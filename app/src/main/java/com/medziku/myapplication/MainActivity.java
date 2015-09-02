@@ -113,13 +113,14 @@ public class MainActivity extends Activity {
 
     private void onLocationKnown(Location location) {
         String textToSet = location.toString();
-        MainActivity.this.gpsPositionTV.setText(textToSet);
+        this.gpsPositionTV.setText(textToSet);
     }
 
     private void onLocationAndCityKnown(Location location, String cityName) {
         String textToSet = location.toString() + "cityname: " + cityName;
-        MainActivity.this.gpsPositionTV.setText(textToSet);
-        MainActivity.this.sendSMS(textToSet);
+
+        this.gpsPositionTV.setText(textToSet);
+        this.sendSMS(textToSet);
     }
 
     private void listenForLocationChanges(LocationChangedCallback locationChangedCallback, boolean shouldReceiveCity) {
