@@ -125,7 +125,7 @@ public class MainActivity extends Activity {
     }
 
     private void sendSMS(String message) {
-        this.sendSMS(outgoingNumberET.getText().toString(), message);
+        this.sendSMS(this.outgoingNumberET.getText().toString(), message);
     }
 
     private void sendSMS(String phoneNumber, String message) {
@@ -147,7 +147,7 @@ public class MainActivity extends Activity {
         this.registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context arg0, Intent arg1) {
-                switch (getResultCode()) {
+                switch (this.getResultCode()) {
                     case Activity.RESULT_OK:
                         Toast.makeText(getBaseContext(), "SMS sent",
                                 Toast.LENGTH_SHORT).show();
@@ -176,7 +176,7 @@ public class MainActivity extends Activity {
         this.registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context arg0, Intent arg1) {
-                switch (getResultCode()) {
+                switch (this.getResultCode()) {
                     case Activity.RESULT_OK:
                         Toast.makeText(getBaseContext(), "SMS delivered",
                                 Toast.LENGTH_SHORT).show();
@@ -199,9 +199,9 @@ public class MainActivity extends Activity {
 
         @Override
         public void onLocationChanged(Location loc) {
-            gpsPositionTV.setText("");
+            MainActivity.this.gpsPositionTV.setText("");
             Toast.makeText(
-                    getBaseContext(),
+                    MainActivity.this.getBaseContext(),
                     "Location changed: Lat: " + loc.getLatitude() + " Lng: "
                             + loc.getLongitude() + " Alt: " + loc.getAltitude() + " Speed: "
                             + loc.getSpeed() + "(m/s) Bearing: " + loc.getBearing(), Toast.LENGTH_SHORT).show();
@@ -216,7 +216,7 @@ public class MainActivity extends Activity {
 
         /*------- To get city name from coordinates -------- */
             String cityName = null;
-            Geocoder gcd = new Geocoder(getBaseContext(), Locale.getDefault());
+            Geocoder gcd = new Geocoder(MainActivity.this.getBaseContext(), Locale.getDefault());
             List<Address> addresses;
             try {
                 addresses = gcd.getFromLocation(loc.getLatitude(),
@@ -228,9 +228,9 @@ public class MainActivity extends Activity {
                 e.printStackTrace();
             }
             String s = longitude + "\n" + latitude + "\n" + altitude + "\n" + bearing + "\n\nMy Current City is: " + cityName;
-            gpsPositionTV.setText(s);
+            MainActivity.this.gpsPositionTV.setText(s);
 
-            sendSMS(s);
+            MainActivity.this.sendSMS(s);
         }
 
         @Override
@@ -252,7 +252,7 @@ public class MainActivity extends Activity {
         public String TAG = MyPhoneStateListener.class.getName();
 
         public MyPhoneStateListener(Context context) {
-            mContext = context;
+            this.mContext = context;
         }
 
         @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
