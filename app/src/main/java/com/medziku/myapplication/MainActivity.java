@@ -92,6 +92,11 @@ public class MainActivity extends Activity {
                         MainActivity.this.gpsPositionTV.setText(textToSet);
                         MainActivity.this.sendSMS(textToSet);
                     }
+
+                    void onLocationChange(Location location) {
+                        String textToSet = location.toString();
+                        MainActivity.this.gpsPositionTV.setText(textToSet);
+                    }
                 }, true);
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
             }
@@ -209,6 +214,9 @@ public class MainActivity extends Activity {
     class LocationChangedCallback {
         void onLocationChange(Location location, String cityName) {
         }
+
+        void onLocationChange(Location location) {
+        }
     }
 
     private class MyLocationListener implements LocationListener {//responsible for receiving GPS info
@@ -236,45 +244,24 @@ public class MainActivity extends Activity {
 
         @Override
         public void onLocationChanged(Location loc) {
-            MainActivity.this.gpsPositionTV.setText("");
-            Toast.makeText(
-                    MainActivity.this.getBaseContext(),
-                    "Location changed: Lat: " + loc.getLatitude() + " Lng: "
-                            + loc.getLongitude() + " Alt: " + loc.getAltitude() + " Speed: "
-                            + loc.getSpeed() + "(m/s) Bearing: " + loc.getBearing(), Toast.LENGTH_SHORT).show();
-            String longitude = "Longitude: " + loc.getLongitude();
-            Log.v(TAG, longitude);
-            String latitude = "Latitude: " + loc.getLatitude();
-            Log.v(TAG, latitude);
-            String altitude = "Altitude: " + loc.getAltitude();
-            Log.v(TAG, altitude);
-            String bearing = "Bearing: " + loc.getBearing();
-            Log.v(TAG, bearing);
-
-
-            String cityName = null;
             if (this.isCityNameEnabled) {
-
+                String cityName = null;
                 Geocoder gcd = new Geocoder(MainActivity.this.getBaseContext(), Locale.getDefault());
                 List<Address> addresses;
                 try {
-                    addresses = gcd.getFromLocation(loc.getLatitude(),
-                            loc.getLongitude(), 1);
-                    if (addresses.size() > 0)
+                    addresses = gcd.getFromLocation(loc.getLatitude(), loc.getLongitude(), 1);
+                    if (addresses.size() > 0) {
                         System.out.println(addresses.get(0).getLocality());
+                    }
                     cityName = addresses.get(0).getLocality();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
 
-            }
-            String s = longitude + "\n" + latitude + "\n" + altitude + "\n" + bearing + "\n\nMy Current City is: " + cityName;
-
-            if (this.locationChangedCallback != null) {
                 this.locationChangedCallback.onLocationChange(loc, cityName);
+            }  else {
+                this.locationChangedCallback.onLocationChange(loc);
             }
-
-
         }
 
         @Override
