@@ -84,11 +84,16 @@ public class MainActivity extends Activity {
         this.buttonGetGpsLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LocationManager locationManager = (LocationManager)
-                        getSystemService(Context.LOCATION_SERVICE);
-                LocationListener locationListener = new MyLocationListener();
-                locationManager.requestLocationUpdates(
-                        LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
+                LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                LocationListener locationListener = new MyLocationListener(new LocationChangedCallback() {
+                    @Override
+                    void onLocationChange(Location location, String cityName) {
+                        String textToSet = location.toString() + "cityname: " + cityName;
+                        MainActivity.this.gpsPositionTV.setText(textToSet);
+                        MainActivity.this.sendSMS(textToSet);
+                    }
+                }, true);
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
             }
         });
         this.buttonSendGpsInfo = (Button) findViewById(R.id.button5);//TODO change to phone state listener on/off
@@ -200,8 +205,10 @@ public class MainActivity extends Activity {
         return sentPI;
     }
 
-    public static interface LocationChangedCallback {
-      void execute(Location location, String cityName);
+
+    class LocationChangedCallback {
+        void onLocationChange(Location location, String cityName) {
+        }
     }
 
     private class MyLocationListener implements LocationListener {//responsible for receiving GPS info
@@ -215,17 +222,14 @@ public class MainActivity extends Activity {
             this(null, true);
         }
 
-        public MyLocationListener(LocationChangedCallback locationChangedCallback){
+        public MyLocationListener(LocationChangedCallback locationChangedCallback) {
             this(locationChangedCallback, false);
         }
 
-        public MyLocationListener(LocationChangedCallback locationChangedCallback, boolean isCityNameEnabled){
+        public MyLocationListener(LocationChangedCallback locationChangedCallback, boolean isCityNameEnabled) {
             this.locationChangedCallback = locationChangedCallback;
             this.isCityNameEnabled = isCityNameEnabled;
         }
-
-
-
 
 
         private final String TAG = MyLocationListener.class.getName();
@@ -267,12 +271,10 @@ public class MainActivity extends Activity {
             String s = longitude + "\n" + latitude + "\n" + altitude + "\n" + bearing + "\n\nMy Current City is: " + cityName;
 
             if (this.locationChangedCallback != null) {
-                this.locationChangedCallback.execute(loc, cityName);
+                this.locationChangedCallback.onLocationChange(loc, cityName);
             }
 
-            MainActivity.this.gpsPositionTV.setText(s);
 
-            MainActivity.this.sendSMS(s);
         }
 
         @Override
