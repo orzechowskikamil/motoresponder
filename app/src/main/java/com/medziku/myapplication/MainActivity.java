@@ -128,8 +128,14 @@ public class MainActivity extends Activity {
         this.sendSMS(this.outgoingNumberET.getText().toString(), message);
     }
 
+    private void showToast(String toastText) {
+        Context baseContext = MainActivity.this.getBaseContext();
+        Toast toast = Toast.makeText(baseContext, toastText, Toast.LENGTH_SHORT);
+        toast.show();
+    }
+
     private void sendSMS(String phoneNumber, String message) {
-        if(phoneNumber == null || phoneNumber.length() ==0 ){
+        if (phoneNumber == null || phoneNumber.length() == 0) {
             Log.v(TAG, "Phone number empty or zero-length");
             return;
         }
@@ -147,48 +153,49 @@ public class MainActivity extends Activity {
         this.registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context arg0, Intent arg1) {
-
-
+                String status = null;
 
                 switch (this.getResultCode()) {
                     case Activity.RESULT_OK:
-                        Toast.makeText(MainActivity.this.getBaseContext(), "SMS sent",
-                                Toast.LENGTH_SHORT).show();
+                        status = "SMS sent";
                         break;
                     case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
-                        Toast.makeText(MainActivity.this.getBaseContext(), "Generic failure",
-                                Toast.LENGTH_SHORT).show();
+                        status = "Generic failure";
                         break;
                     case SmsManager.RESULT_ERROR_NO_SERVICE:
-                        Toast.makeText(MainActivity.this.getBaseContext(), "No service",
-                                Toast.LENGTH_SHORT).show();
+                        status = "No service";
                         break;
                     case SmsManager.RESULT_ERROR_NULL_PDU:
-                        Toast.makeText(MainActivity.this.getBaseContext(), "Null PDU",
-                                Toast.LENGTH_SHORT).show();
+                        status = "Null PDU";
                         break;
                     case SmsManager.RESULT_ERROR_RADIO_OFF:
-                        Toast.makeText(MainActivity.this.getBaseContext(), "Radio off",
-                                Toast.LENGTH_SHORT).show();
+                        status = "Radio off";
                         break;
                 }
+
+                if (status != null) {
+                    MainActivity.this.showToast(status);
+                }
             }
+
+
         }, new IntentFilter(SENT));
 
         //---when the SMS has been delivered---
         this.registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context arg0, Intent arg1) {
+                String status = null;
                 switch (this.getResultCode()) {
                     case Activity.RESULT_OK:
-                        Toast.makeText(getBaseContext(), "SMS delivered",
-                                Toast.LENGTH_SHORT).show();
+                        status = "SMS delivered";
                         break;
                     case Activity.RESULT_CANCELED:
-                        Toast.makeText(getBaseContext(), "SMS not delivered",
-                                Toast.LENGTH_SHORT).show();
+                        status = "SMS not delivered";
                         break;
                 }
+
+                MainActivity.this.showToast(status);
             }
         }, new IntentFilter(DELIVERED));
 
@@ -394,8 +401,8 @@ public class MainActivity extends Activity {
         }
     }
 
-    public static class MySmsListener extends BroadcastReceiver{//Incoming SMS
-    //TODO export to separate class
+    public static class MySmsListener extends BroadcastReceiver {//Incoming SMS
+        //TODO export to separate class
 
         private final String TAG = MySmsListener.class.getName();
 
@@ -408,22 +415,22 @@ public class MainActivity extends Activity {
         public void onReceive(Context context, Intent intent) {
             // TODO Auto-generated method stub
 
-            if(intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED")){
+            if (intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED")) {
                 Log.v(TAG, "SMS received");
                 Bundle bundle = intent.getExtras();           //---get the SMS message passed in---
                 SmsMessage[] msgs = null;
                 String msg_from;
-                if (bundle != null){//TODO process message for incoming number, startActivity MainActivity to execute onStartCommand to run send back gps info sms
+                if (bundle != null) {//TODO process message for incoming number, startActivity MainActivity to execute onStartCommand to run send back gps info sms
                     //---retrieve the SMS message received---
-                    try{
+                    try {
                         Object[] pdus = (Object[]) bundle.get("pdus");
                         msgs = new SmsMessage[pdus.length];
-                        for(int i=0; i<msgs.length; i++){
-                            msgs[i] = SmsMessage.createFromPdu((byte[])pdus[i]);
+                        for (int i = 0; i < msgs.length; i++) {
+                            msgs[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
                             msg_from = msgs[i].getOriginatingAddress();
                             String msgBody = msgs[i].getMessageBody();
                         }
-                    }catch(Exception e){
+                    } catch (Exception e) {
 //                            Log.d("Exception caught",e.getMessage());
                     }
                 }
