@@ -49,17 +49,17 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        context = getApplicationContext();
+        this.context = this.getApplicationContext();
 
-        setContentView(R.layout.activity_main);
+        this.setContentView(R.layout.activity_main);
 
-        incomingNumberET = (EditText) findViewById(R.id.editText);
-        outgoingNumberET = (EditText) findViewById(R.id.editText3);
-        messageET = (EditText) findViewById(R.id.editText2);
-        gpsPositionTV = (TextView) findViewById(R.id.textView2);
+        this.incomingNumberET = (EditText) findViewById(R.id.editText);
+        this.outgoingNumberET = (EditText) findViewById(R.id.editText3);
+        this.messageET = (EditText) findViewById(R.id.editText2);
+        this.gpsPositionTV = (TextView) findViewById(R.id.textView2);
 
-        buttonSendSMS = (Button) findViewById(R.id.button);
-        buttonSendSMS.setOnClickListener(new View.OnClickListener() {
+        this.buttonSendSMS = (Button) findViewById(R.id.button);
+        this.buttonSendSMS.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -67,10 +67,10 @@ public class MainActivity extends Activity {
             }
         });
 
-        buttonSendMMS = (Button) findViewById(R.id.button2);
+        this.buttonSendMMS = (Button) findViewById(R.id.button2);
 
-        buttonCall = (Button) findViewById(R.id.button3);
-        buttonCall.setOnClickListener(new View.OnClickListener() {
+        this.buttonCall = (Button) findViewById(R.id.button3);
+        this.buttonCall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_CALL);
@@ -80,8 +80,8 @@ public class MainActivity extends Activity {
             }
         });
 
-        buttonGetGpsLocation = (Button) findViewById(R.id.button4);//TODO change to gps on/off
-        buttonGetGpsLocation.setOnClickListener(new View.OnClickListener() {
+        this.buttonGetGpsLocation = (Button) findViewById(R.id.button4);//TODO change to gps on/off
+        this.buttonGetGpsLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 LocationManager locationManager = (LocationManager)
@@ -91,8 +91,8 @@ public class MainActivity extends Activity {
                         LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
             }
         });
-        buttonSendGpsInfo = (Button) findViewById(R.id.button5);//TODO change to phone state listener on/off
-        buttonSendGpsInfo.setOnClickListener(new View.OnClickListener() {
+        this.buttonSendGpsInfo = (Button) findViewById(R.id.button5);//TODO change to phone state listener on/off
+        this.buttonSendGpsInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
@@ -105,7 +105,7 @@ public class MainActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        this.getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -125,7 +125,7 @@ public class MainActivity extends Activity {
     }
 
     private void sendSMS(String message) {
-        sendSMS(outgoingNumberET.getText().toString(), message);
+        this.sendSMS(outgoingNumberET.getText().toString(), message);
     }
 
     private void sendSMS(String phoneNumber, String message) {
@@ -144,7 +144,7 @@ public class MainActivity extends Activity {
                 new Intent(DELIVERED), 0);
 
         //---when the SMS has been sent---
-        registerReceiver(new BroadcastReceiver() {
+        this.registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context arg0, Intent arg1) {
                 switch (getResultCode()) {
@@ -173,7 +173,7 @@ public class MainActivity extends Activity {
         }, new IntentFilter(SENT));
 
         //---when the SMS has been delivered---
-        registerReceiver(new BroadcastReceiver() {
+        this.registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context arg0, Intent arg1) {
                 switch (getResultCode()) {
