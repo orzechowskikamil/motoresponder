@@ -147,25 +147,28 @@ public class MainActivity extends Activity {
         this.registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context arg0, Intent arg1) {
+
+
+
                 switch (this.getResultCode()) {
                     case Activity.RESULT_OK:
-                        Toast.makeText(getBaseContext(), "SMS sent",
+                        Toast.makeText(MainActivity.this.getBaseContext(), "SMS sent",
                                 Toast.LENGTH_SHORT).show();
                         break;
                     case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
-                        Toast.makeText(getBaseContext(), "Generic failure",
+                        Toast.makeText(MainActivity.this.getBaseContext(), "Generic failure",
                                 Toast.LENGTH_SHORT).show();
                         break;
                     case SmsManager.RESULT_ERROR_NO_SERVICE:
-                        Toast.makeText(getBaseContext(), "No service",
+                        Toast.makeText(MainActivity.this.getBaseContext(), "No service",
                                 Toast.LENGTH_SHORT).show();
                         break;
                     case SmsManager.RESULT_ERROR_NULL_PDU:
-                        Toast.makeText(getBaseContext(), "Null PDU",
+                        Toast.makeText(MainActivity.this.getBaseContext(), "Null PDU",
                                 Toast.LENGTH_SHORT).show();
                         break;
                     case SmsManager.RESULT_ERROR_RADIO_OFF:
-                        Toast.makeText(getBaseContext(), "Radio off",
+                        Toast.makeText(MainActivity.this.getBaseContext(), "Radio off",
                                 Toast.LENGTH_SHORT).show();
                         break;
                 }
