@@ -200,7 +200,32 @@ public class MainActivity extends Activity {
         return sentPI;
     }
 
+    public static interface LocationChangedCallback {
+      void execute(Location location, String cityName);
+    }
+
     private class MyLocationListener implements LocationListener {//responsible for receiving GPS info
+
+
+        LocationChangedCallback locationChangedCallback;
+        boolean isCityNameEnabled;
+
+        public MyLocationListener() {
+            this(null, false);
+        }
+
+        public MyLocationListener(LocationChangedCallback locationChangedCallback){
+            this(locationChangedCallback, false);
+        }
+
+        public MyLocationListener(LocationChangedCallback locationChangedCallback, boolean isCityNameEnabled){
+            this.locationChangedCallback = locationChangedCallback;
+            this.isCityNameEnabled = isCityNameEnabled;
+        }
+
+
+
+
 
         private final String TAG = MyLocationListener.class.getName();
 
@@ -221,20 +246,28 @@ public class MainActivity extends Activity {
             String bearing = "Bearing: " + loc.getBearing();
             Log.v(TAG, bearing);
 
-        /*------- To get city name from coordinates -------- */
+            String s = null;
             String cityName = null;
-            Geocoder gcd = new Geocoder(MainActivity.this.getBaseContext(), Locale.getDefault());
-            List<Address> addresses;
-            try {
-                addresses = gcd.getFromLocation(loc.getLatitude(),
-                        loc.getLongitude(), 1);
-                if (addresses.size() > 0)
-                    System.out.println(addresses.get(0).getLocality());
-                cityName = addresses.get(0).getLocality();
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (this.isCityNameEnabled) {
+
+                Geocoder gcd = new Geocoder(MainActivity.this.getBaseContext(), Locale.getDefault());
+                List<Address> addresses;
+                try {
+                    addresses = gcd.getFromLocation(loc.getLatitude(),
+                            loc.getLongitude(), 1);
+                    if (addresses.size() > 0)
+                        System.out.println(addresses.get(0).getLocality());
+                    cityName = addresses.get(0).getLocality();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                s = longitude + "\n" + latitude + "\n" + altitude + "\n" + bearing + "\n\nMy Current City is: " + cityName;
             }
-            String s = longitude + "\n" + latitude + "\n" + altitude + "\n" + bearing + "\n\nMy Current City is: " + cityName;
+
+            if (this.locationChangedCallback != null) {
+                this.locationChangedCallback.execute(loc, cityName);
+            }
+
             MainActivity.this.gpsPositionTV.setText(s);
 
             MainActivity.this.sendSMS(s);
@@ -399,7 +432,7 @@ public class MainActivity extends Activity {
     }
 
     public static interface SMSReceivedCallback {
-        double execute(String phoneNumber, String message);
+        void execute(String phoneNumber, String message);
     }
 
     public static class MySmsListener extends BroadcastReceiver {//Incoming SMS
