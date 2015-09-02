@@ -398,15 +398,24 @@ public class MainActivity extends Activity {
         }
     }
 
+    public static interface SMSReceivedCallback {
+        double execute(String phoneNumber, String message);
+    }
+
     public static class MySmsListener extends BroadcastReceiver {//Incoming SMS
         //TODO export to separate class
 
         private final String TAG = MySmsListener.class.getName();
 
+        SMSReceivedCallback smsReceivedCallback;
+
         public MySmsListener() {
         }
 
-        //private SharedPreferences preferences;
+        public MySmsListener(SMSReceivedCallback smsReceivedCallback) {
+            this.smsReceivedCallback = smsReceivedCallback;
+        }
+
 
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -420,7 +429,7 @@ public class MainActivity extends Activity {
 
 
                 if (bundle != null) {
-                //TODO process message for incoming number, startActivity MainActivity to execute onStartCommand to run send back gps info sms
+                    //TODO process message for incoming number, startActivity MainActivity to execute onStartCommand to run send back gps info sms
 
                     SmsMessage[] msgs = null;
 
@@ -431,11 +440,15 @@ public class MainActivity extends Activity {
                         for (int i = 0; i < msgs.length; i++) {
                             msgs[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
 
-                            String msg_from = msgs[i].getOriginatingAddress();
-                            String msgBody = msgs[i].getMessageBody();
+                            String phoneNumber = msgs[i].getOriginatingAddress();
+                            String message = msgs[i].getMessageBody();
+
+                            if (this.smsReceivedCallback != null) {
+                                this.smsReceivedCallback.execute(phoneNumber, message);
+                            }
                         }
                     } catch (Exception e) {
-                            Log.d("Exception caught",e.getMessage());
+                        Log.d("Exception caught", e.getMessage());
                     }
                 }
             }
