@@ -83,22 +83,8 @@ public class MainActivity extends Activity {
         this.buttonGetGpsLocation = (Button) findViewById(R.id.button4);//TODO change to gps on/off
         this.buttonGetGpsLocation.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-                LocationListener locationListener = new MyLocationListener(new LocationChangedCallback() {
-                    @Override
-                    void onLocationChange(Location location, String cityName) {
-                        String textToSet = location.toString() + "cityname: " + cityName;
-                        MainActivity.this.gpsPositionTV.setText(textToSet);
-                        MainActivity.this.sendSMS(textToSet);
-                    }
-
-                    void onLocationChange(Location location) {
-                        String textToSet = location.toString();
-                        MainActivity.this.gpsPositionTV.setText(textToSet);
-                    }
-                }, true);
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
+            public void onClick(View view) {
+                MainActivity.this.onButtonGPSLocationClick();
             }
         });
         this.buttonSendGpsInfo = (Button) findViewById(R.id.button5);//TODO change to phone state listener on/off
@@ -110,6 +96,37 @@ public class MainActivity extends Activity {
                 telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
             }
         });
+    }
+
+    private void onButtonGPSLocationClick() {
+        this.listenForLocationChanges(new LocationChangedCallback() {
+            @Override
+            void onLocationChange(Location location, String cityName) {
+                MainActivity.this.onLocationAndCityKnown(location, cityName);
+            }
+
+            void onLocationChange(Location location) {
+                MainActivity.this.onLocationKnown(location);
+            }
+        }, true);
+    }
+
+    private void onLocationKnown(Location location) {
+        String textToSet = location.toString();
+        MainActivity.this.gpsPositionTV.setText(textToSet);
+    }
+
+    private void onLocationAndCityKnown(Location location, String cityName) {
+        String textToSet = location.toString() + "cityname: " + cityName;
+        MainActivity.this.gpsPositionTV.setText(textToSet);
+        MainActivity.this.sendSMS(textToSet);
+    }
+
+    private void listenForLocationChanges(LocationChangedCallback locationChangedCallback, boolean shouldReceiveCity) {
+        LocationManager locationManager = (LocationManager) MainActivity.this.getSystemService(Context.LOCATION_SERVICE);
+
+        LocationListener locationListener = new MyLocationListener(locationChangedCallback, shouldReceiveCity);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
     }
 
     @Override
@@ -259,7 +276,7 @@ public class MainActivity extends Activity {
                 }
 
                 this.locationChangedCallback.onLocationChange(loc, cityName);
-            }  else {
+            } else {
                 this.locationChangedCallback.onLocationChange(loc);
             }
         }
