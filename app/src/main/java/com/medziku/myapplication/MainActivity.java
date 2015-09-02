@@ -210,8 +210,9 @@ public class MainActivity extends Activity {
         LocationChangedCallback locationChangedCallback;
         boolean isCityNameEnabled;
 
+
         public MyLocationListener() {
-            this(null, false);
+            this(null, true);
         }
 
         public MyLocationListener(LocationChangedCallback locationChangedCallback){
@@ -246,7 +247,7 @@ public class MainActivity extends Activity {
             String bearing = "Bearing: " + loc.getBearing();
             Log.v(TAG, bearing);
 
-            String s = null;
+
             String cityName = null;
             if (this.isCityNameEnabled) {
 
@@ -261,8 +262,9 @@ public class MainActivity extends Activity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                s = longitude + "\n" + latitude + "\n" + altitude + "\n" + bearing + "\n\nMy Current City is: " + cityName;
+
             }
+            String s = longitude + "\n" + latitude + "\n" + altitude + "\n" + bearing + "\n\nMy Current City is: " + cityName;
 
             if (this.locationChangedCallback != null) {
                 this.locationChangedCallback.execute(loc, cityName);
