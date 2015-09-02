@@ -412,12 +412,20 @@ public class MainActivity extends Activity {
         public void onReceive(Context context, Intent intent) {
             // TODO Auto-generated method stub
 
-            if (intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED")) {
+            boolean smsReceived = intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED");
+
+            if (smsReceived) {
                 Log.v(TAG, "SMS received");
                 Bundle bundle = intent.getExtras();           //---get the SMS message passed in---
-                SmsMessage[] msgs = null;
-                String msg_from;
-                if (bundle != null) {//TODO process message for incoming number, startActivity MainActivity to execute onStartCommand to run send back gps info sms
+
+
+                if (bundle != null) {
+                //TODO process message for incoming number, startActivity MainActivity to execute onStartCommand to run send back gps info sms
+
+                    SmsMessage[] msgs = null;
+                    String msg_from;
+
+
                     //---retrieve the SMS message received---
                     try {
                         Object[] pdus = (Object[]) bundle.get("pdus");
@@ -428,7 +436,7 @@ public class MainActivity extends Activity {
                             String msgBody = msgs[i].getMessageBody();
                         }
                     } catch (Exception e) {
-//                            Log.d("Exception caught",e.getMessage());
+                            Log.d("Exception caught",e.getMessage());
                     }
                 }
             }
