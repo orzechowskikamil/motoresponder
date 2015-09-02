@@ -134,23 +134,15 @@ public class MainActivity extends Activity {
         toast.show();
     }
 
+
     private void sendSMS(String phoneNumber, String message) {
         if (phoneNumber == null || phoneNumber.length() == 0) {
             Log.v(TAG, "Phone number empty or zero-length");
             return;
         }
 
-        String SENT = "SMS_SENT";
-        String DELIVERED = "SMS_DELIVERED";
 
-        PendingIntent sentPI = PendingIntent.getBroadcast(this, 0,
-                new Intent(SENT), 0);
-
-        PendingIntent deliveredPI = PendingIntent.getBroadcast(this, 0,
-                new Intent(DELIVERED), 0);
-
-        //---when the SMS has been sent---
-        this.registerReceiver(new BroadcastReceiver() {
+        PendingIntent sentPI = this.createPendingIntent("SMS_SENT", new BroadcastReceiver() {
             @Override
             public void onReceive(Context arg0, Intent arg1) {
                 String status = null;
@@ -177,12 +169,10 @@ public class MainActivity extends Activity {
                     MainActivity.this.showToast(status);
                 }
             }
+        });
 
 
-        }, new IntentFilter(SENT));
-
-        //---when the SMS has been delivered---
-        this.registerReceiver(new BroadcastReceiver() {
+        PendingIntent deliveredPI = this.createPendingIntent("SMS_DELIVERED", new BroadcastReceiver() {
             @Override
             public void onReceive(Context arg0, Intent arg1) {
                 String status = null;
@@ -197,10 +187,17 @@ public class MainActivity extends Activity {
 
                 MainActivity.this.showToast(status);
             }
-        }, new IntentFilter(DELIVERED));
+        });
 
         SmsManager sms = SmsManager.getDefault();
         sms.sendTextMessage(phoneNumber, null, message, sentPI, deliveredPI);
+    }
+
+    private PendingIntent createPendingIntent(String SENT, BroadcastReceiver broadcastReceiver) {
+        PendingIntent sentPI = PendingIntent.getBroadcast(this, 0, new Intent(SENT), 0);
+
+        this.registerReceiver(broadcastReceiver, new IntentFilter(SENT));
+        return sentPI;
     }
 
     private class MyLocationListener implements LocationListener {//responsible for receiving GPS info
