@@ -113,14 +113,12 @@ public class MainActivity extends Activity {
 
     private void sendSMS(String phoneNumber, String message) {
         this.smsUtility.sendSMS(phoneNumber, message, new SendSMSCallback() {
-            @Override
             public void onSMSDelivered(String status) {
                 if (status != null) {
                     MainActivity.this.showToast(status);
                 }
             }
 
-            @Override
             public void onSMSSent(String status) {
                 if (status != null) {
                     MainActivity.this.showToast(status);
@@ -131,12 +129,11 @@ public class MainActivity extends Activity {
 
     private void onButtonGPSLocationClick() {
         this.locationUtility.listenForLocationChanges(new LocationChangedCallback() {
-            @Override
-            void onLocationChange(Location location, String cityName) {
+            public void onLocationChange(Location location, String cityName) {
                 MainActivity.this.onLocationAndCityKnown(location, cityName);
             }
 
-            void onLocationChange(Location location) {
+            public void onLocationChange(Location location) {
                 MainActivity.this.onLocationKnown(location);
             }
         }, true);
@@ -187,20 +184,16 @@ public class MainActivity extends Activity {
     }
 
 
-    class LocationChangedCallback {
-        void onLocationChange(Location location, String cityName) {
-        }
+    interface LocationChangedCallback {
+        void onLocationChange(Location location, String cityName);
 
-        void onLocationChange(Location location) {
-        }
+        void onLocationChange(Location location);
     }
 
-    class SendSMSCallback {
-        public void onSMSSent(String status) {
-        }
+    interface SendSMSCallback {
+        void onSMSSent(String status);
 
-        public void onSMSDelivered(String status) {
-        }
+        void onSMSDelivered(String status);
     }
 
 
