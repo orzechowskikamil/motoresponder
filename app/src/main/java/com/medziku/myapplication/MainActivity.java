@@ -45,11 +45,16 @@ public class MainActivity extends Activity {
     TextView gpsPositionTV;
     Context context;
 
+    LocationService locationService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         this.context = this.getApplicationContext();
+
+        this.locationService = new LocationService((LocationManager) MainActivity.this.getSystemService(Context.LOCATION_SERVICE));
+
 
         this.setContentView(R.layout.activity_main);
 
@@ -99,7 +104,7 @@ public class MainActivity extends Activity {
     }
 
     private void onButtonGPSLocationClick() {
-        this.listenForLocationChanges(new LocationChangedCallback() {
+        this.locationService.listenForLocationChanges(new LocationChangedCallback() {
             @Override
             void onLocationChange(Location location, String cityName) {
                 MainActivity.this.onLocationAndCityKnown(location, cityName);
@@ -123,12 +128,6 @@ public class MainActivity extends Activity {
         this.sendSMS(textToSet);
     }
 
-    private void listenForLocationChanges(LocationChangedCallback locationChangedCallback, boolean shouldReceiveCity) {
-        LocationManager locationManager = (LocationManager) MainActivity.this.getSystemService(Context.LOCATION_SERVICE);
-
-        LocationListener locationListener = new MyLocationListener(locationChangedCallback, shouldReceiveCity);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -234,6 +233,35 @@ public class MainActivity extends Activity {
         }
 
         void onLocationChange(Location location) {
+        }
+    }
+
+
+    class LocationService {
+
+        public LocationService(LocationManager locationManager, int minimumTimeBetweenUpdates, int minimumDistanceBetweenUpdates) {
+            this.locationManager = locationManager;
+            this.minimumDistanceBetweenUpdates = minimumDistanceBetweenUpdates;
+            this.minimumTimeBetweenUpdates = minimumTimeBetweenUpdates;
+        }
+
+        public LocationService(LocationManager locationManager) {
+            this(locationManager, 5000, 10);
+        }
+
+
+        LocationManager locationManager;
+        private int minimumTimeBetweenUpdates;
+        private int minimumDistanceBetweenUpdates;
+
+
+        public void listenForLocationChanges(LocationChangedCallback locationChangedCallback, boolean shouldReceiveCity) {
+            this.locationManager.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER,
+                    this.minimumTimeBetweenUpdates,
+                    this.minimumDistanceBetweenUpdates,
+                    new MyLocationListener(locationChangedCallback, shouldReceiveCity)
+            );
         }
     }
 
