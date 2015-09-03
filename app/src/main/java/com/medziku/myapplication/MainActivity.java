@@ -40,13 +40,12 @@ import java.util.Locale;
 public class MainActivity extends Activity {
     private static final String TAG = MainActivity.class.getName();
 
-    Button buttonSendSMS, buttonSendMMS, buttonCall, buttonGetGpsLocation, buttonSendGpsInfo;
-    EditText incomingNumberET, outgoingNumberET, messageET;
-    TextView gpsPositionTV;
-    Context context;
-
-    LocationUtility locationUtility;
-    SMSUtility smsUtility;
+    private Button buttonSendSMS, buttonSendMMS, buttonCall, buttonGetGpsLocation, buttonSendGpsInfo;
+    private EditText incomingNumberET, outgoingNumberET, messageET;
+    private TextView gpsPositionTV;
+    private Context context;
+    private LocationUtility locationUtility;
+    private SMSUtility smsUtility;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,23 +107,11 @@ public class MainActivity extends Activity {
         String phoneNumber = outgoingNumberET.getText().toString();
         String message = messageET.getText().toString();
 
-        this.sendSMS(phoneNumber, message);
-    }
-
-    private void sendSMS(String phoneNumber, String message) {
-        this.smsUtility.sendSMS(phoneNumber, message, new SendSMSCallback() {
-            public void onSMSDelivered(String status) {
-                if (status != null) {
-                    MainActivity.this.showToast(status);
-                }
-            }
-
-            public void onSMSSent(String status) {
-                if (status != null) {
-                    MainActivity.this.showToast(status);
-                }
-            }
-        });
+        try {
+            this.sendSMS(phoneNumber, message);
+        } catch (Exception e) {
+            Log.i(TAG, "Sending message failed");
+        }
     }
 
     private void onButtonGPSLocationClick() {
@@ -150,7 +137,6 @@ public class MainActivity extends Activity {
         this.gpsPositionTV.setText(textToSet);
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -173,16 +159,27 @@ public class MainActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-//    private void sendSMS(String message) {
-//        this.sendSMS(this.outgoingNumberET.getText().toString(), message);
-//    }
-
     private void showToast(String toastText) {
         Context baseContext = MainActivity.this.getBaseContext();
         Toast toast = Toast.makeText(baseContext, toastText, Toast.LENGTH_SHORT);
         toast.show();
     }
 
+    private void sendSMS(String phoneNumber, String message) throws Exception {
+        this.smsUtility.sendSMS(phoneNumber, message, new SendSMSCallback() {
+            public void onSMSDelivered(String status) {
+                if (status != null) {
+                    MainActivity.this.showToast(status);
+                }
+            }
+
+            public void onSMSSent(String status) {
+                if (status != null) {
+                    MainActivity.this.showToast(status);
+                }
+            }
+        });
+    }
 
     interface LocationChangedCallback {
         void onLocationChange(Location location, String cityName);
@@ -199,25 +196,17 @@ public class MainActivity extends Activity {
 
     class SMSUtility {
 
-        Context context;
-
+        private Context context;
+        private SmsManager sms;
 
         public SMSUtility(Context context) {
             this.context = context;
+            this.sms = SmsManager.getDefault();
         }
 
-        private PendingIntent createPendingIntent(String SENT, BroadcastReceiver broadcastReceiver) {
-            PendingIntent sentPI = PendingIntent.getBroadcast(this.context, 0, new Intent(SENT), 0);
-
-            this.context.registerReceiver(broadcastReceiver, new IntentFilter(SENT));
-            return sentPI;
-        }
-
-
-        private void sendSMS(String phoneNumber, String message, final SendSMSCallback sendSMSCallback) {
+        public void sendSMS(String phoneNumber, String message, final SendSMSCallback sendSMSCallback) throws Exception {
             if (phoneNumber == null || phoneNumber.length() == 0) {
-                Log.v(TAG, "Phone number empty or zero-length");
-                return;
+                throw new Exception("Phone number empty or zero length");
             }
 
 
@@ -273,14 +262,25 @@ public class MainActivity extends Activity {
                 }
             });
 
-            SmsManager sms = SmsManager.getDefault();
-            sms.sendTextMessage(phoneNumber, null, message, sentPI, deliveredPI);
+
+            this.sms.sendTextMessage(phoneNumber, null, message, sentPI, deliveredPI);
+        }
+
+        private PendingIntent createPendingIntent(String SENT, BroadcastReceiver broadcastReceiver) {
+            PendingIntent sentPI = PendingIntent.getBroadcast(this.context, 0, new Intent(SENT), 0);
+
+            this.context.registerReceiver(broadcastReceiver, new IntentFilter(SENT));
+            return sentPI;
         }
 
     }
 
 
     class LocationUtility {
+
+        private LocationManager locationManager;
+        private int minimumTimeBetweenUpdates;
+        private int minimumDistanceBetweenUpdates;
 
         public LocationUtility(LocationManager locationManager, int minimumTimeBetweenUpdates, int minimumDistanceBetweenUpdates) {
             this.locationManager = locationManager;
@@ -292,12 +292,6 @@ public class MainActivity extends Activity {
             this(locationManager, 5000, 10);
         }
 
-
-        LocationManager locationManager;
-        private int minimumTimeBetweenUpdates;
-        private int minimumDistanceBetweenUpdates;
-
-
         public void listenForLocationChanges(LocationChangedCallback locationChangedCallback, boolean shouldReceiveCity) {
             this.locationManager.requestLocationUpdates(
                     LocationManager.GPS_PROVIDER,
@@ -307,33 +301,23 @@ public class MainActivity extends Activity {
             );
         }
 
-
         private class MyLocationListener implements LocationListener {//responsible for receiving GPS info
 
-
-            LocationChangedCallback locationChangedCallback;
-            boolean isCityNameEnabled;
-
-
-            public MyLocationListener() {
-                this(null, true);
-            }
+            private LocationChangedCallback locationChangedCallback;
+            private boolean isTrackingCityEnabled;
 
             public MyLocationListener(LocationChangedCallback locationChangedCallback) {
                 this(locationChangedCallback, false);
             }
 
-            public MyLocationListener(LocationChangedCallback locationChangedCallback, boolean isCityNameEnabled) {
+            public MyLocationListener(LocationChangedCallback locationChangedCallback, boolean isTrackingCityEnabled) {
                 this.locationChangedCallback = locationChangedCallback;
-                this.isCityNameEnabled = isCityNameEnabled;
+                this.isTrackingCityEnabled = isTrackingCityEnabled;
             }
-
-
-            private final String TAG = MyLocationListener.class.getName();
 
             @Override
             public void onLocationChanged(Location loc) {
-                if (this.isCityNameEnabled) {
+                if (this.isTrackingCityEnabled) {
                     String cityName = null;
                     Geocoder gcd = new Geocoder(MainActivity.this.getBaseContext(), Locale.getDefault());
                     List<Address> addresses;
@@ -514,8 +498,8 @@ public class MainActivity extends Activity {
         }
     }
 
-    public static interface SMSReceivedCallback {
-        void execute(String phoneNumber, String message);
+    interface SMSReceivedCallback {
+        void onSMSReceived(String phoneNumber, String message);
     }
 
     public static class MySmsListener extends BroadcastReceiver {//Incoming SMS
@@ -523,15 +507,14 @@ public class MainActivity extends Activity {
 
         private final String TAG = MySmsListener.class.getName();
 
-        SMSReceivedCallback smsReceivedCallback;
+        private SMSReceivedCallback smsReceivedCallback;
 
         public MySmsListener() {
-        }
+        }  // TODO: 2015-09-03 remove it later - it's nonsense without callback
 
         public MySmsListener(SMSReceivedCallback smsReceivedCallback) {
             this.smsReceivedCallback = smsReceivedCallback;
         }
-
 
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -545,7 +528,7 @@ public class MainActivity extends Activity {
 
 
                 if (bundle != null) {
-                    //TODO process message for incoming number, startActivity MainActivity to execute onStartCommand to run send back gps info sms
+                    //TODO process message for incoming number, startActivity MainActivity to onSMSReceived onStartCommand to run send back gps info sms
 
                     SmsMessage[] msgs = null;
 
@@ -560,7 +543,7 @@ public class MainActivity extends Activity {
                             String message = msgs[i].getMessageBody();
 
                             if (this.smsReceivedCallback != null) {
-                                this.smsReceivedCallback.execute(phoneNumber, message);
+                                this.smsReceivedCallback.onSMSReceived(phoneNumber, message);
                             }
                         }
                     } catch (Exception e) {
