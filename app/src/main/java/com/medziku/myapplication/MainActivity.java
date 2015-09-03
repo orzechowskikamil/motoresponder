@@ -53,7 +53,7 @@ public class MainActivity extends Activity {
 
         this.context = this.getApplicationContext();
 
-        this.locationUtility = new LocationUtility((LocationManager) MainActivity.this.getSystemService(Context.LOCATION_SERVICE));
+        this.locationUtility = new LocationUtility(this);
         this.smsUtility = new SMSUtility(this);
 
 
@@ -282,14 +282,14 @@ public class MainActivity extends Activity {
         private int minimumTimeBetweenUpdates;
         private int minimumDistanceBetweenUpdates;
 
-        public LocationUtility(LocationManager locationManager, int minimumTimeBetweenUpdates, int minimumDistanceBetweenUpdates) {
-            this.locationManager = locationManager;
+        public LocationUtility(Context context, int minimumTimeBetweenUpdates, int minimumDistanceBetweenUpdates) {
+            this.locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
             this.minimumDistanceBetweenUpdates = minimumDistanceBetweenUpdates;
             this.minimumTimeBetweenUpdates = minimumTimeBetweenUpdates;
         }
 
-        public LocationUtility(LocationManager locationManager) {
-            this(locationManager, 5000, 10);
+        public LocationUtility(Context context) {
+            this(context, 5000, 10);
         }
 
         public void listenForLocationChanges(LocationChangedCallback locationChangedCallback, boolean shouldReceiveCity) {
