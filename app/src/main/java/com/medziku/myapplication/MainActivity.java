@@ -207,7 +207,6 @@ public class MainActivity extends Activity {
         void onSMSReceived(String phoneNumber, String message);
     }
 
-
     class SMSUtility {
 
         private Context context;
@@ -281,18 +280,19 @@ public class MainActivity extends Activity {
         }
 
         public void listenForSMS(SMSReceivedCallback smsReceivedCallback) {
-            new IncomingSMSReceiver(smsReceivedCallback);
+            this.context.registerReceiver(
+                    new IncomingSMSReceiver(smsReceivedCallback),
+                    new IntentFilter("android.provider.Telephony.SMS_RECEIVED")
+            );
         }
 
         private PendingIntent createPendingIntent(String SENT, BroadcastReceiver broadcastReceiver) {
             PendingIntent sentPI = PendingIntent.getBroadcast(this.context, 0, new Intent(SENT), 0);
-
             this.context.registerReceiver(broadcastReceiver, new IntentFilter(SENT));
             return sentPI;
         }
 
-
-        class IncomingSMSReceiver extends BroadcastReceiver {
+        private class IncomingSMSReceiver extends BroadcastReceiver {
 
             private SMSReceivedCallback smsReceivedCallback;
 
@@ -332,7 +332,6 @@ public class MainActivity extends Activity {
         }
 
     }
-
 
     class LocationUtility {
 
@@ -410,7 +409,6 @@ public class MainActivity extends Activity {
         }
 
     }
-
 
     private class MyPhoneStateListener extends PhoneStateListener {//Responsible for incoming phone calls, phone state etc
         Context mContext;
@@ -555,6 +553,4 @@ public class MainActivity extends Activity {
             Log.i(TAG, "onMessageWaitingIndicatorChanged: " + mwi);
         }
     }
-
-
 }
