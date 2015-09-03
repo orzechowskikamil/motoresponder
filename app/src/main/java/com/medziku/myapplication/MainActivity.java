@@ -56,6 +56,12 @@ public class MainActivity extends Activity {
         this.locationUtility = new LocationUtility(this);
         this.smsUtility = new SMSUtility(this);
 
+        this.smsUtility.listenForSMS(new SMSReceivedCallback() {
+            @Override
+            public void onSMSReceived(String phoneNumber, String message) {
+                MainActivity.this.onSMSReceived(phoneNumber, message);
+            }
+        });
 
         this.setContentView(R.layout.activity_main);
 
@@ -137,6 +143,10 @@ public class MainActivity extends Activity {
         this.gpsPositionTV.setText(textToSet);
     }
 
+    private void onSMSReceived(String phoneNumber, String message) {
+        this.showToast("SMS arrived! Phone number: " + phoneNumber + ", message: " + message);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -191,6 +201,10 @@ public class MainActivity extends Activity {
         void onSMSSent(String status);
 
         void onSMSDelivered(String status);
+    }
+
+    interface SMSReceivedCallback {
+        void onSMSReceived(String phoneNumber, String message);
     }
 
 
@@ -266,11 +280,55 @@ public class MainActivity extends Activity {
             this.sms.sendTextMessage(phoneNumber, null, message, sentPI, deliveredPI);
         }
 
+        public void listenForSMS(SMSReceivedCallback smsReceivedCallback) {
+            new IncomingSMSReceiver(smsReceivedCallback);
+        }
+
         private PendingIntent createPendingIntent(String SENT, BroadcastReceiver broadcastReceiver) {
             PendingIntent sentPI = PendingIntent.getBroadcast(this.context, 0, new Intent(SENT), 0);
 
             this.context.registerReceiver(broadcastReceiver, new IntentFilter(SENT));
             return sentPI;
+        }
+
+
+        class IncomingSMSReceiver extends BroadcastReceiver {
+
+            private SMSReceivedCallback smsReceivedCallback;
+
+            public IncomingSMSReceiver(SMSReceivedCallback smsReceivedCallback) {
+                this.smsReceivedCallback = smsReceivedCallback;
+            }
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                boolean receivedIntentIsSMS = intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED");
+
+                if (receivedIntentIsSMS) {
+                    Bundle bundle = intent.getExtras();
+
+                    if (bundle != null) {
+                        try {
+                            Object[] pdus = (Object[]) bundle.get("pdus");
+                            SmsMessage[] smsMessages = null;
+                            smsMessages = new SmsMessage[pdus.length];
+
+                            for (int i = 0; i < smsMessages.length; i++) {
+                                smsMessages[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
+
+                                String phoneNumber = smsMessages[i].getOriginatingAddress();
+                                String message = smsMessages[i].getMessageBody();
+
+                                if (this.smsReceivedCallback != null) {
+                                    this.smsReceivedCallback.onSMSReceived(phoneNumber, message);
+                                }
+                            }
+                        } catch (Exception e) {
+                            Log.d("Exception caught", e.getMessage());
+                        }
+                    }
+                }
+            }
         }
 
     }
@@ -498,59 +556,5 @@ public class MainActivity extends Activity {
         }
     }
 
-    interface SMSReceivedCallback {
-        void onSMSReceived(String phoneNumber, String message);
-    }
 
-    public static class MySmsListener extends BroadcastReceiver {//Incoming SMS
-        //TODO export to separate class
-
-        private final String TAG = MySmsListener.class.getName();
-
-        private SMSReceivedCallback smsReceivedCallback;
-
-        public MySmsListener() {
-        }  // TODO: 2015-09-03 remove it later - it's nonsense without callback
-
-        public MySmsListener(SMSReceivedCallback smsReceivedCallback) {
-            this.smsReceivedCallback = smsReceivedCallback;
-        }
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            // TODO Auto-generated method stub
-
-            boolean receivedIntentIsSMS = intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED");
-
-            if (receivedIntentIsSMS) {
-                Log.v(TAG, "SMS received");
-                Bundle bundle = intent.getExtras();           //---get the SMS message passed in---
-
-
-                if (bundle != null) {
-                    //TODO process message for incoming number, startActivity MainActivity to onSMSReceived onStartCommand to run send back gps info sms
-
-                    SmsMessage[] msgs = null;
-
-                    //---retrieve the SMS message received---
-                    try {
-                        Object[] pdus = (Object[]) bundle.get("pdus");
-                        msgs = new SmsMessage[pdus.length];
-                        for (int i = 0; i < msgs.length; i++) {
-                            msgs[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
-
-                            String phoneNumber = msgs[i].getOriginatingAddress();
-                            String message = msgs[i].getMessageBody();
-
-                            if (this.smsReceivedCallback != null) {
-                                this.smsReceivedCallback.onSMSReceived(phoneNumber, message);
-                            }
-                        }
-                    } catch (Exception e) {
-                        Log.d("Exception caught", e.getMessage());
-                    }
-                }
-            }
-        }
-    }
 }
