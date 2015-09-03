@@ -191,15 +191,6 @@ public class MainActivity extends Activity {
         });
     }
 
-
-
-
-
-
-
-
-
-
     private class MyPhoneStateListener extends PhoneStateListener {//Responsible for incoming phone calls, phone state etc
         Context mContext;
         public String TAG = MyPhoneStateListener.class.getName();
