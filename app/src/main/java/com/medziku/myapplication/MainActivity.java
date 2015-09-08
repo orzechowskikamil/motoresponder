@@ -49,6 +49,8 @@ public class MainActivity extends Activity {
 
     private PhoneStateUtility phoneStateUtility;
 
+    private Responder responder;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,7 +59,7 @@ public class MainActivity extends Activity {
 
         this.locationUtility = new LocationUtility(this);
         this.smsUtility = new SMSUtility(this);
-        this.phoneStateUtility=new PhoneStateUtility(this);
+        this.phoneStateUtility = new PhoneStateUtility(this);
 
         this.smsUtility.listenForSMS(new SMSReceivedCallback() {
             @Override
@@ -65,6 +67,9 @@ public class MainActivity extends Activity {
                 MainActivity.this.onSMSReceived(phoneNumber, message);
             }
         });
+
+        this.responder = new Responder();
+
 
         this.setContentView(R.layout.activity_main);
 
@@ -111,7 +116,7 @@ public class MainActivity extends Activity {
     }
 
     private void listenForCalls() {
-       this.phoneStateUtility.listenForCalls();
+        this.phoneStateUtility.listenForCalls();
     }
 
     private void onButtonSendSMSClick() {
@@ -150,6 +155,9 @@ public class MainActivity extends Activity {
 
     private void onSMSReceived(String phoneNumber, String message) {
         this.showToast("SMS arrived! Phone number: " + phoneNumber + ", message: " + message);
+
+
+        this.responder.onSMSReceived(phoneNumber);
     }
 
     @Override
@@ -197,13 +205,12 @@ public class MainActivity extends Activity {
     }
 
 
-
     class PhoneStateUtility {
 
         Context context;
 
         public PhoneStateUtility(Context context) {
-            this.context=context;
+            this.context = context;
         }
 
         public void listenForCalls() {

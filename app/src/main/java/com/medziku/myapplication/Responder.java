@@ -104,7 +104,7 @@ public class Responder {
             secondCheckSpeed = 0;
         }
 
-        biggerSpeed = (secondCheckSpeed>speed) ?secondCheckSpeed:speed;
+        biggerSpeed = (secondCheckSpeed > speed) ? secondCheckSpeed : speed;
 
 
         if (biggerSpeed < this.ridingSpeed) {
@@ -202,7 +202,9 @@ public class Responder {
     }
 
     private String generateAutoRespondMessage(String phoneNumber) {
-        return "";
+        return "Jadę właśnie motocyklem i nie mogę odebrać. Oddzwonię później.";
+
+        // TODO: 2015-09-08 separate messages for sms and call would be nice
     }
 
     private void sendSMS(String phoneNumber, String message) {
