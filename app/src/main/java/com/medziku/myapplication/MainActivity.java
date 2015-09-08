@@ -73,85 +73,85 @@ public class MainActivity extends Activity {
 
         this.setContentView(R.layout.activity_main);
 
-        this.incomingNumberET = (EditText) findViewById(R.id.editText);
-        this.outgoingNumberET = (EditText) findViewById(R.id.editText3);
-        this.messageET = (EditText) findViewById(R.id.editText2);
-        this.gpsPositionTV = (TextView) findViewById(R.id.textView2);
+//        this.incomingNumberET = (EditText) findViewById(R.id.editText);
+//        this.outgoingNumberET = (EditText) findViewById(R.id.editText3);
+//        this.messageET = (EditText) findViewById(R.id.editText2);
+//        this.gpsPositionTV = (TextView) findViewById(R.id.textView2);
 
-        this.buttonSendSMS = (Button) findViewById(R.id.button);
-        this.buttonSendSMS.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MainActivity.this.onButtonSendSMSClick();
-            }
-        });
+//        this.buttonSendSMS = (Button) findViewById(R.id.button);
+//        this.buttonSendSMS.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                MainActivity.this.onButtonSendSMSClick();
+//            }
+//        });
 
-        this.buttonSendMMS = (Button) findViewById(R.id.button2);
+//        this.buttonSendMMS = (Button) findViewById(R.id.button2);
 
-        this.buttonCall = (Button) findViewById(R.id.button3);
-        this.buttonCall.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_CALL);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.setData(Uri.parse("tel:" + outgoingNumberET.getText().toString()));
-                context.startActivity(intent);
-            }
-        });
+//        this.buttonCall = (Button) findViewById(R.id.button3);
+//        this.buttonCall.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(Intent.ACTION_CALL);
+//                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                intent.setData(Uri.parse("tel:" + outgoingNumberET.getText().toString()));
+//                context.startActivity(intent);
+//            }
+//        });
 
-        this.buttonGetGpsLocation = (Button) findViewById(R.id.button4);//TODO change to gps on/off
-        this.buttonGetGpsLocation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                MainActivity.this.onButtonGPSLocationClick();
-            }
-        });
-        this.buttonSendGpsInfo = (Button) findViewById(R.id.button5);//TODO change to phone state listener on/off
-        this.buttonSendGpsInfo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MainActivity.this.listenForCalls();
-            }
-        });
+//        this.buttonGetGpsLocation = (Button) findViewById(R.id.button4);//TODO change to gps on/off
+//        this.buttonGetGpsLocation.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                MainActivity.this.onButtonGPSLocationClick();
+//            }
+//        });
+//        this.buttonSendGpsInfo = (Button) findViewById(R.id.button5);//TODO change to phone state listener on/off
+//        this.buttonSendGpsInfo.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                MainActivity.this.listenForCalls();
+//            }
+//        });
     }
 
     private void listenForCalls() {
         this.phoneStateUtility.listenForCalls();
     }
 
-    private void onButtonSendSMSClick() {
-        String phoneNumber = outgoingNumberET.getText().toString();
-        String message = messageET.getText().toString();
+//    private void onButtonSendSMSClick() {
+//        String phoneNumber = outgoingNumberET.getText().toString();
+//        String message = messageET.getText().toString();
+//
+//        try {
+//            this.sendSMS(phoneNumber, message);
+//        } catch (Exception e) {
+//            Log.i(TAG, "Sending message failed");
+//        }
+//    }
+//
+//    private void onButtonGPSLocationClick() {
+//        this.locationUtility.listenForLocationChanges(new LocationChangedCallback() {
+//            public void onLocationChange(Location location, String cityName) {
+//                MainActivity.this.onLocationAndCityKnown(location, cityName);
+//            }
+//
+//            public void onLocationChange(Location location) {
+//                MainActivity.this.onLocationKnown(location);
+//            }
+//        }, true);
+//    }
 
-        try {
-            this.sendSMS(phoneNumber, message);
-        } catch (Exception e) {
-            Log.i(TAG, "Sending message failed");
-        }
-    }
-
-    private void onButtonGPSLocationClick() {
-        this.locationUtility.listenForLocationChanges(new LocationChangedCallback() {
-            public void onLocationChange(Location location, String cityName) {
-                MainActivity.this.onLocationAndCityKnown(location, cityName);
-            }
-
-            public void onLocationChange(Location location) {
-                MainActivity.this.onLocationKnown(location);
-            }
-        }, true);
-    }
-
-    private void onLocationKnown(Location location) {
-        String textToSet = location.toString();
-        this.gpsPositionTV.setText(textToSet);
-    }
-
-    private void onLocationAndCityKnown(Location location, String cityName) {
-        String textToSet = location.toString() + "cityname: " + cityName;
-
-        this.gpsPositionTV.setText(textToSet);
-    }
+//    private void onLocationKnown(Location location) {
+//        String textToSet = location.toString();
+//        this.gpsPositionTV.setText(textToSet);
+//    }
+//
+//    private void onLocationAndCityKnown(Location location, String cityName) {
+//        String textToSet = location.toString() + "cityname: " + cityName;
+//
+//        this.gpsPositionTV.setText(textToSet);
+//    }
 
     private void onSMSReceived(String phoneNumber, String message) {
         this.showToast("SMS arrived! Phone number: " + phoneNumber + ", message: " + message);
@@ -188,21 +188,21 @@ public class MainActivity extends Activity {
         toast.show();
     }
 
-    private void sendSMS(String phoneNumber, String message) throws Exception {
-        this.smsUtility.sendSMS(phoneNumber, message, new SendSMSCallback() {
-            public void onSMSDelivered(String status) {
-                if (status != null) {
-                    MainActivity.this.showToast(status);
-                }
-            }
-
-            public void onSMSSent(String status) {
-                if (status != null) {
-                    MainActivity.this.showToast(status);
-                }
-            }
-        });
-    }
+//    private void sendSMS(String phoneNumber, String message) throws Exception {
+//        this.smsUtility.sendSMS(phoneNumber, message, new SendSMSCallback() {
+//            public void onSMSDelivered(String status) {
+//                if (status != null) {
+//                    MainActivity.this.showToast(status);
+//                }
+//            }
+//
+//            public void onSMSSent(String status) {
+//                if (status != null) {
+//                    MainActivity.this.showToast(status);
+//                }
+//            }
+//        });
+//    }
 
 
 }
