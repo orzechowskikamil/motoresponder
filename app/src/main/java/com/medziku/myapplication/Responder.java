@@ -7,6 +7,7 @@ import android.location.Location;
  */
 public class Responder {
 
+    // todo create action log where every decision is stored and user can debug settings 
 
     public boolean notifyAboutAutoRespond = true;
     public boolean showPendingNotification = true;
