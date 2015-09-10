@@ -10,6 +10,8 @@ public class Responder {
 
     public boolean notifyAboutAutoRespond = true;
     public boolean showPendingNotification = true;
+    public boolean includeProximityCheck = true;
+    public boolean includeLightCheck = true;
 
     public int maybeRidingSpeed = 15;
     public int ridingSpeed = 60;
@@ -48,6 +50,16 @@ public class Responder {
     private void handleIncoming(String phoneNumber) {
         // if phone is unlocked we do not need to autorespond at all.
         if (this.phoneIsUnlocked()) {
+            return;
+        }
+        
+        if (this.includeProximityCheck && this.isProxime() === false){
+            // proxime test failed, so phone can't be in pocket. if not in pocket he probably does not ride
+            return;
+        }
+        
+        if (this.includeLightCheck && this.isLightOutside()){
+            // light outside. in pocket shouldn't be any light.
             return;
         }
 
@@ -217,6 +229,16 @@ public class Responder {
             return;
         }
         // do logic.
+    }
+    
+    private boolean isProxime(){
+        // return true if phone reports proximity to smth.
+        return false;
+    }
+    
+    private boolean isLightOutside(){
+        // return true if light sensor reports light
+        return false;    
     }
 
 }
