@@ -6,6 +6,9 @@ import android.location.Location;
  * Created by Kamil on 2015-09-08.
  */
 public class Responder {
+    
+    // TODO refactor it to create RespondingDecision class where this class will become abstract decision about responding or not 
+    // while extracting to other classes process of gathering location or sending sms logic
 
     // todo create action log where every decision is stored and user can debug settings 
 
