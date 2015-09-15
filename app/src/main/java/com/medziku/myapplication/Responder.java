@@ -6,7 +6,7 @@ import android.location.Location;
  * Created by Kamil on 2015-09-08.
  */
 public class Responder {
-    
+
     // TODO refactor it to create RespondingDecision class where this class will become abstract decision about responding or not 
     // while extracting to other classes process of gathering location or sending sms logic
 
@@ -16,9 +16,16 @@ public class Responder {
     public boolean showPendingNotification = true;
     public boolean includeProximityCheck = true;
     public boolean includeLightCheck = true;
+    public boolean interpretLocationTimeoutAsNotRiding = true;
+    public boolean assumePhoneUnlockedAsNotRiding = true;
+    public boolean interpretStayingStillAccelerometerAsNotRiding = true;
+    public boolean doAnotherGPSCheckIfNotSure = true;
+
 
     public int maybeRidingSpeed = 15;
-    public int ridingSpeed = 60;
+    public int sureRidingSpeed = 60;
+    public int waitForAnotherGPSCheckTimeout = 20000;
+    public int waitBeforeResponding =10000;
 
 
     public int respondingCountrySettings = 0;
@@ -56,13 +63,13 @@ public class Responder {
         if (this.phoneIsUnlocked()) {
             return;
         }
-        
-        if (this.includeProximityCheck && this.isProxime() == false){
+
+        if (this.includeProximityCheck && this.isProxime() == false) {
             // proxime test failed, so phone can't be in pocket. if not in pocket he probably does not ride
             return;
         }
-        
-        if (this.includeLightCheck && this.isLightOutside()){
+
+        if (this.includeLightCheck && this.isLightOutside()) {
             // light outside. in pocket shouldn't be any light.
             return;
         }
@@ -80,7 +87,7 @@ public class Responder {
         // wait some time before responding - give user time to get phone from the pocket
         // or from the desk and respond manually.
         // unlocking phone should break any responding at all
-        this.wait(10000);
+        this.wait(this.waitBeforeResponding);
 
         // now things will go automatically in one milisecond so it's not required to still show this
         if (this.showPendingNotification) {
@@ -89,21 +96,22 @@ public class Responder {
 
         // if phone is unlocked now, we can return - user heard ring, get phone and will
         // respond manually.
-        if (this.phoneIsUnlocked()) {
+        if (this.assumePhoneUnlockedAsNotRiding && this.phoneIsUnlocked()) {
             return;
         }
 
         // if phone doesn't report any movement we can also assume that user is not riding motorcycle
-        if (!this.phoneReportsAccelerometerMovement()) {
+        if (this.interpretStayingStillAccelerometerAsNotRiding && this.phoneReportsStayingStill()) {
             return;
         }
 
         Location location = this.getLocation();
         boolean locationTimeouted = false;
-        int speed = 0;
-        int secondCheckSpeed = 0;
-        int biggerSpeed = 0;
-        if (locationTimeouted) {
+        int firstMeasurementSpeed = 0;
+        int secondMeasurementSpeed = 0;
+        int biggerMeasurementSpeed = 0;
+
+        if (locationTimeouted && this.interpretLocationTimeoutAsNotRiding) {
             // if timeout, it means that phone is probably in home with no access to GPS satelites. 
             // so if no ride, no need to respond automatically
             // TODO add option to disable this.
@@ -111,19 +119,23 @@ public class Responder {
         }
 
 
-        if (speed >= this.maybeRidingSpeed && speed < this.ridingSpeed) {
+        if (doAnotherGPSCheckIfNotSure
+                && (firstMeasurementSpeed >= this.maybeRidingSpeed)
+                && (firstMeasurementSpeed < this.sureRidingSpeed)) {
             // speed is small. too small. not sure if he rides or not.
             // try to recheck in few minutes.
-            this.wait(20000);
+            this.wait(this.waitForAnotherGPSCheckTimeout);
             location = this.getLocation();
             // reinit speed and location
-            secondCheckSpeed = 0;
+            secondMeasurementSpeed = 0;
         }
 
-        biggerSpeed = (secondCheckSpeed > speed) ? secondCheckSpeed : speed;
+        biggerMeasurementSpeed = (secondMeasurementSpeed > firstMeasurementSpeed)
+                ? secondMeasurementSpeed
+                : firstMeasurementSpeed;
 
 
-        if (biggerSpeed < this.ridingSpeed) {
+        if (biggerMeasurementSpeed < this.sureRidingSpeed) {
             // user is not riding. no need to autorespond
             return;
         }
@@ -148,7 +160,7 @@ public class Responder {
         return false;
     }
 
-    private boolean phoneReportsAccelerometerMovement() {
+    private boolean phoneReportsStayingStill() {
         // if accelerometer does not report movement, return false, otherwise true.
         return false;
     }
@@ -234,15 +246,15 @@ public class Responder {
         }
         // do logic.
     }
-    
-    private boolean isProxime(){
+
+    private boolean isProxime() {
         // return true if phone reports proximity to smth.
         return false;
     }
-    
-    private boolean isLightOutside(){
+
+    private boolean isLightOutside() {
         // return true if light sensor reports light
-        return false;    
+        return false;
     }
 
 }
