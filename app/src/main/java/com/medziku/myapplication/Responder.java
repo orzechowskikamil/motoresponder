@@ -57,7 +57,7 @@ public class Responder {
             return;
         }
         
-        if (this.includeProximityCheck && this.isProxime() === false){
+        if (this.includeProximityCheck && this.isProxime() == false){
             // proxime test failed, so phone can't be in pocket. if not in pocket he probably does not ride
             return;
         }
