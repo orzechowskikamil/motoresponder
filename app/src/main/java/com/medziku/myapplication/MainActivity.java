@@ -40,10 +40,10 @@ import java.util.Locale;
 public class MainActivity extends Activity {
     private static final String TAG = MainActivity.class.getName();
 
-    private Button buttonSendSMS, buttonSendMMS, buttonCall, buttonGetGpsLocation, buttonSendGpsInfo;
-    private EditText incomingNumberET, outgoingNumberET, messageET;
-    private TextView gpsPositionTV;
-    private Context context;
+//    private Button buttonSendSMS, buttonSendMMS, buttonCall, buttonGetGpsLocation, buttonSendGpsInfo;
+//    private EditText incomingNumberET, outgoingNumberET, messageET;
+//    private TextView gpsPositionTV;
+//    private Context context;
     private LocationUtility locationUtility;
     private SMSUtility smsUtility;
 
@@ -55,11 +55,14 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        this.context = this.getApplicationContext();
+//        this.context = this.getApplicationContext();
+
 
         this.locationUtility = new LocationUtility(this);
         this.smsUtility = new SMSUtility(this);
         this.phoneStateUtility = new PhoneStateUtility(this);
+
+        this.responder = new Responder(this.locationUtility);
 
         this.smsUtility.listenForSMS(new SMSReceivedCallback() {
             @Override
@@ -67,8 +70,6 @@ public class MainActivity extends Activity {
                 MainActivity.this.onSMSReceived(phoneNumber, message);
             }
         });
-
-        this.responder = new Responder();
 
 
         this.setContentView(R.layout.activity_main);

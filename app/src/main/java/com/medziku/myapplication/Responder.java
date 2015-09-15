@@ -10,7 +10,9 @@ public class Responder {
     // TODO refactor it to create RespondingDecision class where this class will become abstract decision about responding or not 
     // while extracting to other classes process of gathering location or sending sms logic
 
-    // todo create action log where every decision is stored and user can debug settings 
+    // todo create action log where every decision is stored and user can debug settings
+
+    LocationUtility locationUtility;
 
     public boolean notifyAboutAutoRespond = true;
     public boolean showPendingNotification = true;
@@ -25,21 +27,21 @@ public class Responder {
     public int maybeRidingSpeed = 15;
     public int sureRidingSpeed = 60;
     public int waitForAnotherGPSCheckTimeout = 20000;
-    public int waitBeforeResponding =10000;
-
-
+    public int waitBeforeResponding = 10000;
     public int respondingCountrySettings = 0;
+    public int respondingSettings = 2;
+
     public static final int RESPONDING_COUNTRY_SETTINGS_CURRENT_COUNTRY_ONLY = 0;
     public static final int RESPONDING_COUNTRY_SETTINGS_ANY_COUNTRY = 1;
 
-    public int respondingSettings = 2;
     public static final int RESPONDING_SETTINGS_RESPOND_EVERYONE = 0;
     public static final int RESPONDING_SETTINGS_RESPOND_EVERY_NORMAL_NUMBER = 1;
     public static final int RESPONDING_SETTINGS_RESPOND_ONLY_CONTACT_BOOK = 2;
     public static final int RESPONDING_SETTINGS_RESPOND_ONLY_GROUP = 3;
 
 
-    public Responder() {
+    public Responder(LocationUtility locationUtility) {
+        this.locationUtility = locationUtility;
         // probably we have to start every onsmsreceived in new thread
     }
 
@@ -58,7 +60,7 @@ public class Responder {
         this.cancelAllHandling();
     }
 
-    private void handleIncoming(String phoneNumber) {
+    private void handleIncoming(final String phoneNumber) {
         // if phone is unlocked we do not need to autorespond at all.
         if (this.phoneIsUnlocked()) {
             return;
@@ -105,30 +107,43 @@ public class Responder {
             return;
         }
 
-        Location location = this.getLocation();
-        boolean locationTimeouted = false;
-        int firstMeasurementSpeed = 0;
-        int secondMeasurementSpeed = 0;
-        int biggerMeasurementSpeed = 0;
+        this.locationUtility.listenForLocationOnce(new LocationChangedCallback() {
 
-        if (locationTimeouted && this.interpretLocationTimeoutAsNotRiding) {
-            // if timeout, it means that phone is probably in home with no access to GPS satelites. 
+            // TODO: 2015-09-16 promises welcome?
+            @Override
+            public void onLocationChange(Location location) {
+                Responder.this.onLocationFirstDetermined(phoneNumber, location);
+            }
+
+        });
+    }
+
+
+    private void onLocationFirstDetermined(String phoneNumber, Location location) {
+
+        boolean locationTimeouted = false;
+        float firstMeasurementSpeed = location.getSpeed();
+        float secondMeasurementSpeed = 0;
+        float biggerMeasurementSpeed = 0;
+
+        if (Responder.this.interpretLocationTimeoutAsNotRiding && locationTimeouted) {
+            // if timeout, it means that phone is probably in home with no access to GPS satelites.
             // so if no ride, no need to respond automatically
             // TODO add option to disable this.
             return;
         }
 
 
-        if (doAnotherGPSCheckIfNotSure
-                && (firstMeasurementSpeed >= this.maybeRidingSpeed)
-                && (firstMeasurementSpeed < this.sureRidingSpeed)) {
-            // speed is small. too small. not sure if he rides or not.
-            // try to recheck in few minutes.
-            this.wait(this.waitForAnotherGPSCheckTimeout);
-            location = this.getLocation();
-            // reinit speed and location
-            secondMeasurementSpeed = 0;
-        }
+//        if (this.doAnotherGPSCheckIfNotSure
+//                && (firstMeasurementSpeed >= this.maybeRidingSpeed)
+//                && (firstMeasurementSpeed < this.sureRidingSpeed)) {
+//            // speed is small. too small. not sure if he rides or not.
+//            // try to recheck in few minutes.
+//            this.wait(this.waitForAnotherGPSCheckTimeout);
+//            location = this.getLocation();
+//            // reinit speed and location
+//            secondMeasurementSpeed = 0;
+//        }
 
         biggerMeasurementSpeed = (secondMeasurementSpeed > firstMeasurementSpeed)
                 ? secondMeasurementSpeed
@@ -144,6 +159,7 @@ public class Responder {
         this.sendSMS(phoneNumber, message);
         this.notifyAboutAutoRespond(phoneNumber);
     }
+
 
     private void cancelAllHandling() {
         // call this to break all autoresponding
@@ -174,7 +190,8 @@ public class Responder {
     }
 
     private Location getLocation() {
-        // return location or timeout
+
+
         return null;
     }
 
