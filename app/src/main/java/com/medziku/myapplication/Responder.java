@@ -115,17 +115,16 @@ public class Responder {
     }
 
 
-    private void onLocationFirstDetermined(String phoneNumber, Location location) {
+    private void handleIncomingSecondStep(String phoneNumber, Location location) {
 
         boolean locationTimeouted = false;
         float firstMeasurementSpeed = location.getSpeed();
         float secondMeasurementSpeed = 0;
         float biggerMeasurementSpeed = 0;
 
-        if (Responder.this.interpretLocationTimeoutAsNotRiding && locationTimeouted) {
+        if (this.interpretLocationTimeoutAsNotRiding && locationTimeouted) {
             // if timeout, it means that phone is probably in home with no access to GPS satelites.
             // so if no ride, no need to respond automatically
-            // TODO add option to disable this.
             return;
         }
 
@@ -191,7 +190,7 @@ public class Responder {
             // TODO: 2015-09-16 promises welcome?
             @Override
             public void onLocationChange(Location location) {
-                Responder.this.onLocationFirstDetermined(phoneNumber, location);
+                Responder.this.handleIncomingSecondStep(phoneNumber, location);
             }
 
         });

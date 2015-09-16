@@ -11,67 +11,69 @@ import android.hardware.SensorManager;
  */
 public class SensorsUtility {
 
-    SensorManager mySensorManager;
-    Sensor myProximitySensor;
+    private SensorManager sensorManager;
+    private Sensor proximitySensor;
+    private Sensor lightSensor;
     private float currentProximity;
+    private boolean sensorListenersRegistered = false;
 
     private float lightValue;
 
+    private SensorEventListener sensorEventListener;
+
 
     public SensorsUtility(Context context) {
-        this.mySensorManager = (SensorManager) context.getSystemService(
-                Context.SENSOR_SERVICE);
-        this.myProximitySensor = mySensorManager.getDefaultSensor(
-                Sensor.TYPE_PROXIMITY);
+        this.sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+        this.sensorEventListener = new SensorEventListener() {
+            @Override
+            public void onAccuracyChanged(Sensor sensor, int accuracy) {
+                // TODO Auto-generated method stub
 
-        if (this.myProximitySensor == null) {
-            //
-        } else {
-            String name = this.myProximitySensor.getName();
-            float maximumRange = this.myProximitySensor.getMaximumRange();
-            this.mySensorManager.registerListener(this.sensorEventListener,
-                    this.myProximitySensor,
-                    SensorManager.SENSOR_DELAY_NORMAL);
-        }
+            }
 
+            @Override
+            public void onSensorChanged(SensorEvent event) {
+                // TODO Auto-generated method stub
 
-        Sensor LightSensor = mySensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
-        if (LightSensor != null) {
+                if (event.sensor.getType() == Sensor.TYPE_PROXIMITY) {
+                    SensorsUtility.this.setCurrentProximity(event.values[0]);
+                }
 
-            mySensorManager.registerListener(
-                    sensorEventListener,
-                    LightSensor,
-                    SensorManager.SENSOR_DELAY_NORMAL);
-
-
-        }
-
-
+                if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
+                    SensorsUtility.this.setLightValue(event.values[0]);
+                }
+            }
+        };
     }
 
-    SensorEventListener sensorEventListener
-            = new SensorEventListener() {
-
-        @Override
-        public void onAccuracyChanged(Sensor sensor, int accuracy) {
-            // TODO Auto-generated method stub
-
+    private void registerSensorUpdates() {
+        if (this.sensorListenersRegistered) {
+            return;
         }
 
-        @Override
-        public void onSensorChanged(SensorEvent event) {
-            // TODO Auto-generated method stub
-
-            if (event.sensor.getType() == Sensor.TYPE_PROXIMITY) {
-                float value = event.values[0];
-                SensorsUtility.this.setCurrentProximity(value);
-            }
-
-            if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
-                SensorsUtility.this.setLightValue(event.values[0]);
-            }
+        this.proximitySensor = this.sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+        if (this.proximitySensor != null) {
+//            String name = this.proximitySensor.getName();
+//            float maximumRange = this.proximitySensor.getMaximumRange();
+            this.sensorManager.registerListener(this.sensorEventListener, this.proximitySensor, SensorManager.SENSOR_DELAY_NORMAL);
         }
-    };
+
+        this.lightSensor = this.sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+        if (this.lightSensor != null) {
+            this.sensorManager.registerListener(this.sensorEventListener, this.lightSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        }
+        this.sensorListenersRegistered = true;
+    }
+
+    private void unregisterSensorUpdates() {
+        if (!this.sensorListenersRegistered) {
+            return;
+        }
+        this.sensorManager.unregisterListener(this.sensorEventListener);
+
+        this.sensorListenersRegistered = false;
+    }
+
 
     public float getCurrentProximity() {
         return this.currentProximity;
