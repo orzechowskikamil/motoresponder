@@ -43,6 +43,8 @@ public class Responder {
 
 
     public Responder(LocationUtility locationUtility, SensorsUtility proximityUtility, LockStateUtility lockStateUtility) {
+        this.sensorsUtility.registerSensorUpdates();
+
         // probably we have to start every onsmsreceived in new thread
         this.locationUtility = locationUtility;
         this.sensorsUtility = proximityUtility;
@@ -65,6 +67,12 @@ public class Responder {
     }
 
     private void handleIncoming(final String phoneNumber) {
+        // for now for simplification just wait one second forclaryfying sensor values
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         // if phone is unlocked we do not need to autorespond at all.
         if (this.phoneIsUnlocked()) {
             return;

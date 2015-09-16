@@ -9,6 +9,12 @@ import android.hardware.SensorManager;
 /**
  * Created by Kamil on 2015-09-16.
  */
+
+interface LightValueCallback {
+    void onLightValue(float value);
+}
+
+
 public class SensorsUtility {
 
     private SensorManager sensorManager;
@@ -46,7 +52,7 @@ public class SensorsUtility {
         };
     }
 
-    private void registerSensorUpdates() {
+    public void registerSensorUpdates() {
         if (this.sensorListenersRegistered) {
             return;
         }
@@ -64,6 +70,7 @@ public class SensorsUtility {
         }
         this.sensorListenersRegistered = true;
     }
+
 
     private void unregisterSensorUpdates() {
         if (!this.sensorListenersRegistered) {

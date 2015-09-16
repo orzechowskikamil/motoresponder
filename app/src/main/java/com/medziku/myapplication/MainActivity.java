@@ -20,6 +20,8 @@ public class MainActivity extends Activity {
     private CallsUtility callsUtility;
 
     private Responder responder;
+    private SensorsUtility sensorsUtility;
+    private LockStateUtility lockStateUtility;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,8 +33,10 @@ public class MainActivity extends Activity {
         this.locationUtility = new LocationUtility(this);
         this.smsUtility = new SMSUtility(this);
         this.callsUtility = new CallsUtility(this);
+        this.sensorsUtility = new SensorsUtility(this);
+        this.lockStateUtility = new LockStateUtility(this);
 
-        this.responder = new Responder(this.locationUtility, proximityUtility, lockStateUtility);
+        this.responder = new Responder(this.locationUtility, this.sensorsUtility, this.lockStateUtility);
 
         this.smsUtility.listenForSMS(new SMSReceivedCallback() {
             @Override
