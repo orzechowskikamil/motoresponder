@@ -32,7 +32,7 @@ public class MainActivity extends Activity {
         this.smsUtility = new SMSUtility(this);
         this.callsUtility = new CallsUtility(this);
 
-        this.responder = new Responder(this.locationUtility, proximityUtility);
+        this.responder = new Responder(this.locationUtility, proximityUtility, lockStateUtility);
 
         this.smsUtility.listenForSMS(new SMSReceivedCallback() {
             @Override

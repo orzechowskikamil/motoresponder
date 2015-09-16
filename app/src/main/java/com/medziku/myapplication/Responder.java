@@ -1,6 +1,5 @@
 package com.medziku.myapplication;
 
-import android.app.TimePickerDialog;
 import android.location.Location;
 
 /**
@@ -40,12 +39,14 @@ public class Responder {
     public static final int RESPONDING_SETTINGS_RESPOND_EVERY_NORMAL_NUMBER = 1;
     public static final int RESPONDING_SETTINGS_RESPOND_ONLY_CONTACT_BOOK = 2;
     public static final int RESPONDING_SETTINGS_RESPOND_ONLY_GROUP = 3;
+    private LockStateUtility lockStateUtility;
 
 
-    public Responder(LocationUtility locationUtility, SensorsUtility proximityUtility) {
+    public Responder(LocationUtility locationUtility, SensorsUtility proximityUtility, LockStateUtility lockStateUtility) {
         // probably we have to start every onsmsreceived in new thread
         this.locationUtility = locationUtility;
         this.sensorsUtility = proximityUtility;
+        this.lockStateUtility = lockStateUtility;
     }
 
     public void onSMSReceived(String phoneNumber) {
@@ -110,15 +111,7 @@ public class Responder {
             return;
         }
 
-        this.locationUtility.listenForLocationOnce(new LocationChangedCallback() {
-
-            // TODO: 2015-09-16 promises welcome?
-            @Override
-            public void onLocationChange(Location location) {
-                Responder.this.onLocationFirstDetermined(phoneNumber, location);
-            }
-
-        });
+        this.getLocationAndProceed(phoneNumber);
     }
 
 
@@ -143,7 +136,7 @@ public class Responder {
 //            // speed is small. too small. not sure if he rides or not.
 //            // try to recheck in few minutes.
 //            this.wait(this.waitForAnotherGPSCheckTimeout);
-//            location = this.getLocation();
+//            location = this.getLocationAndProceed();
 //            // reinit speed and location
 //            secondMeasurementSpeed = 0;
 //        }
@@ -176,7 +169,7 @@ public class Responder {
 
     private boolean phoneIsUnlocked() {
         // return false if phone is unlocked, true if it has screen lock.
-        return false;
+        return this.lockStateUtility.isPhoneUnlocked();
     }
 
     private boolean phoneReportsStayingStill() {
@@ -192,10 +185,16 @@ public class Responder {
         // hide toast shown by notifyAoutPendingautorespond
     }
 
-    private Location getLocation() {
+    private void getLocationAndProceed(final String phoneNumber) {
+        this.locationUtility.listenForLocationOnce(new LocationChangedCallback() {
 
+            // TODO: 2015-09-16 promises welcome?
+            @Override
+            public void onLocationChange(Location location) {
+                Responder.this.onLocationFirstDetermined(phoneNumber, location);
+            }
 
-        return null;
+        });
     }
 
     private boolean isNormalNumber(String phoneNumber) {
