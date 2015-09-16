@@ -1,5 +1,6 @@
 package com.medziku.myapplication;
 
+import android.app.TimePickerDialog;
 import android.location.Location;
 
 /**
@@ -13,7 +14,7 @@ public class Responder {
     // todo create action log where every decision is stored and user can debug settings
 
     private LocationUtility locationUtility;
-    private SensorsUtility proximityUtility;
+    private SensorsUtility sensorsUtility;
 
     public boolean notifyAboutAutoRespond = true;
     public boolean showPendingNotification = true;
@@ -44,7 +45,7 @@ public class Responder {
     public Responder(LocationUtility locationUtility, SensorsUtility proximityUtility) {
         // probably we have to start every onsmsreceived in new thread
         this.locationUtility = locationUtility;
-        this.proximityUtility = proximityUtility;
+        this.sensorsUtility = proximityUtility;
     }
 
     public void onSMSReceived(String phoneNumber) {
@@ -269,12 +270,13 @@ public class Responder {
     private boolean isProxime() {
         // return true if phone reports proximity to smth.
         // TODO: 2015-09-16 recheck, probably invalid 
-        return this.proximityUtility.getCurrentProximity() > 0.5;
+        return this.sensorsUtility.getCurrentProximity() > 0.5;
     }
 
     private boolean isLightOutside() {
         // return true if light sensor reports light
-        return false;
+        // TODO: 2015-09-16 probably invalid 
+        return this.sensorsUtility.getLightValue() > 100;
     }
 
 }
