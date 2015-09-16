@@ -12,7 +12,8 @@ public class Responder {
 
     // todo create action log where every decision is stored and user can debug settings
 
-    LocationUtility locationUtility;
+    private LocationUtility locationUtility;
+    private SensorsUtility proximityUtility;
 
     public boolean notifyAboutAutoRespond = true;
     public boolean showPendingNotification = true;
@@ -40,9 +41,10 @@ public class Responder {
     public static final int RESPONDING_SETTINGS_RESPOND_ONLY_GROUP = 3;
 
 
-    public Responder(LocationUtility locationUtility) {
-        this.locationUtility = locationUtility;
+    public Responder(LocationUtility locationUtility, SensorsUtility proximityUtility) {
         // probably we have to start every onsmsreceived in new thread
+        this.locationUtility = locationUtility;
+        this.proximityUtility = proximityUtility;
     }
 
     public void onSMSReceived(String phoneNumber) {
@@ -266,7 +268,8 @@ public class Responder {
 
     private boolean isProxime() {
         // return true if phone reports proximity to smth.
-        return false;
+        // TODO: 2015-09-16 recheck, probably invalid 
+        return this.proximityUtility.getCurrentProximity() > 0.5;
     }
 
     private boolean isLightOutside() {
