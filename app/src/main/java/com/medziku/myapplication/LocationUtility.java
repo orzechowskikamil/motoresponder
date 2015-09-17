@@ -84,8 +84,12 @@ class LocationUtility {
                     public void onLocationChanged(Location loc) {
                         if (loc.getAccuracy() >= 0.68) {
                             callback.onLocationChange(loc);
-                            LocationUtility.this.locationManager.removeUpdates(this);
+                            this.unregisterUpdates();
                         }
+                    }
+
+                    private void unregisterUpdates() {
+                        LocationUtility.this.locationManager.removeUpdates(this);
                     }
 
                     @Override

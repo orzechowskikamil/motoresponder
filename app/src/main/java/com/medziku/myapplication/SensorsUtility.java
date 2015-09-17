@@ -5,6 +5,9 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.util.Log;
+
+import java.util.concurrent.ConcurrentNavigableMap;
 
 /**
  * Created by Kamil on 2015-09-16.
@@ -20,6 +23,7 @@ public class SensorsUtility {
     private SensorManager sensorManager;
     private Sensor proximitySensor;
     private Sensor lightSensor;
+    private int darkValue = 3;
     private float currentProximity;
     private boolean sensorListenersRegistered = false;
 
@@ -82,20 +86,30 @@ public class SensorsUtility {
     }
 
 
-    public float getCurrentProximity() {
+    private float getCurrentProximity() {
         return this.currentProximity;
+    }
+
+    public boolean isProxime() {
+        return this.getCurrentProximity() > (this.proximitySensor.getMaximumRange() / 2);
     }
 
     private void setCurrentProximity(float currentProximity) {
         this.currentProximity = currentProximity;
+        Log.d("proximity", Float.toString(currentProximity));
     }
 
-    public float getLightValue() {
+    private float getLightValue() {
         return lightValue;
+    }
+
+    public boolean isLightOutside() {
+        return this.getLightValue() < this.darkValue;
     }
 
     private void setLightValue(float lightValue) {
         this.lightValue = lightValue;
+        Log.d("light", Float.toString(lightValue));
     }
 }
 

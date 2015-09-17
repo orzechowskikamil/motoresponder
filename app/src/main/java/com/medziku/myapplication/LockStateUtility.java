@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,9 @@ public class LockStateUtility {
 
         this.context.registerReceiver(new UserPresentBroadcastReceiver(),
                 new IntentFilter("android.intent.action.SCREEN_OFF"));
+
+        // if somebody started app, phone must be unlocked at start
+        this.phoneUnlocked = true;
     }
 
     private void listenToUnlockEvent(LockStateCallback unlockCallback) {
@@ -60,6 +64,7 @@ public class LockStateUtility {
                 for (LockStateCallback unlockCallback : LockStateUtility.this.lockStateCallbacksList) {
                     unlockCallback.onChangeState(true);
                     LockStateUtility.this.setPhoneUnlocked(true);
+                    Log.d("lock state utility", "phone unlocked");
                 }
 
             }
@@ -70,6 +75,7 @@ public class LockStateUtility {
                 for (LockStateCallback unlockCallback : LockStateUtility.this.lockStateCallbacksList) {
                     unlockCallback.onChangeState(false);
                     LockStateUtility.this.setPhoneUnlocked(false);
+                    Log.d("lock state utility", "phone locked");
                 }
             }
         }

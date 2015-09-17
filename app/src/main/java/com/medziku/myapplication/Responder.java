@@ -27,8 +27,9 @@ public class Responder {
 
     public int maybeRidingSpeed = 15;
     public int sureRidingSpeed = 60;
-    public int waitForAnotherGPSCheckTimeout = 20000;
-    public int waitBeforeResponding = 10000;
+    public long waitForAnotherGPSCheckTimeout = 20000;
+    public long waitAfterReceivingMsgOrCall = 1000;
+    public long waitBeforeResponding = 10000;
     public int respondingCountrySettings = 0;
     public int respondingSettings = 2;
 
@@ -43,12 +44,12 @@ public class Responder {
 
 
     public Responder(LocationUtility locationUtility, SensorsUtility proximityUtility, LockStateUtility lockStateUtility) {
-        this.sensorsUtility.registerSensorUpdates();
-
         // probably we have to start every onsmsreceived in new thread
         this.locationUtility = locationUtility;
         this.sensorsUtility = proximityUtility;
         this.lockStateUtility = lockStateUtility;
+
+        this.sensorsUtility.registerSensorUpdates();
     }
 
     public void onSMSReceived(String phoneNumber) {
@@ -69,12 +70,12 @@ public class Responder {
     private void handleIncoming(final String phoneNumber) {
         // for now for simplification just wait one second forclaryfying sensor values
         try {
-            Thread.sleep(1000);
+            Thread.sleep(this.waitAfterReceivingMsgOrCall);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         // if phone is unlocked we do not need to autorespond at all.
-        if (this.phoneIsUnlocked()) {
+        if (this.assumePhoneUnlockedAsNotRiding && this.phoneIsUnlocked()) {
             return;
         }
 
@@ -101,7 +102,10 @@ public class Responder {
         // wait some time before responding - give user time to get phone from the pocket
         // or from the desk and respond manually.
         // unlocking phone should break any responding at all
-        this.wait(this.waitBeforeResponding);
+        try {
+            Thread.sleep(this.waitBeforeResponding);
+        } catch (InterruptedException e) {
+        }
 
         // now things will go automatically in one milisecond so it's not required to still show this
         if (this.showPendingNotification) {
@@ -176,7 +180,8 @@ public class Responder {
 
     private boolean phoneIsUnlocked() {
         // return false if phone is unlocked, true if it has screen lock.
-        return this.lockStateUtility.isPhoneUnlocked();
+        // TODO: 2015-09-18 FOR NOW IT ALWAYS REPORT LOCKED, CHANGE IT! 
+        return !this.lockStateUtility.isPhoneUnlocked();
     }
 
     private boolean phoneReportsStayingStill() {
@@ -276,13 +281,13 @@ public class Responder {
     private boolean isProxime() {
         // return true if phone reports proximity to smth.
         // TODO: 2015-09-16 recheck, probably invalid 
-        return this.sensorsUtility.getCurrentProximity() > 0.5;
+        return this.sensorsUtility.isProxime();
     }
 
     private boolean isLightOutside() {
         // return true if light sensor reports light
         // TODO: 2015-09-16 probably invalid 
-        return this.sensorsUtility.getLightValue() > 100;
+        return this.sensorsUtility.isLightOutside();
     }
 
 }
