@@ -1,10 +1,7 @@
-package com.medziku.myapplication;
+package com.medziku.motoresponder;
 
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.os.Build;
 import android.telephony.*;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,13 +10,6 @@ import java.util.List;
  * Created by Kamil on 2015-09-08.
  */
 
-interface CallCallback {
-    void onCall(String phoneNumber);
-}
-
-interface CellStateCallback {
-    void onCellState();
-}
 
 public class CallsUtility {
 

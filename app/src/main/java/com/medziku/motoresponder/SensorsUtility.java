@@ -1,4 +1,4 @@
-package com.medziku.myapplication;
+package com.medziku.motoresponder;
 
 import android.content.Context;
 import android.hardware.Sensor;
@@ -7,16 +7,9 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.util.Log;
 
-import java.util.concurrent.ConcurrentNavigableMap;
-
 /**
  * Created by Kamil on 2015-09-16.
  */
-
-interface LightValueCallback {
-    void onLightValue(float value);
-}
-
 
 public class SensorsUtility {
 

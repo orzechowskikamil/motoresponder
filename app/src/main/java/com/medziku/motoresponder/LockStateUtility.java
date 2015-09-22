@@ -1,4 +1,4 @@
-package com.medziku.myapplication;
+package com.medziku.motoresponder;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -13,9 +13,6 @@ import java.util.List;
  * Created by Kamil on 2015-09-16.
  */
 
-interface LockStateCallback {
-    void onChangeState(boolean isLocked);
-}
 
 
 public class LockStateUtility {
@@ -39,10 +36,10 @@ public class LockStateUtility {
         this.phoneUnlocked = true;
     }
 
-    private void listenToUnlockEvent(LockStateCallback unlockCallback) {
+    /*private void listenToUnlockEvent(LockStateCallback unlockCallback) {
         this.lockStateCallbacksList.add(unlockCallback);
 
-    }
+    }*/
 
     public boolean isPhoneUnlocked() {
         return phoneUnlocked;

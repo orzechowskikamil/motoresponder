@@ -1,4 +1,4 @@
-package com.medziku.myapplication;
+package com.medziku.motoresponder;
 
 import android.app.Activity;
 import android.app.PendingIntent;
@@ -10,16 +10,6 @@ import android.os.Bundle;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 import android.util.Log;
-
-interface SMSReceivedCallback {
-    void onSMSReceived(String phoneNumber, String message);
-}
-
-interface SendSMSCallback {
-    void onSMSSent(String status);
-
-    void onSMSDelivered(String status);
-}
 
 class SMSUtility {
 
