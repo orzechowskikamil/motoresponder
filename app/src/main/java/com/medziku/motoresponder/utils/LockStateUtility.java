@@ -1,10 +1,12 @@
-package com.medziku.motoresponder;
+package com.medziku.motoresponder.utils;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.util.Log;
+
+import com.medziku.motoresponder.callbacks.LockStateCallback;
 
 import java.util.ArrayList;
 import java.util.List;

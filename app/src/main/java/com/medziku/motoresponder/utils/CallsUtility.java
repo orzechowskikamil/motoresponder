@@ -1,7 +1,10 @@
-package com.medziku.motoresponder;
+package com.medziku.motoresponder.utils;
 
 import android.content.Context;
 import android.telephony.*;
+
+import com.medziku.motoresponder.callbacks.CallCallback;
+import com.medziku.motoresponder.callbacks.CellStateCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +12,6 @@ import java.util.List;
 /**
  * Created by Kamil on 2015-09-08.
  */
-
 
 public class CallsUtility {
 

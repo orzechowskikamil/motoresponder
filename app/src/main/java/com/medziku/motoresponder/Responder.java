@@ -2,6 +2,11 @@ package com.medziku.motoresponder;
 
 import android.location.Location;
 
+import com.medziku.motoresponder.callbacks.LocationChangedCallback;
+import com.medziku.motoresponder.utils.LocationUtility;
+import com.medziku.motoresponder.utils.LockStateUtility;
+import com.medziku.motoresponder.utils.SensorsUtility;
+
 /**
  * Created by Kamil on 2015-09-08.
  */

@@ -1,4 +1,4 @@
-package com.medziku.motoresponder;
+package com.medziku.motoresponder.callbacks;
 
 import android.location.Location;
 

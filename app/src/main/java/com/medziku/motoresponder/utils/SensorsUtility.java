@@ -1,4 +1,4 @@
-package com.medziku.motoresponder;
+package com.medziku.motoresponder.utils;
 
 import android.content.Context;
 import android.hardware.Sensor;

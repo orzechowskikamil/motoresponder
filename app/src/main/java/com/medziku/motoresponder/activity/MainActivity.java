@@ -1,4 +1,4 @@
-package com.medziku.motoresponder;
+package com.medziku.motoresponder.activity;
 
 import android.app.Activity;
 import android.content.Context;
@@ -6,6 +6,16 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+
+import com.medziku.motoresponder.R;
+import com.medziku.motoresponder.Responder;
+import com.medziku.motoresponder.callbacks.CallCallback;
+import com.medziku.motoresponder.callbacks.SMSReceivedCallback;
+import com.medziku.motoresponder.utils.CallsUtility;
+import com.medziku.motoresponder.utils.LocationUtility;
+import com.medziku.motoresponder.utils.LockStateUtility;
+import com.medziku.motoresponder.utils.SMSUtility;
+import com.medziku.motoresponder.utils.SensorsUtility;
 
 public class MainActivity extends Activity {
     private static final String TAG = MainActivity.class.getName();

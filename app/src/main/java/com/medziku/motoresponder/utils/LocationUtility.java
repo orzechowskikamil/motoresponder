@@ -1,9 +1,11 @@
-package com.medziku.motoresponder;
+package com.medziku.motoresponder.utils;
 
 
 import android.content.Context;
 import android.location.*;
 import android.os.Bundle;
+
+import com.medziku.motoresponder.callbacks.LocationChangedCallback;
 
 
 //interface LocationCityChangedCallback {
@@ -11,7 +13,7 @@ import android.os.Bundle;
 //    void onLocationCityChange(Location location, String cityName);
 //}
 
-class LocationUtility {
+public class LocationUtility {
 
     private Context context;
     private LocationManager locationManager;
