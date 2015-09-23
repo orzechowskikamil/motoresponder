@@ -1,6 +1,10 @@
 package com.medziku.motoresponder.services;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
@@ -11,7 +15,9 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.medziku.motoresponder.R;
 import com.medziku.motoresponder.Responder;
+import com.medziku.motoresponder.activity.MainActivity;
 import com.medziku.motoresponder.callbacks.CallCallback;
 import com.medziku.motoresponder.callbacks.SMSReceivedCallback;
 import com.medziku.motoresponder.utils.CallsUtility;
@@ -36,6 +42,8 @@ public class BackgroundService extends Service {
 
     private float currentProximity;
     private float lightValue;
+
+    private int notificationId = 0;
 
     //from activity
 
@@ -65,6 +73,7 @@ public class BackgroundService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        hideNotification();
         unregisterSensorUpdates();//TODO powinna byc takze mozliwosc wyrejestrowania w on command started dla konkretnej komendy
         Log.d("BackgroundService", "destroed");
     }
@@ -125,6 +134,7 @@ public class BackgroundService extends Service {
         };
 
         registerSensorUpdates();
+        showNotification();
     }
 
     @Override
@@ -137,6 +147,37 @@ public class BackgroundService extends Service {
         super.onRebind(intent);
     }
 
+
+    //mine
+
+    private void showNotification(){
+        Intent resultIntent = new Intent(this, MainActivity.class);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        stackBuilder.addParentStack(MainActivity.class);
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(
+                        0,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+        Notification.Builder notificationBuilder = new Notification.Builder(getApplicationContext());
+        notificationBuilder.setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle("Test title")
+                .setContentText("Test content")
+                .setContentInfo("Test onfo")
+        .setContentIntent(resultPendingIntent);
+        Notification notification = notificationBuilder.build();
+        notification.flags = Notification.FLAG_ONGOING_EVENT;
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.notify(notificationId, notification);
+    }
+
+    private void hideNotification(){
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.cancel(notificationId);
+    }
 
 
     //////////////
