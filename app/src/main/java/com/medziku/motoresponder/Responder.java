@@ -6,7 +6,6 @@ import com.medziku.motoresponder.callbacks.LocationChangedCallback;
 import com.medziku.motoresponder.services.BackgroundService;
 import com.medziku.motoresponder.utils.LocationUtility;
 import com.medziku.motoresponder.utils.LockStateUtility;
-import com.medziku.motoresponder.utils.SensorsUtility;
 
 /**
  * Created by Kamil on 2015-09-08.
@@ -51,14 +50,11 @@ public class Responder {
     private BackgroundService bs;//TODO
 
 
-    public Responder(BackgroundService bs, LocationUtility locationUtility, SensorsUtility proximityUtility, LockStateUtility lockStateUtility) {
+    public Responder(BackgroundService bs, LocationUtility locationUtility, LockStateUtility lockStateUtility) {
         // probably we have to start every onsmsreceived in new thread
         this.bs = bs;
         this.locationUtility = locationUtility;
-        //this.sensorsUtility = proximityUtility;
         this.lockStateUtility = lockStateUtility;
-
-        //this.sensorsUtility.registerSensorUpdates();
     }
 
     public void onSMSReceived(String phoneNumber) {
@@ -143,18 +139,6 @@ public class Responder {
             // so if no ride, no need to respond automatically
             return;
         }
-
-
-//        if (this.doAnotherGPSCheckIfNotSure
-//                && (firstMeasurementSpeed >= this.maybeRidingSpeed)
-//                && (firstMeasurementSpeed < this.sureRidingSpeed)) {
-//            // speed is small. too small. not sure if he rides or not.
-//            // try to recheck in few minutes.
-//            this.wait(this.waitForAnotherGPSCheckTimeout);
-//            location = this.getLocationAndProceed();
-//            // reinit speed and location
-//            secondMeasurementSpeed = 0;
-//        }
 
         biggerMeasurementSpeed = (secondMeasurementSpeed > firstMeasurementSpeed)
                 ? secondMeasurementSpeed

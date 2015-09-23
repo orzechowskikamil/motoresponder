@@ -18,7 +18,6 @@ import com.medziku.motoresponder.utils.CallsUtility;
 import com.medziku.motoresponder.utils.LocationUtility;
 import com.medziku.motoresponder.utils.LockStateUtility;
 import com.medziku.motoresponder.utils.SMSUtility;
-import com.medziku.motoresponder.utils.SensorsUtility;
 
 /**
  * Created by medziku on 22.09.15.
@@ -46,7 +45,6 @@ public class BackgroundService extends Service {
     private CallsUtility callsUtility;
 
     private Responder responder;
-    private SensorsUtility sensorsUtility;
     private LockStateUtility lockStateUtility;
 
     //end from activity
@@ -82,10 +80,9 @@ public class BackgroundService extends Service {
         this.locationUtility = new LocationUtility(this);
         this.smsUtility = new SMSUtility(this);
         this.callsUtility = new CallsUtility(this);
-        this.sensorsUtility = new SensorsUtility(this);
         this.lockStateUtility = new LockStateUtility(this);
 
-        this.responder = new Responder(this, this.locationUtility, this.sensorsUtility, this.lockStateUtility);
+        this.responder = new Responder(this, this.locationUtility, this.lockStateUtility);
 
         this.smsUtility.listenForSMS(new SMSReceivedCallback() {
             @Override
