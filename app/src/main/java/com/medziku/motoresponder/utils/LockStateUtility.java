@@ -15,8 +15,6 @@ import java.util.List;
  * Created by Kamil on 2015-09-16.
  */
 
-
-
 public class LockStateUtility {
 
     private Context context;
@@ -37,11 +35,6 @@ public class LockStateUtility {
         // if somebody started app, phone must be unlocked at start
         this.phoneUnlocked = true;
     }
-
-    /*private void listenToUnlockEvent(LockStateCallback unlockCallback) {
-        this.lockStateCallbacksList.add(unlockCallback);
-
-    }*/
 
     public boolean isPhoneUnlocked() {
         return phoneUnlocked;

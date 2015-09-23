@@ -3,6 +3,7 @@ package com.medziku.motoresponder;
 import android.location.Location;
 
 import com.medziku.motoresponder.callbacks.LocationChangedCallback;
+import com.medziku.motoresponder.services.BackgroundService;
 import com.medziku.motoresponder.utils.LocationUtility;
 import com.medziku.motoresponder.utils.LockStateUtility;
 import com.medziku.motoresponder.utils.SensorsUtility;
@@ -18,7 +19,7 @@ public class Responder {
     // todo create action log where every decision is stored and user can debug settings
 
     private LocationUtility locationUtility;
-    private SensorsUtility sensorsUtility;
+    //private SensorsUtility sensorsUtility;
 
     public boolean notifyAboutAutoRespond = true;
     public boolean showPendingNotification = true;
@@ -47,14 +48,17 @@ public class Responder {
     public static final int RESPONDING_SETTINGS_RESPOND_ONLY_GROUP = 3;
     private LockStateUtility lockStateUtility;
 
+    private BackgroundService bs;//TODO
 
-    public Responder(LocationUtility locationUtility, SensorsUtility proximityUtility, LockStateUtility lockStateUtility) {
+
+    public Responder(BackgroundService bs, LocationUtility locationUtility, SensorsUtility proximityUtility, LockStateUtility lockStateUtility) {
         // probably we have to start every onsmsreceived in new thread
+        this.bs = bs;
         this.locationUtility = locationUtility;
-        this.sensorsUtility = proximityUtility;
+        //this.sensorsUtility = proximityUtility;
         this.lockStateUtility = lockStateUtility;
 
-        this.sensorsUtility.registerSensorUpdates();
+        //this.sensorsUtility.registerSensorUpdates();
     }
 
     public void onSMSReceived(String phoneNumber) {
@@ -84,15 +88,10 @@ public class Responder {
             return;
         }
 
-        if (this.includeProximityCheck && this.isProxime() == false) {
-            // proxime test failed, so phone can't be in pocket. if not in pocket he probably does not ride
+        if (this.isNotInPocket()) {
             return;
         }
 
-        if (this.includeLightCheck && this.isLightOutside()) {
-            // light outside. in pocket shouldn't be any light.
-            return;
-        }
 
         // do not answer numbers which user doesnt want to autorespond
         if (!this.shouldRespondToThisNumber(phoneNumber)) {
@@ -266,7 +265,7 @@ public class Responder {
     }
 
     private String generateAutoRespondMessage(String phoneNumber) {
-        return "Jadę właśnie motocyklem i nie mogę odebrać. Oddzwonię później.";
+        return "Jadę właśnie motocyklem i nie mogę odebrać. Oddzwonię później.";//TODO spersonalizować
 
         // TODO: 2015-09-08 separate messages for sms and call would be nice
     }
@@ -286,13 +285,19 @@ public class Responder {
     private boolean isProxime() {
         // return true if phone reports proximity to smth.
         // TODO: 2015-09-16 recheck, probably invalid 
-        return this.sensorsUtility.isProxime();
+        return this.bs.isProxime();
     }
 
     private boolean isLightOutside() {
         // return true if light sensor reports light
         // TODO: 2015-09-16 probably invalid 
-        return this.sensorsUtility.isLightOutside();
+        return this.bs.isLightOutside();
+    }
+
+    private boolean isNotInPocket() {
+        return this.includeProximityCheck && !this.isProxime() || // proxime test failed, so phone can't be in pocket. if not in pocket he probably does not ride
+                this.includeLightCheck && this.isLightOutside();// light outside. in pocket shouldn't be any light.
+
     }
 
 }

@@ -37,6 +37,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <service android:name=".services.BackgroundService"
+            ></service>
         <!--<receiver android:name=".MainActivity$SMSUtility$IncomingSMSReceiver">-->
             <!--<intent-filter>-->
                 <!--<action android:name="android.provider.Telephony.SMS_RECEIVED" />-->
