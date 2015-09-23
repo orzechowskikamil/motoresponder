@@ -1,40 +1,43 @@
 package com.medziku.motoresponder.activity;
 
 import android.app.Activity;
-import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
+import android.view.View;
+import android.widget.Button;
 
 import com.medziku.motoresponder.R;
-import com.medziku.motoresponder.Responder;
-import com.medziku.motoresponder.callbacks.CallCallback;
-import com.medziku.motoresponder.callbacks.SMSReceivedCallback;
-import com.medziku.motoresponder.utils.CallsUtility;
-import com.medziku.motoresponder.utils.LocationUtility;
-import com.medziku.motoresponder.utils.LockStateUtility;
-import com.medziku.motoresponder.utils.SMSUtility;
-import com.medziku.motoresponder.utils.SensorsUtility;
+import com.medziku.motoresponder.services.BackgroundService;
 
 public class MainActivity extends Activity {
-    private static final String TAG = MainActivity.class.getName();
-
-    //    private Button buttonSendSMS, buttonSendMMS, buttonCall, buttonGetGpsLocation, buttonSendGpsInfo;
-//    private EditText incomingNumberET, outgoingNumberET, messageET;
-//    private TextView gpsPositionTV;
-//    private Context context;
-
+    private Button runService, stopService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
-
         this.setContentView(R.layout.activity_main);
-    }
 
+        runService = (Button) findViewById(R.id.button1);
+        stopService = (Button) findViewById(R.id.button2);
+
+        runService.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent serviceIntent = new Intent(getApplicationContext(), BackgroundService.class);
+                startService(serviceIntent);
+            }
+        });
+
+        stopService.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent serviceIntent = new Intent(getApplicationContext(), BackgroundService.class);
+                stopService(serviceIntent);
+            }
+        });
+    }
 
 
     @Override
@@ -58,12 +61,4 @@ public class MainActivity extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
-/*
-    private void showToast(String toastText) {
-        Context baseContext = MainActivity.this.getBaseContext();
-        Toast toast = Toast.makeText(baseContext, toastText, Toast.LENGTH_SHORT);
-        toast.show();
-    }*/
-
-
 }
