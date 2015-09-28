@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <SwitchPreference
+        android:key="responder_on"
+        android:summary="Decide if background application should be enabled"
+        android:title="Responder ON" />
+
+    <EditTextPreference
+        android:dialogTitle="Response text"
+        android:key="response_text"
+        android:summary="The message which will be sent to recipient"
+        android:title="Response text" />
+
+    <SwitchPreference
+        android:key="attach_location_info"
+        android:summary="Your position coordinates will be sent to recipient"
+        android:title="Attach location info" />
+
+    <CheckBoxPreference
+        android:key="answer_calls"
+        android:summary="The response will be sent in answer to phone call"
+        android:title="Respond to calls" />
+
+    <CheckBoxPreference
+        android:key="answer_sms"
+        android:summary="The response will be sent in answer to SMS"
+        android:title="Respond to messages" />
+    <CheckBoxPreference
+        android:key="answer_contacts_only"
+        android:summary="The response will be sent only if initializer was someone from Your contac's list"
+        android:title="Respond to saved contacts only" />
+
+</PreferenceScreen>

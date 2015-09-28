@@ -17,7 +17,7 @@ import android.util.Log;
 
 import com.medziku.motoresponder.R;
 import com.medziku.motoresponder.Responder;
-import com.medziku.motoresponder.activity.MainActivity;
+import com.medziku.motoresponder.activity.SettingsActivity;
 import com.medziku.motoresponder.callbacks.CallCallback;
 import com.medziku.motoresponder.callbacks.SMSReceivedCallback;
 import com.medziku.motoresponder.utils.CallsUtility;
@@ -58,7 +58,6 @@ public class BackgroundService extends Service {
     //end from activity
 
 
-
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -74,7 +73,7 @@ public class BackgroundService extends Service {
     public void onDestroy() {
         super.onDestroy();
         hideNotification();
-        unregisterSensorUpdates();//TODO powinna byc takze mozliwosc wyrejestrowania w on command started dla konkretnej komendy
+        unregisterSensors();//TODO powinna byc takze mozliwosc wyrejestrowania w on command started dla konkretnej komendy
         Log.d("BackgroundService", "destroed");
     }
 
@@ -110,31 +109,29 @@ public class BackgroundService extends Service {
         //end from activity
 
 
+        registerSensors();
 
-        this.sensorManager = (SensorManager) getApplicationContext().getSystemService(Context.SENSOR_SERVICE);
-        this.sensorEventListener = new SensorEventListener() {
-            @Override
-            public void onAccuracyChanged(Sensor sensor, int accuracy) {
-                // TODO Auto-generated method stub
-
-            }
-
-            @Override
-            public void onSensorChanged(SensorEvent event) {
-                // TODO Auto-generated method stub
-
-                if (event.sensor.getType() == Sensor.TYPE_PROXIMITY) {
-                    BackgroundService.this.setCurrentProximity(event.values[0]);
-                }
-
-                if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
-                    BackgroundService.this.setLightValue(event.values[0]);
-                }
-            }
-        };
-
-        registerSensorUpdates();
         showNotification();
+    }
+
+    private void registerSensors() {//TODO move in code
+        if (this.sensorListenersRegistered) {
+            return;
+        }
+        this.sensorManager = (SensorManager) getApplicationContext().getSystemService(Context.SENSOR_SERVICE);
+        this.proximitySensor = this.sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+        this.lightSensor = this.sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+        this.sensorEventListener = new BackgroundSensorEventListener();
+
+        if (this.proximitySensor != null) {
+            this.sensorManager.registerListener(this.sensorEventListener, this.proximitySensor, SensorManager.SENSOR_DELAY_NORMAL);
+        }
+
+        if (this.lightSensor != null) {
+            this.sensorManager.registerListener(this.sensorEventListener, this.lightSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        }
+        this.sensorListenersRegistered = true;
+
     }
 
     @Override
@@ -150,10 +147,10 @@ public class BackgroundService extends Service {
 
     //mine
 
-    private void showNotification(){
-        Intent resultIntent = new Intent(this, MainActivity.class);
+    private void showNotification() {
+        Intent resultIntent = new Intent(this, SettingsActivity.class);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-        stackBuilder.addParentStack(MainActivity.class);
+        stackBuilder.addParentStack(SettingsActivity.class);
         stackBuilder.addNextIntent(resultIntent);
         PendingIntent resultPendingIntent =
                 stackBuilder.getPendingIntent(
@@ -165,7 +162,7 @@ public class BackgroundService extends Service {
                 .setContentTitle("Test title")
                 .setContentText("Test content")
                 .setContentInfo("Test onfo")
-        .setContentIntent(resultPendingIntent);
+                .setContentIntent(resultPendingIntent);
         Notification notification = notificationBuilder.build();
         notification.flags = Notification.FLAG_ONGOING_EVENT;
         NotificationManager mNotificationManager =
@@ -173,7 +170,7 @@ public class BackgroundService extends Service {
         mNotificationManager.notify(notificationId, notification);
     }
 
-    private void hideNotification(){
+    private void hideNotification() {
         NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.cancel(notificationId);
@@ -193,7 +190,6 @@ public class BackgroundService extends Service {
     }
 
 
-
     public boolean isProxime() {
         return this.currentProximity > (this.proximitySensor.getMaximumRange() / 2);
     }
@@ -202,26 +198,9 @@ public class BackgroundService extends Service {
         return this.lightValue < this.DARK_VALUE;
     }
 
-    public void registerSensorUpdates() {
-        if (this.sensorListenersRegistered) {
-            return;
-        }
 
-        this.proximitySensor = this.sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
-        if (this.proximitySensor != null) {
-//            String name = this.proximitySensor.getName();
-//            float maximumRange = this.proximitySensor.getMaximumRange();
-            this.sensorManager.registerListener(this.sensorEventListener, this.proximitySensor, SensorManager.SENSOR_DELAY_NORMAL);
-        }
-
-        this.lightSensor = this.sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
-        if (this.lightSensor != null) {
-            this.sensorManager.registerListener(this.sensorEventListener, this.lightSensor, SensorManager.SENSOR_DELAY_NORMAL);
-        }
-        this.sensorListenersRegistered = true;
-    }
-
-    private void unregisterSensorUpdates() {
+    @Deprecated
+    private void unregisterSensors() {//TODO refactor
         if (!this.sensorListenersRegistered) {
             return;
         }
@@ -245,5 +224,22 @@ public class BackgroundService extends Service {
     }
 
     //end from activity
+
+
+    private class BackgroundSensorEventListener implements SensorEventListener {
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {}
+
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            if (event.sensor.getType() == Sensor.TYPE_PROXIMITY) {
+                BackgroundService.this.setCurrentProximity(event.values[0]);
+            }
+
+            if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
+                BackgroundService.this.setLightValue(event.values[0]);
+            }
+        }
+    }
 
 }
