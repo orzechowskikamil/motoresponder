@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">Moto Responder</string>
+    <string name="settings_activity_label">Moto Responder Settings</string>
 
-    <string name="action_settings">Settings</string>
 </resources>
