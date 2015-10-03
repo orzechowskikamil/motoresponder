@@ -1,21 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
-
+    <header android:title="Ustawienia" />
     <header
-        android:fragment="com.medziku.motoresponder.activity.SettingsActivity$Prefs1Fragment"
+        android:id="@+id/general_settings"
+        android:fragment="com.medziku.motoresponder.ui.BackgroundPreferencesFragment"
         android:icon="@drawable/ic_settings_applications"
-        android:title="General preferences" />
-
+        android:title="Działaj w tle" >
+    </header>
     <header
         android:id="@+id/sounds_settings"
-        android:fragment="com.medziku.motoresponder.ui.SoundsPreferencesFragment"
+        android:fragment="com.medziku.motoresponder.ui.GenerlPreferencesFragment"
         android:icon="@drawable/ic_settings_display"
-        android:summary="Some other preferences you can see."
-        android:title="Demo prefs">
-        <!-- Arbitrary key/value pairs can be included with a header as
-             arguments to its fragment. -->
-        <extra
-            android:name="someKey"
-            android:value="someHeaderValue" />
+        android:title="Ogólne ustawienia">
     </header>
 </preference-headers>

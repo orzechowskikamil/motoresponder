@@ -9,26 +9,26 @@ import android.widget.Switch;
 /**
  * Created by medziku on 28.09.15.
  */
-public class SoundEnabler implements CompoundButton.OnCheckedChangeListener {
+public class PropertyEnabler implements CompoundButton.OnCheckedChangeListener {
     //TODO change name
 
     protected final Context mContext;
     private Switch mSwitch;
+    private String mPreferenceKey;
 
-    public SoundEnabler(Context context, Switch swtch) {
+    public PropertyEnabler(Context context, Switch swtch, String preferenceKey) {
         mContext = context;
+        mPreferenceKey = preferenceKey;
         setSwitch(swtch);
     }
 
     public void setSwitch(Switch swtch) {
         if (mSwitch == swtch)
             return;
-
         if (mSwitch != null)
             mSwitch.setOnCheckedChangeListener(null);
         mSwitch = swtch;
         mSwitch.setOnCheckedChangeListener(this);
-
         mSwitch.setChecked(isSwitchOn());
     }
 
@@ -39,16 +39,14 @@ public class SoundEnabler implements CompoundButton.OnCheckedChangeListener {
         prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
         editor = prefs.edit();
 
-        editor.putBoolean("SOUND_ENABLED", isChecked);
+        editor.putBoolean(mPreferenceKey, isChecked);
         editor.commit();
-
     }
 
     public boolean isSwitchOn() {
         SharedPreferences prefs;
         prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
-
-        return prefs.getBoolean("SOUND_ENABLED", true);
+        return prefs.getBoolean(mPreferenceKey, true);
     }
 
     public void resume() {

@@ -24,14 +24,16 @@ public class MyPrefsHeaderAdapter extends ArrayAdapter<PreferenceActivity.Header
     static final int HEADER_TYPE_SWITCH = 2;
 
     private LayoutInflater mInflater;
-    private SoundEnabler mSoundEnabler;
+    private PropertyEnabler mPropertyEnabler;
+    private PropertyEnabler mGeneralEnabler;
 
     public MyPrefsHeaderAdapter(Context context, List<PreferenceActivity.Header> objects) {
         super(context, 0, objects);
 
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        mSoundEnabler = new SoundEnabler(context, new Switch(context));
+        mPropertyEnabler = new PropertyEnabler(context, new Switch(context), "GENERAL_PREFERENCES_ENABLED");
+        mGeneralEnabler = new PropertyEnabler(context, new Switch(context), BackgroundPreferencesFragment.BACKGROUND_SERVICE_ENABLED);
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -55,8 +57,13 @@ public class MyPrefsHeaderAdapter extends ArrayAdapter<PreferenceActivity.Header
                 ((TextView) view.findViewById(android.R.id.summary)).setText(header
                         .getSummary(getContext().getResources()));
 
-                if (header.id == R.id.sounds_settings)
-                    mSoundEnabler.setSwitch((Switch) view.findViewById(R.id.switchWidget));
+                if (header.id == R.id.sounds_settings) {
+                    mPropertyEnabler.setSwitch((Switch) view.findViewById(R.id.switchWidget));
+                }
+                if (header.id == R.id.general_settings) {
+                    mGeneralEnabler.setSwitch((Switch) view.findViewById(R.id.switchWidget));
+                }
+
                 break;
 
             case HEADER_TYPE_NORMAL:
@@ -75,7 +82,7 @@ public class MyPrefsHeaderAdapter extends ArrayAdapter<PreferenceActivity.Header
     public static int getHeaderType(PreferenceActivity.Header header) {
         if ((header.fragment == null) && (header.intent == null)) {
             return HEADER_TYPE_CATEGORY;
-        } else if (header.id == R.id.sounds_settings) {
+        } else if (header.id == R.id.sounds_settings || header.id == R.id.general_settings) {
             return HEADER_TYPE_SWITCH;
         } else {
             return HEADER_TYPE_NORMAL;
@@ -83,10 +90,12 @@ public class MyPrefsHeaderAdapter extends ArrayAdapter<PreferenceActivity.Header
     }
 
     public void resume() {
-        mSoundEnabler.resume();
+        mPropertyEnabler.resume();
+        mGeneralEnabler.resume();
     }
 
     public void pause() {
-        mSoundEnabler.pause();
+        mPropertyEnabler.pause();
+        mGeneralEnabler.pause();
     }
 }

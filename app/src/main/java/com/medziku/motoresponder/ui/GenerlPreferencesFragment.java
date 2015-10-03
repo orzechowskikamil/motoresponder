@@ -15,10 +15,11 @@ import com.medziku.motoresponder.R;
 /**
  * Created by medziku on 28.09.15.
  */
-public class SoundsPreferencesFragment extends PreferenceFragment implements
-        SharedPreferences.OnSharedPreferenceChangeListener {//TODO change name
+public class GenerlPreferencesFragment extends PreferenceFragment implements
+        SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private SoundEnabler mSoundEnabler;
+    public static final String GENERAL_PREFERENCES_ENABLED = "GENERAL_PREFERENCES_ENABLED";
+    private PropertyEnabler mPropertyEnabler;
 
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -26,7 +27,7 @@ public class SoundsPreferencesFragment extends PreferenceFragment implements
         PreferenceManager.getDefaultSharedPreferences(getActivity())
                 .registerOnSharedPreferenceChangeListener(this);
 
-        addPreferencesFromResource(R.xml.sounds_prefs);//TODO change name
+        addPreferencesFromResource(R.xml.general_prefs);
 
         Activity activity = getActivity();
         ActionBar actionbar = activity.getActionBar();
@@ -39,25 +40,23 @@ public class SoundsPreferencesFragment extends PreferenceFragment implements
                 ActionBar.LayoutParams.WRAP_CONTENT, Gravity.CENTER_VERTICAL
                 | Gravity.RIGHT));
 
-        actionbar.setTitle("Sounds options");
-
-        mSoundEnabler = new SoundEnabler(getActivity(), actionBarSwitch);
+        mPropertyEnabler = new PropertyEnabler(getActivity(), actionBarSwitch, GENERAL_PREFERENCES_ENABLED);
         updateSettings();
     }
 
     public void onResume() {
         super.onResume();
-        mSoundEnabler.resume();
+        mPropertyEnabler.resume();
         updateSettings();
     }
 
     public void onPause() {
         super.onPause();
-        mSoundEnabler.pause();
+        mPropertyEnabler.pause();
     }
 
     protected void updateSettings() {
-        boolean available = mSoundEnabler.isSwitchOn();
+        boolean available = mPropertyEnabler.isSwitchOn();
 
         int count = getPreferenceScreen().getPreferenceCount();
         for (int i = 0; i < count; ++i) {
@@ -68,7 +67,7 @@ public class SoundsPreferencesFragment extends PreferenceFragment implements
 
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
                                           String key) {
-        if (key.equals("SOUND_ENABLED"))
+        if (key.equals(GENERAL_PREFERENCES_ENABLED))
             updateSettings();
     }
 }
