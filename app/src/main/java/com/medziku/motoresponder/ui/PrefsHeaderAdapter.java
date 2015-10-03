@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * Created by medziku on 28.09.15.
  */
-public class MyPrefsHeaderAdapter extends ArrayAdapter<PreferenceActivity.Header> {
+public class PrefsHeaderAdapter extends ArrayAdapter<PreferenceActivity.Header> {
 
     static final int HEADER_TYPE_CATEGORY = 0;
     static final int HEADER_TYPE_NORMAL = 1;
@@ -27,13 +27,13 @@ public class MyPrefsHeaderAdapter extends ArrayAdapter<PreferenceActivity.Header
     private PropertyEnabler mPropertyEnabler;
     private PropertyEnabler mGeneralEnabler;
 
-    public MyPrefsHeaderAdapter(Context context, List<PreferenceActivity.Header> objects) {
+    public PrefsHeaderAdapter(Context context, List<PreferenceActivity.Header> objects) {
         super(context, 0, objects);
 
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         mPropertyEnabler = new PropertyEnabler(context, new Switch(context), "GENERAL_PREFERENCES_ENABLED");
-        mGeneralEnabler = new PropertyEnabler(context, new Switch(context), BackgroundPreferencesFragment.BACKGROUND_SERVICE_ENABLED);
+        mGeneralEnabler = new PropertyEnabler(context, new Switch(context), SwitchPreferencesFragment.BACKGROUND_SERVICE_ENABLED);
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {

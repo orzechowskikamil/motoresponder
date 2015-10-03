@@ -15,11 +15,16 @@ import com.medziku.motoresponder.R;
 /**
  * Created by medziku on 28.09.15.
  */
-public class GenerlPreferencesFragment extends PreferenceFragment implements
+public class SwitchPreferencesFragment extends PreferenceFragment implements
         SharedPreferences.OnSharedPreferenceChangeListener {
 
+    public static final String BACKGROUND_SERVICE_ENABLED = "BACKGROUND_SERVICE_ENABLED";
     public static final String GENERAL_PREFERENCES_ENABLED = "GENERAL_PREFERENCES_ENABLED";
+    public static final String BACKGROUND = "background";
+    public static final String GENERAL = "general";
+
     private PropertyEnabler mPropertyEnabler;
+    private String mKey;
 
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -27,7 +32,16 @@ public class GenerlPreferencesFragment extends PreferenceFragment implements
         PreferenceManager.getDefaultSharedPreferences(getActivity())
                 .registerOnSharedPreferenceChangeListener(this);
 
-        addPreferencesFromResource(R.xml.general_prefs);
+        //addPreferencesFromResource(R.xml.background_prefs);
+
+        String settings = getArguments().getString("prefs");
+        if (BACKGROUND.equals(settings)) {
+            addPreferencesFromResource(R.xml.background_prefs);
+            mKey = BACKGROUND_SERVICE_ENABLED;
+        } else if (GENERAL.equals(settings)) {
+            addPreferencesFromResource(R.xml.general_prefs);
+            mKey = GENERAL_PREFERENCES_ENABLED;
+        }
 
         Activity activity = getActivity();
         ActionBar actionbar = activity.getActionBar();
@@ -40,7 +54,7 @@ public class GenerlPreferencesFragment extends PreferenceFragment implements
                 ActionBar.LayoutParams.WRAP_CONTENT, Gravity.CENTER_VERTICAL
                 | Gravity.RIGHT));
 
-        mPropertyEnabler = new PropertyEnabler(getActivity(), actionBarSwitch, GENERAL_PREFERENCES_ENABLED);
+        mPropertyEnabler = new PropertyEnabler(getActivity(), actionBarSwitch, BACKGROUND_SERVICE_ENABLED);
         updateSettings();
     }
 
@@ -56,6 +70,7 @@ public class GenerlPreferencesFragment extends PreferenceFragment implements
     }
 
     protected void updateSettings() {
+
         boolean available = mPropertyEnabler.isSwitchOn();
 
         int count = getPreferenceScreen().getPreferenceCount();
@@ -67,7 +82,7 @@ public class GenerlPreferencesFragment extends PreferenceFragment implements
 
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
                                           String key) {
-        if (key.equals(GENERAL_PREFERENCES_ENABLED))
+        if (key.equals(mKey))
             updateSettings();
     }
 }

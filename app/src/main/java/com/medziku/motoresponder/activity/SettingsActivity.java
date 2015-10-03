@@ -5,7 +5,7 @@ import android.preference.PreferenceActivity;
 import android.widget.ListAdapter;
 
 import com.medziku.motoresponder.R;
-import com.medziku.motoresponder.ui.MyPrefsHeaderAdapter;
+import com.medziku.motoresponder.ui.PrefsHeaderAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,14 +25,14 @@ public class SettingsActivity extends PreferenceActivity {
     protected void onResume() {
         super.onResume();
 
-        if (getListAdapter() instanceof MyPrefsHeaderAdapter)
-            ((MyPrefsHeaderAdapter) getListAdapter()).resume();
+        if (getListAdapter() instanceof PrefsHeaderAdapter)
+            ((PrefsHeaderAdapter) getListAdapter()).resume();
     }
 
     protected void onPause() {
         super.onPause();
-        if (getListAdapter() instanceof MyPrefsHeaderAdapter)
-            ((MyPrefsHeaderAdapter) getListAdapter()).pause();
+        if (getListAdapter() instanceof PrefsHeaderAdapter)
+            ((PrefsHeaderAdapter) getListAdapter()).pause();
     }
 
     @Override
@@ -52,7 +52,7 @@ public class SettingsActivity extends PreferenceActivity {
                 mHeaders.add((Header) adapter.getItem(i));
         }
 
-        super.setListAdapter(new MyPrefsHeaderAdapter(this, mHeaders));
+        super.setListAdapter(new PrefsHeaderAdapter(this, mHeaders));
     }
 
     @Override
