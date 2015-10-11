@@ -1,4 +1,4 @@
-package com.medziku.myapplication;
+package com.medziku.motoresponder.utils;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -6,17 +6,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.util.Log;
 
+import com.medziku.motoresponder.callbacks.LockStateCallback;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Kamil on 2015-09-16.
  */
-
-interface LockStateCallback {
-    void onChangeState(boolean isLocked);
-}
-
 
 public class LockStateUtility {
 
@@ -37,11 +34,6 @@ public class LockStateUtility {
 
         // if somebody started app, phone must be unlocked at start
         this.phoneUnlocked = true;
-    }
-
-    private void listenToUnlockEvent(LockStateCallback unlockCallback) {
-        this.lockStateCallbacksList.add(unlockCallback);
-
     }
 
     public boolean isPhoneUnlocked() {

@@ -1,25 +1,19 @@
-package com.medziku.myapplication;
+package com.medziku.motoresponder.utils;
 
 
 import android.content.Context;
 import android.location.*;
 import android.os.Bundle;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
+import com.medziku.motoresponder.callbacks.LocationChangedCallback;
 
-interface LocationChangedCallback {
-    void onLocationChange(Location location);
-
-}
 
 //interface LocationCityChangedCallback {
 //
 //    void onLocationCityChange(Location location, String cityName);
 //}
 
-class LocationUtility {
+public class LocationUtility {
 
     private Context context;
     private LocationManager locationManager;
