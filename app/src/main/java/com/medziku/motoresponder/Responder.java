@@ -169,9 +169,6 @@ public class Responder {
 
 
     private boolean phoneIsUnlocked() {
-        // return false if phone is unlocked, true if it has screen lock.
-        // TODO: 2015-09-18 FOR NOW IT ALWAYS REPORT LOCKED, CHANGE IT!
-        // TODO K. Orzechowski: of course marcin, because it's mock stage :D
         return !this.lockStateUtility.isPhoneUnlocked();
     }
 
