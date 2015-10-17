@@ -99,7 +99,13 @@ public class Responder {
 
         // do not answer numbers which user doesnt want to autorespond
         if (!this.shouldRespondToThisNumber(phoneNumber)) {
-            return;
+
+            // TODO K. Orzechowski: I disabled this for now because it's not most important part of application
+            // right now. Do it later and remove development bypass.
+            boolean isNotDevelopment = false;
+            if (isNotDevelopment) {
+                return;
+            }
         }
 
         // show notification to give user possibiity to cancel autorespond
