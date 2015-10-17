@@ -53,9 +53,13 @@ public class LockStateUtility {
          * device wakes up (e.g when the keyguard is gone)
          * */
             if (intent.getAction().equals(Intent.ACTION_USER_PRESENT)) {
+
+                LockStateUtility.this.setPhoneUnlocked(true);
+
+
+
                 for (LockStateCallback unlockCallback : LockStateUtility.this.lockStateCallbacksList) {
                     unlockCallback.onChangeState(true);
-                    LockStateUtility.this.setPhoneUnlocked(true);
                     Log.d("lock state utility", "phone unlocked");
                 }
 
@@ -64,9 +68,12 @@ public class LockStateUtility {
          * is being shut down (completely turned off, not sleeping)
          * */
             else if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
+
+                LockStateUtility.this.setPhoneUnlocked(false);
+
                 for (LockStateCallback unlockCallback : LockStateUtility.this.lockStateCallbacksList) {
                     unlockCallback.onChangeState(false);
-                    LockStateUtility.this.setPhoneUnlocked(false);
+
                     Log.d("lock state utility", "phone locked");
                 }
             }
