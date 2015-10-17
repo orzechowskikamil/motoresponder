@@ -185,12 +185,12 @@ public class Responder {
     }
 
     private boolean phoneReportsStayingStill() {
-        // if accelerometer does not report movement, return false, otherwise true.
+        // TODO K. Orzechowski: if accelerometer does not report movement, return false, otherwise true.
         return false;
     }
 
     private void notifyAboutPendingAutoRespond() {
-        // show something, for example toast that autorespond is pending, with possibility to cancel it by user
+        // TODO K. Orzechowski:show something, for example toast that autorespond is pending, with possibility to cancel it by user
     }
 
     private void unnotifyAboutPendingAutoRespond() {
@@ -210,19 +210,21 @@ public class Responder {
     }
 
     private boolean isNormalNumber(String phoneNumber) {
-        return true; // return true if normal number - no sms premium or smth.
+        return true; // TODO K. Orzechowski:  return true if normal number - no sms premium or smth.
     }
 
     private boolean isNumberFromCurrentCountry(String phoneNumber) {
+        // TODO K. Orzechowski: implement real logic
         return true;
     }
 
     private boolean isInContactBook(String phoneNumber) {
-        return true; // check if in contact book
+        return true;// TODO K. Orzechowski:  check if in contact book
     }
 
     private boolean isInGroup(String phoneNumber) {
-        return true; // probably we need one special group, or selector from exisiting groups allowing user to choose many groups.
+        return true;
+        // TODO K. Orzechowski:  probably we need one special group, or selector from exisiting groups allowing user to choose many groups.
     }
 
 
@@ -261,12 +263,14 @@ public class Responder {
     }
 
     private String generateAutoRespondMessage(String phoneNumber) {
-        return "Jadę właśnie motocyklem i nie mogę odebrać. Oddzwonię później.";//TODO spersonalizować
+        return "Jadę właśnie motocyklem i nie mogę odebrać. Oddzwonię później.";
+        // TODO K. Orzechowski: add possibility to personalize message IN LATER STAGE
 
-        // TODO: 2015-09-08 separate messages for sms and call would be nice
+        // TODO K. Orzechowski: separate messages for sms and call would be nice
     }
 
     private void sendSMS(String phoneNumber, String message) {
+        // TODO K. Orzechowski: this is empty , implement me
     }
 
     private void notifyAboutAutoRespond(String phoneNumber) {
