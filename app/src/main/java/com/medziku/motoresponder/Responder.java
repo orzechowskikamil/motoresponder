@@ -74,6 +74,8 @@ public class Responder {
 
     private void handleIncoming(final String phoneNumber) {
         // for now for simplification just wait one second forclaryfying sensor values
+
+        // TODO K. Orzechowski: not sure if this is safe or lock main thread
         try {
             Thread.sleep(this.waitAfterReceivingMsgOrCall);
         } catch (InterruptedException e) {
@@ -168,7 +170,8 @@ public class Responder {
 
     private boolean phoneIsUnlocked() {
         // return false if phone is unlocked, true if it has screen lock.
-        // TODO: 2015-09-18 FOR NOW IT ALWAYS REPORT LOCKED, CHANGE IT! 
+        // TODO: 2015-09-18 FOR NOW IT ALWAYS REPORT LOCKED, CHANGE IT!
+        // TODO K. Orzechowski: of course marcin, because it's mock stage :D
         return !this.lockStateUtility.isPhoneUnlocked();
     }
 
