@@ -40,13 +40,17 @@ public class LockStateUtility {
         @Override
         public void onReceive(Context arg0, Intent intent) {
 
+            // TODO K. Orzechowski: This is why floating notification is required - because
+            // app should respond always when screen is locked. Initially I thought that
+            // there is no point of notification because when app works screen is always off but it is not true
+            // because when screen is on but phone is not unlocked also auto respond will be sent.
+
             // Sent when the user is present after device wakes up (e.g when the keyguard is gone)
             if (intent.getAction().equals(Intent.ACTION_USER_PRESENT)) {
                 LockStateUtility.this.setPhoneUnlocked(true);
                 Log.d("lock state utility", "phone unlocked");
             }
-            // Device is shutting down. This is broadcast when the device is being shut down
-            // (completely turned off, not sleeping)
+            // Device screen is off
             else if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
                 LockStateUtility.this.setPhoneUnlocked(false);
                 Log.d("lock state utility", "phone locked");
