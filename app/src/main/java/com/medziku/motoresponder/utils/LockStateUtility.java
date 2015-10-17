@@ -33,6 +33,7 @@ public class LockStateUtility {
                 new IntentFilter("android.intent.action.SCREEN_OFF"));
 
         // if somebody started app, phone must be unlocked at start
+        // TODO K. Orzechowski: That can be not true if app will start with phone startup or as a service...
         this.phoneUnlocked = true;
     }
 
