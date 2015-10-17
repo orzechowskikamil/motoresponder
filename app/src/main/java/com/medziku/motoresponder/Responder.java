@@ -86,10 +86,16 @@ public class Responder {
             return;
         }
 
-        if (this.isNotInPocket()) {
+        // if rider rides, phone should be in pocket.
+        // in pocket is proxime (to leg)... If there is no proximity, he is probably not riding.
+        if (this.includeProximityCheck && !this.isProxime()) {
             return;
         }
 
+        // inside pocket should be dark. if it's light, he is probably not riding
+        if (this.includeLightCheck && this.isLightOutside()) {
+            return;
+        }
 
         // do not answer numbers which user doesnt want to autorespond
         if (!this.shouldRespondToThisNumber(phoneNumber)) {
@@ -278,10 +284,5 @@ public class Responder {
         return this.bs.isLightOutside();
     }
 
-    private boolean isNotInPocket() {
-        return this.includeProximityCheck && !this.isProxime() || // proxime test failed, so phone can't be in pocket. if not in pocket he probably does not ride
-                this.includeLightCheck && this.isLightOutside();// light outside. in pocket shouldn't be any light.
-
-    }
 
 }
