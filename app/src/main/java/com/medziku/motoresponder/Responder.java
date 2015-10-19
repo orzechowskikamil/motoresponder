@@ -314,6 +314,8 @@ public class Responder {
         // TODO K. Orzechowski: this is empty , implement me
     }
 
+    // TODO K. Orzechowski: add tryNotifyAutoRespond to name or move this.notifyAboutAutoRespond to upper method.
+    // idea is to have all things dependent on settings on one level to improve readability
     private void notifyAboutAutoRespond(String phoneNumber) {
         // this should show some toast like this: 'motoresponder responded XXX person for you. call him'
         // ofc if setting allow this
