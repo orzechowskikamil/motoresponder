@@ -181,7 +181,15 @@ public class Responder {
             return;
         }
 
-        this.getLocationAndProceed(phoneNumber);
+        // this will try to get location and call 2nd step of algorithm
+        // TODO K. Orzechowski: rewrite it to some promise or other construct which will be linear
+        this.locationUtility.listenForLocationOnce(new LocationChangedCallback() {
+            @Override
+            public void onLocationChange(Location location) {
+                Responder.this.handleIncomingSecondStep(phoneNumber, location);
+            }
+
+        });
     }
 
 
@@ -239,18 +247,6 @@ public class Responder {
 
     private void unnotifyAboutPendingAutoRespond() {
         // hide toast shown by notifyAoutPendingautorespond
-    }
-
-    private void getLocationAndProceed(final String phoneNumber) {
-        this.locationUtility.listenForLocationOnce(new LocationChangedCallback() {
-
-            // TODO: 2015-09-16 promises welcome?
-            @Override
-            public void onLocationChange(Location location) {
-                Responder.this.handleIncomingSecondStep(phoneNumber, location);
-            }
-
-        });
     }
 
     private boolean isNormalNumber(String phoneNumber) {
