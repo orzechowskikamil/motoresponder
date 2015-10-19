@@ -33,7 +33,14 @@ public class Responder {
     public int maybeRidingSpeed = 15;
     public int sureRidingSpeed = 60;
     public long waitForAnotherGPSCheckTimeout = 20000;
+
+    /**
+     * Time to wait before anything will be done in terms of handling sms/call
+     */
     public long waitAfterReceivingMsgOrCall = 1000;
+    /**
+     * Time for user to get phone out of pocket and respond
+     */
     public long waitBeforeResponding = 10000;
     public int respondingCountrySettings = 0;
     public int respondingSettings = 2;
@@ -122,14 +129,18 @@ public class Responder {
         // or from the desk and respond manually.
         // unlocking phone should break any responding at all
         try {
+            // TODO K. Orzechowski: not sure if I am able to sleep main thread, and not got ANR
             Thread.sleep(this.waitBeforeResponding);
         } catch (InterruptedException e) {
         }
 
         // now things will go automatically in one milisecond so it's not required to still show this
         if (this.showPendingNotification) {
+            // TODO K. Orzechowski: hmmm. It can be a flaw - check all returns if some return
+            // not cause to exit without unnotyfing
             this.unnotifyAboutPendingAutoRespond();
         }
+
 
         // if phone is unlocked now, we can return - user heard ring, get phone and will
         // respond manually.
