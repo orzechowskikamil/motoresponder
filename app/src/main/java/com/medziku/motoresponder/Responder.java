@@ -247,7 +247,7 @@ public class Responder {
     }
 
     private void unnotifyAboutPendingAutoRespond() {
-        // hide toast shown by notifyAoutPendingautorespond
+        // TODO K. Orzechowski:  hide toast shown by notifyAoutPendingautorespond
     }
 
     private boolean isNormalNumber(String phoneNumber) {
