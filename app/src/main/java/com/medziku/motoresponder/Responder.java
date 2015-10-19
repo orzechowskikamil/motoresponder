@@ -173,7 +173,7 @@ public class Responder {
         }
 
         // if phone doesn't report any movement we can also assume that user is not riding motorcycle
-        if (this.includeAccelerometerCheck && this.phoneReportsStayingStill()) {
+        if (this.includeAccelerometerCheck && !this.accelerometerReportsMovement()) {
             return;
         }
 
@@ -237,7 +237,7 @@ public class Responder {
         return !this.lockStateUtility.isPhoneUnlocked();
     }
 
-    private boolean phoneReportsStayingStill() {
+    private boolean accelerometerReportsMovement() {
         // TODO K. Orzechowski: if accelerometer does not report movement, return false, otherwise true.
         return false;
     }
