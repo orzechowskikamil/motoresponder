@@ -22,11 +22,32 @@ public class Responder {
 
     public boolean notifyAboutAutoRespond = true;
     public boolean showPendingNotification = true;
+    /**
+     * If true, it will assume not riding if phone proximity sensor read false value (no proximity - not in pocket).
+     * If false, it will ignore proximity check.
+     */
     public boolean includeProximityCheck = true;
+    /**
+     * If true, it will assume not riding if there is light on the sensor (phone not in pocket).
+     * If false, it will ignore light readings.
+     */
     public boolean includeLightCheck = true;
+    /**
+     * If true, it will interpret timeout during gathering location as being in home (often location timeout
+     * is caused by being in building, riding through tunnel is rare).
+     * If false, it will ignore timeout.
+     */
     public boolean interpretLocationTimeoutAsNotRiding = true;
+    /**
+     * If true, if phone is unlocked it will be assumed as not riding (no automatical answer).
+     * If false, it will ignore unlocked/locked state.
+     */
     public boolean assumePhoneUnlockedAsNotRiding = true;
-    public boolean interpretStayingStillAccelerometerAsNotRiding = true;
+    /**
+     * If true, if accelerometer will report staying still, app will assume that staying = not riding.
+     * If false, it will ignore accelerometer reading
+     */
+    public boolean includeAccelerometerCheck = true;
     public boolean doAnotherGPSCheckIfNotSure = true;
 
 
@@ -149,7 +170,7 @@ public class Responder {
         }
 
         // if phone doesn't report any movement we can also assume that user is not riding motorcycle
-        if (this.interpretStayingStillAccelerometerAsNotRiding && this.phoneReportsStayingStill()) {
+        if (this.includeAccelerometerCheck && this.phoneReportsStayingStill()) {
             return;
         }
 
