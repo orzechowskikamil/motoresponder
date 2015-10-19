@@ -173,7 +173,7 @@ public class Responder {
         }
 
         // if phone doesn't report any movement we can also assume that user is not riding motorcycle
-        if (this.includeAccelerometerCheck && !this.accelerometerReportsMovement()) {
+        if (this.includeAccelerometerCheck && !this.motionSensorReportsMovement()) {
             return;
         }
 
@@ -237,7 +237,9 @@ public class Responder {
         return !this.lockStateUtility.isPhoneUnlocked();
     }
 
-    private boolean accelerometerReportsMovement() {
+    private boolean motionSensorReportsMovement() {
+        // TODO K. Orzechowski: using here also gyroscope and magneometer is not a bad idea
+        // maybe other method will be required for it.
         // TODO K. Orzechowski: if accelerometer does not report movement, return false, otherwise true.
         return false;
     }
