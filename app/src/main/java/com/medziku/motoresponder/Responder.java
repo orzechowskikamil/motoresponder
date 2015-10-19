@@ -72,6 +72,11 @@ public class Responder {
         this.cancelAllHandling();
     }
 
+
+    /**
+     * This is method containing all logic of responding in human readable way.
+     * In other words: it's just an algorithm.
+     */
     private void handleIncoming(final String phoneNumber) {
         // for now for simplification just wait one second forclaryfying sensor values
 
@@ -102,8 +107,8 @@ public class Responder {
 
             // TODO K. Orzechowski: I disabled this for now because it's not most important part of application
             // right now. Do it later and remove development bypass.
-            boolean isNotDevelopment = false;
-            if (isNotDevelopment) {
+            boolean isDevelopment = true;
+            if (!isDevelopment) {
                 return;
             }
         }
