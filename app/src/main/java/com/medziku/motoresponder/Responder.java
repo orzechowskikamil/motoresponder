@@ -111,16 +111,15 @@ public class Responder {
     /**
      * This is method containing all logic of responding in human readable way.
      * In other words: it's just an algorithm.
+     *
+     * @param phoneNumber Phone number of incoming call/sms
      */
     private void handleIncoming(final String phoneNumber) {
         // for now for simplification just wait one second forclaryfying sensor values
 
         // TODO K. Orzechowski: not sure if this is safe or lock main thread
-        try {
-            Thread.sleep(this.waitAfterReceivingMsgOrCall);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        this.sleep(waitAfterReceivingMsgOrCall);
+
         // if phone is unlocked we do not need to autorespond at all.
         if (this.assumePhoneUnlockedAsNotRiding && this.phoneIsUnlocked()) {
             return;
@@ -156,11 +155,8 @@ public class Responder {
         // wait some time before responding - give user time to get phone from the pocket
         // or from the desk and respond manually.
         // unlocking phone should break any responding at all
-        try {
-            // TODO K. Orzechowski: not sure if I am able to sleep main thread, and not got ANR
-            Thread.sleep(this.waitBeforeResponding);
-        } catch (InterruptedException e) {
-        }
+        // TODO K. Orzechowski: not sure if I am able to sleep main thread, and not got ANR
+        this.sleep(this.waitBeforeResponding);
 
         // now things will go automatically in one milisecond so it's not required to still show this
         if (this.showPendingNotification) {
@@ -183,36 +179,46 @@ public class Responder {
 
         // this will try to get location and call 2nd step of algorithm
         // TODO K. Orzechowski: rewrite it to some promise or other construct which will be linear
-        this.locationUtility.listenForLocationOnce(new LocationChangedCallback() {
-            @Override
-            public void onLocationChange(Location location) {
-                Responder.this.handleIncomingSecondStep(phoneNumber, location);
-            }
+        try {
+            this.locationUtility.listenForLocationOnce(new LocationChangedCallback() {
+                @Override
+                public void onLocationChange(Location location) {
+                    Responder.this.handleIncomingSecondStep(phoneNumber, location);
+                }
 
-        });
+            });
+        } catch (Exception e) {
+            // TODO K. Orzechowski: it was really unexpected at this stage.
+            e.printStackTrace();
+        }
+    }
+
+    private void sleep(long timeoutMs) {
+        try {
+            Thread.sleep(timeoutMs);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
 
     private void handleIncomingSecondStep(String phoneNumber, Location location) {
 
-        boolean locationTimeouted = false;
-        float firstMeasurementSpeed = location.getSpeed();
-        float secondMeasurementSpeed = 0;
-        float biggerMeasurementSpeed = 0;
 
+        float speed = location.getSpeed();
+
+        boolean locationTimeouted = location == null;
         if (this.interpretLocationTimeoutAsNotRiding && locationTimeouted) {
             // if timeout, it means that phone is probably in home with no access to GPS satelites.
             // so if no ride, no need to respond automatically
             return;
         }
 
-        biggerMeasurementSpeed = (secondMeasurementSpeed > firstMeasurementSpeed)
-                ? secondMeasurementSpeed
-                : firstMeasurementSpeed;
+        // TODO K. Orzechowski: add second check of speed if user is between sure riding speed and no riding speed
+        // for example: 15 km/h. It can be motorcycle or running. We make another check in few minutes - maybe
+        // we hit bigger speed and it become sure.
 
-
-        if (biggerMeasurementSpeed < this.sureRidingSpeed) {
-            // user is not riding. no need to autorespond
+        if (speed <= this.sureRidingSpeed) {
             return;
         }
 
@@ -224,13 +230,8 @@ public class Responder {
 
     private void cancelAllHandling() {
         // call this to break all autoresponding
+        // TODO K. Orzechowski: Implement it.
     }
-
-
-    private void wait(int amountMs) {
-        // wait for given milliseconds
-    }
-
 
     private boolean phoneIsUnlocked() {
         return !this.lockStateUtility.isPhoneUnlocked();
@@ -319,6 +320,7 @@ public class Responder {
         if (this.notifyAboutAutoRespond == false) {
             return;
         }
+        // TODO K. Orzechowski: Implement showing notification , best if with events.
         // do logic.
     }
 

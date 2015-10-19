@@ -7,68 +7,52 @@ import android.os.Bundle;
 
 import com.medziku.motoresponder.callbacks.LocationChangedCallback;
 
-
-//interface LocationCityChangedCallback {
-//
-//    void onLocationCityChange(Location location, String cityName);
-//}
-
+/**
+ * This utility allow to listen for location once and get linear response instead of cyclic
+ * notifications like LocationListener serves.
+ * NOTE: It allow you only to listen once per one time (simpler to implement and for now no need to do multiply
+ * listening).
+ * TODO K. Orzechowski: maybe it should be not LocationUtility but object designed for handling one listening.
+ */
 public class LocationUtility {
 
     private Context context;
     private LocationManager locationManager;
     private int minimumTimeBetweenUpdates;
     private int minimumDistanceBetweenUpdates;
+    private boolean alreadyListening;
 
     public LocationUtility(Context context, int minimumTimeBetweenUpdates, int minimumDistanceBetweenUpdates) {
         this.context = context;
         this.locationManager = (LocationManager) this.context.getSystemService(Context.LOCATION_SERVICE);
         this.minimumDistanceBetweenUpdates = minimumDistanceBetweenUpdates;
         this.minimumTimeBetweenUpdates = minimumTimeBetweenUpdates;
+        this.alreadyListening = false;
     }
 
+
+    /**
+     * Initiate location utility with 5000ms as time between location updates and 10m minimum distance
+     * between location updates.
+     */
     public LocationUtility(Context context) {
         this(context, 5000, 10);
     }
-//
-//    public void listenForLocationChanges(LocationChangedCallback locationChangedCallback, boolean shouldReceiveCity) {
-//        this.locationManager.requestLocationUpdates(
-//                LocationManager.GPS_PROVIDER,
-//                this.minimumTimeBetweenUpdates,
-//                this.minimumDistanceBetweenUpdates,
-//                new MyLocationListener(locationChangedCallback, shouldReceiveCity)
-//        );
-//    }
-//
-//    private LocationListener  listenForLocationChanges(LocationChangedCallback locationChangedCallback, boolean shouldReceiveCity) {
-//        LocationListener locationListener = new MyLocationListener(locationChangedCallback, shouldReceiveCity);
-//        this.locationManager.requestLocationUpdates(
-//                LocationManager.GPS_PROVIDER,
-//                this.minimumTimeBetweenUpdates,
-//                this.minimumDistanceBetweenUpdates,
-//                locationListener
-//        );
-//
-//        return locationListener;
-//    }
-//
-//    public void listenForLocationChangesOnce(final LocationChangedCallback locationChangedCallback, boolean shouldReceiveCity) {
-//        this.listenForLocationChanges(new LocationChangedCallback() {
-//
-//            public void onLocationChange(Location location, String cityName) {
-//                LocationUtility.this.locationManager.removeUpdates();
-//                locationChangedCallback.onLocationChange(location, cityName);
-//            }
-//
-//
-//            public void onLocationChange(Location location) {
-//                locationChangedCallback.onLocationChange(location);
-//            }
-//        }, shouldReceiveCity);
-//    }
 
+    /**
+     * Listens for location (only one listener per one time)
+     *
+     * @param callback Callback which be called when location is known (null value on timeout)
+     * @throws Exception When second callback tried to be registered when another is listening
+     */
+    public void listenForLocationOnce(final LocationChangedCallback callback) throws Exception {
+        if (this.alreadyListening == true) {
+            throw new Exception("Only one listener can be registered at once");
+        }
 
-    public void listenForLocationOnce(final LocationChangedCallback callback) {
+        this.alreadyListening = true;
+        // TODO K. Orzechowski: maybe it will be good to move minimumDistance and minimumTime settings
+        // from constructor to this method.
 
         this.locationManager.requestLocationUpdates(
                 LocationManager.GPS_PROVIDER,
@@ -76,84 +60,35 @@ public class LocationUtility {
                 this.minimumDistanceBetweenUpdates,
                 new LocationListener() {
                     public void onLocationChanged(Location loc) {
+                        // TODO K. Orzechowski: magic number, fix it
                         if (loc.getAccuracy() >= 0.68) {
-                            callback.onLocationChange(loc);
-                            this.unregisterUpdates();
+                            callCallbackAndUnregister(loc);
                         }
                     }
 
-                    private void unregisterUpdates() {
+                    private void callCallbackAndUnregister(Location loc) {
+                        LocationUtility.this.alreadyListening = false;
                         LocationUtility.this.locationManager.removeUpdates(this);
+                        callback.onLocationChange(loc);
                     }
 
                     @Override
                     public void onStatusChanged(String provider, int status, Bundle extras) {
-
+                        if (status == LocationProvider.OUT_OF_SERVICE) {
+                            this.callCallbackAndUnregister(null);
+                        }
                     }
 
                     @Override
                     public void onProviderEnabled(String provider) {
-
+                        // TODO K. Orzechowski: probably needs to do nothing, Marcin - correct me if I am wrong
                     }
 
                     @Override
                     public void onProviderDisabled(String provider) {
-
+                        // TODO K. Orzechowski: probably needs to return timeout - Marcin correct me if I am wrong
+                        this.callCallbackAndUnregister(null);
                     }
                 });
     }
-
-//    private class MyLocationListener implements LocationListener {//responsible for receiving GPS info
-//
-//        private LocationChangedCallback locationChangedCallback;
-//        private LocationCityChangedCallback locationCityChangedCallback;
-//        private boolean isTrackingCityEnabled;
-//
-//        public MyLocationListener(LocationChangedCallback locationChangedCallback) {
-//            this(locationChangedCallback, false);
-//        }
-//
-//        public MyLocationListener(LocationChangedCallback locationChangedCallback, boolean isTrackingCityEnabled) {
-//            this.locationChangedCallback = locationChangedCallback;
-//            this.isTrackingCityEnabled = isTrackingCityEnabled;
-//        }
-//
-//        @Override
-//        public void onLocationChanged(Location loc) {
-//            if (loc.getAccuracy() >= 0.68) {
-//                if (this.isTrackingCityEnabled) {
-//                    String cityName = null;
-//                    Geocoder gcd = new Geocoder(LocationUtility.this.context, Locale.getDefault());
-//                    List<Address> addresses;
-//                    try {
-//                        addresses = gcd.getFromLocation(loc.getLatitude(), loc.getLongitude(), 1);
-//                        if (addresses.size() > 0) {
-//                            System.out.println(addresses.get(0).getLocality());
-//                        }
-//                        cityName = addresses.get(0).getLocality();
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//
-//                    this.locationCityChangedCallback.onLocationCityChange(loc, cityName);
-//                } else {
-//                    this.locationChangedCallback.onLocationChange(loc);
-//                }
-//            }
-//        }
-//
-//        @Override
-//        public void onProviderDisabled(String provider) {
-//        }
-//
-//        @Override
-//        public void onProviderEnabled(String provider) {
-//        }
-//
-//        @Override
-//        public void onStatusChanged(String provider, int status, Bundle extras) {
-//
-//        }
-//    }
-
 }
