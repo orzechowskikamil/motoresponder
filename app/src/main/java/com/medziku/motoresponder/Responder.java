@@ -321,7 +321,6 @@ public class Responder {
             return;
         }
         // TODO K. Orzechowski: Implement showing notification , best if with events.
-        // do logic.
     }
 
     private boolean isProxime() {
