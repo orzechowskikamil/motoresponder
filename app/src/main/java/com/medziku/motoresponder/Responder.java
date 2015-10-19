@@ -63,7 +63,14 @@ public class Responder {
      * Time for user to get phone out of pocket and respond
      */
     public long waitBeforeResponding = 10000;
+
+    /**
+     * Responding current country or also abroad.
+     */
     public int respondingCountrySettings = 0;
+    /**
+     * Responding to group, contact book, normal numbers or everyone.
+     */
     public int respondingSettings = 2;
 
     public static final int RESPONDING_COUNTRY_SETTINGS_CURRENT_COUNTRY_ONLY = 0;
