@@ -15,7 +15,7 @@ public class Responder {
     // TODO refactor it to create RespondingDecision class where this class will become abstract decision about responding or not 
     // while extracting to other classes process of gathering location or sending sms logic
 
-    // todo create action log where every decision is stored and user can debug settings
+    // TODO k.orzechowskk create action log where every decision is stored and USER can debug settings and see FLOW of algorithm
 
     private LocationUtility locationUtility;
     //private SensorsUtility sensorsUtility;
@@ -173,9 +173,13 @@ public class Responder {
         }
 
         // if phone doesn't report any movement we can also assume that user is not riding motorcycle
+        // TODO k.orzechowsk this name is plural, refactor it to motionSensorsReportsMovement
         if (this.includeAccelerometerCheck && !this.motionSensorReportsMovement()) {
             return;
         }
+        
+        // TODO k.orzechowsk add Bluetooth Beacon option to identify that you sit on bike IN FUTURE
+        // TODO k.orzechowsk add NFC tag in pocket option to identify that you sit on bike IN FUTURE
 
         // this will try to get location and call 2nd step of algorithm
         // TODO K. Orzechowski: rewrite it to some promise or other construct which will be linear
@@ -284,6 +288,14 @@ public class Responder {
                 break;
         }
 
+
+        /* TODO k.orzechowski 
+           break method below into three sections
+           First is BLACKLISTING with options: none, blacklist (put in application), contact book group 
+           Second is WHITELISTING with options: none, all contacts, whitelist (put in application), contact book group
+           Third is NORMAL/SHORT numbers with options: everyone / normal numbers / short numbers (like sms premium)
+        */
+        
         switch (this.respondingSettings) {
             case Responder.RESPONDING_SETTINGS_RESPOND_EVERYONE:
                 respondingConstraintsMeet = true;
