@@ -4,7 +4,7 @@ package com.medziku.motoresponder.utils;
 import android.content.Context;
 import android.location.*;
 import android.os.Bundle;
-import java.util.concurrent.*;
+import com.google.common.util.concurrent.*;
 
 /**
  * This utility allow to listen for location once and get linear response instead of cyclic
@@ -44,13 +44,8 @@ public class LocationUtility {
     public Future<Location> listenForLocationOnce() throws Exception {
         // TODO K. Orzechowski: maybe it will be good to move minimumDistance and minimumTime settings
         // from constructor to this method.
-        final Location[] tempLocation = new Location[1];
         
-        Future<> result = new FutureTask<Location>(new Callable<Location>(){
-                public Location call(){
-                    return tempLocation[0];
-                }
-            });
+        SettableFuture<Location> result = SettableFuture.create();
 
         this.locationManager.requestLocationUpdates(
                 LocationManager.GPS_PROVIDER,
@@ -60,8 +55,7 @@ public class LocationUtility {
                     public void onLocationChanged(Location loc) {
                         // TODO K. Orzechowski: magic number, fix it
                         if (loc.getAccuracy() >= 0.68) {
-                            tempLocation[0] = loc;
-                            result.run();
+                            result.set(loc);
                         }
                     }
 
@@ -69,9 +63,11 @@ public class LocationUtility {
                     @Override
                     public void onStatusChanged(String provider, int status, Bundle extras) {
                         if (status == LocationProvider.OUT_OF_SERVICE) {
-                            result.run();
+                           result.set(null);
                         }
                     }
+                    
+                    // TODO k.orzechowsk resolve future also on timeout for example 10 000 ms
 
                     @Override
                     public void onProviderEnabled(String provider) {
@@ -81,7 +77,7 @@ public class LocationUtility {
                     @Override
                     public void onProviderDisabled(String provider) {
                         // TODO K. Orzechowski: probably needs to return timeout - Marcin correct me if I am wrong
-                        result.run();
+                        result.set(null);
                     }
                 });
         return result;
