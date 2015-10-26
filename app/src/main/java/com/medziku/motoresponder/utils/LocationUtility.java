@@ -6,6 +6,9 @@ import android.location.*;
 import android.os.Bundle;
 import com.google.common.util.concurrent.SettableFuture;
 
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
 /**
@@ -21,6 +24,7 @@ public class LocationUtility {
     private LocationManager locationManager;
     private int minimumTimeBetweenUpdates;
     private int minimumDistanceBetweenUpdates;
+    private int gettingLocationTimeout = 5000;
 
     public LocationUtility(Context context, int minimumTimeBetweenUpdates, int minimumDistanceBetweenUpdates) {
         this.context = context;
@@ -43,11 +47,22 @@ public class LocationUtility {
      *
      * @return Future which is fullfilled when location with appropriate accuracy is known, or null if timeout/error.
      */
-    public Future<Location> getCurrentLocation(){
+    public Future<Location> getCurrentLocation() {
         // TODO K. Orzechowski: maybe it will be good to move minimumDistance and minimumTime settings
         // from constructor to this method.
 
         final SettableFuture<Location> result = SettableFuture.create();
+
+        // this is safety timeout - if no location after desired time, it cancells location listening
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                result.set(null);
+            }
+        }, gettingLocationTimeout);
+
+        // TODO K. Orzechowski: add unregistering to all sets
+
 
         this.locationManager.requestLocationUpdates(
                 LocationManager.GPS_PROVIDER,
