@@ -20,14 +20,12 @@ public class LocationUtility {
     private LocationManager locationManager;
     private int minimumTimeBetweenUpdates;
     private int minimumDistanceBetweenUpdates;
-    private boolean alreadyListening;
 
     public LocationUtility(Context context, int minimumTimeBetweenUpdates, int minimumDistanceBetweenUpdates) {
         this.context = context;
         this.locationManager = (LocationManager) this.context.getSystemService(Context.LOCATION_SERVICE);
         this.minimumDistanceBetweenUpdates = minimumDistanceBetweenUpdates;
         this.minimumTimeBetweenUpdates = minimumTimeBetweenUpdates;
-        this.alreadyListening = false;
     }
 
 
@@ -42,17 +40,18 @@ public class LocationUtility {
     /**
      * Listens for location (only one listener per one time)
      *
-     * @param callback Callback which be called when location is known (null value on timeout)
      * @throws Exception When second callback tried to be registered when another is listening
      */
-    public void listenForLocationOnce(final LocationChangedCallback callback) throws Exception {
-        if (this.alreadyListening == true) {
-            throw new Exception("Only one listener can be registered at once");
-        }
-
-        this.alreadyListening = true;
+    public Future<Location> listenForLocationOnce() throws Exception {
         // TODO K. Orzechowski: maybe it will be good to move minimumDistance and minimumTime settings
         // from constructor to this method.
+        Location tempLocation = null;
+        
+        Future<> result = new FutureTask<Location>(new Callable<Location>(){
+                public Location call(){
+                    return tempLocation;
+                }
+            });
 
         this.locationManager.requestLocationUpdates(
                 LocationManager.GPS_PROVIDER,
@@ -62,20 +61,16 @@ public class LocationUtility {
                     public void onLocationChanged(Location loc) {
                         // TODO K. Orzechowski: magic number, fix it
                         if (loc.getAccuracy() >= 0.68) {
-                            callCallbackAndUnregister(loc);
+                            tempLocation = loc;
+                            result.run();
                         }
                     }
 
-                    private void callCallbackAndUnregister(Location loc) {
-                        LocationUtility.this.alreadyListening = false;
-                        LocationUtility.this.locationManager.removeUpdates(this);
-                        callback.onLocationChange(loc);
-                    }
 
                     @Override
                     public void onStatusChanged(String provider, int status, Bundle extras) {
                         if (status == LocationProvider.OUT_OF_SERVICE) {
-                            this.callCallbackAndUnregister(null);
+                            result.run();
                         }
                     }
 
@@ -87,8 +82,9 @@ public class LocationUtility {
                     @Override
                     public void onProviderDisabled(String provider) {
                         // TODO K. Orzechowski: probably needs to return timeout - Marcin correct me if I am wrong
-                        this.callCallbackAndUnregister(null);
+                        result.run();
                     }
                 });
+        return result;
     }
 }
