@@ -1,10 +1,13 @@
 package com.medziku.motoresponder.activity;
 
+import android.app.Service;
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.widget.ListAdapter;
 
 import com.medziku.motoresponder.R;
+import com.medziku.motoresponder.services.BackgroundService;
 import com.medziku.motoresponder.ui.PrefsHeaderAdapter;
 
 import java.util.ArrayList;
@@ -20,6 +23,9 @@ public class SettingsActivity extends PreferenceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Intent intent = new Intent(this, BackgroundService.class);
+        startService(intent);
     }
 
     protected void onResume() {
