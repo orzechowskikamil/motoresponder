@@ -180,21 +180,10 @@ public class Responder {
         
         // TODO k.orzechowsk add Bluetooth Beacon option to identify that you sit on bike IN FUTURE
         // TODO k.orzechowsk add NFC tag in pocket option to identify that you sit on bike IN FUTURE
+        // TODO k.orzechowsk identify of stolen bikes via beacon in very very future when app will be popular.
 
-        // this will try to get location and call 2nd step of algorithm
-        // TODO K. Orzechowski: rewrite it to some promise or other construct which will be linear
-        try {
-            this.locationUtility.listenForLocationOnce(new LocationChangedCallback() {
-                @Override
-                public void onLocationChange(Location location) {
-                    Responder.this.handleIncomingSecondStep(phoneNumber, location);
-                }
-
-            });
-        } catch (Exception e) {
-            // TODO K. Orzechowski: it was really unexpected at this stage.
-            e.printStackTrace();
-        }
+        Location location = this.locationUtility.listenForLocationOnce();
+        this.handleIncomingSecondStep(phoneNumber, location);
     }
 
     private void sleep(long timeoutMs) {
