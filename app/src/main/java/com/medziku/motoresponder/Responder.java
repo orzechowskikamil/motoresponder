@@ -185,7 +185,6 @@ public class Responder {
         // TODO k.orzechowsk identify of stolen bikes via beacon in very very future when app will be popular.
 
 
-
         Location location = null;
         try {
             location = this.locationUtility.getCurrentLocation().get();
@@ -193,14 +192,18 @@ public class Responder {
             e.printStackTrace();
         }
 
-        float speed = location.getSpeed();
-
         boolean locationTimeouted = location == null;
+
+        // TODO K. Orzechowski: this setting is for future, when I implement asking again for location after some time.
+        // TODO K. Orzechowski: for now it's just dumb if
         if (this.interpretLocationTimeoutAsNotRiding && locationTimeouted) {
             // if timeout, it means that phone is probably in home with no access to GPS satelites.
             // so if no ride, no need to respond automatically
             return;
         }
+
+        float speed = (location != null) ? location.getSpeed() : 0;
+
 
         // TODO K. Orzechowski: add second check of speed if user is between sure riding speed and no riding speed
         // for example: 15 km/h. It can be motorcycle or running. We make another check in few minutes - maybe
