@@ -184,20 +184,7 @@ public class Responder {
 
         Location location = this.locationUtility.listenForLocationOnce();
         this.handleIncomingSecondStep(phoneNumber, location);
-    }
-
-    private void sleep(long timeoutMs) {
-        try {
-            Thread.sleep(timeoutMs);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    private void handleIncomingSecondStep(String phoneNumber, Location location) {
-
-
+        
         float speed = location.getSpeed();
 
         boolean locationTimeouted = location == null;
@@ -218,8 +205,17 @@ public class Responder {
         String message = this.generateAutoRespondMessage(phoneNumber);
         this.sendSMS(phoneNumber, message);
         this.notifyAboutAutoRespond(phoneNumber);
+        
+        
     }
 
+    private void sleep(long timeoutMs) {
+        try {
+            Thread.sleep(timeoutMs);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 
     private void cancelAllHandling() {
         // call this to break all autoresponding
