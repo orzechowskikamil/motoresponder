@@ -24,7 +24,7 @@ public class LocationUtility {
     private LocationManager locationManager;
     private int minimumTimeBetweenUpdates;
     private int minimumDistanceBetweenUpdates;
-    private int gettingLocationTimeout = 5000;
+    private int gettingLocationTimeout = 15000;
 
     public LocationUtility(Context context, int minimumTimeBetweenUpdates, int minimumDistanceBetweenUpdates) {
         this.context = context;

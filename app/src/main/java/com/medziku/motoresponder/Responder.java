@@ -203,7 +203,9 @@ public class Responder {
             return;
         }
 
-        float speed = (location != null) ? location.getSpeed() : 0;
+        // -1 is value of speed for timeouted request.
+        float speed = (location != null) ? location.getSpeed() : -1;
+        this.bs.showStupidNotify("MotoResponder", "GPS speed: " + speed);
 
 
         // TODO K. Orzechowski: add second check of speed if user is between sure riding speed and no riding speed
@@ -308,6 +310,10 @@ public class Responder {
                 break;
         }
 
+        // TODO K. Orzechowski: loop when you will got message from your own device!!!!
+
+        // TODO K. Orzechowski: create smth like no more than 2 responses in one day
+        // TODO K. Orzechowski: or no more than 2 responses from one unlock to another
         boolean respondingAllowed = respondingConstraintsMeet && countryRespondingConstraintsMeet;
 
 
@@ -315,6 +321,7 @@ public class Responder {
     }
 
     private String generateAutoRespondMessage(String phoneNumber) {
+
         return "Jadę właśnie motocyklem i nie mogę odebrać. Oddzwonię później.";
         // TODO K. Orzechowski: add possibility to personalize message IN LATER STAGE
 
