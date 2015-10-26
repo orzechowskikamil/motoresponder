@@ -45,11 +45,11 @@ public class LocationUtility {
     public Future<Location> listenForLocationOnce() throws Exception {
         // TODO K. Orzechowski: maybe it will be good to move minimumDistance and minimumTime settings
         // from constructor to this method.
-        Location tempLocation = null;
+        final Location[] tempLocation = new Location[1];
         
         Future<> result = new FutureTask<Location>(new Callable<Location>(){
                 public Location call(){
-                    return tempLocation;
+                    return tempLocation[0];
                 }
             });
 
@@ -61,7 +61,7 @@ public class LocationUtility {
                     public void onLocationChanged(Location loc) {
                         // TODO K. Orzechowski: magic number, fix it
                         if (loc.getAccuracy() >= 0.68) {
-                            tempLocation = loc;
+                            tempLocation[0] = loc;
                             result.run();
                         }
                     }
