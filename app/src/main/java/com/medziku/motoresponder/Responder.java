@@ -36,7 +36,8 @@ public class Responder {
      * is caused by being in building, riding through tunnel is rare).
      * If false, it will ignore timeout.
      */
-    public boolean interpretLocationTimeoutAsNotRiding = true;
+    // TODO K. Orzechowski: for normal it should be true, for development - false
+    public boolean interpretLocationTimeoutAsNotRiding = false;
     /**
      * If true, if phone is unlocked it will be assumed as not riding (no automatical answer).
      * If false, it will ignore unlocked/locked state.
