@@ -4,8 +4,7 @@ package com.medziku.motoresponder.utils;
 import android.content.Context;
 import android.location.*;
 import android.os.Bundle;
-
-import com.medziku.motoresponder.callbacks.LocationChangedCallback;
+import java.util.concurrent.*;
 
 /**
  * This utility allow to listen for location once and get linear response instead of cyclic
