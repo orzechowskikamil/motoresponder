@@ -7,6 +7,9 @@ import com.medziku.motoresponder.services.BackgroundService;
 import com.medziku.motoresponder.utils.LocationUtility;
 import com.medziku.motoresponder.utils.LockStateUtility;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+
 /**
  * Created by Kamil on 2015-09-08.
  */
@@ -177,14 +180,20 @@ public class Responder {
         if (this.includeAccelerometerCheck && !this.motionSensorReportsMovement()) {
             return;
         }
-        
+
         // TODO k.orzechowsk add Bluetooth Beacon option to identify that you sit on bike IN FUTURE
         // TODO k.orzechowsk add NFC tag in pocket option to identify that you sit on bike IN FUTURE
         // TODO k.orzechowsk identify of stolen bikes via beacon in very very future when app will be popular.
 
-        Location location = this.locationUtility.listenForLocationOnce();
-        this.handleIncomingSecondStep(phoneNumber, location);
-        
+        Future<Location> locationFuture = this.locationUtility.listenForLocationOnce();
+
+        Location location = null;
+        try {
+            location = locationFuture.get();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         float speed = location.getSpeed();
 
         boolean locationTimeouted = location == null;
@@ -205,8 +214,8 @@ public class Responder {
         String message = this.generateAutoRespondMessage(phoneNumber);
         this.sendSMS(phoneNumber, message);
         this.notifyAboutAutoRespond(phoneNumber);
-        
-        
+
+
     }
 
     private void sleep(long timeoutMs) {
@@ -280,7 +289,7 @@ public class Responder {
            Second is WHITELISTING with options: none, all contacts, whitelist (put in application), contact book group
            Third is NORMAL/SHORT numbers with options: everyone / normal numbers / short numbers (like sms premium)
         */
-        
+
         switch (this.respondingSettings) {
             case Responder.RESPONDING_SETTINGS_RESPOND_EVERYONE:
                 respondingConstraintsMeet = true;
