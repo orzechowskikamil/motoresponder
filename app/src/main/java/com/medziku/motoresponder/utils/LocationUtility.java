@@ -43,7 +43,7 @@ public class LocationUtility {
      *
      * @return Future which is fullfilled when location with appropriate accuracy is known, or null if timeout/error.
      */
-    public Future<Location> listenForLocationOnce(){
+    public Future<Location> getCurrentLocation(){
         // TODO K. Orzechowski: maybe it will be good to move minimumDistance and minimumTime settings
         // from constructor to this method.
 

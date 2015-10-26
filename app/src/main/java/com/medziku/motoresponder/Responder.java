@@ -2,13 +2,9 @@ package com.medziku.motoresponder;
 
 import android.location.Location;
 
-import com.medziku.motoresponder.callbacks.LocationChangedCallback;
 import com.medziku.motoresponder.services.BackgroundService;
 import com.medziku.motoresponder.utils.LocationUtility;
 import com.medziku.motoresponder.utils.LockStateUtility;
-
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 /**
  * Created by Kamil on 2015-09-08.
@@ -45,7 +41,8 @@ public class Responder {
      * If true, if phone is unlocked it will be assumed as not riding (no automatical answer).
      * If false, it will ignore unlocked/locked state.
      */
-    public boolean assumePhoneUnlockedAsNotRiding = true;
+    // TODO K. Orzechowski: It should be true - but for development I set false
+    public boolean assumePhoneUnlockedAsNotRiding = false;
     /**
      * If true, if accelerometer will report staying still, app will assume that staying = not riding.
      * If false, it will ignore accelerometer reading
@@ -61,11 +58,13 @@ public class Responder {
     /**
      * Time to wait before anything will be done in terms of handling sms/call
      */
+    // TODO K. Orzechowski: for development set to 100, for normal it should be 1000 at least
     public long waitAfterReceivingMsgOrCall = 1000;
     /**
      * Time for user to get phone out of pocket and respond
      */
-    public long waitBeforeResponding = 10000;
+    // TODO K. Orzechowski: for development set to 100, for real it should be 10 000 at least
+    public long waitBeforeResponding = 100;
 
     /**
      * Responding current country or also abroad.
@@ -185,11 +184,11 @@ public class Responder {
         // TODO k.orzechowsk add NFC tag in pocket option to identify that you sit on bike IN FUTURE
         // TODO k.orzechowsk identify of stolen bikes via beacon in very very future when app will be popular.
 
-        Future<Location> locationFuture = this.locationUtility.listenForLocationOnce();
+
 
         Location location = null;
         try {
-            location = locationFuture.get();
+            location = this.locationUtility.getCurrentLocation().get();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -239,7 +238,7 @@ public class Responder {
         // TODO K. Orzechowski: using here also gyroscope and magneometer is not a bad idea
         // maybe other method will be required for it.
         // TODO K. Orzechowski: if accelerometer does not report movement, return false, otherwise true.
-        return false;
+        return true;
     }
 
     private void notifyAboutPendingAutoRespond() {
