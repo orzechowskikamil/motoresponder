@@ -128,6 +128,8 @@ public class Responder {
             return;
         }
 
+        // TODO k.orzechowsk: Create separate method isUserRiding as abstraction of all those checks...
+        
         // if rider rides, phone should be in pocket.
         // in pocket is proxime (to leg)... If there is no proximity, he is probably not riding.
         if (this.includeProximityCheck && !this.isProxime()) {
