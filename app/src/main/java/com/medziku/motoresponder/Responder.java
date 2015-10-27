@@ -188,7 +188,7 @@ public class Responder {
 
         Location location = null;
         try {
-            location = this.locationUtility.getCurrentLocation().get();
+            location = this.locationUtility.getAccurateLocation().get();
         } catch (Exception e) {
             e.printStackTrace();
         }
