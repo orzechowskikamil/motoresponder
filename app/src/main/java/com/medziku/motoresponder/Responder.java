@@ -130,6 +130,10 @@ public class Responder {
 
         // TODO k.orzechowsk: Create separate method isUserRiding as abstraction of all those checks...
         
+        
+        // TODO k.orzechowsk: If you know way of making promise, why not make promisable light check and 
+        // TODO k.orzechowsk: proximity check? It will save battery aswell...
+        
         // if rider rides, phone should be in pocket.
         // in pocket is proxime (to leg)... If there is no proximity, he is probably not riding.
         if (this.includeProximityCheck && !this.isProxime()) {
