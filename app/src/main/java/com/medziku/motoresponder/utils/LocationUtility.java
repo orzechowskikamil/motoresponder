@@ -25,7 +25,8 @@ public class LocationUtility {
     private LocationManager locationManager;
     private int minimumTimeBetweenUpdates;
     private int minimumDistanceBetweenUpdates;
-    private int gettingLocationTimeout = 5 * 60 * 1000;
+    // 30 seconds is enough...
+    private int gettingLocationTimeout = 30 * 1000;
 
     public LocationUtility(Context context, int minimumTimeBetweenUpdates, int minimumDistanceBetweenUpdates) {
         this.context = context;
@@ -51,76 +52,75 @@ public class LocationUtility {
     public Future<Location> getCurrentLocation() {
         // TODO K. Orzechowski: maybe it will be good to move minimumDistance and minimumTime settings
         // from constructor to this method.
-
+ 
         final SettableFuture<Location> result = SettableFuture.create();
 
-        Location lastKnownLocation = this.locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        if (lastKnownLocation != null) {
-            result.set(lastKnownLocation);
-        } else {
-
-            final LocationListener listener = new LocationListener() {
-                public void onLocationChanged(Location loc) {
-                    // TODO K. Orzechowski: magic number, fix it
-                    Log.d("loc", "Location changed " + loc.getSpeed());
-                    if (loc.getAccuracy() >= 0.68) {
-                        result.set(loc);
-                        LocationUtility.this.locationManager.removeUpdates(this);
-                    }
+        final LocationListener listener = new LocationListener() {
+            
+            private float goodAccuracy = 0.68;
+            
+            public void onLocationChanged(Location loc) {
+                // TODO K. Orzechowski: magic number, fix it
+                Log.d("loc", "Location changed " + loc.getSpeed());
+                if (loc.getAccuracy() >= this.goodAccuracy) {
+                    listener.setFutureAndUnregister(loc);
                 }
+            }
 
 
-                @Override
-                public void onStatusChanged(String provider, int status, Bundle extras) {
-                    Log.d("loc", "Status changed " + status);
-                    if (status == LocationProvider.OUT_OF_SERVICE) {
-                        result.set(null);
-                        LocationUtility.this.locationManager.removeUpdates(this);
-                    }
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+                Log.d("loc", "Status changed " + status);
+                if (status == LocationProvider.OUT_OF_SERVICE) {
+                     listener.setFutureAndUnregister(null);
+                }
 //                        case LocationProvider.AVAILABLE:
 //
 //                        case LocationProvider.OUT_OF_SERVICE:
 //
 //                        case LocationProvider.TEMPORARILY_UNAVAILABLE:
 
-                }
+            }
 
-                // TODO k.orzechowsk resolve future also on timeout for example 10 000 ms
+            // TODO k.orzechowsk resolve future also on timeout for example 10 000 ms
 
-                @Override
-                public void onProviderEnabled(String provider) {
-                    // TODO K. Orzechowski: probably needs to do nothing, Marcin - correct me if I am wrong
-                }
+            @Override
+            public void onProviderEnabled(String provider) {
+                // TODO K. Orzechowski: probably needs to do nothing, Marcin - correct me if I am wrong
+            }
 
-                @Override
-                public void onProviderDisabled(String provider) {
-                    Log.d("loc", "Provider disabled " + provider);
-                    // TODO K. Orzechowski: probably needs to return timeout - Marcin correct me if I am wrong
-                    result.set(null);
-                    LocationUtility.this.locationManager.removeUpdates(this);
-                }
-            };
-
-
-            // this is safety timeout - if no location after desired time, it cancells location listening
-            new Timer().schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    result.set(null);
-                    LocationUtility.this.locationManager.removeUpdates(listener);
-                    Log.d("loc", "location timeout");
-                }
-            }, gettingLocationTimeout);
-
-            // TODO K. Orzechowski: add unregistering to all sets
+            @Override
+            public void onProviderDisabled(String provider) {
+                Log.d("loc", "Provider disabled " + provider);
+                // TODO K. Orzechowski: probably needs to return timeout - Marcin correct me if I am wrong
+                listener.setFutureAndUnregister(null);
+            }
+            
+            public void setFutureAndUnregister(Location location){
+                LocationUtility.this.locationManager.removeUpdates(this);
+                result.set(location);
+            }
+        };
 
 
-            this.locationManager.requestLocationUpdates(
-                    LocationManager.GPS_PROVIDER,
-                    this.minimumTimeBetweenUpdates,
-                    this.minimumDistanceBetweenUpdates,
-                    listener);
-        }
+        // this is safety timeout - if no location after desired time, it cancells location listening
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                listener.setFutureAndUnregister(null);
+                Log.d("loc", "location timeout");
+            }
+        }, gettingLocationTimeout);
+
+        // TODO K. Orzechowski: add unregistering to all sets
+
+
+        this.locationManager.requestLocationUpdates(
+            LocationManager.GPS_PROVIDER,
+            this.minimumTimeBetweenUpdates,
+            this.minimumDistanceBetweenUpdates,
+            listener);
+    
         return result;
     }
 }
