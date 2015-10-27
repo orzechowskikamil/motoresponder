@@ -109,6 +109,59 @@ public class Responder {
         // call this when phone is unlocked by user
         this.cancelAllHandling();
     }
+    
+    private boolean isUserNotRiding(){
+        // if rider rides, phone should be in pocket (ofc if somebody use phone during ride outside pocket, he should
+        // disable this option).
+        // in pocket is proxime (to leg or chest)... If there is no proximity, he is not riding.
+        if (this.includeProximityCheck && !this.isProxime()) {
+            return false;
+        }  
+        
+               // TODO k.orzechowsk: If you know way of making promise, why not make promisable light check and 
+        // TODO k.orzechowsk: proximity check? It will save battery aswell...
+        
+       // inside pocket should be dark. if it's light, he is probably not riding
+        if (this.includeLightCheck && this.isLightOutside()) {
+            return false;
+        }
+        
+        
+        // if phone doesn't report any movement we can also assume that user is not riding motorcycle
+        // TODO k.orzechowsk this name is plural, refactor it to motionSensorsReportsMovement
+        boolean deviceStayingStill = !this.motionSensorReportsMovement();
+        if (this.includeAccelerometerCheck && deviceStayingStill) {
+            return false;
+        }
+
+        // TODO k.orzechowsk add Bluetooth Beacon option to identify that you sit on bike IN FUTURE
+        // TODO k.orzechowsk add NFC tag in pocket option to identify that you sit on bike IN FUTURE
+        // TODO k.orzechowsk identify of stolen bikes via beacon in very very future when app will be popular.
+
+        // TODO k.orzechowsk add option to disable GPS, maybe someone don't want to use it, only gyro?
+        float speedKmh = this.getCurrentSpeedKmh();
+        
+      
+        boolean locationTimeouted = speedKmh == -1;
+        // TODO K. Orzechowski: this setting is for future, when I implement asking again for location after some time.
+        // TODO K. Orzechowski: for now it's just dumb if
+        if (this.interpretLocationTimeoutAsNotRiding && locationTimeouted) {
+            // if timeout, it means that phone is probably in home with no access to GPS satelites.
+            // so if no ride, no need to respond automatically
+            return false;
+        }
+
+        // TODO K. Orzechowski: add second check of speed if user is between sure riding speed and no riding speed
+        // for example: 15 km/h. It can be motorcycle or running. We make another check in few minutes - maybe
+        // we hit bigger speed and it become sure.
+
+        if (speedKmh <= this.sureRidingSpeed) {
+            return false;
+        }
+        
+        // all conditions when we are sure that user is not riding are not met - so user is riding. 
+        return true;
+    }
 
 
     /**
@@ -128,22 +181,7 @@ public class Responder {
             return;
         }
 
-        // TODO k.orzechowsk: Create separate method isUserRiding as abstraction of all those checks...
-        
-        
-        // TODO k.orzechowsk: If you know way of making promise, why not make promisable light check and 
-        // TODO k.orzechowsk: proximity check? It will save battery aswell...
-        
-        // if rider rides, phone should be in pocket.
-        // in pocket is proxime (to leg)... If there is no proximity, he is probably not riding.
-        if (this.includeProximityCheck && !this.isProxime()) {
-            return;
-        }
-
-        // inside pocket should be dark. if it's light, he is probably not riding
-        if (this.includeLightCheck && this.isLightOutside()) {
-            return;
-        }
+      
 
         // do not answer numbers which user doesnt want to autorespond
         if (!this.shouldRespondToThisNumber(phoneNumber)) {
@@ -152,67 +190,40 @@ public class Responder {
             // right now. Do it later and remove development bypass. (uncomment return)
             //return;
         }
-
-        // show notification to give user possibiity to cancel autorespond
+        
+         // show notification to give user possibiity to cancel autorespond
         if (this.showPendingNotification) {
             this.notifyAboutPendingAutoRespond();
         }
-
+        
         // wait some time before responding - give user time to get phone from the pocket
         // or from the desk and respond manually.
         // unlocking phone should break any responding at all
         // TODO K. Orzechowski: not sure if I am able to sleep main thread, and not got ANR
         this.sleep(this.waitBeforeResponding);
-
+        
         // now things will go automatically in one milisecond so it's not required to still show this
         if (this.showPendingNotification) {
             // TODO K. Orzechowski: hmmm. It can be a flaw - check all returns if some return
             // not cause to exit without unnotyfing
             this.unnotifyAboutPendingAutoRespond();
         }
-
-
+        
         // if phone is unlocked now, we can return - user heard ring, get phone and will
         // respond manually.
         if (this.assumePhoneUnlockedAsNotRiding && this.phoneIsUnlocked()) {
             return;
         }
-
-        // if phone doesn't report any movement we can also assume that user is not riding motorcycle
-        // TODO k.orzechowsk this name is plural, refactor it to motionSensorsReportsMovement
-        boolean deviceStayingStill = !this.motionSensorReportsMovement();
-        if (this.includeAccelerometerCheck && deviceStayingStill) {
-            return;
-        }
-
-        // TODO k.orzechowsk add Bluetooth Beacon option to identify that you sit on bike IN FUTURE
-        // TODO k.orzechowsk add NFC tag in pocket option to identify that you sit on bike IN FUTURE
-        // TODO k.orzechowsk identify of stolen bikes via beacon in very very future when app will be popular.
-
-
-        // TODO k.orzechowsk add option to disable GPS, maybe someone don't want to use it, only gyro?
-        float speedKmh = this.getCurrentSpeedKmh();
         
-      
-        boolean locationTimeouted = speedKmh == -1;
-        // TODO K. Orzechowski: this setting is for future, when I implement asking again for location after some time.
-        // TODO K. Orzechowski: for now it's just dumb if
-        if (this.interpretLocationTimeoutAsNotRiding && locationTimeouted) {
-            // if timeout, it means that phone is probably in home with no access to GPS satelites.
-            // so if no ride, no need to respond automatically
+        if (this.isUserNotRiding()){
             return;
         }
+
+       
+        
 
        this.bs.showStupidNotify("MotoResponder", "GPS speed: " + speedKmh);
 
-
-        // TODO K. Orzechowski: add second check of speed if user is between sure riding speed and no riding speed
-        // for example: 15 km/h. It can be motorcycle or running. We make another check in few minutes - maybe
-        // we hit bigger speed and it become sure.
-
-        if (speedKmh <= this.sureRidingSpeed) {
-            return;
-        }
 
         String message = this.generateAutoRespondMessage(phoneNumber);
         this.sendSMS(phoneNumber, message);
