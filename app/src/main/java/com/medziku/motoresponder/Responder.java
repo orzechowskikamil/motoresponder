@@ -204,7 +204,8 @@ public class Responder {
         }
 
         // -1 is value of speed for timeouted request.
-        float speed = (location != null) ? location.getSpeed() : -1;
+        float speedMs = (location != null) ? location.getSpeed() : -1;
+        float speedKmh = this.msToKmh(speedMs);
         this.bs.showStupidNotify("MotoResponder", "GPS speed: " + speed);
 
 
@@ -221,6 +222,10 @@ public class Responder {
         this.notifyAboutAutoRespond(phoneNumber);
 
 
+    }
+    
+    private float msToKmh(float speedMs){
+        return speedMs*3.6;
     }
 
     private void sleep(long timeoutMs) {
