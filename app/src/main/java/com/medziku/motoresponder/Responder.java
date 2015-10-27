@@ -149,11 +149,8 @@ public class Responder {
         if (!this.shouldRespondToThisNumber(phoneNumber)) {
 
             // TODO K. Orzechowski: I disabled this for now because it's not most important part of application
-            // right now. Do it later and remove development bypass.
-            boolean isDevelopment = true;
-            if (!isDevelopment) {
-                return;
-            }
+            // right now. Do it later and remove development bypass. (uncomment return)
+            //return;
         }
 
         // show notification to give user possibiity to cancel autorespond
