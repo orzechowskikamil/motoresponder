@@ -90,6 +90,7 @@ public class Responder {
 
     public Responder(BackgroundService bs, LocationUtility locationUtility, LockStateUtility lockStateUtility) {
         // probably we have to start every onsmsreceived in new thread
+        // TODO k.orzechowski: refactor it to something like RespondTask constructed again for every response.
         this.bs = bs;
         this.locationUtility = locationUtility;
         this.lockStateUtility = lockStateUtility;
@@ -174,6 +175,7 @@ public class Responder {
         // for now for simplification just wait one second forclaryfying sensor values
 
         // TODO K. Orzechowski: not sure if this is safe or lock main thread
+        // TODO K.orzechowski: not sure if it is required at all.
         this.sleep(waitAfterReceivingMsgOrCall);
 
         // if phone is unlocked we do not need to autorespond at all.
