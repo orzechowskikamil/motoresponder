@@ -177,7 +177,8 @@ public class Responder {
 
         // if phone doesn't report any movement we can also assume that user is not riding motorcycle
         // TODO k.orzechowsk this name is plural, refactor it to motionSensorsReportsMovement
-        if (this.includeAccelerometerCheck && !this.motionSensorReportsMovement()) {
+        boolean deviceStayingStill = !this.motionSensorReportsMovement();
+        if (this.includeAccelerometerCheck && deviceStayingStill) {
             return;
         }
 
@@ -186,15 +187,11 @@ public class Responder {
         // TODO k.orzechowsk identify of stolen bikes via beacon in very very future when app will be popular.
 
 
-        Location location = null;
-        try {
-            location = this.locationUtility.getAccurateLocation().get();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        boolean locationTimeouted = location == null;
-
+        // TODO k.orzechowsk add option to disable GPS, maybe someone don't want to use it, only gyro?
+        float speedKmh = this.getCurrentSpeedKmh();
+        
+      
+        boolean locationTimeouted = speedKmh == -1;
         // TODO K. Orzechowski: this setting is for future, when I implement asking again for location after some time.
         // TODO K. Orzechowski: for now it's just dumb if
         if (this.interpretLocationTimeoutAsNotRiding && locationTimeouted) {
@@ -203,17 +200,14 @@ public class Responder {
             return;
         }
 
-        // -1 is value of speed for timeouted request.
-        float speedMs = (location != null) ? location.getSpeed() : -1;
-        float speedKmh = this.msToKmh(speedMs);
-        this.bs.showStupidNotify("MotoResponder", "GPS speed: " + speed);
+       this.bs.showStupidNotify("MotoResponder", "GPS speed: " + speedKmh);
 
 
         // TODO K. Orzechowski: add second check of speed if user is between sure riding speed and no riding speed
         // for example: 15 km/h. It can be motorcycle or running. We make another check in few minutes - maybe
         // we hit bigger speed and it become sure.
 
-        if (speed <= this.sureRidingSpeed) {
+        if (speedKmh <= this.sureRidingSpeed) {
             return;
         }
 
@@ -222,6 +216,23 @@ public class Responder {
         this.notifyAboutAutoRespond(phoneNumber);
 
 
+    }
+    
+    /**
+     * @return Speed in km/h or -1 if location request timeouted. 
+     */
+    private float getCurrentSpeedKmh(){
+        Location location = null;
+        try {
+            location = this.locationUtility.getAccurateLocation().get();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+         // -1 is value of speed for timeouted request.
+        float speedMs = (location == null) ?  -1 : location.getSpeed();
+        float speedKmh = this.msToKmh(speedMs);
+        return speedKmh;
     }
     
     private float msToKmh(float speedMs){
