@@ -201,7 +201,7 @@ public class BackgroundService extends Service {
 
 
     public boolean isProxime() {
-        return this.currentProximity > (this.proximitySensor.getMaximumRange() / 2);
+        return this.currentProximity == this.proximitySensor.getMinimumRange();
     }
 
     public boolean isLightOutside() {
