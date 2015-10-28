@@ -26,11 +26,7 @@ import com.medziku.motoresponder.utils.*;
 public class BackgroundService extends Service {
 
 
-
-
-
     private boolean sensorListenersRegistered = false;
-
 
 
     private int notificationId = 0;
@@ -82,7 +78,7 @@ public class BackgroundService extends Service {
         this.lockStateUtility = new LockStateUtility(this);
         this.sensorsUtility = new SensorsUtility(this);
 
-        this.responder = new Responder(this, this.locationUtility, this.lockStateUtility);
+        this.responder = new Responder(this, this.locationUtility, this.lockStateUtility, this.sensorsUtility);
 
         this.smsUtility.listenForSMS(new SMSReceivedCallback() {
             @Override
@@ -157,8 +153,6 @@ public class BackgroundService extends Service {
     }
 
 
-
-
     //from activity
 
     private void onCallReceived(String phoneNumber) {
@@ -174,8 +168,6 @@ public class BackgroundService extends Service {
     }
 
     //end from activity
-
-
 
 
 }
