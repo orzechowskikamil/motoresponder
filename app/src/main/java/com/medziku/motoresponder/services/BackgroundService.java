@@ -201,7 +201,9 @@ public class BackgroundService extends Service {
 
 
     public boolean isProxime() {
-        return this.currentProximity == this.proximitySensor.getMinimumRange();
+        // maximum is away, and not maximum is proxime.
+        // TODO K. Orzechowski: add self teaching mechanism of storing minimum and maximum.
+        return this.currentProximity != this.proximitySensor.getMaximumRange();
     }
 
     public boolean isLightOutside() {
@@ -227,7 +229,8 @@ public class BackgroundService extends Service {
     }
 
     private void onSMSReceived(String phoneNumber, String message) {
-        //this.showToast("SMS arrived! Phone number: " + phoneNumber + ", message: " + message);//TODO change to notification
+        //this.showToast("SMS arrived! Phone number: " + phoneNumber + ", message: " + message);
+        // TODO change to notification
 
 
         this.responder.onSMSReceived(phoneNumber);
