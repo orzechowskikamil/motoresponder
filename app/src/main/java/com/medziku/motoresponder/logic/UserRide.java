@@ -1,9 +1,11 @@
 package com.medziku.motoresponder.logic;
 
 import android.location.Location;
-import com.medziku.motoresponder.services.BackgroundService;
 import com.medziku.motoresponder.utils.LocationUtility;
+import com.medziku.motoresponder.utils.MotionUtility;
 import com.medziku.motoresponder.utils.SensorsUtility;
+
+import java.util.concurrent.ExecutionException;
 
 /**
  * This class represent if user ride or not.
@@ -12,6 +14,7 @@ public class UserRide {
 
     private LocationUtility locationUtility;
     private SensorsUtility sensorsUtility;
+    private MotionUtility motionUtility;
 
 
     /**
@@ -42,9 +45,10 @@ public class UserRide {
     public int maybeRidingSpeed = 15;
     public int sureRidingSpeed = 60;
 
-    public UserRide(LocationUtility locationUtility, SensorsUtility sensorsUtility) {
+    public UserRide(LocationUtility locationUtility, SensorsUtility sensorsUtility, MotionUtility motionUtility) {
         this.locationUtility = locationUtility;
         this.sensorsUtility = sensorsUtility;
+        this.motionUtility = motionUtility;
     }
 
 
@@ -103,6 +107,12 @@ public class UserRide {
 
 
     private boolean motionSensorReportsMovement() {
+        try {
+            return this.motionUtility.isDeviceInMotion().get();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         // TODO K. Orzechowski: using here also gyroscope and magneometer is not a bad idea
         // maybe other method will be required for it.
         // TODO K. Orzechowski: if accelerometer does not report movement, return false, otherwise true.
