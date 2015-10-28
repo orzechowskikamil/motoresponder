@@ -8,8 +8,6 @@ import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -20,28 +18,20 @@ import com.medziku.motoresponder.Responder;
 import com.medziku.motoresponder.activity.SettingsActivity;
 import com.medziku.motoresponder.callbacks.CallCallback;
 import com.medziku.motoresponder.callbacks.SMSReceivedCallback;
-import com.medziku.motoresponder.utils.CallsUtility;
-import com.medziku.motoresponder.utils.LocationUtility;
-import com.medziku.motoresponder.utils.LockStateUtility;
-import com.medziku.motoresponder.utils.SMSUtility;
+import com.medziku.motoresponder.utils.*;
 
 /**
  * Created by medziku on 22.09.15.
  */
 public class BackgroundService extends Service {
 
-    public static final int DARK_VALUE = 3;
 
-    private SensorEventListener sensorEventListener;
-    private SensorManager sensorManager;
 
-    private Sensor proximitySensor;
-    private Sensor lightSensor;
+
 
     private boolean sensorListenersRegistered = false;
 
-    private float currentProximity;
-    private float lightValue;
+
 
     private int notificationId = 0;
 
@@ -54,6 +44,7 @@ public class BackgroundService extends Service {
 
     private Responder responder;
     private LockStateUtility lockStateUtility;
+    private SensorsUtility sensorsUtility;
 
     //end from activity
 
@@ -73,7 +64,7 @@ public class BackgroundService extends Service {
     public void onDestroy() {
         super.onDestroy();
         hideNotification();
-        unregisterSensors();//TODO powinna byc takze mozliwosc wyrejestrowania w on command started dla konkretnej komendy
+        this.sensorsUtility.unregisterSensors();//TODO powinna byc takze mozliwosc wyrejestrowania w on command started dla konkretnej komendy
         Log.d("BackgroundService", "destroed");
     }
 
@@ -89,6 +80,7 @@ public class BackgroundService extends Service {
         this.smsUtility = new SMSUtility(this);
         this.callsUtility = new CallsUtility(this);
         this.lockStateUtility = new LockStateUtility(this);
+        this.sensorsUtility = new SensorsUtility(this);
 
         this.responder = new Responder(this, this.locationUtility, this.lockStateUtility);
 
@@ -108,31 +100,9 @@ public class BackgroundService extends Service {
 
         //end from activity
 
-
-        registerSensors();
-
         showNotification();
     }
 
-    private void registerSensors() {//TODO move in code
-        if (this.sensorListenersRegistered) {
-            return;
-        }
-        this.sensorManager = (SensorManager) getApplicationContext().getSystemService(Context.SENSOR_SERVICE);
-        this.proximitySensor = this.sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
-        this.lightSensor = this.sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
-        this.sensorEventListener = new BackgroundSensorEventListener();
-
-        if (this.proximitySensor != null) {
-            this.sensorManager.registerListener(this.sensorEventListener, this.proximitySensor, SensorManager.SENSOR_DELAY_NORMAL);
-        }
-
-        if (this.lightSensor != null) {
-            this.sensorManager.registerListener(this.sensorEventListener, this.lightSensor, SensorManager.SENSOR_DELAY_NORMAL);
-        }
-        this.sensorListenersRegistered = true;
-
-    }
 
     @Override
     public boolean onUnbind(Intent intent) {
@@ -187,39 +157,6 @@ public class BackgroundService extends Service {
     }
 
 
-    //////////////
-
-    private void setCurrentProximity(float currentProximity) {
-        this.currentProximity = currentProximity;
-        Log.d("proximity", Float.toString(currentProximity));//TODO zmienic logger na Slf4j
-    }
-
-    private void setLightValue(float lightValue) {
-        this.lightValue = lightValue;
-        Log.d("light", Float.toString(lightValue));
-    }
-
-
-    public boolean isProxime() {
-        // maximum is away, and not maximum is proxime.
-        // TODO K. Orzechowski: add self teaching mechanism of storing minimum and maximum.
-        return this.currentProximity != this.proximitySensor.getMaximumRange();
-    }
-
-    public boolean isLightOutside() {
-        return this.lightValue < this.DARK_VALUE;
-    }
-
-
-    @Deprecated
-    private void unregisterSensors() {//TODO refactor
-        if (!this.sensorListenersRegistered) {
-            return;
-        }
-        this.sensorManager.unregisterListener(this.sensorEventListener);
-
-        this.sensorListenersRegistered = false;
-    }
 
 
     //from activity
@@ -239,21 +176,6 @@ public class BackgroundService extends Service {
     //end from activity
 
 
-    private class BackgroundSensorEventListener implements SensorEventListener {
-        @Override
-        public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        }
 
-        @Override
-        public void onSensorChanged(SensorEvent event) {
-            if (event.sensor.getType() == Sensor.TYPE_PROXIMITY) {
-                BackgroundService.this.setCurrentProximity(event.values[0]);
-            }
-
-            if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
-                BackgroundService.this.setLightValue(event.values[0]);
-            }
-        }
-    }
 
 }
