@@ -147,7 +147,17 @@ public class BackgroundService extends Service {
 
     //mine
 
+    public void showStupidNotify(String title, String content) {
+        this.hideNotification();
+        this.showNotification(title, content, "test info");
+    }
+
+
     private void showNotification() {
+        this.showNotification("Test title", "Test content", "test info");
+    }
+
+    private void showNotification(String title, String content, String info) {
         Intent resultIntent = new Intent(this, SettingsActivity.class);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         stackBuilder.addParentStack(SettingsActivity.class);
@@ -159,9 +169,9 @@ public class BackgroundService extends Service {
                 );
         Notification.Builder notificationBuilder = new Notification.Builder(getApplicationContext());
         notificationBuilder.setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle("Test title")
-                .setContentText("Test content")
-                .setContentInfo("Test onfo")
+                .setContentTitle(title)
+                .setContentText(content)
+                .setContentInfo(info)
                 .setContentIntent(resultPendingIntent);
         Notification notification = notificationBuilder.build();
         notification.flags = Notification.FLAG_ONGOING_EVENT;
@@ -191,7 +201,7 @@ public class BackgroundService extends Service {
 
 
     public boolean isProxime() {
-        return this.currentProximity > (this.proximitySensor.getMaximumRange() / 2);
+        return this.currentProximity == this.proximitySensor.getMinimumRange();
     }
 
     public boolean isLightOutside() {
@@ -228,7 +238,8 @@ public class BackgroundService extends Service {
 
     private class BackgroundSensorEventListener implements SensorEventListener {
         @Override
-        public void onAccuracyChanged(Sensor sensor, int accuracy) {}
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        }
 
         @Override
         public void onSensorChanged(SensorEvent event) {
