@@ -1,7 +1,5 @@
 package com.medziku.motoresponder;
 
-import android.location.Location;
-
 import com.medziku.motoresponder.logic.NumberRules;
 import com.medziku.motoresponder.logic.RespondingDecider;
 import com.medziku.motoresponder.logic.UserRide;
@@ -14,7 +12,6 @@ import com.medziku.motoresponder.utils.SensorsUtility;
  * Created by Kamil on 2015-09-08.
  */
 public class Responder {
-    private final LocationUtility locationUtility;
     private final SensorsUtility sensorsUtility;
 
     // TODO refactor it to create RespondingDecider class where this class will become abstract decision about responding or not
@@ -47,18 +44,16 @@ public class Responder {
 
     private LockStateUtility lockStateUtility;
 
-    private BackgroundService bs;//TODO
     private RespondingDecider respondingDecider;
 
 
     public Responder(BackgroundService bs, LocationUtility locationUtility, LockStateUtility lockStateUtility, SensorsUtility sensorsUtility) {
         // probably we have to start every onsmsreceived in new thread
         // TODO k.orzechowski: refactor it to something like RespondTask constructed again for every response.
-        this.bs = bs;
-        this.locationUtility = locationUtility;
+        LocationUtility locationUtility1 = locationUtility;
         this.lockStateUtility = lockStateUtility;
         this.sensorsUtility = sensorsUtility;
-        this.respondingDecider = new RespondingDecider(new UserRide(this.locationUtility, this.sensorsUtility), new NumberRules());
+        this.respondingDecider = new RespondingDecider(new UserRide(locationUtility1, this.sensorsUtility), new NumberRules());
     }
 
     public void onSMSReceived(String phoneNumber) {
@@ -174,7 +169,7 @@ public class Responder {
     private void notifyAboutAutoRespond(String phoneNumber) {
         // this should show some toast like this: 'motoresponder responded XXX person for you. call him'
         // ofc if setting allow this
-        if (this.notifyAboutAutoRespond == false) {
+        if (!this.notifyAboutAutoRespond) {
             return;
         }
         // TODO K. Orzechowski: Implement showing notification , best if with events.

@@ -130,8 +130,7 @@ public class UserRide {
 
         // -1 is value of speed for timeouted request.
         float speedMs = (location == null) ? -1 : location.getSpeed();
-        float speedKmh = this.msToKmh(speedMs);
-        return speedKmh;
+        return this.msToKmh(speedMs);
     }
 
 

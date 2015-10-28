@@ -9,7 +9,7 @@ import com.medziku.motoresponder.utils.CallsUtility;
 /**
  * Created by medziku on 22.09.15.
  */
-public class CallListener extends PhoneStateListener {//Responsible for incoming phone calls, phone state etc
+class CallListener extends PhoneStateListener {//Responsible for incoming phone calls, phone state etc
 
     private CallsUtility callsUtility;
     public CallListener(CallsUtility callsUtility) {

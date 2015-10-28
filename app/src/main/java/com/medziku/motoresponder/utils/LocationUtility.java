@@ -16,17 +16,11 @@ import java.util.concurrent.Future;
  */
 public class LocationUtility {
 
-    private Context context;
     private LocationManager locationManager;
-    private int minimumTimeBetweenUpdates = 500;
     private double goodAccuracy = 0.68;
-    private int minimumDistanceBetweenUpdates = 0;
-    // 30 seconds is enough...
-    private int gettingLocationTimeout = 30 * 1000;
 
     public LocationUtility(Context context) {
-        this.context = context;
-        this.locationManager = (LocationManager) this.context.getSystemService(Context.LOCATION_SERVICE);
+        this.locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
     }
 
 
@@ -82,6 +76,7 @@ public class LocationUtility {
 
 
         // this is safety timeout - if no location after desired time, it cancells location listening
+        int gettingLocationTimeout = 30 * 1000;
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
@@ -91,10 +86,12 @@ public class LocationUtility {
             }
         }, gettingLocationTimeout);
 
+        int minimumTimeBetweenUpdates = 500;
+        int minimumDistanceBetweenUpdates = 0;
         this.locationManager.requestLocationUpdates(
                 LocationManager.GPS_PROVIDER,
-                this.minimumTimeBetweenUpdates,
-                this.minimumDistanceBetweenUpdates,
+                minimumTimeBetweenUpdates,
+                minimumDistanceBetweenUpdates,
                 listener);
 
         return result;

@@ -11,15 +11,13 @@ import android.util.Log;
  */
 public class LockStateUtility {
 
-    private Context context;
     private boolean phoneUnlocked;
 
     public LockStateUtility(Context context) {
-        this.context = context;
-        this.context.registerReceiver(new UserPresentBroadcastReceiver(),
+        context.registerReceiver(new UserPresentBroadcastReceiver(),
                 new IntentFilter("android.intent.action.USER_PRESENT"));
 
-        this.context.registerReceiver(new UserPresentBroadcastReceiver(),
+        context.registerReceiver(new UserPresentBroadcastReceiver(),
                 new IntentFilter("android.intent.action.SCREEN_OFF"));
 
         // if somebody started app, phone must be unlocked at start

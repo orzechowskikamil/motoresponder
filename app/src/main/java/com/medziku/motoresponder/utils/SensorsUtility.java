@@ -87,7 +87,7 @@ public class SensorsUtility {
     }
 
     public boolean isLightOutside() {
-        return this.lightValue < this.DARK_VALUE;
+        return this.lightValue < SensorsUtility.DARK_VALUE;
     }
 
 
