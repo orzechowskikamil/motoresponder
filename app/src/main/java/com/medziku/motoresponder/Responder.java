@@ -2,6 +2,9 @@ package com.medziku.motoresponder;
 
 import android.location.Location;
 
+import com.medziku.motoresponder.logic.NumberRules;
+import com.medziku.motoresponder.logic.RespondingDecider;
+import com.medziku.motoresponder.logic.UserRide;
 import com.medziku.motoresponder.services.BackgroundService;
 import com.medziku.motoresponder.utils.LocationUtility;
 import com.medziku.motoresponder.utils.LockStateUtility;
@@ -10,8 +13,9 @@ import com.medziku.motoresponder.utils.LockStateUtility;
  * Created by Kamil on 2015-09-08.
  */
 public class Responder {
+    private final LocationUtility locationUtility;
 
-    // TODO refactor it to create RespondingDecision class where this class will become abstract decision about responding or not 
+    // TODO refactor it to create RespondingDecider class where this class will become abstract decision about responding or not
     // while extracting to other classes process of gathering location or sending sms logic
 
     // TODO k.orzechowskk create action log where every decision is stored and USER can debug settings and see FLOW of algorithm
@@ -31,8 +35,6 @@ public class Responder {
     public boolean assumePhoneUnlockedAsNotRiding = false;
 
 
-
-
     public long waitForAnotherGPSCheckTimeout = 20000;
 
     /**
@@ -44,6 +46,7 @@ public class Responder {
     private LockStateUtility lockStateUtility;
 
     private BackgroundService bs;//TODO
+    private RespondingDecider respondingDecider;
 
 
     public Responder(BackgroundService bs, LocationUtility locationUtility, LockStateUtility lockStateUtility) {
@@ -52,6 +55,7 @@ public class Responder {
         this.bs = bs;
         this.locationUtility = locationUtility;
         this.lockStateUtility = lockStateUtility;
+        this.respondingDecider=new RespondingDecider(new UserRide(this.bs, this.locationUtility), new NumberRules());
     }
 
     public void onSMSReceived(String phoneNumber) {
@@ -68,8 +72,6 @@ public class Responder {
         // call this when phone is unlocked by user
         this.cancelAllHandling();
     }
-
-
 
 
     /**
@@ -89,6 +91,10 @@ public class Responder {
             this.notifyAboutPendingAutoRespond();
         }
 
+
+        if (!this.respondingDecider.shouldRespond(phoneNumber)) {
+            return;
+        }
 
         // wait some time before responding - give user time to get phone from the pocket
         // or from the desk and respond manually.
@@ -110,10 +116,6 @@ public class Responder {
         }
 
 
-
-
-
-
 //        this.bs.showStupidNotify("MotoResponder", "GPS speed: " + speedKmh);
 
 
@@ -123,8 +125,6 @@ public class Responder {
 
 
     }
-
-
 
 
     private void sleep(long timeoutMs) {
@@ -145,7 +145,6 @@ public class Responder {
     }
 
 
-
     private void notifyAboutPendingAutoRespond() {
         // TODO K. Orzechowski:show something, for example toast that autorespond is pending, with possibility to cancel it by user
     }
@@ -153,8 +152,6 @@ public class Responder {
     private void unnotifyAboutPendingAutoRespond() {
         // TODO K. Orzechowski:  hide toast shown by notifyAoutPendingautorespond
     }
-
-
 
 
     private String generateAutoRespondMessage(String phoneNumber) {
@@ -179,8 +176,6 @@ public class Responder {
         }
         // TODO K. Orzechowski: Implement showing notification , best if with events.
     }
-
-
 
 
 }
