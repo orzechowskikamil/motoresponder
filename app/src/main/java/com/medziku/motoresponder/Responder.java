@@ -57,11 +57,6 @@ public class Responder {
     public long waitForAnotherGPSCheckTimeout = 20000;
 
     /**
-     * Time to wait before anything will be done in terms of handling sms/call
-     */
-    // TODO K. Orzechowski: for development set to 100, for normal it should be 1000 at least
-    public long waitAfterReceivingMsgOrCall = 1000;
-    /**
      * Time for user to get phone out of pocket and respond
      */
     // TODO K. Orzechowski: for development set to 100, for real it should be 10 000 at least
@@ -110,24 +105,24 @@ public class Responder {
         // call this when phone is unlocked by user
         this.cancelAllHandling();
     }
-    
-    private boolean isUserNotRiding(){
+
+    private boolean isUserNotRiding() {
         // if rider rides, phone should be in pocket (ofc if somebody use phone during ride outside pocket, he should
         // disable this option).
         // in pocket is proxime (to leg or chest)... If there is no proximity, he is not riding.
         if (this.includeProximityCheck && !this.isProxime()) {
             return false;
-        }  
-        
-               // TODO k.orzechowsk: If you know way of making promise, why not make promisable light check and 
+        }
+
+        // TODO k.orzechowsk: If you know way of making promise, why not make promisable light check and
         // TODO k.orzechowsk: proximity check? It will save battery aswell...
-        
-       // inside pocket should be dark. if it's light, he is probably not riding
+
+        // inside pocket should be dark. if it's light, he is probably not riding
         if (this.includeLightCheck && this.isLightOutside()) {
             return false;
         }
-        
-        
+
+
         // if phone doesn't report any movement we can also assume that user is not riding motorcycle
         // TODO k.orzechowsk this name is plural, refactor it to motionSensorsReportsMovement
         boolean deviceStayingStill = !this.motionSensorReportsMovement();
@@ -141,8 +136,8 @@ public class Responder {
 
         // TODO k.orzechowsk add option to disable GPS, maybe someone don't want to use it, only gyro?
         float speedKmh = this.getCurrentSpeedKmh();
-        
-      
+
+
         boolean locationTimeouted = speedKmh == -1;
         // TODO K. Orzechowski: this setting is for future, when I implement asking again for location after some time.
         // TODO K. Orzechowski: for now it's just dumb if
@@ -159,7 +154,7 @@ public class Responder {
         if (speedKmh <= this.sureRidingSpeed) {
             return false;
         }
-        
+
         // all conditions when we are sure that user is not riding are not met - so user is riding. 
         return true;
     }
@@ -172,18 +167,11 @@ public class Responder {
      * @param phoneNumber Phone number of incoming call/sms
      */
     private void handleIncoming(final String phoneNumber) {
-        // for now for simplification just wait one second forclaryfying sensor values
-
-        // TODO K. Orzechowski: not sure if this is safe or lock main thread
-        // TODO K.orzechowski: not sure if it is required at all.
-        this.sleep(waitAfterReceivingMsgOrCall);
-
         // if phone is unlocked we do not need to autorespond at all.
         if (this.assumePhoneUnlockedAsNotRiding && this.phoneIsUnlocked()) {
             return;
         }
 
-      
 
         // do not answer numbers which user doesnt want to autorespond
         if (!this.shouldRespondToThisNumber(phoneNumber)) {
@@ -192,39 +180,37 @@ public class Responder {
             // right now. Do it later and remove development bypass. (uncomment return)
             //return;
         }
-        
-         // show notification to give user possibiity to cancel autorespond
+
+        // show notification to give user possibiity to cancel autorespond
         if (this.showPendingNotification) {
             this.notifyAboutPendingAutoRespond();
         }
-        
+
         // wait some time before responding - give user time to get phone from the pocket
         // or from the desk and respond manually.
         // unlocking phone should break any responding at all
         // TODO K. Orzechowski: not sure if I am able to sleep main thread, and not got ANR
         this.sleep(this.waitBeforeResponding);
-        
+
         // now things will go automatically in one milisecond so it's not required to still show this
         if (this.showPendingNotification) {
             // TODO K. Orzechowski: hmmm. It can be a flaw - check all returns if some return
             // not cause to exit without unnotyfing
             this.unnotifyAboutPendingAutoRespond();
         }
-        
+
         // if phone is unlocked now, we can return - user heard ring, get phone and will
         // respond manually.
         if (this.assumePhoneUnlockedAsNotRiding && this.phoneIsUnlocked()) {
             return;
         }
-        
-        if (this.isUserNotRiding()){
+
+        if (this.isUserNotRiding()) {
             return;
         }
 
-       
-        
 
-       this.bs.showStupidNotify("MotoResponder", "GPS speed: " + speedKmh);
+//        this.bs.showStupidNotify("MotoResponder", "GPS speed: " + speedKmh);
 
 
         String message = this.generateAutoRespondMessage(phoneNumber);
@@ -233,26 +219,26 @@ public class Responder {
 
 
     }
-    
+
     /**
-     * @return Speed in km/h or -1 if location request timeouted. 
+     * @return Speed in km/h or -1 if location request timeouted.
      */
-    private float getCurrentSpeedKmh(){
+    private float getCurrentSpeedKmh() {
         Location location = null;
         try {
             location = this.locationUtility.getAccurateLocation().get();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
-         // -1 is value of speed for timeouted request.
-        float speedMs = (location == null) ?  -1 : location.getSpeed();
+
+        // -1 is value of speed for timeouted request.
+        float speedMs = (location == null) ? -1 : location.getSpeed();
         float speedKmh = this.msToKmh(speedMs);
         return speedKmh;
     }
-    
-    private float msToKmh(float speedMs){
-        return speedMs*3.6;
+
+    private float msToKmh(float speedMs) {
+        return (float) (speedMs * 3.6);
     }
 
     private void sleep(long timeoutMs) {
