@@ -18,6 +18,9 @@ public class LocationUtility {
 
     private LocationManager locationManager;
     private double goodAccuracy = 0.68;
+    public int gettingLocationTimeout = 30 * 1000;
+    public int minimumTimeBetweenUpdates = 500;
+    public int minimumDistanceBetweenUpdates = 0;
 
     public LocationUtility(Context context) {
         this.locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
@@ -76,7 +79,7 @@ public class LocationUtility {
 
 
         // this is safety timeout - if no location after desired time, it cancells location listening
-        int gettingLocationTimeout = 30 * 1000;
+        
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
@@ -84,14 +87,13 @@ public class LocationUtility {
                 LocationUtility.this.locationManager.removeUpdates(listener);
                 result.set(null);
             }
-        }, gettingLocationTimeout);
+        }, this.gettingLocationTimeout);
 
-        int minimumTimeBetweenUpdates = 500;
-        int minimumDistanceBetweenUpdates = 0;
+       
         this.locationManager.requestLocationUpdates(
                 LocationManager.GPS_PROVIDER,
-                minimumTimeBetweenUpdates,
-                minimumDistanceBetweenUpdates,
+                this.minimumTimeBetweenUpdates,
+                this.minimumDistanceBetweenUpdates,
                 listener);
 
         return result;
