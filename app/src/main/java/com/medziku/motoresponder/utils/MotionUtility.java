@@ -18,7 +18,7 @@ public class MotionUtility {
     private SensorManager sensorManager;
     public MotionUtility(Context context) {
         this.sensorManager = (SensorManager)context.getSystemService(SENSOR_SERVICE);
-        this.accelerometer = this.sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        this.accelerometer = this.sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
     }
 
     public Future<Boolean> isDeviceInMotion() {
