@@ -12,8 +12,9 @@ public class MotionUtility {
     
     public double movementTreshold = 2;
     public int eventsNeeded=5;
-    // if no movement, listener got no events. NO events in two seconds - we assume phone laying still.
-    public int gettingAccelerationTimeout = 2*1000;
+    // if no movement, listener got no events. NO events in five seconds - we assume phone laying still.
+    public int gettingAccelerationTimeout = 5*1000;
+    public int accelerometerDelay = 500;
             
     private SensorManager sensorManager;
     public MotionUtility(Context context) {
@@ -22,6 +23,7 @@ public class MotionUtility {
     }
 
     public Future<Boolean> isDeviceInMotion() {
+        // TODO k.orzechowsk add TYPE_GYROSCOPE or TYPE_ROTATION_VECTOR
         SettableFuture<Boolean> result = SettableFuture.create();
 
         final SensorEventListener accelerometerSensorListener = new SensorEventListener() {
@@ -65,7 +67,7 @@ public class MotionUtility {
             }
         }, this.gettingAccelerationTimeout);
         
-        this.sensorManager.registerListener(accelerometerSensorListener, this.accelerometer, SensorManager.SENSOR_DELAY_UI);
+        this.sensorManager.registerListener(accelerometerSensorListener, this.accelerometer, this.accelerometerDelay);
 
 
         return result;
