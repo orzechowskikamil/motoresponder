@@ -5,7 +5,6 @@ import com.medziku.motoresponder.utils.LocationUtility;
 import com.medziku.motoresponder.utils.MotionUtility;
 import com.medziku.motoresponder.utils.SensorsUtility;
 
-import java.util.concurrent.ExecutionException;
 
 /**
  * This class represent if user ride or not.
@@ -40,8 +39,10 @@ public class UserRide {
      * If false, it will ignore accelerometer reading
      */
     public boolean includeAccelerometerCheck = true;
+    // TODO K. Orzechowski: use it later
     public boolean doAnotherGPSCheckIfNotSure = true;
 
+    // TODO K. Orzechowski: use it later
     public int maybeRidingSpeed = 15;
     public int sureRidingSpeed = 60;
 
@@ -115,8 +116,9 @@ public class UserRide {
 
         // TODO K. Orzechowski: using here also gyroscope and magneometer is not a bad idea
         // maybe other method will be required for it.
-        // TODO K. Orzechowski: if accelerometer does not report movement, return false, otherwise true.
-        return true;
+
+        // default - false
+        return false;
     }
 
     private boolean isProxime() {
@@ -126,6 +128,7 @@ public class UserRide {
     private boolean isLightOutside() {
         return this.sensorsUtility.isLightOutside();
     }
+
 
     /**
      * @return Speed in km/h or -1 if location request timeouted.
