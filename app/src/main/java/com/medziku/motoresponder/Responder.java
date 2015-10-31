@@ -99,6 +99,7 @@ public class Responder {
 
         new RespondingDecider(this.userRide, this.numberRules).execute(phoneNumber);
 
+        // TODO K. Orzechowski: uncomment this after getting info out from responding decider
 //
 //        // wait some time before responding - give user time to get phone from the pocket
 //        // or from the desk and respond manually.

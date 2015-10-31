@@ -70,18 +70,6 @@ public class UserRide {
         // TODO k.orzechowsk: If you know way of making promise, why not make promisable light check and
         // TODO k.orzechowsk: proximity check? It will save battery aswell...
 
-        // Light check seemed to be reundant with proximity sensor, and hard to measure because no standard min-max values
-        // so removed light sensor, proximity is enough
-//
-//        // inside pocket should be dark. if it's light, he is probably not riding
-//        if (this.includeLightCheck && this.isLightOutside()) {
-//            // TODO K. Orzechowski: it's for development uncomment it later
-//            Log.d("motoapp", "Device isn't in dark pocket");
-//            //   return false;
-//        } else {
-//            Log.d("motoapp", "Device is in dark pocket");
-//        }
-
 
         // if phone doesn't report any movement we can also assume that user is not riding motorcycle
         // TODO k.orzechowsk this name is plural, refactor it to motionSensorsReportsMovement
@@ -141,10 +129,6 @@ public class UserRide {
     private boolean isProxime() {
         return this.sensorsUtility.isProxime();
     }
-
-//    private boolean isLightOutside() {
-//        return this.sensorsUtility.isLightOutside();
-//    }
 
 
     /**
