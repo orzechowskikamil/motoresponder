@@ -17,15 +17,28 @@ import java.util.concurrent.Future;
  */
 public class MotionUtility {
 
-    private final Sensor accelerometer;
-    public double movementTreshold = 2;
-    // TODO K. Orzechowski: it for development, normally it should be like 5-10
-    public int eventsNeeded = 29;
-    // if no movement, listener got no events. NO events in five seconds - we assume phone laying still.
-    // TODO K. Orzechowski: set up for development, normally it should be 5*1000
-    public int gettingAccelerationTimeout = 103 * 1000;
+    private final Sensor linearAccelerometer;
+
     /**
-     * Microseconds! 10^-6 of second!
+     * for TYPE_LINEAR_ACCELERATION linearAccelerometer, differences between accelerations of laying still
+     * phone shouldn't be bigger than 0.2
+     */
+    public double accelerationDeltaTresholdForMovement = 0.2;
+
+    /**
+     * Events with acceleration delta bigger than accelerationDeltaTresholdForMovement to assume that phone is moving,
+     * user is riding.
+     */
+    public int aboveTresholdEventsNeededToAssumeMovement = 6;
+
+    /**
+     * App wait for this time (milliseconds) for aboveTresholdEventsNeededToAssumeMovement amounts of events before
+     * it assume that there is no movement of device
+     */
+    public int measuringMovementTimeout = 10 * 1000;
+
+    /**
+     * It's in microseconds! 10^-6 of second!
      */
     public int accelerometerDelayUs = 300 * 1000;
 
@@ -33,16 +46,16 @@ public class MotionUtility {
 
     public MotionUtility(Context context) {
         this.sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-        this.accelerometer = this.sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
+        this.linearAccelerometer = this.sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
     }
 
     public Future<Boolean> isDeviceInMotion() {
-        // TODO k.orzechowsk add TYPE_GYROSCOPE or TYPE_ROTATION_VECTOR
         final SettableFuture<Boolean> result = SettableFuture.create();
 
         final SensorEventListener listener = new SensorEventListener() {
 
-            private double accelerationLast = SensorManager.GRAVITY_EARTH;
+            private boolean firstEventAlreadyHappened = false;
+            private double accelerationLast = 0;
 
             private int eventCounter = 0;
             private int xCoord = 0;
@@ -58,20 +71,30 @@ public class MotionUtility {
                 double z = e.values[this.zCoord];
 
                 double accelerationCurrent = Math.sqrt(x * x + y * y + z * z);
+
+                if (firstEventAlreadyHappened == false) {
+                    this.accelerationLast = accelerationCurrent;
+                    this.firstEventAlreadyHappened = true;
+                    return;
+                }
+
                 double delta = this.accelerationLast - accelerationCurrent;
 
-                Log.d("motoapp", "MotionUtility: delta is" + delta + ", acc cur: " + accelerationCurrent);
 
-                if (delta > MotionUtility.this.movementTreshold) {
+                Log.d("motoapp", "MotionUtility: delta is " + delta + ", acc cur: " + accelerationCurrent);
+
+                if (delta > MotionUtility.this.accelerationDeltaTresholdForMovement) {
                     eventCounter++;
                     Log.d("motoapp", "MotionUtility: delta overreached");
                 }
 
-                if (eventCounter > MotionUtility.this.eventsNeeded) {
+                if (eventCounter > MotionUtility.this.aboveTresholdEventsNeededToAssumeMovement) {
                     Log.d("motoapp", "MotionUtility: enough events captured, assuming motion");
                     MotionUtility.this.sensorManager.unregisterListener(this);
                     result.set(true);
                 }
+
+                this.accelerationLast = accelerationCurrent;
             }
 
             public void onAccuracyChanged(Sensor sensor, int accuracy) {
@@ -85,9 +108,9 @@ public class MotionUtility {
                 MotionUtility.this.sensorManager.unregisterListener(listener);
                 result.set(false);
             }
-        }, this.gettingAccelerationTimeout);
+        }, this.measuringMovementTimeout);
 
-        this.sensorManager.registerListener(listener, this.accelerometer, this.accelerometerDelayUs);
+        this.sensorManager.registerListener(listener, this.linearAccelerometer, this.accelerometerDelayUs);
         Log.d("motoapp", "MotionUtility: registered listener");
 
         return result;
