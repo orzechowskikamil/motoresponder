@@ -27,7 +27,7 @@ public class LockStateUtility {
 
     public boolean isPhoneUnlocked() {
         return phoneUnlocked;
-    }
+    } //
 
     private void setPhoneUnlocked(boolean phoneUnlocked) {
         this.phoneUnlocked = phoneUnlocked;
