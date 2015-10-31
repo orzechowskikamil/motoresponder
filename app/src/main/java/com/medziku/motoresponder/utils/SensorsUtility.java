@@ -71,12 +71,12 @@ public class SensorsUtility {
 
     private void setCurrentProximity(float currentProximity) {
         this.currentProximity = currentProximity;
-        Log.d("motoapp", "SensorsUtility: current proximity is: " + currentProximity);
+//        Log.d("motoapp", "SensorsUtility: current proximity is: " + currentProximity);
     }
 
     private void setLightValue(float lightValue) {
         this.lightValue = lightValue;
-        Log.d("motoapp", "SensorsUtility: light value is: " + lightValue);
+//        Log.d("motoapp", "SensorsUtility: light value is: " + lightValue);
     }
 
 
