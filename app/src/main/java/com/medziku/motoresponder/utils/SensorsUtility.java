@@ -16,18 +16,18 @@ public class SensorsUtility {
     private SensorManager sensorManager;
 
     private Sensor proximitySensor;
-    private Sensor lightSensor;
+//    private Sensor lightSensor;
 
-    public static final int DARK_VALUE = 3;
+//    public static final int DARK_VALUE = 3;
 
 
     private float currentProximity;
-    private float lightValue;
+//    private float lightValue;
 
     public SensorsUtility(Context context) {
         this.sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         this.proximitySensor = this.sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
-        this.lightSensor = this.sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+//        this.lightSensor = this.sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
 
         this.registerSensors();
     }
@@ -45,9 +45,9 @@ public class SensorsUtility {
                     SensorsUtility.this.setCurrentProximity(event.values[0]);
                 }
 
-                if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
-                    SensorsUtility.this.setLightValue(event.values[0]);
-                }
+//                if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
+//                    SensorsUtility.this.setLightValue(event.values[0]);
+//                }
             }
         };
 
@@ -60,24 +60,24 @@ public class SensorsUtility {
             );
         }
 
-        if (this.lightSensor != null) {
-            this.sensorManager.registerListener(
-                    this.sensorEventListener,
-                    this.lightSensor,
-                    SensorManager.SENSOR_DELAY_NORMAL
-            );
-        }
+//        if (this.lightSensor != null) {
+//            this.sensorManager.registerListener(
+//                    this.sensorEventListener,
+//                    this.lightSensor,
+//                    SensorManager.SENSOR_DELAY_NORMAL
+//            );
+//        }
     }
 
     private void setCurrentProximity(float currentProximity) {
         this.currentProximity = currentProximity;
-//        Log.d("motoapp", "SensorsUtility: current proximity is: " + currentProximity);
+        Log.d("motoapp", "SensorsUtility: current proximity is: " + currentProximity);
     }
 
-    private void setLightValue(float lightValue) {
-        this.lightValue = lightValue;
+//    private void setLightValue(float lightValue) {
+//        this.lightValue = lightValue;
 //        Log.d("motoapp", "SensorsUtility: light value is: " + lightValue);
-    }
+//    }
 
 
     public boolean isProxime() {
@@ -86,10 +86,10 @@ public class SensorsUtility {
         return this.currentProximity != this.proximitySensor.getMaximumRange();
     }
 
-    public boolean isLightOutside() {
-        this.lightSensor = this.lightSensor;
-        return this.lightValue < SensorsUtility.DARK_VALUE;
-    }
+//    public boolean isLightOutside() {
+//        this.lightSensor = this.lightSensor;
+//        return this.lightValue < SensorsUtility.DARK_VALUE;
+//    }
 
 
     public void unregisterSensors() {

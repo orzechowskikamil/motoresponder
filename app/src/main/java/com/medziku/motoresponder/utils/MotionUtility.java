@@ -64,7 +64,7 @@ public class MotionUtility {
 
 
             public void onSensorChanged(SensorEvent e) {
-                Log.d("motoapp", "MotionUtility: sensorChanged motion event");
+//                Log.d("motoapp", "MotionUtility: sensorChanged motion event");
 
                 double x = e.values[this.xCoord];
                 double y = e.values[this.yCoord];
@@ -81,15 +81,15 @@ public class MotionUtility {
                 double delta = this.accelerationLast - accelerationCurrent;
 
 
-                Log.d("motoapp", "MotionUtility: delta is " + delta + ", acc cur: " + accelerationCurrent);
+//                Log.d("motoapp", "MotionUtility: delta is " + delta + ", acc cur: " + accelerationCurrent);
 
                 if (delta > MotionUtility.this.accelerationDeltaTresholdForMovement) {
                     eventCounter++;
-                    Log.d("motoapp", "MotionUtility: delta overreached");
+//                    Log.d("motoapp", "MotionUtility: delta overreached");
                 }
 
                 if (eventCounter > MotionUtility.this.aboveTresholdEventsNeededToAssumeMovement) {
-                    Log.d("motoapp", "MotionUtility: enough events captured, assuming motion");
+//                    Log.d("motoapp", "MotionUtility: enough events captured, assuming motion");
                     MotionUtility.this.sensorManager.unregisterListener(this);
                     result.set(true);
                 }
@@ -104,14 +104,14 @@ public class MotionUtility {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                Log.d("motoapp", "MotionUtility: unregistered motion listener");
+//                Log.d("motoapp", "MotionUtility: unregistered motion listener");
                 MotionUtility.this.sensorManager.unregisterListener(listener);
                 result.set(false);
             }
         }, this.measuringMovementTimeout);
 
         this.sensorManager.registerListener(listener, this.linearAccelerometer, this.accelerometerDelayUs);
-        Log.d("motoapp", "MotionUtility: registered listener");
+//        Log.d("motoapp", "MotionUtility: registered listener");
 
         return result;
     }
