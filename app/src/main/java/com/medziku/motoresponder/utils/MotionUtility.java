@@ -24,7 +24,10 @@ public class MotionUtility {
     // if no movement, listener got no events. NO events in five seconds - we assume phone laying still.
     // TODO K. Orzechowski: set up for development, normally it should be 5*1000
     public int gettingAccelerationTimeout = 103 * 1000;
-    public int accelerometerDelay = 300;
+    /**
+     * Microseconds! 10^-6 of second!
+     */
+    public int accelerometerDelayUs = 300 * 1000;
 
     private SensorManager sensorManager;
 
@@ -57,15 +60,15 @@ public class MotionUtility {
                 double accelerationCurrent = Math.sqrt(x * x + y * y + z * z);
                 double delta = this.accelerationLast - accelerationCurrent;
 
-                Log.d("motoapp", "MotionUtility: delta is" + delta);
+                Log.d("motoapp", "MotionUtility: delta is" + delta + ", acc cur: " + accelerationCurrent);
 
                 if (delta > MotionUtility.this.movementTreshold) {
                     eventCounter++;
-                    Log.d("motoapp","MotionUtility: delta overreached");
+                    Log.d("motoapp", "MotionUtility: delta overreached");
                 }
 
                 if (eventCounter > MotionUtility.this.eventsNeeded) {
-                    Log.d("motoapp","MotionUtility: enough events captured, assuming motion");
+                    Log.d("motoapp", "MotionUtility: enough events captured, assuming motion");
                     MotionUtility.this.sensorManager.unregisterListener(this);
                     result.set(true);
                 }
@@ -84,7 +87,7 @@ public class MotionUtility {
             }
         }, this.gettingAccelerationTimeout);
 
-        this.sensorManager.registerListener(listener, this.accelerometer, this.accelerometerDelay);
+        this.sensorManager.registerListener(listener, this.accelerometer, this.accelerometerDelayUs);
         Log.d("motoapp", "MotionUtility: registered listener");
 
         return result;

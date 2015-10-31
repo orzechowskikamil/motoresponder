@@ -28,7 +28,6 @@ public class BackgroundService extends Service {
     //from activity
 
     private Responder responder;
-    private SensorsUtility sensorsUtility;
 
     //end from activity
 
@@ -48,7 +47,7 @@ public class BackgroundService extends Service {
     public void onDestroy() {
         super.onDestroy();
         hideNotification();
-        this.sensorsUtility.unregisterSensors();//TODO powinna byc takze mozliwosc wyrejestrowania w on command started dla konkretnej komendy
+//        this.sensorsUtility.unregisterSensors();//TODO powinna byc takze mozliwosc wyrejestrowania w on command started dla konkretnej komendy
         Log.d("BackgroundService", "destroed");
     }
 
@@ -60,14 +59,12 @@ public class BackgroundService extends Service {
 
         //from activity
 
-        LocationUtility locationUtility = new LocationUtility(this);
+
         SMSUtility smsUtility = new SMSUtility(this);
         CallsUtility callsUtility = new CallsUtility(this);
-        LockStateUtility lockStateUtility = new LockStateUtility(this);
-        MotionUtility motionUtility = new MotionUtility(this);
-        this.sensorsUtility = new SensorsUtility(this);
 
-        this.responder = new Responder(this, locationUtility, lockStateUtility, this.sensorsUtility, motionUtility);
+
+        this.responder = new Responder(this);
 
         smsUtility.listenForSMS(new SMSReceivedCallback() {
             @Override

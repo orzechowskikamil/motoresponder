@@ -44,15 +44,23 @@ public class Responder {
 
 
     private LockStateUtility lockStateUtility;
-    private RespondingDecider respondingDecider;
+    private NumberRules numberRules;
+    private UserRide userRide;
 
 
-    public Responder(BackgroundService bs, LocationUtility locationUtility, LockStateUtility lockStateUtility, SensorsUtility sensorsUtility, MotionUtility motionUtility) {
+    public Responder(BackgroundService bs) {
+
         // probably we have to start every onsmsreceived in new thread
-        // TODO k.orzechowski: refactor it to something like RespondTask constructed again for every response.
-        this.lockStateUtility = lockStateUtility;
 
-        this.respondingDecider = new RespondingDecider(new UserRide(locationUtility, sensorsUtility, motionUtility), new NumberRules());
+        LocationUtility locationUtility = new LocationUtility(bs);
+        this.lockStateUtility = new LockStateUtility(bs);
+        MotionUtility motionUtility = new MotionUtility(bs);
+        SensorsUtility sensorsUtility = new SensorsUtility(bs);
+
+
+        this.userRide = new UserRide(locationUtility, sensorsUtility, motionUtility);
+        this.numberRules = new NumberRules();
+
     }
 
     public void onSMSReceived(String phoneNumber) {
@@ -89,7 +97,7 @@ public class Responder {
         }
 
 
-        this.respondingDecider.execute(phoneNumber);
+        new RespondingDecider(this.userRide, this.numberRules).execute(phoneNumber);
 
 //
 //        // wait some time before responding - give user time to get phone from the pocket
