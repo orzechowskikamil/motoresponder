@@ -45,7 +45,12 @@ public class UserRide {
 
     // TODO K. Orzechowski: use it later
     public int maybeRidingSpeed = 15;
-    public int sureRidingSpeed = 60;
+
+    /**
+     * This is speed in kilometers which for sure is speed achieveable only by riding on motorcycle, and
+     * for example, not walking or running.
+     */
+    public double sureRidingSpeed = 40;
 
     public UserRide(LocationUtility locationUtility, SensorsUtility sensorsUtility, MotionUtility motionUtility) {
         this.locationUtility = locationUtility;

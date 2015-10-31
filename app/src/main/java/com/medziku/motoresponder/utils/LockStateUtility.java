@@ -25,8 +25,6 @@ public class LockStateUtility {
 
     /**
      * If true, phone is unlocked and turned screen on, if false - not
-     *
-     * @return
      */
     @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
     public boolean isPhoneUnlocked() {

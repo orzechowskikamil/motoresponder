@@ -11,6 +11,7 @@ import android.util.Log;
  * Reports about Light and Proximity current values.
  */
 public class SensorsUtility {
+    // TODO K. Orzechowski: try to make this class not listener, but reading current value from system.
 
     private SensorEventListener sensorEventListener;
     private SensorManager sensorManager;
@@ -25,7 +26,7 @@ public class SensorsUtility {
         this.registerSensors();
     }
 
-    private void registerSensors() {//TODO move in code
+    private void registerSensors() {
 
         this.sensorEventListener = new SensorEventListener() {
             @Override
@@ -54,7 +55,6 @@ public class SensorsUtility {
 
     private void setCurrentProximity(float currentProximity) {
         this.currentProximity = currentProximity;
-        Log.d("motoapp", "SensorsUtility: current proximity is: " + currentProximity);
     }
 
 

@@ -7,8 +7,9 @@ import java.net.URL;
 
 /**
  * This class makes decision if we should respond to particular SMS or ll.
+ * You can use every object of this class only once (every object is one decision)
  */
-// TODO K. Orzechowski: rename now
+// TODO K. Orzechowski: rename to RespondingDecision since you can use it only once
 public class RespondingDecider extends AsyncTask<String, Boolean, Boolean> {
 
 
