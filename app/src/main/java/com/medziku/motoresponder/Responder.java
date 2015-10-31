@@ -6,13 +6,13 @@ import com.medziku.motoresponder.logic.UserRide;
 import com.medziku.motoresponder.services.BackgroundService;
 import com.medziku.motoresponder.utils.LocationUtility;
 import com.medziku.motoresponder.utils.LockStateUtility;
+import com.medziku.motoresponder.utils.MotionUtility;
 import com.medziku.motoresponder.utils.SensorsUtility;
 
 /**
  * Created by Kamil on 2015-09-08.
  */
 public class Responder {
-    private final SensorsUtility sensorsUtility;
 
     // TODO refactor it to create RespondingDecider class where this class will become abstract decision about responding or not
     // while extracting to other classes process of gathering location or sending sms logic
@@ -42,18 +42,17 @@ public class Responder {
     // TODO K. Orzechowski: for development set to 100, for real it should be 10 000 at least
     public long waitBeforeResponding = 100;
 
-    private LockStateUtility lockStateUtility;
 
+    private LockStateUtility lockStateUtility;
     private RespondingDecider respondingDecider;
 
 
-    public Responder(BackgroundService bs, LocationUtility locationUtility, LockStateUtility lockStateUtility, SensorsUtility sensorsUtility) {
+    public Responder(BackgroundService bs, LocationUtility locationUtility, LockStateUtility lockStateUtility, SensorsUtility sensorsUtility, MotionUtility motionUtility) {
         // probably we have to start every onsmsreceived in new thread
         // TODO k.orzechowski: refactor it to something like RespondTask constructed again for every response.
-        LocationUtility locationUtility1 = locationUtility;
         this.lockStateUtility = lockStateUtility;
-        this.sensorsUtility = sensorsUtility;
-        this.respondingDecider = new RespondingDecider(new UserRide(locationUtility1, this.sensorsUtility), new NumberRules());
+
+        this.respondingDecider = new RespondingDecider(new UserRide(locationUtility, sensorsUtility, motionUtility), new NumberRules());
     }
 
     public void onSMSReceived(String phoneNumber) {

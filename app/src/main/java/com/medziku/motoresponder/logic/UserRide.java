@@ -38,7 +38,7 @@ public class UserRide {
      * If true, if accelerometer will report staying still, app will assume that staying = not riding.
      * If false, it will ignore accelerometer reading
      */
-    public boolean includeAccelerometerCheck = true;
+    public boolean includeDeviceMotionCheck = true;
     // TODO K. Orzechowski: use it later
     public boolean doAnotherGPSCheckIfNotSure = true;
 
@@ -58,7 +58,8 @@ public class UserRide {
         // disable this option).
         // in pocket is proxime (to leg or chest)... If there is no proximity, he is not riding.
         if (this.includeProximityCheck && !this.isProxime()) {
-            return false;
+            // TODO K. Orzechowski: it's for development uncomment it later
+            //  return false;
         }
 
         // TODO k.orzechowsk: If you know way of making promise, why not make promisable light check and
@@ -66,14 +67,15 @@ public class UserRide {
 
         // inside pocket should be dark. if it's light, he is probably not riding
         if (this.includeLightCheck && this.isLightOutside()) {
-            return false;
+            // TODO K. Orzechowski: it's for development uncomment it later
+            //   return false;
         }
 
 
         // if phone doesn't report any movement we can also assume that user is not riding motorcycle
         // TODO k.orzechowsk this name is plural, refactor it to motionSensorsReportsMovement
         boolean deviceStayingStill = !this.motionSensorReportsMovement();
-        if (this.includeAccelerometerCheck && deviceStayingStill) {
+        if (this.includeDeviceMotionCheck && deviceStayingStill) {
             return false;
         }
 

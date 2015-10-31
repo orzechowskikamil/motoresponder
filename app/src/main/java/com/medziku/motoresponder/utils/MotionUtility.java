@@ -19,9 +19,11 @@ public class MotionUtility {
 
     private final Sensor accelerometer;
     public double movementTreshold = 2;
-    public int eventsNeeded = 5;
+    // TODO K. Orzechowski: it for development, normally it should be like 5-10
+    public int eventsNeeded = 5000;
     // if no movement, listener got no events. NO events in five seconds - we assume phone laying still.
-    public int gettingAccelerationTimeout = 5 * 1000;
+    // TODO K. Orzechowski: set up for development, normally it should be 5*1000
+    public int gettingAccelerationTimeout = 50 * 1000;
     public int accelerometerDelay = 500;
 
     private SensorManager sensorManager;
@@ -52,6 +54,8 @@ public class MotionUtility {
 
                 double accelerationCurrent = Math.sqrt(x * x + y * y + z * z);
                 double delta = this.accelerationLast - accelerationCurrent;
+
+                Log.d("Motion", "Delta was " + delta);
 
                 if (delta > MotionUtility.this.movementTreshold) {
                     eventCounter++;

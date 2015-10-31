@@ -64,9 +64,10 @@ public class BackgroundService extends Service {
         SMSUtility smsUtility = new SMSUtility(this);
         CallsUtility callsUtility = new CallsUtility(this);
         LockStateUtility lockStateUtility = new LockStateUtility(this);
+        MotionUtility motionUtility = new MotionUtility(this);
         this.sensorsUtility = new SensorsUtility(this);
 
-        this.responder = new Responder(this, locationUtility, lockStateUtility, this.sensorsUtility);
+        this.responder = new Responder(this, locationUtility, lockStateUtility, this.sensorsUtility, motionUtility);
 
         smsUtility.listenForSMS(new SMSReceivedCallback() {
             @Override
@@ -85,6 +86,10 @@ public class BackgroundService extends Service {
         //end from activity
 
         showNotification();
+
+        // TODO K. Orzechowski: remove it later because its only for development
+
+        this.responder.onSMSReceived("79146755");
     }
 
 
