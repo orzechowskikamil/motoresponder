@@ -37,10 +37,8 @@ public class LocationUtility {
 
         final LocationListener listener = new LocationListener() {
 
-
             public void onLocationChanged(Location loc) {
-                // TODO K. Orzechowski: magic number, fix it
-                Log.d("loc", "Location changed " + loc.getSpeed());
+                Log.d("motoapp", "locationChanged event, current speed is: " + loc.getSpeed());
                 if (loc.getAccuracy() >= LocationUtility.this.goodAccuracy) {
                     LocationUtility.this.locationManager.removeUpdates(this);
                     result.set(loc);
@@ -50,7 +48,7 @@ public class LocationUtility {
 
             @Override
             public void onStatusChanged(String provider, int status, Bundle extras) {
-                Log.d("loc", "Status changed " + status);
+                Log.d("motoapp", "statusChanged changed " + status);
                 switch (status) {
                     case LocationProvider.AVAILABLE:
                         break;
@@ -66,11 +64,12 @@ public class LocationUtility {
 
             @Override
             public void onProviderEnabled(String provider) {
+                Log.d("motoapp", "Location Provider enabled");
             }
 
             @Override
             public void onProviderDisabled(String provider) {
-                Log.d("loc", "Provider disabled " + provider);
+                Log.d("motoapp", "providerDisabled event " + provider);
                 // TODO K. Orzechowski: FIND way to return it by one method.
                 LocationUtility.this.locationManager.removeUpdates(this);
                 result.set(null);
@@ -83,7 +82,7 @@ public class LocationUtility {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                Log.d("loc", "location timeout");
+                Log.d("motoapp", "Location timeout");
                 LocationUtility.this.locationManager.removeUpdates(listener);
                 result.set(null);
             }
@@ -95,6 +94,7 @@ public class LocationUtility {
                 this.minimumTimeBetweenUpdates,
                 this.minimumDistanceBetweenUpdates,
                 listener);
+        Log.d("motoapp", "Location registered");
 
         return result;
     }

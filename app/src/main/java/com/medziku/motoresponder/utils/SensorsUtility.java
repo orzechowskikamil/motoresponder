@@ -71,12 +71,12 @@ public class SensorsUtility {
 
     private void setCurrentProximity(float currentProximity) {
         this.currentProximity = currentProximity;
-        Log.d("proximity", Float.toString(currentProximity));//TODO zmienic logger na Slf4j
+        Log.d("motoapp", "SensorsUtility: current proximity is: " + currentProximity);
     }
 
     private void setLightValue(float lightValue) {
         this.lightValue = lightValue;
-        Log.d("light", Float.toString(lightValue));
+        Log.d("motoapp", "SensorsUtility: light value is: " + lightValue);
     }
 
 

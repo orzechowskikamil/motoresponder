@@ -46,12 +46,12 @@ public class LockStateUtility {
             // Sent when the user is present after device wakes up (e.g when the keyguard is gone)
             if (intent.getAction().equals(Intent.ACTION_USER_PRESENT)) {
                 LockStateUtility.this.setPhoneUnlocked(true);
-                Log.d("lock state utility", "phone unlocked");
+                Log.d("motoapp", "LockStateUtility: Phone unlocked");
             }
             // Device screen is off
             else if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
                 LockStateUtility.this.setPhoneUnlocked(false);
-                Log.d("lock state utility", "phone locked");
+                Log.d("motoapp", "LockStateUtility: Phone locked");
             }
         }
 
