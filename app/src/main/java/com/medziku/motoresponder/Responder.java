@@ -1,5 +1,6 @@
 package com.medziku.motoresponder;
 
+import com.google.common.base.Predicate;
 import com.medziku.motoresponder.logic.NumberRules;
 import com.medziku.motoresponder.logic.RespondingDecider;
 import com.medziku.motoresponder.logic.UserRide;
@@ -97,36 +98,40 @@ public class Responder {
         }
 
 
-        new RespondingDecider(this.userRide, this.numberRules).execute(phoneNumber);
+        new RespondingDecider(this.userRide, this.numberRules, new Predicate<Boolean>() {
+            @Override
+            public boolean apply(Boolean input) {
+                // TODO K. Orzechowski: uncomment this after getting info out from responding decider
 
-        // TODO K. Orzechowski: uncomment this after getting info out from responding decider
-//
-//        // wait some time before responding - give user time to get phone from the pocket
-//        // or from the desk and respond manually.
-//        // unlocking phone should break any responding at all
-//        // TODO K. Orzechowski: not sure if I am able to sleep main thread, and not got ANR
-//        this.sleep(this.waitBeforeResponding);
-//
-//        // now things will go automatically in one milisecond so it's not required to still show this
-//        if (this.showPendingNotification) {
-//            // TODO K. Orzechowski: hmmm. It can be a flaw - check all returns if some return
-//            // not cause to exit without unnotyfing
-//            this.unnotifyAboutPendingAutoRespond();
-//        }
-//
-//        // if phone is unlocked now, we can return - user heard ring, get phone and will
-//        // respond manually.
-//        if (this.assumePhoneUnlockedAsNotRiding && this.phoneIsUnlocked()) {
-//            return;
-//        }
-//
-//
-////        this.bs.showStupidNotify("MotoResponder", "GPS speed: " + speedKmh);
-//
-//
-//        String message = this.generateAutoRespondMessage(phoneNumber);
-//        this.sendSMS(phoneNumber, message);
-//        this.notifyAboutAutoRespond(phoneNumber);
+                // if phone is unlocked now, we can return - user heard ring, get phone and will
+                // respond manually.
+                if (Responder.this.assumePhoneUnlockedAsNotRiding && Responder.this.phoneIsUnlocked()) {
+                    return false;
+                }
+
+                // wait some time before responding - give user time to get phone from the pocket
+                // or from the desk and respond manually.
+                // unlocking phone should break any responding at all
+                // TODO K. Orzechowski: not sure if I am able to sleep main thread, and not got ANR
+//                Responder.this.sleep(Responder.this.waitBeforeResponding);
+
+                // now things will go automatically in one milisecond so it's not required to still show this
+                if (Responder.this.showPendingNotification) {
+                    // TODO K. Orzechowski: hmmm. It can be a flaw - check all returns if some return
+                    // not cause to exit without unnotyfing
+                    Responder.this.unnotifyAboutPendingAutoRespond();
+                }
+
+
+//        this.bs.showStupidNotify("MotoResponder", "GPS speed: " + speedKmh);
+
+
+                String message = Responder.this.generateAutoRespondMessage(phoneNumber);
+                Responder.this.sendSMS(phoneNumber, message);
+                Responder.this.notifyAboutAutoRespond(phoneNumber);
+                return true;
+            }
+        }).execute(phoneNumber);
 
 
     }

@@ -2,6 +2,7 @@ package com.medziku.motoresponder.logic;
 
 import android.os.AsyncTask;
 import android.util.Log;
+import com.google.common.base.Predicate;
 
 import java.net.URL;
 
@@ -13,12 +14,14 @@ import java.net.URL;
 public class RespondingDecider extends AsyncTask<String, Boolean, Boolean> {
 
 
+    private final Predicate<Boolean> predicate;
     private NumberRules numberRules;
     private UserRide userRide;
 
-    public RespondingDecider(UserRide userRide, NumberRules numberRules) {
+    public RespondingDecider(UserRide userRide, NumberRules numberRules, Predicate<Boolean> predicate) {
         this.userRide = userRide;
         this.numberRules = numberRules;
+        this.predicate = predicate;
 
     }
 
@@ -48,7 +51,7 @@ public class RespondingDecider extends AsyncTask<String, Boolean, Boolean> {
 
     // This is called when doInBackground() is finished
     protected void onPostExecute(Boolean... result) {
-        Log.d("motoapp", "RespondingDecider post execute called");
+        this.predicate.apply(result[0]);
 
     }
 
