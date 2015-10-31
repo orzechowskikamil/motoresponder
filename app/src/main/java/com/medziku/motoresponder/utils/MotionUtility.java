@@ -20,17 +20,20 @@ public class MotionUtility {
     private final Sensor accelerometer;
     public double movementTreshold = 2;
     // TODO K. Orzechowski: it for development, normally it should be like 5-10
-    public int eventsNeeded = 5000;
+    public int eventsNeeded = 29;
     // if no movement, listener got no events. NO events in five seconds - we assume phone laying still.
     // TODO K. Orzechowski: set up for development, normally it should be 5*1000
-    public int gettingAccelerationTimeout = 130 * 1000;
-    public int accelerometerDelay = 0;
+    public int gettingAccelerationTimeout = 103 * 1000;
+    /**
+     * Microseconds! 10^-6 of second!
+     */
+    public int accelerometerDelayUs = 300 * 1000;
 
     private SensorManager sensorManager;
 
     public MotionUtility(Context context) {
         this.sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-        this.accelerometer = this.sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        this.accelerometer = this.sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
     }
 
     public Future<Boolean> isDeviceInMotion() {
@@ -57,13 +60,15 @@ public class MotionUtility {
                 double accelerationCurrent = Math.sqrt(x * x + y * y + z * z);
                 double delta = this.accelerationLast - accelerationCurrent;
 
-                Log.d("motoapp", "MotionUtility: accelerationCurrent is " + accelerationCurrent);
+                Log.d("motoapp", "MotionUtility: delta is" + delta + ", acc cur: " + accelerationCurrent);
 
                 if (delta > MotionUtility.this.movementTreshold) {
                     eventCounter++;
+                    Log.d("motoapp", "MotionUtility: delta overreached");
                 }
 
                 if (eventCounter > MotionUtility.this.eventsNeeded) {
+                    Log.d("motoapp", "MotionUtility: enough events captured, assuming motion");
                     MotionUtility.this.sensorManager.unregisterListener(this);
                     result.set(true);
                 }
@@ -82,7 +87,7 @@ public class MotionUtility {
             }
         }, this.gettingAccelerationTimeout);
 
-        this.sensorManager.registerListener(listener, this.accelerometer, this.accelerometerDelay);
+        this.sensorManager.registerListener(listener, this.accelerometer, this.accelerometerDelayUs);
         Log.d("motoapp", "MotionUtility: registered listener");
 
         return result;
