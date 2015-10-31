@@ -4,6 +4,7 @@ package com.medziku.motoresponder.utils;
 import android.content.Context;
 import android.location.*;
 import android.os.Bundle;
+import android.os.Looper;
 import android.util.Log;
 import com.google.common.util.concurrent.SettableFuture;
 
@@ -17,8 +18,11 @@ import java.util.concurrent.Future;
 public class LocationUtility {
 
     private LocationManager locationManager;
-    private double goodAccuracy = 0.68;
-    public int gettingLocationTimeout = 30 * 1000;
+    /**
+     * Location must be more precise than 20 meters
+     */
+    private double goodAccuracyMeters = 20;
+    public int gettingLocationTimeout = 15 * 1000;
     public int minimumTimeBetweenUpdates = 500;
     public int minimumDistanceBetweenUpdates = 0;
 
@@ -38,8 +42,9 @@ public class LocationUtility {
         final LocationListener listener = new LocationListener() {
 
             public void onLocationChanged(Location loc) {
-                Log.d("motoapp", "locationChanged event, current speed is: " + loc.getSpeed());
-                if (loc.getAccuracy() >= LocationUtility.this.goodAccuracy) {
+                Log.d("motoapp", "locationChanged event, current speed is: " + loc.getSpeed() + ", in kmh it is " + loc.getSpeed() * 3.6 + ", accuracy is " + loc.getAccuracy());
+                if (loc.getAccuracy() <= LocationUtility.this.goodAccuracyMeters) {
+                    Log.d("motoapp", "LOCATION MEASURED");
                     LocationUtility.this.locationManager.removeUpdates(this);
                     result.set(loc);
                 }
@@ -78,7 +83,7 @@ public class LocationUtility {
 
 
         // this is safety timeout - if no location after desired time, it cancells location listening
-        
+
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
@@ -88,12 +93,14 @@ public class LocationUtility {
             }
         }, this.gettingLocationTimeout);
 
-       
+
+        Looper.prepare();
         this.locationManager.requestLocationUpdates(
                 LocationManager.GPS_PROVIDER,
                 this.minimumTimeBetweenUpdates,
                 this.minimumDistanceBetweenUpdates,
                 listener);
+        Looper.loop();
         Log.d("motoapp", "Location registered");
 
         return result;

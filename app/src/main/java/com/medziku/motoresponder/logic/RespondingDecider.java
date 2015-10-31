@@ -2,22 +2,24 @@ package com.medziku.motoresponder.logic;
 
 import android.os.AsyncTask;
 import android.util.Log;
-
-import java.net.URL;
+import com.google.common.base.Predicate;
 
 /**
  * This class makes decision if we should respond to particular SMS or ll.
+ * You can use every object of this class only once (every object is one decision)
  */
-// TODO K. Orzechowski: rename now
+// TODO K. Orzechowski: rename to RespondingDecision since you can use it only once
 public class RespondingDecider extends AsyncTask<String, Boolean, Boolean> {
 
 
+    private final Predicate<Boolean> resultCallback;
     private NumberRules numberRules;
     private UserRide userRide;
 
-    public RespondingDecider(UserRide userRide, NumberRules numberRules) {
+    public RespondingDecider(UserRide userRide, NumberRules numberRules, Predicate<Boolean> resultCallback) {
         this.userRide = userRide;
         this.numberRules = numberRules;
+        this.resultCallback = resultCallback;
 
     }
 
@@ -47,7 +49,7 @@ public class RespondingDecider extends AsyncTask<String, Boolean, Boolean> {
 
     // This is called when doInBackground() is finished
     protected void onPostExecute(Boolean... result) {
-        Log.d("motoapp", "RespondingDecider post execute called");
+        this.resultCallback.apply(result[0]);
 
     }
 

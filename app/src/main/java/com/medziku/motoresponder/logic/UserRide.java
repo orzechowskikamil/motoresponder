@@ -45,7 +45,12 @@ public class UserRide {
 
     // TODO K. Orzechowski: use it later
     public int maybeRidingSpeed = 15;
-    public int sureRidingSpeed = 60;
+
+    /**
+     * This is speed in kilometers which for sure is speed achieveable only by riding on motorcycle, and
+     * for example, not walking or running.
+     */
+    public double sureRidingSpeed = 40;
 
     public UserRide(LocationUtility locationUtility, SensorsUtility sensorsUtility, MotionUtility motionUtility) {
         this.locationUtility = locationUtility;
@@ -59,34 +64,19 @@ public class UserRide {
         // disable this option).
         // in pocket is proxime (to leg or chest)... If there is no proximity, he is not riding.
         if (this.includeProximityCheck && !this.isProxime()) {
-            // TODO K. Orzechowski: it's for development uncomment it later
-            Log.d("motoapp", "Device isn't proxime to pocket");
+            // TODO K. Orzechowski: commented for development, uncomment later
             //  return false;
-        } else {
-            Log.d("motoapp", "Device is proxime to pocket");
+            //return false;
         }
 
         // TODO k.orzechowsk: If you know way of making promise, why not make promisable light check and
         // TODO k.orzechowsk: proximity check? It will save battery aswell...
 
-        // inside pocket should be dark. if it's light, he is probably not riding
-        if (this.includeLightCheck && this.isLightOutside()) {
-            // TODO K. Orzechowski: it's for development uncomment it later
-            Log.d("motoapp", "Device isn't in dark pocket");
-            //   return false;
-        } else {
-            Log.d("motoapp", "Device is in dark pocket");
-        }
-
-
         // if phone doesn't report any movement we can also assume that user is not riding motorcycle
-        // TODO k.orzechowsk this name is plural, refactor it to motionSensorsReportsMovement
         boolean deviceStayingStill = !this.motionSensorReportsMovement();
         if (this.includeDeviceMotionCheck && deviceStayingStill) {
-            Log.d("motoapp", "Device isn't in motion");
-            return false;
-        } else {
-            Log.d("motoapp", "Device is in motion");
+            // TODO K. Orzechowski: commented for development, uncomment later
+          //  return false;
         }
 
 
@@ -136,10 +126,6 @@ public class UserRide {
 
     private boolean isProxime() {
         return this.sensorsUtility.isProxime();
-    }
-
-    private boolean isLightOutside() {
-        return this.sensorsUtility.isLightOutside();
     }
 
 
