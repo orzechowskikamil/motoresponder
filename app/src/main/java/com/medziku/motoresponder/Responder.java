@@ -1,27 +1,22 @@
 package com.medziku.motoresponder;
 
+import android.content.Context;
 import com.google.common.base.Predicate;
+import com.medziku.motoresponder.callbacks.SMSReceivedCallback;
 import com.medziku.motoresponder.logic.NumberRules;
 import com.medziku.motoresponder.logic.RespondingDecision;
 import com.medziku.motoresponder.logic.UserRide;
-import com.medziku.motoresponder.services.BackgroundService;
-import com.medziku.motoresponder.utils.LocationUtility;
-import com.medziku.motoresponder.utils.LockStateUtility;
-import com.medziku.motoresponder.utils.MotionUtility;
-import com.medziku.motoresponder.utils.SensorsUtility;
+import com.medziku.motoresponder.utils.*;
 
 /**
- * Created by Kamil on 2015-09-08.
+ * It's like all responding logic entry point
  */
 public class Responder {
 
-    // TODO refactor it to create RespondingDecision class where this class will become abstract decision about responding or not
-    // while extracting to other classes process of gathering location or sending sms logic
 
-    // TODO k.orzechowskk create action log where every decision is stored and USER can debug settings and see FLOW of algorithm
-
-
-    //private SensorsUtility sensorsUtility;
+    // TODO k.orzechowskk create action log where every decision is stored and USER can debug settings
+    // TODO k.orzechowskk and see FLOW of algorithm
+    // TODO K. Orzechowski: it can be done with heavy use of toasts!
 
     public boolean notifyAboutAutoRespond = true;
     public boolean showPendingNotification = true;
@@ -48,20 +43,52 @@ public class Responder {
     private NumberRules numberRules;
     private UserRide userRide;
 
+    private Context context;
+    private NotificationUtility notificationUtility;
 
-    public Responder(BackgroundService bs) {
+    public Responder(Context context) {
 
         // probably we have to start every onsmsreceived in new thread
+        this.context = context;
 
-        LocationUtility locationUtility = new LocationUtility(bs);
-        this.lockStateUtility = new LockStateUtility(bs);
-        MotionUtility motionUtility = new MotionUtility(bs);
-        SensorsUtility sensorsUtility = new SensorsUtility(bs);
+        LocationUtility locationUtility = new LocationUtility(context);
+        this.lockStateUtility = new LockStateUtility(context);
+        MotionUtility motionUtility = new MotionUtility(context);
+        SensorsUtility sensorsUtility = new SensorsUtility(context);
+        this.notificationUtility = new NotificationUtility(context);
 
 
         this.userRide = new UserRide(locationUtility, sensorsUtility, motionUtility);
         this.numberRules = new NumberRules();
+    }
 
+    public void startResponding() {
+        SMSUtility smsUtility = new SMSUtility(this.context);
+        CallsUtility callsUtility = new CallsUtility(this.context);
+
+
+        smsUtility.listenForSMS(new SMSReceivedCallback() {
+            @Override
+            public void onSMSReceived(String phoneNumber, String message) {
+                Responder.this.onSMSReceived(phoneNumber);
+            }
+        });
+
+        callsUtility.listenForCalls(new Predicate<String>() {
+            @Override
+            public boolean apply(String phoneNumber) {
+                Responder.this.onUnAnsweredCallReceived(phoneNumber);
+                return true;
+            }
+        });
+
+
+        // TODO K. Orzechowski: remove it later because its only for development
+        this.onSMSReceived("79146755");
+    }
+
+    public void stopResponding() {
+        // TODO K. Orzechowski: stop it really.
     }
 
     public void onSMSReceived(String phoneNumber) {
@@ -75,6 +102,7 @@ public class Responder {
     }
 
     public void onPhoneUnlocked() {
+        // TODO K. Orzechowski: bind it
         // call this when phone is unlocked by user
         this.cancelAllHandling();
     }
@@ -187,5 +215,19 @@ public class Responder {
         // TODO K. Orzechowski: Implement showing notification , best if with events.
     }
 
+
+    public void showStupidNotify(String title, String content) {
+        this.hideNotification();
+        this.showNotification(title, content, "test info");
+    }
+
+    private void hideNotification() {
+        this.notificationUtility.hideNotification();
+    }
+
+
+    private void showNotification(String title, String content, String info) {
+        this.notificationUtility.showNotification(title, content, info);
+    }
 
 }
