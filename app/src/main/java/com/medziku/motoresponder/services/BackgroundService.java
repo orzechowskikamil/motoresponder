@@ -11,10 +11,10 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.google.common.base.Predicate;
 import com.medziku.motoresponder.R;
 import com.medziku.motoresponder.Responder;
 import com.medziku.motoresponder.activity.SettingsActivity;
-import com.medziku.motoresponder.callbacks.CallCallback;
 import com.medziku.motoresponder.callbacks.SMSReceivedCallback;
 import com.medziku.motoresponder.utils.*;
 
@@ -73,10 +73,11 @@ public class BackgroundService extends Service {
             }
         });
 
-        callsUtility.listenForCalls(new CallCallback() {
+        callsUtility.listenForCalls(new Predicate<String>() {
             @Override
-            public void onCall(String phoneNumber) {
+            public boolean apply(String phoneNumber) {
                 BackgroundService.this.onCallReceived(phoneNumber);
+                return true;
             }
         });
 
