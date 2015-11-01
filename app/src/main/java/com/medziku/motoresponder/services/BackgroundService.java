@@ -7,7 +7,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 
-import com.medziku.motoresponder.Responder;
+import com.medziku.motoresponder.logic.Responder;
 
 
 /**
