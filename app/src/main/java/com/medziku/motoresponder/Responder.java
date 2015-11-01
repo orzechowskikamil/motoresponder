@@ -2,7 +2,7 @@ package com.medziku.motoresponder;
 
 import com.google.common.base.Predicate;
 import com.medziku.motoresponder.logic.NumberRules;
-import com.medziku.motoresponder.logic.RespondingDecider;
+import com.medziku.motoresponder.logic.RespondingDecision;
 import com.medziku.motoresponder.logic.UserRide;
 import com.medziku.motoresponder.services.BackgroundService;
 import com.medziku.motoresponder.utils.LocationUtility;
@@ -15,7 +15,7 @@ import com.medziku.motoresponder.utils.SensorsUtility;
  */
 public class Responder {
 
-    // TODO refactor it to create RespondingDecider class where this class will become abstract decision about responding or not
+    // TODO refactor it to create RespondingDecision class where this class will become abstract decision about responding or not
     // while extracting to other classes process of gathering location or sending sms logic
 
     // TODO k.orzechowskk create action log where every decision is stored and USER can debug settings and see FLOW of algorithm
@@ -98,7 +98,7 @@ public class Responder {
         }
 
 
-        new RespondingDecider(this.userRide, this.numberRules, new Predicate<Boolean>() {
+        new RespondingDecision(this.userRide, this.numberRules, new Predicate<Boolean>() {
             @Override
             public boolean apply(Boolean input) {
                 // TODO K. Orzechowski: uncomment this after getting info out from responding decider

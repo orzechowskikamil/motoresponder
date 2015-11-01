@@ -8,15 +8,14 @@ import com.google.common.base.Predicate;
  * This class makes decision if we should respond to particular SMS or ll.
  * You can use every object of this class only once (every object is one decision)
  */
-// TODO K. Orzechowski: rename to RespondingDecision since you can use it only once
-public class RespondingDecider extends AsyncTask<String, Boolean, Boolean> {
+public class RespondingDecision extends AsyncTask<String, Boolean, Boolean> {
 
 
     private final Predicate<Boolean> resultCallback;
     private NumberRules numberRules;
     private UserRide userRide;
 
-    public RespondingDecider(UserRide userRide, NumberRules numberRules, Predicate<Boolean> resultCallback) {
+    public RespondingDecision(UserRide userRide, NumberRules numberRules, Predicate<Boolean> resultCallback) {
         this.userRide = userRide;
         this.numberRules = numberRules;
         this.resultCallback = resultCallback;
@@ -55,7 +54,7 @@ public class RespondingDecider extends AsyncTask<String, Boolean, Boolean> {
 
     // This is called each time you call publishProgress()
     protected void onProgressUpdate(Boolean... progress) {
-        Log.d("motoapp", "RespondingDecider progress update called");
+        Log.d("motoapp", "RespondingDecision progress update called");
     }
 }
 
