@@ -98,6 +98,22 @@ public class SMSUtility {
         this.context.registerReceiver(broadcastReceiver, new IntentFilter(SENT));
         return sentPI;
     }
+    
+        // TODO k.orzechowsk This may not work... fix it in android studio
+    public boolean isOutgoingSMSAfterDate(Date date, String phoneNumber){
+        String[] whichColumns = null;
+        // TODO k.orzechowsk calllog.calls.number
+        String selections = Telephony.Sms.DATE_SENT+'>? AND ' + CallLog.Calls.ADDRESS+'=?';
+        String[] selectionArgs = {date, number};
+        String sortOrder = CallLog.Calls.DATE + " DESC"
+        
+        Cursor cursor = context.getContentResolver().query(Telephony.Sms.Outbox.CONTENT_URI,
+            whichColumns, selections, selectionArgs,sortOrder);
+        boolean result = cursor.moveToNext();
+         cursor.close();  
+         
+         return result;
+    }
 
     private class IncomingSMSReceiver extends BroadcastReceiver {
 
