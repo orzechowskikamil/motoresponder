@@ -1,0 +1,6 @@
+class ContactsUtility{
+
+   public ContactsUtility(Context context){
+   }
+
+}
