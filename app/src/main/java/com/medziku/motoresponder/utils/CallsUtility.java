@@ -36,6 +36,19 @@ public class CallsUtility {
         this.callCallback = callCallback;
     }
     
+    // TODO k.orzechowsk This may not work... fix it in android studio
+    private boolean isOutgoingCallAfterDate(Date date, String phoneNumber){
+        String[] whichColumns = null;
+        String selections = CallLog.Calls.DATE+'>? AND ' + CallLog.Calls.NUMBER+'=? AND '+CallLog.Calls.TYPE+'=?';
+        String[] selectionArgs = {date, number, CallLog.Calls.OUTGOING_TYPE};
+        String sortOrder = CallLog.Calls.DATE + " DESC"
+        Cursor cursor = context.getContentResolver().query(CallLog.Calls.CONTENT_URI,
+            whichColumns, selections, selectionArgs,sortOrder);
+        boolean result = cursor.moveToNext();
+         cursor.close();  
+         
+         return result;
+    }
     
     
     private String getCallDetails() {
