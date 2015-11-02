@@ -1,6 +1,27 @@
 class ContactsUtility{
 
+private Context context;
+
    public ContactsUtility(Context context){
+   this.context=context;
    }
+   
+   public boolean contactBookContainsContact(String phoneNumber){
+   
+   //String phoneNumber = "777 777 7777"; 
+
+String[] columns = new String[]{Phone.CONTACT_ID, Phone.DISPLAY_NAME, Phone.NUMBER };    
+
+ Uri uri = Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URI,Uri.encode(phoneNumber));        
+ Cursor cs= this.context.getContentResolver().query(uri, new String[]{PhoneLookup.DISPLAY_NAME},null,null,null);
+boolean result= false;
+ if(cs.getCount()>0)
+   // contactName=cs.getString(cs.getColumnIndex(PhoneLookup.DISPLAY_NAME));
+   result=true;
+
+cs.close();
+return result;
+   }
+
 
 }
