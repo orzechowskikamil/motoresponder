@@ -40,7 +40,7 @@ public class CallsUtility {
         this.callCallback = callCallback;
     }
 
-    private boolean isOutgoingCallAfterDate(Date date, String phoneNumber) {
+    public boolean isOutgoingCallAfterDate(Date date, String phoneNumber) {
         String[] whichColumns = {CallLog.Calls.NUMBER};
 
         String selections = CallLog.Calls.DATE + " > ? AND " + CallLog.Calls.NUMBER + " = ? AND "

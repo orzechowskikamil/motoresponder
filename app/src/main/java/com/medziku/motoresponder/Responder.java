@@ -5,6 +5,7 @@ import com.google.common.base.Predicate;
 import com.medziku.motoresponder.callbacks.SMSReceivedCallback;
 import com.medziku.motoresponder.logic.NumberRules;
 import com.medziku.motoresponder.logic.RespondingDecision;
+import com.medziku.motoresponder.logic.UserResponded;
 import com.medziku.motoresponder.logic.UserRide;
 import com.medziku.motoresponder.utils.*;
 
@@ -12,6 +13,7 @@ import com.medziku.motoresponder.utils.*;
  * It's like all responding logic entry point
  */
 public class Responder {
+    private CallsUtility callsUtility;
 
 
     // TODO k.orzechowskk create action log where every decision is stored and USER can debug settings
@@ -42,6 +44,7 @@ public class Responder {
     private LockStateUtility lockStateUtility;
     private NumberRules numberRules;
     private UserRide userRide;
+    private UserResponded userResponded;
 
     private Context context;
     private NotificationUtility notificationUtility;
@@ -56,15 +59,16 @@ public class Responder {
         MotionUtility motionUtility = new MotionUtility(context);
         SensorsUtility sensorsUtility = new SensorsUtility(context);
         this.notificationUtility = new NotificationUtility(context);
+        this.callsUtility = new CallsUtility(this.context);
 
 
         this.userRide = new UserRide(locationUtility, sensorsUtility, motionUtility);
         this.numberRules = new NumberRules();
+        this.userResponded = new UserResponded(this.callsUtility);
     }
 
     public void startResponding() {
         SMSUtility smsUtility = new SMSUtility(this.context);
-        CallsUtility callsUtility = new CallsUtility(this.context);
 
 
         smsUtility.listenForSMS(new SMSReceivedCallback() {
@@ -74,7 +78,7 @@ public class Responder {
             }
         });
 
-        callsUtility.listenForCalls(new Predicate<String>() {
+        this.callsUtility.listenForCalls(new Predicate<String>() {
             @Override
             public boolean apply(String phoneNumber) {
                 Responder.this.onUnAnsweredCallReceived(phoneNumber);
@@ -126,7 +130,7 @@ public class Responder {
         }
 
 
-        new RespondingDecision(this.userRide, this.numberRules, new Predicate<Boolean>() {
+        new RespondingDecision(this.userRide, this.numberRules, this.userResponded, new Predicate<Boolean>() {
             @Override
             public boolean apply(Boolean input) {
                 // TODO K. Orzechowski: uncomment this after getting info out from responding decider
