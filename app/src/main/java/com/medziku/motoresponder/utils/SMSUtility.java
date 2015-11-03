@@ -6,13 +6,17 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.provider.Telephony;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 import android.util.Log;
 
 import com.medziku.motoresponder.callbacks.SMSReceivedCallback;
 import com.medziku.motoresponder.callbacks.SendSMSCallback;
+
+import java.util.Date;
 
 public class SMSUtility {
 
@@ -98,23 +102,22 @@ public class SMSUtility {
         this.context.registerReceiver(broadcastReceiver, new IntentFilter(SENT));
         return sentPI;
     }
-    
-        // TODO k.orzechowsk This may not work... fix it in android studio
-    public boolean isOutgoingSMSAfterDate(Date date, String phoneNumber){
+
+    public boolean wasOutgoingSMSSentAfterDate(Date date, String phoneNumber) {
         String[] whichColumns = null;
-        // TODO k.orzechowsk calllog.calls.number
-        String selections = Telephony.Sms.DATE_SENT+'>? AND ' + CallLog.Calls.ADDRESS+'=?';
-        String[] selectionArgs = {date, number};
-        String sortOrder = CallLog.Calls.DATE + " DESC"
-        
+        String selections = Telephony.Sms.DATE_SENT + ">? AND " + Telephony.Sms.ADDRESS + "=?";
+        String[] selectionArgs = {String.valueOf(date.getTime()), phoneNumber};
+        String sortOrder = Telephony.Sms.DATE + " DESC";
+
         Cursor cursor = context.getContentResolver().query(Telephony.Sms.Outbox.CONTENT_URI,
-            whichColumns, selections, selectionArgs,sortOrder);
-        boolean result = cursor.moveToNext();
-         cursor.close();  
-         
-         return result;
+                whichColumns, selections, selectionArgs, sortOrder);
+        boolean result = cursor.getCount() > 0;
+        cursor.close();
+
+        return result;
     }
 
+    // TODO K. Orzechowski: please inline it in some spare time because it looks like shit separated from the context.
     private class IncomingSMSReceiver extends BroadcastReceiver {
 
         private SMSReceivedCallback smsReceivedCallback;
