@@ -41,6 +41,9 @@ public class CallsUtility {
     }
 
     public boolean isOutgoingCallAfterDate(Date date, String phoneNumber) {
+        // TODO K. Orzechowski: it may still contain a flaw, since phone number sometimes is returned as
+        // TODO K. Orzechowski: XXXXXXXXX, sometimes as +48XXXXXXXXX, and sometimes as 0048XXXXXXXXX.
+        // TODO K. Orzechowski: verify it later.
         String[] whichColumns = {CallLog.Calls.NUMBER};
 
         String selections = CallLog.Calls.DATE + " > ? AND " + CallLog.Calls.NUMBER + " = ? AND "
