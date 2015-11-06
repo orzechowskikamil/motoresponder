@@ -31,6 +31,9 @@ public class RespondingDecision extends AsyncTask<String, Boolean, Boolean> {
         if (!this.numberRules.shouldRespondToThisNumber(phoneNumber)) {
             return false;
         }
+        
+        // TODO k.orzechowski: idea: check if you are not in public transportation by checking
+        // for available wifi, or many bluetooth devices around you.
 
         // TODO K. Orzechowski: sleep here for long time.
         // TODO K. Orzechowski: allow user to respond himself and then check.
