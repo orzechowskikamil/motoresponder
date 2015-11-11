@@ -198,7 +198,7 @@ public class Responder {
 
     private String generateAutoRespondMessage(String phoneNumber) {
 
-        return "Jadę właśnie motocyklem i nie mogę odebrać. Oddzwonię później.";
+        return "Cześć. Jeżdzę właśnie motocyklem. Odezwę się jak skończy mi się paliwo.";
         // TODO K. Orzechowski: add possibility to personalize message IN LATER STAGE
 
         // TODO K. Orzechowski: separate messages for sms and call would be nice
