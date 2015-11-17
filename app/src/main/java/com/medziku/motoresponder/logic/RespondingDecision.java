@@ -5,21 +5,20 @@ import android.util.Log;
 import com.google.common.base.Predicate;
 
 /**
- * This class makes decision if we should respond to particular SMS or ll.
+ * This class makes decision if we should respond to particular SMS or call.
  * You can use every object of this class only once (every object is one decision)
  */
 public class RespondingDecision extends AsyncTask<String, Boolean, Boolean> {
 
 
     private final Predicate<Boolean> resultCallback;
+    private final UserResponded userResponded;
     private NumberRules numberRules;
     private UserRide userRide;
-    private AlreadyResponded alreadyResponded;
 
-    public RespondingDecision(UserRide userRide, NumberRules numberRules, AlreadyResponded alreadyResponded, Predicate<Boolean> resultCallback) {
+    public RespondingDecision(UserRide userRide, NumberRules numberRules, Predicate<Boolean> resultCallback) {
         this.userRide = userRide;
         this.numberRules = numberRules;
-        this.alreadyResponded = alreadyResponded;
         this.resultCallback = resultCallback;
 
     }
@@ -27,11 +26,19 @@ public class RespondingDecision extends AsyncTask<String, Boolean, Boolean> {
     private boolean shouldRespond(String phoneNumber) {
         // do not answer numbers which user doesnt want to autorespond
         // this check is relatively cheap compared to measuring if user is riding
+        // TODO K. Orzechowski: rename to smth like numberRulesAllowResponding?
         if (!this.numberRules.shouldRespondToThisNumber(phoneNumber)) {
             return false;
         }
+        
+        // TODO k.orzechowski: idea: check if you are not in public transportation by checking
+        // for available wifi, or many bluetooth devices around you.
 
-        if (this.alreadyResponded.isAlreadyResponded(phoneNumber)) {
+        // TODO K. Orzechowski: sleep here for long time.
+        // TODO K. Orzechowski: allow user to respond himself and then check.
+
+
+        if (this.userResponded.userAlreadyResponded(phoneNumber)) {
             return false;
         }
 
