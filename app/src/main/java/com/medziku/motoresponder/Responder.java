@@ -3,6 +3,7 @@ package com.medziku.motoresponder;
 import android.content.Context;
 import com.google.common.base.Predicate;
 import com.medziku.motoresponder.callbacks.SMSReceivedCallback;
+import com.medziku.motoresponder.logic.AlreadyResponded;
 import com.medziku.motoresponder.logic.NumberRules;
 import com.medziku.motoresponder.logic.RespondingDecision;
 import com.medziku.motoresponder.logic.UserRide;
@@ -45,17 +46,24 @@ public class Responder {
 
     private Context context;
     private NotificationUtility notificationUtility;
+    private SMSUtility smsUtility;
+    private CallsUtility callsUtility;
+    private AlreadyResponded alreadyResponded;
 
     public Responder(Context context) {
 
         // probably we have to start every onsmsreceived in new thread
         this.context = context;
 
+         this.smsUtility = new SMSUtility(this.context);
+         this.callsUtility = new CallsUtility(this.context);
+
         LocationUtility locationUtility = new LocationUtility(context);
         this.lockStateUtility = new LockStateUtility(context);
         MotionUtility motionUtility = new MotionUtility(context);
         SensorsUtility sensorsUtility = new SensorsUtility(context);
         this.notificationUtility = new NotificationUtility(context);
+        this.alreadyResponded = new AlreadyResponded(this.smsUtility,this.callsUtility);
 
 
         this.userRide = new UserRide(locationUtility, sensorsUtility, motionUtility);
@@ -63,18 +71,14 @@ public class Responder {
     }
 
     public void startResponding() {
-        SMSUtility smsUtility = new SMSUtility(this.context);
-        CallsUtility callsUtility = new CallsUtility(this.context);
-
-
-        smsUtility.listenForSMS(new SMSReceivedCallback() {
+        this.smsUtility.listenForSMS(new SMSReceivedCallback() {
             @Override
             public void onSMSReceived(String phoneNumber, String message) {
                 Responder.this.onSMSReceived(phoneNumber);
             }
         });
 
-        callsUtility.listenForCalls(new Predicate<String>() {
+        this.callsUtility.listenForCalls(new Predicate<String>() {
             @Override
             public boolean apply(String phoneNumber) {
                 Responder.this.onUnAnsweredCallReceived(phoneNumber);
@@ -126,7 +130,7 @@ public class Responder {
         }
 
 
-        new RespondingDecision(this.userRide, this.numberRules, new Predicate<Boolean>() {
+        new RespondingDecision(this.userRide, this.numberRules, this.alreadyResponded, new Predicate<Boolean>() {
             @Override
             public boolean apply(Boolean input) {
                 // TODO K. Orzechowski: uncomment this after getting info out from responding decider

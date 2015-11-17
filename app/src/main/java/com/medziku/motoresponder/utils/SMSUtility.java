@@ -104,18 +104,26 @@ public class SMSUtility {
     }
 
     public boolean wasOutgoingSMSSentAfterDate(Date date, String phoneNumber) {
-        String[] whichColumns = null;
-        String selections = Telephony.Sms.DATE_SENT + ">? AND " + Telephony.Sms.ADDRESS + "=?";
-        String[] selectionArgs = {String.valueOf(date.getTime()), phoneNumber};
-        String sortOrder = Telephony.Sms.DATE + " DESC";
+        String[] whichColumns = {Telephony.Sms.ADDRESS};
+//        String selections = Telephony.Sms.DATE_SENT + ">? AND " + Telephony.Sms.ADDRESS + "=?";
+        String selections = Telephony.Sms.DATE_SENT + " > ?";
+//        String[] selectionArgs = {String.valueOf(date.getTime()), phoneNumber};
+        String[] selectionArgs = {"1300"};
+//        String sortOrder = Telephony.Sms.DATE + " DESC";
+        String sortOrder = Telephony.Sms.ADDRESS + " DESC";
 
         Cursor cursor = context.getContentResolver().query(Telephony.Sms.Outbox.CONTENT_URI,
                 whichColumns, selections, selectionArgs, sortOrder);
-        boolean result = cursor.getCount() > 0;
+//        boolean result = cursor.getCount() > 0;
+        do {
+            String value = cursor.getString(0);
+        } while (cursor.moveToNext());
         cursor.close();
 
-        return result;
+//        return result;
+        return true;
     }
+
 
     // TODO K. Orzechowski: please inline it in some spare time because it looks like shit separated from the context.
     private class IncomingSMSReceiver extends BroadcastReceiver {

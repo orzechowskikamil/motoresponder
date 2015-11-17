@@ -14,10 +14,12 @@ public class RespondingDecision extends AsyncTask<String, Boolean, Boolean> {
     private final Predicate<Boolean> resultCallback;
     private NumberRules numberRules;
     private UserRide userRide;
+    private AlreadyResponded alreadyResponded;
 
-    public RespondingDecision(UserRide userRide, NumberRules numberRules, Predicate<Boolean> resultCallback) {
+    public RespondingDecision(UserRide userRide, NumberRules numberRules, AlreadyResponded alreadyResponded, Predicate<Boolean> resultCallback) {
         this.userRide = userRide;
         this.numberRules = numberRules;
+        this.alreadyResponded = alreadyResponded;
         this.resultCallback = resultCallback;
 
     }
@@ -26,6 +28,10 @@ public class RespondingDecision extends AsyncTask<String, Boolean, Boolean> {
         // do not answer numbers which user doesnt want to autorespond
         // this check is relatively cheap compared to measuring if user is riding
         if (!this.numberRules.shouldRespondToThisNumber(phoneNumber)) {
+            return false;
+        }
+
+        if (this.alreadyResponded.isAlreadyResponded(phoneNumber)) {
             return false;
         }
 
