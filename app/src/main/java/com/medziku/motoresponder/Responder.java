@@ -13,7 +13,7 @@ import com.medziku.motoresponder.utils.*;
  * It's like all responding logic entry point
  */
 public class Responder {
-    private CallsUtility callsUtility;
+
 
 
     // TODO k.orzechowskk create action log where every decision is stored and USER can debug settings
@@ -50,15 +50,15 @@ public class Responder {
     private NotificationUtility notificationUtility;
     private SMSUtility smsUtility;
     private CallsUtility callsUtility;
-    private AlreadyResponded alreadyResponded;
+
 
     public Responder(Context context) {
 
         // probably we have to start every onsmsreceived in new thread
         this.context = context;
 
-         this.smsUtility = new SMSUtility(this.context);
-         this.callsUtility = new CallsUtility(this.context);
+        this.smsUtility = new SMSUtility(this.context);
+        this.callsUtility = new CallsUtility(this.context);
 
         LocationUtility locationUtility = new LocationUtility(context);
         this.lockStateUtility = new LockStateUtility(context);
@@ -69,7 +69,7 @@ public class Responder {
 
         this.userRide = new UserRide(locationUtility, sensorsUtility, motionUtility);
         this.numberRules = new NumberRules();
-        this.userResponded = new UserResponded(this.callsUtility);
+        this.userResponded = new UserResponded(this.callsUtility,this.smsUtility);
     }
 
     public void startResponding() {
@@ -132,7 +132,7 @@ public class Responder {
         }
 
 
-        new RespondingDecision(this.userRide, this.numberRules, new Predicate<Boolean>() {
+        new RespondingDecision(this.userRide, this.numberRules, this.userResponded, new Predicate<Boolean>() {
             @Override
             public boolean apply(Boolean input) {
                 // TODO K. Orzechowski: uncomment this after getting info out from responding decider

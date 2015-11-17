@@ -1,6 +1,7 @@
 package com.medziku.motoresponder.logic;
 
 import com.medziku.motoresponder.utils.CallsUtility;
+import com.medziku.motoresponder.utils.SMSUtility;
 
 import java.util.Date;
 
@@ -9,17 +10,20 @@ import java.util.Date;
  */
 public class UserResponded {
 
-    private final CallsUtility callsUtility;
+    private CallsUtility callsUtility;
+    private SMSUtility smsUtility;
 
-    public UserResponded(CallsUtility callsUtility) {
+    public UserResponded(CallsUtility callsUtility, SMSUtility smsUtility) {
         this.callsUtility = callsUtility;
+        this.smsUtility = smsUtility;
     }
 
-    public boolean userAlreadyResponded(String phoneNumber) {
-        Date now = new Date();
+    public boolean isUserRespondedSince(Date time, String phoneNumber) {
+        if (this.callsUtility.isOutgoingCallAfterDate(time, phoneNumber)) {
+            return true;
+        }
 
-
-        if (this.callsUtility.isOutgoingCallAfterDate(now, phoneNumber)) {
+        if (this.smsUtility.wasOutgoingSMSSentAfterDate(time, phoneNumber)) {
             return true;
         }
 

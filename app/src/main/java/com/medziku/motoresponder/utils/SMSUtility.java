@@ -2,13 +2,16 @@ package com.medziku.motoresponder.utils;
 
 import android.app.Activity;
 import android.app.PendingIntent;
+import android.app.TimePickerDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Telephony;
+import android.telephony.PhoneNumberUtils;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 import android.util.Log;
@@ -103,25 +106,48 @@ public class SMSUtility {
         return sentPI;
     }
 
+    private String normalizeNumber(String phoneNumber, String defaultCountryIso) {
+        // TODO K. Orzechowski: nothing work...
+        // TODO K. Orzechowski: for now , plain number, think about something better
+        return phoneNumber;
+
+//        if (Build.VERSION.SDK_INT >= 21) {
+//            return PhoneNumberUtils.formatNumberToE164(phoneNumber, defaultCountryIso);
+//        } else {
+//            return PhoneNumberUtils.formatNumber(phoneNumber);
+//        }
+    }
+
     public boolean wasOutgoingSMSSentAfterDate(Date date, String phoneNumber) {
         String[] whichColumns = {Telephony.Sms.ADDRESS};
-//        String selections = Telephony.Sms.DATE_SENT + ">? AND " + Telephony.Sms.ADDRESS + "=?";
-        String selections = Telephony.Sms.DATE_SENT + " > ?";
-//        String[] selectionArgs = {String.valueOf(date.getTime()), phoneNumber};
-        String[] selectionArgs = {"1300"};
-//        String sortOrder = Telephony.Sms.DATE + " DESC";
-        String sortOrder = Telephony.Sms.ADDRESS + " DESC";
 
-        Cursor cursor = context.getContentResolver().query(Telephony.Sms.Outbox.CONTENT_URI,
+        String selections = Telephony.Sms.DATE + " > ?";
+
+        String[] selectionArgs = {String.valueOf(date.getTime())};
+
+        String sortOrder = Telephony.Sms.DATE + " DESC";
+        Cursor cursor = context.getContentResolver().query(Telephony.Sms.Sent.CONTENT_URI,
                 whichColumns, selections, selectionArgs, sortOrder);
-//        boolean result = cursor.getCount() > 0;
-        do {
-            String value = cursor.getString(0);
-        } while (cursor.moveToNext());
-        cursor.close();
 
-//        return result;
-        return true;
+        boolean result = false;
+
+        // TODO K. Orzechowski: get country code from locale
+        String phoneNumberNormalized = this.normalizeNumber(phoneNumber, "48");
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                do {
+                    String sentMsgPhoneNumber = cursor.getString(cursor.getColumnIndex(Telephony.Sms.ADDRESS));
+                    String sentMsgPhoneNumberNormalized = this.normalizeNumber(sentMsgPhoneNumber, "48");
+
+                    if (sentMsgPhoneNumberNormalized.equals(phoneNumberNormalized)) {
+                        result = true;
+                        break;
+                    }
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        }
+        return result;
     }
 
 
