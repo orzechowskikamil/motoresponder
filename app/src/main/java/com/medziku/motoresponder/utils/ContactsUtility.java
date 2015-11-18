@@ -4,9 +4,12 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
-import android.telephony.PhoneNumberUtils;
 
-class ContactsUtility {
+import java.util.ArrayList;
+import java.util.List;
+
+
+public class ContactsUtility {
 
     private Context context;
 
@@ -15,19 +18,22 @@ class ContactsUtility {
     }
 
     public boolean contactBookContainsContact(String phoneNumber) {
+        // TODO K. Orzechowski: just for testing purposes
+
+        this.readAllContactBookGroupNames();
 
         //String phoneNumber = "777 777 7777";
-
-        String[] columns = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME};
+        String[] columns = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME,
+                ContactsContract.PhoneLookup.NORMALIZED_NUMBER,
+                ContactsContract.PhoneLookup.NUMBER};
 
         Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
 
         // TODO K. Orzechowski: Learn about E164 representation and use it in other places instead of number!
         String selection = ContactsContract.PhoneLookup.NORMALIZED_NUMBER + " = ?";
 
-        // TODO K. Orzechowski: it can be not true! (this 48 thing)
-        // TODO K. Orzechowski: It require API 21 - do smth with it
-        String phoneNumberNormalized = PhoneNumberUtils.formatNumberToE164(phoneNumber, "48");
+
+        String phoneNumberNormalized = this.normalizePhoneNumber(phoneNumber);
 
         String[] selectionArgs = {phoneNumberNormalized};
         Cursor cursor = this.context.getContentResolver().query(
@@ -39,27 +45,35 @@ class ContactsUtility {
         return result;
     }
 
-    public String[] readAllContactBookGroupNames() {
+    private String normalizePhoneNumber(String phoneNumber) {
+        // TODO K. Orzechowski: Get iso country code (48) from locale
+        // TODO K. Orzechowski: It require API 21 - do smth with it
+        // TODO K. Orzechowski: it does not work, fix it
+
+//        return PhoneNumberUtils.formatNumberToE164(phoneNumber, "48");
+        return phoneNumber;
+    }
+
+    public List<String> readAllContactBookGroupNames() {
         final String[] GROUP_PROJECTION = new String[]{
                 ContactsContract.Groups._ID, ContactsContract.Groups.TITLE};
 
         Cursor cursor = this.context.getContentResolver().query(
                 ContactsContract.Groups.CONTENT_URI, GROUP_PROJECTION, null, null, null);
 
-        cursor.moveToFirst();
-        String[] names = new String[cursor.getCount()];
+        List<String> names = new ArrayList<>();
 
-        int titleColumn = cursor.getColumnIndex(ContactsContract.Groups.TITLE);
+        int titleColumnIndex = cursor.getColumnIndex(ContactsContract.Groups.TITLE);
 
-        int i = 0;
-        while (!cursor.isAfterLast()) {
-            String groupName = cursor.getString(titleColumn);
-            names[i] = groupName;
-            i++;
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                do {
+                    String groupName = cursor.getString(titleColumnIndex);
+                    names.add(groupName);
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
         }
-
-        cursor.close();
         return names;
     }
-
 }

@@ -57,9 +57,11 @@ public class Responder {
         SensorsUtility sensorsUtility = new SensorsUtility(context);
         this.notificationUtility = new NotificationUtility(context);
 
+        ContactsUtility contactsUtility = new ContactsUtility(context);
+
 
         this.userRide = new UserRide(locationUtility, sensorsUtility, motionUtility);
-        this.numberRules = new NumberRules();
+        this.numberRules = new NumberRules(contactsUtility);
     }
 
     public void startResponding() {
