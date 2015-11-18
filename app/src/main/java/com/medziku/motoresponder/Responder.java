@@ -66,10 +66,11 @@ public class Responder {
         SensorsUtility sensorsUtility = new SensorsUtility(context);
         this.notificationUtility = new NotificationUtility(context);
 
+        ContactsUtility contactsUtility = new ContactsUtility(context);
+
 
         this.userRide = new UserRide(locationUtility, sensorsUtility, motionUtility);
-        this.numberRules = new NumberRules();
-        this.userResponded = new UserResponded(this.callsUtility,this.smsUtility);
+        this.numberRules = new NumberRules(contactsUtility);
     }
 
     public void startResponding() {
@@ -90,7 +91,7 @@ public class Responder {
 
 
         // TODO K. Orzechowski: remove it later because its only for development
-        this.onSMSReceived("79146755");
+        this.onSMSReceived("791467855");
     }
 
     public void stopResponding() {
