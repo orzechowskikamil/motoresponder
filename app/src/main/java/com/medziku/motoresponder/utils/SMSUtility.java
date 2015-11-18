@@ -2,16 +2,13 @@ package com.medziku.motoresponder.utils;
 
 import android.app.Activity;
 import android.app.PendingIntent;
-import android.app.TimePickerDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.Telephony;
-import android.telephony.PhoneNumberUtils;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 import android.util.Log;
