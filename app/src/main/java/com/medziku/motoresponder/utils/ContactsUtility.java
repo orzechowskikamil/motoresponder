@@ -45,6 +45,7 @@ public class ContactsUtility {
         return result;
     }
 
+    // TODO k.orzechowsk this does not access the phone api or database - can belong to logic.
     private String normalizePhoneNumber(String phoneNumber) {
         // TODO K. Orzechowski: Get iso country code (48) from locale
         // TODO K. Orzechowski: It require API 21 - do smth with it
@@ -75,5 +76,15 @@ public class ContactsUtility {
             cursor.close();
         }
         return names;
+    }
+    
+    public boolean isGroupContainingContact(String groupName, String phoneNumberOfContact){
+        // TODO fill me   
+    }
+    
+    public String readCurrentDevicePhoneNumber(){
+        TelephonyManager tMgr = (TelephonyManager)mAppContext.getSystemService(Context.TELEPHONY_SERVICE);
+        String mPhoneNumber = tMgr.getLine1Number();
+        return mPhoneNumber;
     }
 }
