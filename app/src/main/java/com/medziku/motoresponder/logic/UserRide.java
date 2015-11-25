@@ -74,8 +74,7 @@ public class UserRide {
         // TODO k.orzechowsk: proximity check? It will save battery aswell...
 
         // if phone doesn't report any movement we can also assume that user is not riding motorcycle
-        boolean deviceStayingStill = !this.motionSensorReportsMovement();
-        if (this.includeDeviceMotionCheck && deviceStayingStill) {
+        if (this.includeDeviceMotionCheck &&  !this.motionSensorReportsMovement()) {
             // TODO K. Orzechowski: commented for development, uncomment later
           //  return false;
         }
@@ -89,31 +88,51 @@ public class UserRide {
         float speedKmh = this.getCurrentSpeedKmh();
 
 
-        boolean locationTimeouted = speedKmh == -1;
         // TODO K. Orzechowski: this setting is for future, when I implement asking again for location after some time.
         // TODO K. Orzechowski: for now it's just dumb if
-        if (this.interpretLocationTimeoutAsNotRiding && locationTimeouted) {
+        if (this.interpretLocationTimeoutAsNotRiding && this.isLocationTimeouted(speedKmh)) {
             // if timeout, it means that phone is probably in home with no access to GPS satelites.
             // so if no ride, no need to respond automatically
             return false;
         }
+        
+        if (this.isSpeedForSureNotRiding(speedKmh){
+            return false;
+        }
 
-        // TODO K. Orzechowski: add second check of speed if user is between sure riding speed and no riding speed
+        // second check of speed if user is between sure riding speed and no riding speed
         // for example: 15 km/h. It can be motorcycle or running. We make another check in few minutes - maybe
         // we hit bigger speed and it become sure.
 
-        if (speedKmh < this.sureRidingSpeed && speedKmh >= this.maybeRidingSpeed) {
+        if (this.isSpeedMaybeRiding(speedKmh)) {
             Thread.sleep(this.maybeRidingTimeoutMs);
             
             float secondCheckSpeedKmh = this.getCurrentSpeedKmh();
             
-            if (secondCheckSpeedKmh < this.sureRidingSpeed){
+            if (this.isSpeedForSureRiding(secondCheckSpeedKhm)==false){
                 return false;
             }
         }
 
         // all conditions when we are sure that user is not riding are not met - so user is riding.
         return true;
+    }
+    
+    private boolean isSpeedForSureNotRiding(float speedKmh){
+        return speedKmh < this.maybeRidingSpeed;
+    }
+    
+    private boolean isSpeedForSureRiding(float speedKmh){
+        return speedKmh >= this.sureSpeedRiding;
+    }
+    
+    private boolean isLocationTimeouted(float speedKmh){
+        return speedKmh==-1;
+    }
+    
+    // todo k.orzechowsk ridiculous name, fix it
+    private boolean isSpeedMaybeRiding(float speedKmh){
+        return this.isSpeedForSureNotRiding() == false && this.isSpeedForSureRiding()==false;
     }
 
 
