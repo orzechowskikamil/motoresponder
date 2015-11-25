@@ -45,6 +45,7 @@ public class UserRide {
 
     // TODO K. Orzechowski: use it later
     public int maybeRidingSpeed = 15;
+    public int maybeRidingTimeoutMs = 30000;
 
     /**
      * This is speed in kilometers which for sure is speed achieveable only by riding on motorcycle, and
@@ -101,8 +102,14 @@ public class UserRide {
         // for example: 15 km/h. It can be motorcycle or running. We make another check in few minutes - maybe
         // we hit bigger speed and it become sure.
 
-        if (speedKmh <= this.sureRidingSpeed) {
-            return false;
+        if (speedKmh < this.sureRidingSpeed && speedKmh >= this.maybeRidingSpeed) {
+            Thread.sleep(this.maybeRidingTimeoutMs);
+            
+            float secondCheckSpeedKmh = this.getCurrentSpeedKmh();
+            
+            if (secondCheckSpeedKmh < this.sureRidingSpeed){
+                return false;
+            }
         }
 
         // all conditions when we are sure that user is not riding are not met - so user is riding.
