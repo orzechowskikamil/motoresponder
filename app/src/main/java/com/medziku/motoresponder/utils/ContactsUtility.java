@@ -18,11 +18,6 @@ public class ContactsUtility {
     }
 
     public boolean contactBookContainsContact(String phoneNumber) {
-        // TODO K. Orzechowski: just for testing purposes
-
-        this.readAllContactBookGroupNames();
-
-        //String phoneNumber = "777 777 7777";
         String[] columns = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME,
                 ContactsContract.PhoneLookup.NORMALIZED_NUMBER,
                 ContactsContract.PhoneLookup.NUMBER};
