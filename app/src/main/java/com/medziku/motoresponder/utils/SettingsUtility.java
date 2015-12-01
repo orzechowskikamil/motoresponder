@@ -45,4 +45,8 @@ class SettingsUtility{
       this.setValue(SERVICE_ENABLED, value);
     }
     
+    public String getAutoResponseTextForSMS()(){
+        return "(Automatyczna odpowiedz) Czesc, jezdze wlasnie motocyklem, odezwe sie jak skonczy mi sie paliwo.";
+    }
+    
 }
