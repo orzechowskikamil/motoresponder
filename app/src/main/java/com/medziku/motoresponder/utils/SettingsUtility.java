@@ -35,7 +35,7 @@ class SettingsUtility{
       this.editor.commit();
     }
     
-    private String SERVICE_ENABLED='service-enabled';
+    private String SERVICE_ENABLED="service-enabled";
     
     public boolean isServiceEnabled(){
         return this.getValue(SERVICE_ENABLED, true);
