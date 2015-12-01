@@ -1,6 +1,7 @@
 class SettingsUtility{
 
     private SharedPreferences.Editor editor;
+    
     public SettingsUtility(Context context){
       SharedPreferences sharedPref = context.getActivity().getPreferences(Context.MODE_PRIVATE);
       SharedPreferences.Editor this.editor = sharedPref.edit();
