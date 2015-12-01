@@ -14,6 +14,7 @@ class SettingsUtility{
     
     private void setValue(String name, boolean value){
       this.editor.putBoolean(name, value);
+      this.editor.commit();
     }
     
         private String getValue(String name, String defaultValue){
@@ -22,6 +23,7 @@ class SettingsUtility{
     
     private void setValue(String name, String value){
       this.editor.putString(name, value);
+      this.editor.commit();
     }
     
         private int getValue(String name, int defaultValue){
@@ -30,6 +32,7 @@ class SettingsUtility{
     
     private void setValue(String name, int value){
       this.editor.putInt(name, value);
+      this.editor.commit();
     }
     
     private String SERVICE_ENABLED='service-enabled';
