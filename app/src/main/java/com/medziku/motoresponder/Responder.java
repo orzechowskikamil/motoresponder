@@ -91,7 +91,7 @@ public class Responder {
 
 
         // TODO K. Orzechowski: remove it later because its only for development
-        this.onSMSReceived("791467855");
+        // this.onSMSReceived("791467855");
     }
 
     public void stopResponding() {
