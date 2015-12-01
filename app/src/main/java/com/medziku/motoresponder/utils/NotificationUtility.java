@@ -60,5 +60,9 @@ public class NotificationUtility {
     public void hideNotification() {
         this.hideNotification(this.defaultNotificationID);
     }
+    
+    public void showToast(String message){
+         Toast.makeText(this.context.getBaseContext(), message, Toast.LENGTH_SHORT).show();
+    }
 
 }
