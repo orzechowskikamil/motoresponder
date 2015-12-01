@@ -53,18 +53,21 @@ private PhoneNumberVerifier numberVerifier;
     public boolean shouldRespondToThisNumber(String phoneNumber) {
         boolean respondingConstraintsMeet = false;
         boolean countryRespondingConstraintsMeet = false;
+       
+       // TODO k.orzechowsk commented until 1.01 
+        // if (this.respondingWhitelist === NumberRules.RESPONDING_WHITELIST_ENABLED && this.isNumberOnWhitelist(phoneNumber)==false){
+        //     return false;
+        // }
         
-        if (this.respondingWhitelist === NumberRules.RESPONDING_WHITELIST_ENABLED && this.isNumberOnWhitelist(phoneNumber)==false){
-            return false;
-        }
+        // TODO k.orzechowsk commented until 1.01 
+    // if (this.respondingBlacklist === NumberRules.RESPONDING_BLACKLIST_ENABLED && this.isNumberOnBlacklist(phoneNumber)==true){
+    //         return false;
+    //     }
         
-    if (this.respondingBlacklist === NumberRules.RESPONDING_BLACKLIST_ENABLED && this.isNumberOnBlacklist(phoneNumber)==true){
-            return false;
-        }
-        
-        if (this.respondingCountrySettings == NumberRules.COUNTRY_SETTINGS_CURRENT_COUNTRY_ONLY && this.isNumberFromCurrentCountry(phoneNumber)==false){
-            return false;
-        }
+        // TODO k.orzechowsk commented until 1.01 
+        // if (this.respondingCountrySettings == NumberRules.COUNTRY_SETTINGS_CURRENT_COUNTRY_ONLY && this.isNumberFromCurrentCountry(phoneNumber)==false){
+        //     return false;
+        // }
         
         /* TODO k.orzechowski
            break method below into three sections
@@ -73,9 +76,10 @@ private PhoneNumberVerifier numberVerifier;
            Third is NORMAL/SHORT numbers with options: everyone / normal numbers / short numbers (like sms premium)
         */
 
-if (this.respondingSettings == RESPONDING_SETTINGS_RESPOND_EVERY_NORMAL_NUMBER && this.isNormalNumber(phoneNumber)==false){
-return false;
-}
+// TODO k.orzechowsk commented until 1.01 
+// if (this.respondingSettings == RESPONDING_SETTINGS_RESPOND_EVERY_NORMAL_NUMBER && this.isNormalNumber(phoneNumber)==false){
+// return false;
+// }
 
 if (this.respondingSettings ==RESPONDING_SETTINGS_RESPOND_ONLY_CONTACT_BOOK  && this.isInContactBook(phoneNumber)===false){
     return false;
@@ -87,6 +91,7 @@ if (this.isCurrentDevicePhoneNumber(phoneNumber)){
   
          return true;
     }
+    
     
     private boolean isCurrentDevicePhoneNumber(String phoneNumber){
         // todo it should be kept in storage since readCurrentDevicePhoneNumber can return null
