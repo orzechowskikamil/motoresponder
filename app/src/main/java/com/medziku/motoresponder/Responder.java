@@ -14,12 +14,6 @@ import com.medziku.motoresponder.utils.*;
  */
 public class Responder {
 
-
-
-    // TODO k.orzechowskk create action log where every decision is stored and USER can debug settings
-    // TODO k.orzechowskk and see FLOW of algorithm
-    // TODO K. Orzechowski: it can be done with heavy use of toasts!
-
     public boolean notifyAboutAutoRespond = true;
     public boolean showPendingNotification = true;
 
@@ -202,11 +196,7 @@ public class Responder {
 
 
     private String generateAutoRespondMessage(String phoneNumber) {
-
         return this.settingsUtility.getAutoResponseTextForSMS();
-        // TODO K. Orzechowski: add possibility to personalize message IN LATER STAGE
-
-        // TODO K. Orzechowski: separate messages for sms and call would be nice
     }
 
     private void sendSMS(String phoneNumber, String message) {
@@ -221,7 +211,6 @@ public class Responder {
         if (!this.notifyAboutAutoRespond) {
             return;
         }
-        // TODO K. Orzechowski: Implement showing notification , best if with events.
     }
 
 
