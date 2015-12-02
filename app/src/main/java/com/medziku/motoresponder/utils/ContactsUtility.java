@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
+import android.telephony.TelephonyManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +41,7 @@ public class ContactsUtility {
         return result;
     }
 
-    // TODO k.orzechowsk this does not access the phone api or database - can belong to logic.
+
     private String normalizePhoneNumber(String phoneNumber) {
         // TODO K. Orzechowski: Get iso country code (48) from locale
         // TODO K. Orzechowski: It require API 21 - do smth with it
@@ -72,14 +73,16 @@ public class ContactsUtility {
         }
         return names;
     }
-    
-    public boolean isGroupContainingContact(String groupName, String phoneNumberOfContact){
-        // TODO fill me   
+
+    public boolean isGroupContainingContact(String groupName, String phoneNumberOfContact) {
+        // TODO fill me
+        return false;
     }
-    
-    public String readCurrentDevicePhoneNumber(){
-        TelephonyManager tMgr = (TelephonyManager)mAppContext.getSystemService(Context.TELEPHONY_SERVICE);
-        String mPhoneNumber = tMgr.getLine1Number();
+
+    public String readCurrentDevicePhoneNumber() {
+        TelephonyManager telephonyManager =
+                (TelephonyManager) this.context.getSystemService(Context.TELEPHONY_SERVICE);
+        String mPhoneNumber = telephonyManager.getLine1Number();
         return mPhoneNumber;
     }
 }
