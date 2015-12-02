@@ -1,6 +1,6 @@
 package com.medziku.motoresponder.activity;
 
-import android.app.Service;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
@@ -13,8 +13,10 @@ import com.medziku.motoresponder.ui.PrefsHeaderAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
- * Created by medziku on 27.09.15.
+ * This activity is UI of this application.
+ * Main functionality of application doesn't have UI, so only UI of the app is settings panel of application.
  */
 public class SettingsActivity extends PreferenceActivity {
 

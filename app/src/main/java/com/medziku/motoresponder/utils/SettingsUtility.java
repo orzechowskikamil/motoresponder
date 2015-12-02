@@ -1,17 +1,21 @@
 package com.medziku.motoresponder.utils;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-class SettingsUtility {
 
+/**
+ * This class exposes settings of application and totally hide process of storing them.
+ */
+public class SettingsUtility {
+
+    private final String APP_SHARED_PREFERENCES = "AppSharedPreferences";
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
     private String SERVICE_ENABLED = "service-enabled";
 
-    public SettingsUtility(Activity activity) {
-        this.sharedPreferences = activity.getPreferences(Context.MODE_PRIVATE);
+    public SettingsUtility(Context context) {
+        this.sharedPreferences = context.getSharedPreferences(this.APP_SHARED_PREFERENCES, Context.MODE_PRIVATE);
         this.editor = this.sharedPreferences.edit();
     }
 
