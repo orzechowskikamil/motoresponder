@@ -4,44 +4,27 @@ import android.os.AsyncTask;
 import android.util.Log;
 import com.google.common.base.Predicate;
 
-import java.util.Date;
 
 /**
- * This class makes decision if we should respond to particular SMS or call.
- * You can use every object of this class only once (every object is one decision)
+ * Every task is responding to one call/sms, so every object of this class should be used only once.
  */
 public class RespondingTask extends AsyncTask<String, Boolean, Boolean> {
 
 
-    private ResponderAnswered responderAnswered;
     private Predicate<Boolean> resultCallback;
-    private UserResponded userResponded;
-    private NumberRules numberRules;
-    private UserRide userRide;
+
+    private RespondingDecision respondingDecision;
+
     private int waitBeforeRespondingMs = 30000;
 
 
-    public RespondingTask(UserRide userRide, NumberRules numberRules, UserResponded userResponded, ResponderAnswered responderAnswered, Predicate<Boolean> resultCallback) {
-        this.userRide = userRide;
-        this.numberRules = numberRules;
-        this.userResponded = userResponded;
+    public RespondingTask(RespondingDecision respondingDecision, Predicate<Boolean> resultCallback) {
+
+        this.respondingDecision = respondingDecision;
         this.resultCallback = resultCallback;
-        this.responderAnswered = responderAnswered;
     }
 
-    private boolean shouldRespond(String phoneNumber) {
-        Date dateOfReceiving = new Date();
-
-        // send auto respose only on first message on phone number, do not spam with responses. User action will unlock responding.
-        if (this.responderAnswered.responderAnsweredFromLastUserAction(phoneNumber) == true) {
-            return false;
-        }
-
-        // limit daily responses
-        if (this.responderAnswered.tooMuchAutomaticalAnswersIn24h(phoneNumber) == true) {
-            return false;
-        }
-
+    private void respond(String phoneNumber) {
         // wait 30 seconds before responding.
         try {
             Thread.sleep(this.waitBeforeRespondingMs);
@@ -49,39 +32,17 @@ public class RespondingTask extends AsyncTask<String, Boolean, Boolean> {
             e.printStackTrace();
         }
 
-        // do not answer numbers which user doesnt want to autorespond
-        // this check is relatively cheap compared to measuring if user is riding
-        // TODO K. Orzechowski: rename to smth like numberRulesAllowResponding?
-        if (!this.numberRules.shouldRespondToThisNumber(phoneNumber)) {
-            return false;
+        if (this.respondingDecision.shouldRespond(phoneNumber)) {
+            // TODO K. Orzechowski: move responding logic here.
         }
-
-        // TODO k.orzechowski: idea: check if you are not in public transportation by checking
-        // for available wifi, or many bluetooth devices around you.
-
-        // TODO K. Orzechowski: sleep here for long time.
-        // TODO K. Orzechowski: allow user to respond himself and then check.
-
-
-        if (this.userResponded.isUserRespondedSince(dateOfReceiving, phoneNumber)) {
-            return false;
-        }
-
-
-        // this check is more expensive in terms of power and battery
-        // so it's performed later.
-        if (!this.userRide.isUserRiding()) {
-            return false;
-        }
-
-        // all excluding conditions not met, we should respond.
-        return true;
     }
 
 
     @Override
     protected Boolean doInBackground(String... params) {
-        return this.shouldRespond(params[0]);
+        this.respond(params[0]);
+        // TODO K. Orzechowski: refactor, we need void here, not boolean.
+        return true;
     }
 
     // This is called when doInBackground() is finished

@@ -43,6 +43,7 @@ public class Responder {
     private SMSUtility smsUtility;
     private CallsUtility callsUtility;
     private SettingsUtility settingsUtility;
+    private RespondingDecision respondingDecision;
 
 
     public Responder(Context context) {
@@ -66,6 +67,8 @@ public class Responder {
 
         this.userRide = new UserRide(locationUtility, sensorsUtility, motionUtility);
         this.numberRules = new NumberRules(contactsUtility);
+
+        this.respondingDecision = new RespondingDecision(this.userRide, this.numberRules, this.userResponded, this.responderAnswered);
     }
 
     public void startResponding() {
@@ -128,11 +131,10 @@ public class Responder {
         }
 
 
+        // TODO K. Orzechowski: not sure if calling method of object from main thread will not block main thread
+        // instead of execute in task. Verify it.
         new RespondingTask(
-                this.userRide,
-                this.numberRules,
-                this.userResponded,
-                this.responderAnswered,
+                this.respondingDecision,
                 new Predicate<Boolean>() {
                     @Override
                     public boolean apply(Boolean input) {
