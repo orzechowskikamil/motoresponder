@@ -1,6 +1,11 @@
 package com.medziku.motoresponder.logic;
 
+import android.content.Context;
+
 public class ResponderAnswered {
+
+    public ResponderAnswered(Context context) {
+    }
 
 
     public boolean responderAnsweredFromLastUserAction(String phoneNumber) {

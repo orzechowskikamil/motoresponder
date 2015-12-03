@@ -3,10 +3,7 @@ package com.medziku.motoresponder;
 import android.content.Context;
 import com.google.common.base.Predicate;
 import com.medziku.motoresponder.callbacks.SMSReceivedCallback;
-import com.medziku.motoresponder.logic.NumberRules;
-import com.medziku.motoresponder.logic.RespondingDecision;
-import com.medziku.motoresponder.logic.UserResponded;
-import com.medziku.motoresponder.logic.UserRide;
+import com.medziku.motoresponder.logic.*;
 import com.medziku.motoresponder.utils.*;
 
 /**
@@ -39,6 +36,7 @@ public class Responder {
     private NumberRules numberRules;
     private UserRide userRide;
     private UserResponded userResponded;
+    private ResponderAnswered responderAnswered;
 
     private Context context;
     private NotificationUtility notificationUtility;
@@ -55,6 +53,7 @@ public class Responder {
         this.smsUtility = new SMSUtility(this.context);
         this.callsUtility = new CallsUtility(this.context);
         this.settingsUtility = new SettingsUtility(this.context);
+        this.responderAnswered = new ResponderAnswered(this.context);
 
         LocationUtility locationUtility = new LocationUtility(context);
         this.lockStateUtility = new LockStateUtility(context);
@@ -129,40 +128,45 @@ public class Responder {
         }
 
 
-        new RespondingDecision(this.userRide, this.numberRules, this.userResponded, new Predicate<Boolean>() {
-            @Override
-            public boolean apply(Boolean input) {
-                // TODO K. Orzechowski: uncomment this after getting info out from responding decider
+        new RespondingDecision(
+                this.userRide,
+                this.numberRules,
+                this.userResponded,
+                this.responderAnswered,
+                new Predicate<Boolean>() {
+                    @Override
+                    public boolean apply(Boolean input) {
+                        // TODO K. Orzechowski: uncomment this after getting info out from responding decider
 
-                // if phone is unlocked now, we can return - user heard ring, get phone and will
-                // respond manually.
-                if (Responder.this.assumePhoneUnlockedAsNotRiding && Responder.this.phoneIsUnlocked()) {
-                    return false;
-                }
+                        // if phone is unlocked now, we can return - user heard ring, get phone and will
+                        // respond manually.
+                        if (Responder.this.assumePhoneUnlockedAsNotRiding && Responder.this.phoneIsUnlocked()) {
+                            return false;
+                        }
 
-                // wait some time before responding - give user time to get phone from the pocket
-                // or from the desk and respond manually.
-                // unlocking phone should break any responding at all
-                // TODO K. Orzechowski: not sure if I am able to sleep main thread, and not got ANR
+                        // wait some time before responding - give user time to get phone from the pocket
+                        // or from the desk and respond manually.
+                        // unlocking phone should break any responding at all
+                        // TODO K. Orzechowski: not sure if I am able to sleep main thread, and not got ANR
 //                Responder.this.sleep(Responder.this.waitBeforeResponding);
 
-                // now things will go automatically in one milisecond so it's not required to still show this
-                if (Responder.this.showPendingNotification) {
-                    // TODO K. Orzechowski: hmmm. It can be a flaw - check all returns if some return
-                    // not cause to exit without unnotyfing
-                    Responder.this.unnotifyAboutPendingAutoRespond();
-                }
+                        // now things will go automatically in one milisecond so it's not required to still show this
+                        if (Responder.this.showPendingNotification) {
+                            // TODO K. Orzechowski: hmmm. It can be a flaw - check all returns if some return
+                            // not cause to exit without unnotyfing
+                            Responder.this.unnotifyAboutPendingAutoRespond();
+                        }
 
 
 //        this.bs.showStupidNotify("MotoResponder", "GPS speed: " + speedKmh);
 
 
-                String message = Responder.this.generateAutoRespondMessage(phoneNumber);
-                Responder.this.sendSMS(phoneNumber, message);
-                Responder.this.notifyAboutAutoRespond(phoneNumber);
-                return true;
-            }
-        }).execute(phoneNumber);
+                        String message = Responder.this.generateAutoRespondMessage(phoneNumber);
+                        Responder.this.sendSMS(phoneNumber, message);
+                        Responder.this.notifyAboutAutoRespond(phoneNumber);
+                        return true;
+                    }
+                }).execute(phoneNumber);
 
 
     }
