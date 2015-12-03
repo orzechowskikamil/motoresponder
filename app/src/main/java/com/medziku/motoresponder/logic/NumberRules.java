@@ -2,6 +2,8 @@ package com.medziku.motoresponder.logic;
 
 import com.medziku.motoresponder.utils.ContactsUtility;
 
+import java.util.List;
+
 
 /**
  * This class is responsible for filtering numbers which shouldn't be answered.
@@ -10,13 +12,15 @@ public class NumberRules {
 
 
     private ContactsUtility contactsUtility;
-    private PhoneNumberVerifier numberVerifier;
+    // TODO K. Orzechowski: not needed for 1.00
+//    private PhoneNumberVerifier numberVerifier;
 
     public NumberRules(ContactsUtility contactsUtility) {
         this.contactsUtility = contactsUtility;
-        this.numberVerifier = new PhoneNumberVerifier();
-        this.whiteListGroupNames = new List<String>();
-        this.blackListGrupNames = new List<String>();
+        // TODO K. Orzechowski: not needed for 1.00
+//        this.numberVerifier = new PhoneNumberVerifier();
+//        this.whiteListGroupNames = new List<String>();
+//        this.blackListGrupNames = new List<String>();
     }
 
     /**
@@ -46,6 +50,7 @@ public class NumberRules {
 
     public static final int RESPONDING_BLACKLIST_DISABLED = 0;
     public static final int RESPONDING_BLACKLIST_ENABLED = 1;
+
 
     public List<String> whiteListGroupNames;
     public List<String> blackListGroupNames;
@@ -81,7 +86,8 @@ public class NumberRules {
 // return false;
 // }
 
-        if (this.respondingSettings == RESPONDING_SETTINGS_RESPOND_ONLY_CONTACT_BOOK && this.isInContactBook(phoneNumber) == = false) {
+        if (this.respondingSettings == RESPONDING_SETTINGS_RESPOND_ONLY_CONTACT_BOOK
+                && this.isInContactBook(phoneNumber) == false) {
             return false;
         }
 
@@ -98,13 +104,15 @@ public class NumberRules {
         return phoneNumber.equals(this.contactsUtility.readCurrentDevicePhoneNumber());
     }
 
-    private String getCurrentDeviceCountry() {
-        return numberVerifier.getUserCountry();
-    }
+    // TODO K. Orzechowski: not needed for 1.00
+//    private String getCurrentDeviceCountry() {
+//        return numberVerifier.getUserCountry();
+//    }
 
-    private String getCountryOfNumber(String phoneNumber) {
-        return this.numberVerifier.getCountryByPhoneNumber(null, phoneNumber);
-    }
+    // TODO K. Orzechowski: not needed for 1.00
+//    private String getCountryOfNumber(String phoneNumber) {
+//        return this.numberVerifier.getCountryByPhoneNumber(null, phoneNumber);
+//    }
 
     private boolean isNumberOnWhiteList(String phoneNumber) {
         for (String whiteListGroupName : this.whiteListGroupNames) {
@@ -121,15 +129,17 @@ public class NumberRules {
                 return true;
             }
         }
+        return false;
     }
 
 
     private boolean isNormalNumber(String phoneNumber) {
         // todo add this to the project https://github.com/KingsMentor/PhoneNumberValidator
 
-        if (this.numberVerifier.isNumberValid(this.getCountryOfNumber(phoneNumber), phoneNumber) == false) {
-            return false;
-        }
+        // TODO K. Orzechowski: not needed for 1.00
+//        if (this.numberVerifier.isNumberValid(this.getCountryOfNumber(phoneNumber), phoneNumber) == false) {
+//            return false;
+//        }
 
         // if (!PhoneNumberUtils.isGlobalPhoneNumber("+912012185234")){
         // return false;
@@ -143,9 +153,10 @@ public class NumberRules {
         return true; // TODO K. Orzechowski:  return true if normal number - no sms premium or smth.
     }
 
-    private boolean isNumberFromCurrentCountry(String phoneNumber) {
-        return this.numberVerifier.isNumberValid(this.getCurrentDeviceCountry(), phoneNumber);
-    }
+    // TODO K. Orzechowski: not needed for 1.00
+//    private boolean isNumberFromCurrentCountry(String phoneNumber) {
+//        return this.numberVerifier.isNumberValid(this.getCurrentDeviceCountry(), phoneNumber);
+//    }
 
     private boolean isInContactBook(String phoneNumber) {
         return this.contactsUtility.contactBookContainsContact(phoneNumber);
