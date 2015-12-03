@@ -128,7 +128,7 @@ public class Responder {
         }
 
 
-        new RespondingDecision(
+        new RespondingTask(
                 this.userRide,
                 this.numberRules,
                 this.userResponded,

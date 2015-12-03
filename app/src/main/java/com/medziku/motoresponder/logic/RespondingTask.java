@@ -10,7 +10,7 @@ import java.util.Date;
  * This class makes decision if we should respond to particular SMS or call.
  * You can use every object of this class only once (every object is one decision)
  */
-public class RespondingDecision extends AsyncTask<String, Boolean, Boolean> {
+public class RespondingTask extends AsyncTask<String, Boolean, Boolean> {
 
 
     private ResponderAnswered responderAnswered;
@@ -21,7 +21,7 @@ public class RespondingDecision extends AsyncTask<String, Boolean, Boolean> {
     private int waitBeforeRespondingMs = 30000;
 
 
-    public RespondingDecision(UserRide userRide, NumberRules numberRules, UserResponded userResponded, ResponderAnswered responderAnswered, Predicate<Boolean> resultCallback) {
+    public RespondingTask(UserRide userRide, NumberRules numberRules, UserResponded userResponded, ResponderAnswered responderAnswered, Predicate<Boolean> resultCallback) {
         this.userRide = userRide;
         this.numberRules = numberRules;
         this.userResponded = userResponded;
@@ -92,7 +92,7 @@ public class RespondingDecision extends AsyncTask<String, Boolean, Boolean> {
 
     // This is called each time you call publishProgress()
     protected void onProgressUpdate(Boolean... progress) {
-        Log.d("motoapp", "RespondingDecision progress update called");
+        Log.d("motoapp", "RespondingTask progress update called");
     }
 }
 
