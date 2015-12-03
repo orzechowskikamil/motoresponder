@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
+import android.widget.Toast;
 import com.medziku.motoresponder.R;
 import com.medziku.motoresponder.activity.SettingsActivity;
 
@@ -60,9 +61,9 @@ public class NotificationUtility {
     public void hideNotification() {
         this.hideNotification(this.defaultNotificationID);
     }
-    
-    public void showToast(String message){
-         Toast.makeText(this.context.getBaseContext(), message, Toast.LENGTH_SHORT).show();
+
+    public void showToast(String message) {
+        Toast.makeText(this.context, message, Toast.LENGTH_SHORT).show();
     }
 
 }
