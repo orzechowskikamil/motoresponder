@@ -115,47 +115,13 @@ public class Responder {
     private void handleIncoming(final String phoneNumber) {
 
 
-        // show notification to give user possibiity to cancel autorespond
-        if (this.showPendingNotification) {
-            this.notifyAboutPendingAutoRespond();
-        }
-
-
         // TODO K. Orzechowski: not sure if calling method of object from main thread will not block main thread
         // instead of execute in task. Verify it.
         new RespondingTask(
-                this.respondingDecision,
+                this.respondingDecision, this.settingsUtility, this.notificationUtility, this.smsUtility,
                 new Predicate<Boolean>() {
                     @Override
                     public boolean apply(Boolean input) {
-                        // TODO K. Orzechowski: uncomment this after getting info out from responding decider
-
-//                        // if phone is unlocked now, we can return - user heard ring, get phone and will
-//                        // respond manually.
-//                        if (Responder.this.assumePhoneUnlockedAsNotRiding && Responder.this.phoneIsUnlocked()) {
-//                            return false;
-//                        }
-
-                        // wait some time before responding - give user time to get phone from the pocket
-                        // or from the desk and respond manually.
-                        // unlocking phone should break any responding at all
-                        // TODO K. Orzechowski: not sure if I am able to sleep main thread, and not got ANR
-//                Responder.this.sleep(Responder.this.waitBeforeResponding);
-
-                        // now things will go automatically in one milisecond so it's not required to still show this
-                        if (Responder.this.showPendingNotification) {
-                            // TODO K. Orzechowski: hmmm. It can be a flaw - check all returns if some return
-                            // not cause to exit without unnotyfing
-                            Responder.this.unnotifyAboutPendingAutoRespond();
-                        }
-
-
-//        this.bs.showStupidNotify("MotoResponder", "GPS speed: " + speedKmh);
-
-
-                        String message = Responder.this.generateAutoRespondMessage(phoneNumber);
-                        Responder.this.sendSMS(phoneNumber, message);
-                        Responder.this.notifyAboutAutoRespond(phoneNumber);
                         return true;
                     }
                 }).execute(phoneNumber);
@@ -164,60 +130,10 @@ public class Responder {
     }
 
 
-    private void sleep(long timeoutMs) {
-        try {
-            Thread.sleep(timeoutMs);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
     private void cancelAllHandling() {
         // call this to break all autoresponding
         // TODO K. Orzechowski: Implement it.
     }
 
-
-    private void notifyAboutPendingAutoRespond() {
-        // TODO K. Orzechowski:show something, for example toast that autorespond is pending, with possibility to cancel it by user
-    }
-
-    private void unnotifyAboutPendingAutoRespond() {
-        // TODO K. Orzechowski:  hide toast shown by notifyAoutPendingautorespond
-    }
-
-
-    private String generateAutoRespondMessage(String phoneNumber) {
-        return this.settingsUtility.getAutoResponseTextForSMS();
-    }
-
-    private void sendSMS(String phoneNumber, String message) {
-        // TODO K. Orzechowski: this is empty , implement me
-    }
-
-    // TODO K. Orzechowski: add tryNotifyAutoRespond to name or move this.notifyAboutAutoRespond to upper method.
-    // idea is to have all things dependent on settings on one level to improve readability
-    private void notifyAboutAutoRespond(String phoneNumber) {
-        // this should show some toast like this: 'motoresponder responded XXX person for you. call him'
-        // ofc if setting allow this
-        if (!this.notifyAboutAutoRespond) {
-            return;
-        }
-    }
-
-
-    public void showStupidNotify(String title, String content) {
-        this.hideNotification();
-        this.showNotification(title, content, "test info");
-    }
-
-    private void hideNotification() {
-        this.notificationUtility.hideNotification();
-    }
-
-
-    private void showNotification(String title, String content, String info) {
-        this.notificationUtility.showNotification(title, content, info);
-    }
 
 }

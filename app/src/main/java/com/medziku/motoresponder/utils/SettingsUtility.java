@@ -81,4 +81,12 @@ public class SettingsUtility {
         return true;
     }
 
+
+    /**
+     * Should we display notification when motoresponder is measuring if user is riding or not?
+     * @return
+     */
+    public boolean isShowingPendingNotificationEnabled() {
+        return true;
+    }
 }

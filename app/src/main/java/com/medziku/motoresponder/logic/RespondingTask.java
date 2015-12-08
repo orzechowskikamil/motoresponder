@@ -3,6 +3,9 @@ package com.medziku.motoresponder.logic;
 import android.os.AsyncTask;
 import android.util.Log;
 import com.google.common.base.Predicate;
+import com.medziku.motoresponder.utils.NotificationUtility;
+import com.medziku.motoresponder.utils.SMSUtility;
+import com.medziku.motoresponder.utils.SettingsUtility;
 
 
 /**
@@ -11,6 +14,9 @@ import com.google.common.base.Predicate;
 public class RespondingTask extends AsyncTask<String, Boolean, Boolean> {
 
 
+    private SMSUtility smsUtility;
+    private NotificationUtility notificationUtility;
+    private SettingsUtility settingsUtility;
     private Predicate<Boolean> resultCallback;
 
     private RespondingDecision respondingDecision;
@@ -18,13 +24,16 @@ public class RespondingTask extends AsyncTask<String, Boolean, Boolean> {
     private int waitBeforeRespondingMs = 30000;
 
 
-    public RespondingTask(RespondingDecision respondingDecision, Predicate<Boolean> resultCallback) {
+    public RespondingTask(RespondingDecision respondingDecision, SettingsUtility settingsUtility, NotificationUtility notificationUtility, SMSUtility smsUtility, Predicate<Boolean> resultCallback) {
 
         this.respondingDecision = respondingDecision;
         this.resultCallback = resultCallback;
+        this.settingsUtility = settingsUtility;
+        this.notificationUtility = notificationUtility;
+        this.smsUtility = smsUtility;
     }
 
-    private void respond(String phoneNumber) {
+    private void handleRespondingTask(String phoneNumber) {
 
 
         // wait 30 seconds before responding.
@@ -34,15 +43,49 @@ public class RespondingTask extends AsyncTask<String, Boolean, Boolean> {
             e.printStackTrace();
         }
 
-        if (this.respondingDecision.shouldRespond(phoneNumber)) {
-            // TODO K. Orzechowski: move responding logic here.
+
+        // show notification to give user possibiity to cancel autorespond
+        if (this.settingsUtility.isShowingPendingNotificationEnabled()) {
+            this.notifyAboutPendingAutoRespond();
         }
+
+
+        if (this.respondingDecision.shouldRespond(phoneNumber)) {
+            this.respondWithSMS(phoneNumber);
+
+
+        }
+
+        if (this.settingsUtility.isShowingPendingNotificationEnabled()) {
+            this.unnotifyAboutPendingAutoRespond();
+        }
+    }
+
+    private void respondWithSMS(String phoneNumber) {
+        // TODO K. Orzechowski: this probably should be in separate logic class.
+        String message = this.settingsUtility.getAutoResponseTextForSMS();
+
+        try {
+            this.smsUtility.sendSMS(phoneNumber, message, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        this.notificationUtility.showToast("Notification sended!");
+    }
+
+    private void notifyAboutPendingAutoRespond() {
+        this.notificationUtility.showNotification("MotoResponder", "Moto responder is determining if should automatically respond", "");
+    }
+
+    private void unnotifyAboutPendingAutoRespond() {
+        this.notificationUtility.hideNotification();
     }
 
 
     @Override
     protected Boolean doInBackground(String... params) {
-        this.respond(params[0]);
+        this.handleRespondingTask(params[0]);
         // TODO K. Orzechowski: refactor, we need void here, not boolean.
         return true;
     }
