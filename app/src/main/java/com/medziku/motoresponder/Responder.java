@@ -15,14 +15,6 @@ public class Responder {
     public boolean showPendingNotification = true;
 
 
-    /**
-     * If true, if phone is unlocked it will be assumed as not riding (no automatical answer).
-     * If false, it will ignore unlocked/locked state.
-     */
-    // TODO K. Orzechowski: It should be true - but for development I set false
-    public boolean assumePhoneUnlockedAsNotRiding = false;
-
-
     public long waitForAnotherGPSCheckTimeout = 20000;
 
     /**
@@ -47,17 +39,18 @@ public class Responder {
 
 
     public Responder(Context context) {
-
-        // probably we have to start every onsmsreceived in new thread
         this.context = context;
+
+        this.lockStateUtility = new LockStateUtility(context);
 
         this.smsUtility = new SMSUtility(this.context);
         this.callsUtility = new CallsUtility(this.context);
         this.settingsUtility = new SettingsUtility(this.context);
-        this.responderAnswered = new ResponderAnswered(this.context);
+        this.responderAnswered = new ResponderAnswered(this.settingsUtility, this.lockStateUtility);
+        this.userResponded = new UserResponded(this.callsUtility, this.smsUtility);
 
         LocationUtility locationUtility = new LocationUtility(context);
-        this.lockStateUtility = new LockStateUtility(context);
+
         MotionUtility motionUtility = new MotionUtility(context);
         SensorsUtility sensorsUtility = new SensorsUtility(context);
         this.notificationUtility = new NotificationUtility(context);
@@ -120,10 +113,7 @@ public class Responder {
      * @param phoneNumber Phone number of incoming call/sms
      */
     private void handleIncoming(final String phoneNumber) {
-        // if phone is unlocked we do not need to autorespond at all.
-        if (this.assumePhoneUnlockedAsNotRiding && this.phoneIsUnlocked()) {
-            return;
-        }
+
 
         // show notification to give user possibiity to cancel autorespond
         if (this.showPendingNotification) {
@@ -140,11 +130,11 @@ public class Responder {
                     public boolean apply(Boolean input) {
                         // TODO K. Orzechowski: uncomment this after getting info out from responding decider
 
-                        // if phone is unlocked now, we can return - user heard ring, get phone and will
-                        // respond manually.
-                        if (Responder.this.assumePhoneUnlockedAsNotRiding && Responder.this.phoneIsUnlocked()) {
-                            return false;
-                        }
+//                        // if phone is unlocked now, we can return - user heard ring, get phone and will
+//                        // respond manually.
+//                        if (Responder.this.assumePhoneUnlockedAsNotRiding && Responder.this.phoneIsUnlocked()) {
+//                            return false;
+//                        }
 
                         // wait some time before responding - give user time to get phone from the pocket
                         // or from the desk and respond manually.
@@ -185,10 +175,6 @@ public class Responder {
     private void cancelAllHandling() {
         // call this to break all autoresponding
         // TODO K. Orzechowski: Implement it.
-    }
-
-    private boolean phoneIsUnlocked() {
-        return !this.lockStateUtility.isPhoneUnlocked();
     }
 
 

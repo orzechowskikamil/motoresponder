@@ -11,7 +11,6 @@ public class RespondingDecision {
 
 
     private ResponderAnswered responderAnswered;
-    private Predicate<Boolean> resultCallback;
     private UserResponded userResponded;
     private NumberRules numberRules;
     private UserRide userRide;
@@ -24,8 +23,12 @@ public class RespondingDecision {
         this.responderAnswered = responderAnswered;
     }
 
-
     public boolean shouldRespond(String phoneNumber) {
+
+        if (this.responderAnswered.shouldNotRespondBecauseDeviceUnlocked()) {
+            return false;
+        }
+
         Date dateOfReceiving = new Date();
 
         // send auto respose only on first message on phone number, do not spam with responses. User action will unlock responding.

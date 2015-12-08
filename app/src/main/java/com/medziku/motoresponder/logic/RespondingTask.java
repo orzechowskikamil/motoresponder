@@ -25,6 +25,8 @@ public class RespondingTask extends AsyncTask<String, Boolean, Boolean> {
     }
 
     private void respond(String phoneNumber) {
+
+
         // wait 30 seconds before responding.
         try {
             Thread.sleep(this.waitBeforeRespondingMs);
