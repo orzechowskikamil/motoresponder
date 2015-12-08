@@ -89,4 +89,13 @@ public class SettingsUtility {
     public boolean isShowingPendingNotificationEnabled() {
         return true;
     }
+
+    /**
+     * How long responder should wait since receiving message to starting responding process, to allow user
+     * manually respond if he is not away.
+     * @return
+     */
+    public int getDelayBeforeRespondingMs() {
+        return   30000;
+    }
 }

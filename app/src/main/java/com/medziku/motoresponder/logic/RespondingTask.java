@@ -21,7 +21,8 @@ public class RespondingTask extends AsyncTask<String, Boolean, Boolean> {
 
     private RespondingDecision respondingDecision;
 
-    private int waitBeforeRespondingMs = 30000;
+
+
 
 
     public RespondingTask(RespondingDecision respondingDecision, SettingsUtility settingsUtility, NotificationUtility notificationUtility, SMSUtility smsUtility, Predicate<Boolean> resultCallback) {
@@ -38,7 +39,7 @@ public class RespondingTask extends AsyncTask<String, Boolean, Boolean> {
 
         // wait 30 seconds before responding.
         try {
-            Thread.sleep(this.waitBeforeRespondingMs);
+            Thread.sleep(this.settingsUtility.getDelayBeforeRespondingMs());
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
