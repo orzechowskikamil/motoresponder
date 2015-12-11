@@ -18,6 +18,10 @@ public class CallsUtility {
     }
 
     public void listenForCalls(Predicate<String> callCallback) {
+        if (this.callCallback != null) {
+            throw new IllegalStateException("Utility is already listening for calls");
+        }
+
         TelephonyManager telephonyManager = (TelephonyManager) this.context.getSystemService(Context.TELEPHONY_SERVICE);
         PhoneStateListener phoneStateListener = new PhoneStateListener() {
             @Override
@@ -39,6 +43,11 @@ public class CallsUtility {
         telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
         this.callCallback = callCallback;
     }
+
+    public void stopListeningForCalls() {
+       // TODO K. Orzechowski: fill me
+    }
+
 
     public boolean isOutgoingCallAfterDate(Date date, String phoneNumber) {
         // TODO K. Orzechowski: it may still contain a flaw, since phone number sometimes is returned as
