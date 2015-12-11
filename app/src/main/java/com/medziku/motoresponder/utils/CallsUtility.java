@@ -44,8 +44,9 @@ public class CallsUtility {
         this.callCallback = callCallback;
     }
 
-    public void stopListeningForCalls() {
-       // TODO K. Orzechowski: fill me
+    public void stopListeningForCalls() throws Exception {
+        // TODO K. Orzechowski: fill me
+        throw new Exception("not implemented");
     }
 
 
