@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.os.Build;
 import android.os.PowerManager;
 import android.util.Log;
+import com.google.common.base.Predicate;
 
 /**
  * This Utility listens for changes of phone being unlocked or not and report most recent value.
@@ -20,6 +21,16 @@ public class LockStateUtility {
 
     public LockStateUtility(Context context) {
         this.context = context;
+    }
+
+
+
+    public void listenToLockStateChanges(Predicate<Boolean> lockStateChangedCallback) {
+        // TODO K. Orzechowski: implement
+    }
+
+    public void stopListeningToLockStateChanges(){
+        // TODO K. Orzechowski: implement
     }
 
 

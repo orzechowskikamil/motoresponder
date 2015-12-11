@@ -97,6 +97,10 @@ public class SMSUtility {
         );
     }
 
+    public void stopListeningForSMS() {
+        // TODO K. Orzechowski: implement
+    }
+
     private PendingIntent createPendingIntent(String SENT, BroadcastReceiver broadcastReceiver) {
         PendingIntent sentPI = PendingIntent.getBroadcast(this.context, 0, new Intent(SENT), 0);
         this.context.registerReceiver(broadcastReceiver, new IntentFilter(SENT));
