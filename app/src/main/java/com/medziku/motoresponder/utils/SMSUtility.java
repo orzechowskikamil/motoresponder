@@ -6,13 +6,17 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.provider.Telephony;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 import android.util.Log;
 
 import com.medziku.motoresponder.callbacks.SMSReceivedCallback;
 import com.medziku.motoresponder.callbacks.SendSMSCallback;
+
+import java.util.Date;
 
 public class SMSUtility {
 
@@ -93,12 +97,62 @@ public class SMSUtility {
         );
     }
 
+    public void stopListeningForSMS() {
+        // TODO K. Orzechowski: implement
+    }
+
     private PendingIntent createPendingIntent(String SENT, BroadcastReceiver broadcastReceiver) {
         PendingIntent sentPI = PendingIntent.getBroadcast(this.context, 0, new Intent(SENT), 0);
         this.context.registerReceiver(broadcastReceiver, new IntentFilter(SENT));
         return sentPI;
     }
 
+    private String normalizeNumber(String phoneNumber, String defaultCountryIso) {
+        // TODO K. Orzechowski: nothing work...
+        // TODO K. Orzechowski: for now , plain number, think about something better
+        return phoneNumber;
+
+//        if (Build.VERSION.SDK_INT >= 21) {
+//            return PhoneNumberUtils.formatNumberToE164(phoneNumber, defaultCountryIso);
+//        } else {
+//            return PhoneNumberUtils.formatNumber(phoneNumber);
+//        }
+    }
+
+    public boolean wasOutgoingSMSSentAfterDate(Date date, String phoneNumber) {
+        String[] whichColumns = {Telephony.Sms.ADDRESS};
+
+        String selections = Telephony.Sms.DATE + " > ?";
+
+        String[] selectionArgs = {String.valueOf(date.getTime())};
+
+        String sortOrder = Telephony.Sms.DATE + " DESC";
+        Cursor cursor = context.getContentResolver().query(Telephony.Sms.Sent.CONTENT_URI,
+                whichColumns, selections, selectionArgs, sortOrder);
+
+        boolean result = false;
+
+        // TODO K. Orzechowski: get country code from locale
+        String phoneNumberNormalized = this.normalizeNumber(phoneNumber, "48");
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                do {
+                    String sentMsgPhoneNumber = cursor.getString(cursor.getColumnIndex(Telephony.Sms.ADDRESS));
+                    String sentMsgPhoneNumberNormalized = this.normalizeNumber(sentMsgPhoneNumber, "48");
+
+                    if (sentMsgPhoneNumberNormalized.equals(phoneNumberNormalized)) {
+                        result = true;
+                        break;
+                    }
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        }
+        return result;
+    }
+
+
+    // TODO K. Orzechowski: please inline it in some spare time because it looks like shit separated from the context.
     private class IncomingSMSReceiver extends BroadcastReceiver {
 
         private SMSReceivedCallback smsReceivedCallback;

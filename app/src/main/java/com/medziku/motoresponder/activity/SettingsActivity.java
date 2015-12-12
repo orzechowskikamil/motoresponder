@@ -1,17 +1,22 @@
 package com.medziku.motoresponder.activity;
 
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.widget.ListAdapter;
 
 import com.medziku.motoresponder.R;
+import com.medziku.motoresponder.services.BackgroundService;
 import com.medziku.motoresponder.ui.PrefsHeaderAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
- * Created by medziku on 27.09.15.
+ * This activity is UI of this application.
+ * Main functionality of application doesn't have UI, so only UI of the app is settings panel of application.
  */
 public class SettingsActivity extends PreferenceActivity {
 
@@ -20,6 +25,9 @@ public class SettingsActivity extends PreferenceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Intent intent = new Intent(this, BackgroundService.class);
+        startService(intent);
     }
 
     protected void onResume() {

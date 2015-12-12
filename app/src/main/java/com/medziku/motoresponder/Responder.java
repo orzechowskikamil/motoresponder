@@ -1,60 +1,92 @@
 package com.medziku.motoresponder;
 
-import android.location.Location;
-
-import com.medziku.motoresponder.callbacks.LocationChangedCallback;
-import com.medziku.motoresponder.services.BackgroundService;
-import com.medziku.motoresponder.utils.LocationUtility;
-import com.medziku.motoresponder.utils.LockStateUtility;
+import android.content.Context;
+import com.google.common.base.Predicate;
+import com.medziku.motoresponder.callbacks.SMSReceivedCallback;
+import com.medziku.motoresponder.logic.*;
+import com.medziku.motoresponder.utils.*;
 
 /**
- * Created by Kamil on 2015-09-08.
+ * It's like all responding logic entry point
  */
 public class Responder {
 
-    // TODO refactor it to create RespondingDecision class where this class will become abstract decision about responding or not 
-    // while extracting to other classes process of gathering location or sending sms logic
-
-    // todo create action log where every decision is stored and user can debug settings
-
-    private LocationUtility locationUtility;
-    //private SensorsUtility sensorsUtility;
-
     public boolean notifyAboutAutoRespond = true;
     public boolean showPendingNotification = true;
-    public boolean includeProximityCheck = true;
-    public boolean includeLightCheck = true;
-    public boolean interpretLocationTimeoutAsNotRiding = true;
-    public boolean assumePhoneUnlockedAsNotRiding = true;
-    public boolean interpretStayingStillAccelerometerAsNotRiding = true;
-    public boolean doAnotherGPSCheckIfNotSure = true;
 
 
-    public int maybeRidingSpeed = 15;
-    public int sureRidingSpeed = 60;
     public long waitForAnotherGPSCheckTimeout = 20000;
-    public long waitAfterReceivingMsgOrCall = 1000;
-    public long waitBeforeResponding = 10000;
-    public int respondingCountrySettings = 0;
-    public int respondingSettings = 2;
 
-    public static final int RESPONDING_COUNTRY_SETTINGS_CURRENT_COUNTRY_ONLY = 0;
-    public static final int RESPONDING_COUNTRY_SETTINGS_ANY_COUNTRY = 1;
+    /**
+     * Time for user to get phone out of pocket and respond
+     */
+    // TODO K. Orzechowski: for development set to 100, for real it should be 10 000 at least
+    public long waitBeforeResponding = 100;
 
-    public static final int RESPONDING_SETTINGS_RESPOND_EVERYONE = 0;
-    public static final int RESPONDING_SETTINGS_RESPOND_EVERY_NORMAL_NUMBER = 1;
-    public static final int RESPONDING_SETTINGS_RESPOND_ONLY_CONTACT_BOOK = 2;
-    public static final int RESPONDING_SETTINGS_RESPOND_ONLY_GROUP = 3;
+
     private LockStateUtility lockStateUtility;
+    private NumberRules numberRules;
+    private UserRide userRide;
+    private UserResponded userResponded;
+    private ResponderAnswered responderAnswered;
 
-    private BackgroundService bs;//TODO
+    private Context context;
+    private NotificationUtility notificationUtility;
+    private SMSUtility smsUtility;
+    private CallsUtility callsUtility;
+    private SettingsUtility settingsUtility;
+    private RespondingDecision respondingDecision;
 
 
-    public Responder(BackgroundService bs, LocationUtility locationUtility, LockStateUtility lockStateUtility) {
-        // probably we have to start every onsmsreceived in new thread
-        this.bs = bs;
-        this.locationUtility = locationUtility;
-        this.lockStateUtility = lockStateUtility;
+    public Responder(Context context) {
+        this.context = context;
+
+        this.lockStateUtility = new LockStateUtility(context);
+
+        this.smsUtility = new SMSUtility(this.context);
+        this.callsUtility = new CallsUtility(this.context);
+        this.settingsUtility = new SettingsUtility(this.context);
+        this.responderAnswered = new ResponderAnswered(this.settingsUtility, this.lockStateUtility);
+        this.userResponded = new UserResponded(this.callsUtility, this.smsUtility);
+
+        LocationUtility locationUtility = new LocationUtility(context);
+
+        MotionUtility motionUtility = new MotionUtility(context);
+        SensorsUtility sensorsUtility = new SensorsUtility(context);
+        this.notificationUtility = new NotificationUtility(context);
+
+        ContactsUtility contactsUtility = new ContactsUtility(context);
+
+
+        this.userRide = new UserRide(locationUtility, sensorsUtility, motionUtility);
+        this.numberRules = new NumberRules(contactsUtility);
+
+        this.respondingDecision = new RespondingDecision(this.userRide, this.numberRules, this.userResponded, this.responderAnswered);
+    }
+
+    public void startResponding() {
+        this.smsUtility.listenForSMS(new SMSReceivedCallback() {
+            @Override
+            public void onSMSReceived(String phoneNumber, String message) {
+                Responder.this.onSMSReceived(phoneNumber);
+            }
+        });
+
+        this.callsUtility.listenForCalls(new Predicate<String>() {
+            @Override
+            public boolean apply(String phoneNumber) {
+                Responder.this.onUnAnsweredCallReceived(phoneNumber);
+                return true;
+            }
+        });
+
+
+        // TODO K. Orzechowski: remove it later because its only for development
+        // this.onSMSReceived("791467855");
+    }
+
+    public void stopResponding() {
+        // TODO K. Orzechowski: stop it really.
     }
 
     public void onSMSReceived(String phoneNumber) {
@@ -68,220 +100,40 @@ public class Responder {
     }
 
     public void onPhoneUnlocked() {
+        // TODO K. Orzechowski: bind it
         // call this when phone is unlocked by user
         this.cancelAllHandling();
     }
 
+
+    /**
+     * This is method containing all logic of responding in human readable way.
+     * In other words: it's just an algorithm.
+     *
+     * @param phoneNumber Phone number of incoming call/sms
+     */
     private void handleIncoming(final String phoneNumber) {
-        // for now for simplification just wait one second forclaryfying sensor values
-        try {
-            Thread.sleep(this.waitAfterReceivingMsgOrCall);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        // if phone is unlocked we do not need to autorespond at all.
-        if (this.assumePhoneUnlockedAsNotRiding && this.phoneIsUnlocked()) {
-            return;
-        }
-
-        if (this.isNotInPocket()) {
-            return;
-        }
 
 
-        // do not answer numbers which user doesnt want to autorespond
-        if (!this.shouldRespondToThisNumber(phoneNumber)) {
-            return;
-        }
-
-        // show notification to give user possibiity to cancel autorespond
-        if (this.showPendingNotification) {
-            this.notifyAboutPendingAutoRespond();
-        }
-
-        // wait some time before responding - give user time to get phone from the pocket
-        // or from the desk and respond manually.
-        // unlocking phone should break any responding at all
-        try {
-            Thread.sleep(this.waitBeforeResponding);
-        } catch (InterruptedException e) {
-        }
-
-        // now things will go automatically in one milisecond so it's not required to still show this
-        if (this.showPendingNotification) {
-            this.unnotifyAboutPendingAutoRespond();
-        }
-
-        // if phone is unlocked now, we can return - user heard ring, get phone and will
-        // respond manually.
-        if (this.assumePhoneUnlockedAsNotRiding && this.phoneIsUnlocked()) {
-            return;
-        }
-
-        // if phone doesn't report any movement we can also assume that user is not riding motorcycle
-        if (this.interpretStayingStillAccelerometerAsNotRiding && this.phoneReportsStayingStill()) {
-            return;
-        }
-
-        this.getLocationAndProceed(phoneNumber);
-    }
+        // TODO K. Orzechowski: not sure if calling method of object from main thread will not block main thread
+        // instead of execute in task. Verify it.
+        new RespondingTask(
+                this.respondingDecision, this.settingsUtility, this.notificationUtility, this.smsUtility,
+                new Predicate<Boolean>() {
+                    @Override
+                    public boolean apply(Boolean input) {
+                        return true;
+                    }
+                }).execute(phoneNumber);
 
 
-    private void handleIncomingSecondStep(String phoneNumber, Location location) {
-
-        boolean locationTimeouted = false;
-        float firstMeasurementSpeed = location.getSpeed();
-        float secondMeasurementSpeed = 0;
-        float biggerMeasurementSpeed = 0;
-
-        if (this.interpretLocationTimeoutAsNotRiding && locationTimeouted) {
-            // if timeout, it means that phone is probably in home with no access to GPS satelites.
-            // so if no ride, no need to respond automatically
-            return;
-        }
-
-        biggerMeasurementSpeed = (secondMeasurementSpeed > firstMeasurementSpeed)
-                ? secondMeasurementSpeed
-                : firstMeasurementSpeed;
-
-
-        if (biggerMeasurementSpeed < this.sureRidingSpeed) {
-            // user is not riding. no need to autorespond
-            return;
-        }
-
-        String message = this.generateAutoRespondMessage(phoneNumber);
-        this.sendSMS(phoneNumber, message);
-        this.notifyAboutAutoRespond(phoneNumber);
     }
 
 
     private void cancelAllHandling() {
         // call this to break all autoresponding
+        // TODO K. Orzechowski: Implement it.
     }
 
-
-    private void wait(int amountMs) {
-        // wait for given milliseconds
-    }
-
-
-    private boolean phoneIsUnlocked() {
-        // return false if phone is unlocked, true if it has screen lock.
-        // TODO: 2015-09-18 FOR NOW IT ALWAYS REPORT LOCKED, CHANGE IT! 
-        return !this.lockStateUtility.isPhoneUnlocked();
-    }
-
-    private boolean phoneReportsStayingStill() {
-        // if accelerometer does not report movement, return false, otherwise true.
-        return false;
-    }
-
-    private void notifyAboutPendingAutoRespond() {
-        // show something, for example toast that autorespond is pending, with possibility to cancel it by user
-    }
-
-    private void unnotifyAboutPendingAutoRespond() {
-        // hide toast shown by notifyAoutPendingautorespond
-    }
-
-    private void getLocationAndProceed(final String phoneNumber) {
-        this.locationUtility.listenForLocationOnce(new LocationChangedCallback() {
-
-            // TODO: 2015-09-16 promises welcome?
-            @Override
-            public void onLocationChange(Location location) {
-                Responder.this.handleIncomingSecondStep(phoneNumber, location);
-            }
-
-        });
-    }
-
-    private boolean isNormalNumber(String phoneNumber) {
-        return true; // return true if normal number - no sms premium or smth.
-    }
-
-    private boolean isNumberFromCurrentCountry(String phoneNumber) {
-        return true;
-    }
-
-    private boolean isInContactBook(String phoneNumber) {
-        return true; // check if in contact book
-    }
-
-    private boolean isInGroup(String phoneNumber) {
-        return true; // probably we need one special group, or selector from exisiting groups allowing user to choose many groups.
-    }
-
-
-    private boolean shouldRespondToThisNumber(String phoneNumber) {
-        boolean respondingConstraintsMeet = false;
-        boolean countryRespondingConstraintsMeet = false;
-
-        switch (this.respondingCountrySettings) {
-            case Responder.RESPONDING_COUNTRY_SETTINGS_ANY_COUNTRY:
-                countryRespondingConstraintsMeet = true;
-                break;
-            case Responder.RESPONDING_COUNTRY_SETTINGS_CURRENT_COUNTRY_ONLY:
-                countryRespondingConstraintsMeet = this.isNumberFromCurrentCountry(phoneNumber);
-                break;
-        }
-
-        switch (this.respondingSettings) {
-            case Responder.RESPONDING_SETTINGS_RESPOND_EVERYONE:
-                respondingConstraintsMeet = true;
-                break;
-            case Responder.RESPONDING_SETTINGS_RESPOND_EVERY_NORMAL_NUMBER:
-                respondingConstraintsMeet = this.isNormalNumber(phoneNumber);
-                break;
-            case Responder.RESPONDING_SETTINGS_RESPOND_ONLY_CONTACT_BOOK:
-                respondingConstraintsMeet = this.isInContactBook(phoneNumber);
-                break;
-            case Responder.RESPONDING_SETTINGS_RESPOND_ONLY_GROUP:
-                respondingConstraintsMeet = this.isInGroup(phoneNumber);
-                break;
-        }
-
-        boolean respondingAllowed = respondingConstraintsMeet && countryRespondingConstraintsMeet;
-
-
-        return respondingAllowed;
-    }
-
-    private String generateAutoRespondMessage(String phoneNumber) {
-        return "Jadę właśnie motocyklem i nie mogę odebrać. Oddzwonię później.";//TODO spersonalizować
-
-        // TODO: 2015-09-08 separate messages for sms and call would be nice
-    }
-
-    private void sendSMS(String phoneNumber, String message) {
-    }
-
-    private void notifyAboutAutoRespond(String phoneNumber) {
-        // this should show some toast like this: 'motoresponder responded XXX person for you. call him'
-        // ofc if setting allow this
-        if (this.notifyAboutAutoRespond == false) {
-            return;
-        }
-        // do logic.
-    }
-
-    private boolean isProxime() {
-        // return true if phone reports proximity to smth.
-        // TODO: 2015-09-16 recheck, probably invalid 
-        return this.bs.isProxime();
-    }
-
-    private boolean isLightOutside() {
-        // return true if light sensor reports light
-        // TODO: 2015-09-16 probably invalid 
-        return this.bs.isLightOutside();
-    }
-
-    private boolean isNotInPocket() {
-        return this.includeProximityCheck && !this.isProxime() || // proxime test failed, so phone can't be in pocket. if not in pocket he probably does not ride
-                this.includeLightCheck && this.isLightOutside();// light outside. in pocket shouldn't be any light.
-
-    }
 
 }

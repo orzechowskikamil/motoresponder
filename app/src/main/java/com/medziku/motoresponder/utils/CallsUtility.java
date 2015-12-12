@@ -1,62 +1,76 @@
 package com.medziku.motoresponder.utils;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.provider.CallLog;
 import android.telephony.*;
+import com.google.common.base.Predicate;
 
-import com.medziku.motoresponder.callbacks.CallCallback;
-import com.medziku.motoresponder.callbacks.CellStateCallback;
+import java.util.Date;
 
-import java.util.ArrayList;
-import java.util.List;
-
-/**
- * Created by Kamil on 2015-09-08.
- */
-
-@Deprecated
 public class CallsUtility {
 
     private Context context;
-    private List<CallCallback> callCallbacksList;
+    private Predicate<String> callCallback;
 
     public CallsUtility(Context context) {
-        // TODO: 2015-09-08 add more callbacks!
-        //medziku: no more callbacks!
         this.context = context;
-        this.callCallbacksList = new ArrayList<CallCallback>();
     }
 
-    public void listenForCalls(CallCallback callCallback) {
-        TelephonyManager telephonyManager = (TelephonyManager) this.context.getSystemService(Context.TELEPHONY_SERVICE);
-        MyCallListener phoneStateListener = new MyCallListener();
-        telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
-        this.callCallbacksList.add(callCallback);
-
-    }
-
-    private class MyCallListener extends PhoneStateListener {//Responsible for incoming phone calls, phone state etc
-        public String TAG = MyCallListener.class.getName();
-
-        @Override
-        public void onCallStateChanged(int state, String incomingNumber) {//Call state
-            super.onCallStateChanged(state, incomingNumber);
-            switch (state) {
-                case TelephonyManager.CALL_STATE_IDLE:
-                    break;
-                case TelephonyManager.CALL_STATE_RINGING:
-                    for (CallCallback callCallback : CallsUtility.this.callCallbacksList) {
-                        callCallback.onCall(incomingNumber);
-                    }
-                    break;
-                case TelephonyManager.CALL_STATE_OFFHOOK:
-                    break;
-                default:
-                    break;
-            }
+    public void listenForCalls(Predicate<String> callCallback) {
+        if (this.callCallback != null) {
+            throw new IllegalStateException("Utility is already listening for calls");
         }
+
+        TelephonyManager telephonyManager = (TelephonyManager) this.context.getSystemService(Context.TELEPHONY_SERVICE);
+        PhoneStateListener phoneStateListener = new PhoneStateListener() {
+            @Override
+            public void onCallStateChanged(int state, String incomingNumber) {
+                super.onCallStateChanged(state, incomingNumber);
+                switch (state) {
+                    case TelephonyManager.CALL_STATE_IDLE:
+                        break;
+                    case TelephonyManager.CALL_STATE_RINGING:
+                        CallsUtility.this.callCallback.apply(incomingNumber);
+                        break;
+                    case TelephonyManager.CALL_STATE_OFFHOOK:
+                        break;
+                    default:
+                        break;
+                }
+            }
+        };
+        telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+        this.callCallback = callCallback;
     }
 
-    public List<CallCallback> getCallCallbacksList() {
-        return callCallbacksList;
+    public void stopListeningForCalls() throws Exception {
+        // TODO K. Orzechowski: fill me
+        throw new Exception("not implemented");
     }
+
+
+    public boolean isOutgoingCallAfterDate(Date date, String phoneNumber) {
+        // TODO K. Orzechowski: it may still contain a flaw, since phone number sometimes is returned as
+        // TODO K. Orzechowski: XXXXXXXXX, sometimes as +48XXXXXXXXX, and sometimes as 0048XXXXXXXXX.
+        // TODO K. Orzechowski: verify it later.
+        String[] whichColumns = {CallLog.Calls.NUMBER};
+
+        String selections = CallLog.Calls.DATE + " > ? AND " + CallLog.Calls.NUMBER + " = ? AND "
+                + CallLog.Calls.TYPE + " = ?";
+
+        String[] selectionArgs = {String.valueOf(date.getTime()), phoneNumber, String.valueOf(CallLog.Calls.OUTGOING_TYPE)};
+
+        String sortOrder = CallLog.Calls.DATE + " DESC";
+
+        Cursor cursor = this.context.getContentResolver()
+                .query(CallLog.Calls.CONTENT_URI, whichColumns, selections, selectionArgs, sortOrder);
+
+        boolean result = cursor.getCount() > 0;
+
+        cursor.close();
+
+        return result;
+    }
+
 }
