@@ -13,18 +13,21 @@ public class SettingsUtility {
 
     public static final String RESPONDER_SERVICE_ENABLED_KEY = "responder_on";
     public static final String RESPONSE_TEXT_KEY = "response_text";
+    public static final String RESPONSE_DELAY_KEY = "response_delay";
+
+    public static final int DEFAULT_RESPONSE_DELAY = 10;
 
     private final String APP_SHARED_PREFERENCES = "AppSharedPreferences";
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
 
-    private final String defaultResoinseText;
+    private final String defaultResponseText;
 
     public SettingsUtility(Context context) {
         this.sharedPreferences = context.getSharedPreferences(this.APP_SHARED_PREFERENCES, Context.MODE_PRIVATE);
         this.editor = this.sharedPreferences.edit();
 
-        this.defaultResoinseText = context.getString(R.string.default_resoinse_text);
+        this.defaultResponseText = context.getString(R.string.default_response_text);
     }
 
     private boolean getValue(String name, boolean defaultValue) {//TODO key not name
@@ -78,7 +81,7 @@ public class SettingsUtility {
      * @return
      */
     public String getAutoResponseTextForSMS() {
-        return defaultResoinseText;
+        return defaultResponseText;
     }
 
     /**
@@ -121,6 +124,14 @@ public class SettingsUtility {
      * @return
      */
     public String getDefaultResponseText() {
-        return this.defaultResoinseText;
+        return this.defaultResponseText;
+    }
+
+    /**
+     * Delay in seconds after which the response will be sent.
+     * @return
+     */
+    public int getResponseDelay(){
+        return this.sharedPreferences.getInt(RESPONSE_DELAY_KEY, DEFAULT_RESPONSE_DELAY);
     }
 }

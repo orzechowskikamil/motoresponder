@@ -3,11 +3,17 @@
     <string name="settings_activity_label">Moto Responder Settings</string>
     <string name="responder_on_summary">Decide if background application should be enabled</string>
     <string name="responder_on_title">Responder ON</string>
+    <string name="response_text_title">Response text</string>
+    <string name="response_text_summary">The message which will be sent to recipient</string>
+    <string name="response_delay_title">Respond delay</string>
+    <string name="response_delay_summary">The time in seconds after which the response will be sent</string>
 
     <!-- DEFAULT VALUES -->
-    <string name="default_resoinse_text">(Automatyczna odpowiedz) Czesc, jezdze wlasnie motocyklem, odezwe sie jak skonczy mi sie paliwo.</string>
+    <string name="default_response_text">(Automatyczna odpowiedz) Czesc, jezdze wlasnie motocyklem, odezwe sie jak skonczy mi sie paliwo.</string>
 
     <!-- KEYS -->
     <string name="responder_on">responder_on</string>
+    <string name="response_text">response_text</string>
+    <string name="response_delay">response_delay</string>
 
 </resources>
