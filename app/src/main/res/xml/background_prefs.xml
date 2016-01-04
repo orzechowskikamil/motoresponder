@@ -2,9 +2,9 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <SwitchPreference
-        android:key="responder_on"
-        android:summary="Decide if background application should be enabled"
-        android:title="Responder ON" />
+        android:key="@string/responder_on"
+        android:summary="@string/responder_on_summary"
+        android:title="@string/responder_on_title" />
 
     <EditTextPreference
         android:dialogTitle="Response text"
