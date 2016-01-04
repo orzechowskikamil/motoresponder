@@ -35,7 +35,7 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         log.info("SharedPrefsKeyChanged: {}", key);
 
-        if (key.equals(SettingsUtility.RESPONDER_SERVICE_ENABLED)) {
+        if (key.equals(SettingsUtility.RESPONDER_SERVICE_ENABLED_KEY)) {
             Intent intent = new Intent(this, BackgroundService.class);
             boolean serviceEnabled = sharedPreferences.getBoolean(key, false);
             if (serviceEnabled) {

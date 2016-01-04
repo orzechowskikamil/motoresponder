@@ -3,41 +3,49 @@ package com.medziku.motoresponder.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.medziku.motoresponder.R;
+
 
 /**
  * This class exposes settings of application and totally hide process of storing them.
  */
 public class SettingsUtility {
 
+    public static final String RESPONDER_SERVICE_ENABLED_KEY = "responder_on";
+    public static final String RESPONSE_TEXT_KEY = "response_text";
+
     private final String APP_SHARED_PREFERENCES = "AppSharedPreferences";
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
-    public static final String RESPONDER_SERVICE_ENABLED = "responder_on";
+
+    private final String defaultResoinseText;
 
     public SettingsUtility(Context context) {
         this.sharedPreferences = context.getSharedPreferences(this.APP_SHARED_PREFERENCES, Context.MODE_PRIVATE);
         this.editor = this.sharedPreferences.edit();
+
+        this.defaultResoinseText = context.getString(R.string.default_resoinse_text);
     }
 
-    private boolean getValue(String name, boolean defaultValue) {
+    private boolean getValue(String name, boolean defaultValue) {//TODO key not name
         return this.sharedPreferences.getBoolean(name, defaultValue);
     }
 
-    private void setValue(String name, boolean value) {
+    private void setValue(String name, boolean value) {//TODO key not name
         this.editor.putBoolean(name, value);
         this.editor.commit();
     }
 
-    private String getValue(String name, String defaultValue) {
+    private String getValue(String name, String defaultValue) {//TODO key not name
         return this.sharedPreferences.getString(name, defaultValue);
     }
 
-    private void setValue(String name, String value) {
+    private void setValue(String name, String value) {//TODO key not name
         this.editor.putString(name, value);
         this.editor.commit();
     }
 
-    private int getValue(String name, int defaultValue) {
+    private int getValue(String name, int defaultValue) {//TODO TODO key not name
         return this.sharedPreferences.getInt(name, defaultValue);
     }
 
@@ -52,7 +60,7 @@ public class SettingsUtility {
      * @return
      */
     public boolean isServiceEnabled() {
-        return this.getValue(RESPONDER_SERVICE_ENABLED, true);
+        return this.getValue(RESPONDER_SERVICE_ENABLED_KEY, true);
     }
 
     /**
@@ -61,7 +69,7 @@ public class SettingsUtility {
      * @param value
      */
     public void setServiceEnabled(boolean value) {
-        this.setValue(RESPONDER_SERVICE_ENABLED, value);
+        this.setValue(RESPONDER_SERVICE_ENABLED_KEY, value);
     }
 
 
@@ -70,7 +78,7 @@ public class SettingsUtility {
      * @return
      */
     public String getAutoResponseTextForSMS() {
-        return "(Automatyczna odpowiedz) Czesc, jezdze wlasnie motocyklem, odezwe sie jak skonczy mi sie paliwo.";
+        return defaultResoinseText;
     }
 
     /**
@@ -97,5 +105,22 @@ public class SettingsUtility {
      */
     public int getDelayBeforeRespondingMs() {
         return   30000;
+    }
+
+    /**
+     * Return response text stored in preferences.
+     * @return
+     */
+    //TODO tests
+    public String getResponseText() {//TODO probably there will be need to use phone number argument
+        return this.sharedPreferences.getString(RESPONSE_TEXT_KEY, getDefaultResponseText());
+    }
+
+    /**
+     * Return default response text.
+     * @return
+     */
+    public String getDefaultResponseText() {
+        return this.defaultResoinseText;
     }
 }

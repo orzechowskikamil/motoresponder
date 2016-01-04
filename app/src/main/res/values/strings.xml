@@ -4,6 +4,9 @@
     <string name="responder_on_summary">Decide if background application should be enabled</string>
     <string name="responder_on_title">Responder ON</string>
 
+    <!-- DEFAULT VALUES -->
+    <string name="default_resoinse_text">(Automatyczna odpowiedz) Czesc, jezdze wlasnie motocyklem, odezwe sie jak skonczy mi sie paliwo.</string>
+
     <!-- KEYS -->
     <string name="responder_on">responder_on</string>
 
