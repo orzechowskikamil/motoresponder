@@ -12,7 +12,7 @@ public class SettingsUtility {
     private final String APP_SHARED_PREFERENCES = "AppSharedPreferences";
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
-    private String SERVICE_ENABLED = "service-enabled";
+    public static final String RESPONDER_SERVICE_ENABLED = "responder_on";
 
     public SettingsUtility(Context context) {
         this.sharedPreferences = context.getSharedPreferences(this.APP_SHARED_PREFERENCES, Context.MODE_PRIVATE);
@@ -52,7 +52,7 @@ public class SettingsUtility {
      * @return
      */
     public boolean isServiceEnabled() {
-        return this.getValue(SERVICE_ENABLED, true);
+        return this.getValue(RESPONDER_SERVICE_ENABLED, true);
     }
 
     /**
@@ -61,7 +61,7 @@ public class SettingsUtility {
      * @param value
      */
     public void setServiceEnabled(boolean value) {
-        this.setValue(SERVICE_ENABLED, value);
+        this.setValue(RESPONDER_SERVICE_ENABLED, value);
     }
 
 
