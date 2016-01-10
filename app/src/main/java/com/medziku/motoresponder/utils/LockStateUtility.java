@@ -1,76 +1,55 @@
 package com.medziku.motoresponder.utils;
 
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
+import android.app.KeyguardManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
+import android.os.PowerManager;
 import android.util.Log;
-
-import com.medziku.motoresponder.callbacks.LockStateCallback;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.google.common.base.Predicate;
 
 /**
- * Created by Kamil on 2015-09-16.
+ * This Utility listens for changes of phone being unlocked or not and report most recent value.
  */
-
 public class LockStateUtility {
 
     private Context context;
-    private List<LockStateCallback> lockStateCallbacksList;
-    private boolean phoneUnlocked;
 
     public LockStateUtility(Context context) {
         this.context = context;
-        this.lockStateCallbacksList = new ArrayList<LockStateCallback>();
-
-
-        this.context.registerReceiver(new UserPresentBroadcastReceiver(),
-                new IntentFilter("android.intent.action.USER_PRESENT"));
-
-        this.context.registerReceiver(new UserPresentBroadcastReceiver(),
-                new IntentFilter("android.intent.action.SCREEN_OFF"));
-
-        // if somebody started app, phone must be unlocked at start
-        this.phoneUnlocked = true;
     }
 
+
+
+    public void listenToLockStateChanges(Predicate<Boolean> lockStateChangedCallback) {
+        // TODO K. Orzechowski: implement
+    }
+
+    public void stopListeningToLockStateChanges(){
+        // TODO K. Orzechowski: implement
+    }
+
+
+    /**
+     * If true, phone is unlocked and turned screen on, if false - not
+     */
+    @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
     public boolean isPhoneUnlocked() {
-        return phoneUnlocked;
-    }
 
-    private void setPhoneUnlocked(boolean phoneUnlocked) {
-        this.phoneUnlocked = phoneUnlocked;
-    }
+        KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
+        boolean isPhoneLocked = keyguardManager.inKeyguardRestrictedInputMode();
 
-    private class UserPresentBroadcastReceiver extends BroadcastReceiver {
+        PowerManager powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+        boolean isScreenAwake = (Build.VERSION.SDK_INT < 20
+                ? powerManager.isScreenOn()
+                : powerManager.isInteractive());
 
-        @Override
-        public void onReceive(Context arg0, Intent intent) {
+        boolean phoneIsUnlocked = isScreenAwake && !isPhoneLocked;
 
-        /*Sent when the user is present after
-         * device wakes up (e.g when the keyguard is gone)
-         * */
-            if (intent.getAction().equals(Intent.ACTION_USER_PRESENT)) {
-                for (LockStateCallback unlockCallback : LockStateUtility.this.lockStateCallbacksList) {
-                    unlockCallback.onChangeState(true);
-                    LockStateUtility.this.setPhoneUnlocked(true);
-                    Log.d("lock state utility", "phone unlocked");
-                }
-
-            }
-        /*Device is shutting down. This is broadcast when the device
-         * is being shut down (completely turned off, not sleeping)
-         * */
-            else if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
-                for (LockStateCallback unlockCallback : LockStateUtility.this.lockStateCallbacksList) {
-                    unlockCallback.onChangeState(false);
-                    LockStateUtility.this.setPhoneUnlocked(false);
-                    Log.d("lock state utility", "phone locked");
-                }
-            }
-        }
-
+        return phoneIsUnlocked;
     }
 }

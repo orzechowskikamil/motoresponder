@@ -4,156 +4,105 @@ package com.medziku.motoresponder.utils;
 import android.content.Context;
 import android.location.*;
 import android.os.Bundle;
+import android.os.Looper;
+import android.util.Log;
+import com.google.common.util.concurrent.SettableFuture;
 
-import com.medziku.motoresponder.callbacks.LocationChangedCallback;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.Future;
 
-
-//interface LocationCityChangedCallback {
-//
-//    void onLocationCityChange(Location location, String cityName);
-//}
-
+/**
+ * This utility allow to listen for accurate location and get response as promise.
+ */
 public class LocationUtility {
 
-    private Context context;
     private LocationManager locationManager;
-    private int minimumTimeBetweenUpdates;
-    private int minimumDistanceBetweenUpdates;
-
-    public LocationUtility(Context context, int minimumTimeBetweenUpdates, int minimumDistanceBetweenUpdates) {
-        this.context = context;
-        this.locationManager = (LocationManager) this.context.getSystemService(Context.LOCATION_SERVICE);
-        this.minimumDistanceBetweenUpdates = minimumDistanceBetweenUpdates;
-        this.minimumTimeBetweenUpdates = minimumTimeBetweenUpdates;
-    }
+    /**
+     * Location must be more precise than 20 meters
+     */
+    private double goodAccuracyMeters = 20;
+    public int gettingLocationTimeout = 15 * 1000;
+    public int minimumTimeBetweenUpdates = 500;
+    public int minimumDistanceBetweenUpdates = 0;
 
     public LocationUtility(Context context) {
-        this(context, 5000, 10);
+        this.locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
     }
-//
-//    public void listenForLocationChanges(LocationChangedCallback locationChangedCallback, boolean shouldReceiveCity) {
-//        this.locationManager.requestLocationUpdates(
-//                LocationManager.GPS_PROVIDER,
-//                this.minimumTimeBetweenUpdates,
-//                this.minimumDistanceBetweenUpdates,
-//                new MyLocationListener(locationChangedCallback, shouldReceiveCity)
-//        );
-//    }
-//
-//    private LocationListener  listenForLocationChanges(LocationChangedCallback locationChangedCallback, boolean shouldReceiveCity) {
-//        LocationListener locationListener = new MyLocationListener(locationChangedCallback, shouldReceiveCity);
-//        this.locationManager.requestLocationUpdates(
-//                LocationManager.GPS_PROVIDER,
-//                this.minimumTimeBetweenUpdates,
-//                this.minimumDistanceBetweenUpdates,
-//                locationListener
-//        );
-//
-//        return locationListener;
-//    }
-//
-//    public void listenForLocationChangesOnce(final LocationChangedCallback locationChangedCallback, boolean shouldReceiveCity) {
-//        this.listenForLocationChanges(new LocationChangedCallback() {
-//
-//            public void onLocationChange(Location location, String cityName) {
-//                LocationUtility.this.locationManager.removeUpdates();
-//                locationChangedCallback.onLocationChange(location, cityName);
-//            }
-//
-//
-//            public void onLocationChange(Location location) {
-//                locationChangedCallback.onLocationChange(location);
-//            }
-//        }, shouldReceiveCity);
-//    }
 
 
-    public void listenForLocationOnce(final LocationChangedCallback callback) {
+    /**
+     * Listens for location update
+     *
+     * @return Future which is fullfilled when location with appropriate accuracy is known, or null if timeout/error.
+     */
+    public Future<Location> getAccurateLocation() {
+        final SettableFuture<Location> result = SettableFuture.create();
 
+        final LocationListener listener = new LocationListener() {
+
+            public void onLocationChanged(Location loc) {
+                Log.d("motoapp", "locationChanged event, current speed is: " + loc.getSpeed() + ", in kmh it is " + loc.getSpeed() * 3.6 + ", accuracy is " + loc.getAccuracy());
+                if (loc.getAccuracy() <= LocationUtility.this.goodAccuracyMeters) {
+                    Log.d("motoapp", "LOCATION MEASURED");
+                    LocationUtility.this.locationManager.removeUpdates(this);
+                    result.set(loc);
+                }
+            }
+
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+                Log.d("motoapp", "statusChanged changed " + status);
+                switch (status) {
+                    case LocationProvider.AVAILABLE:
+                        break;
+                    case LocationProvider.TEMPORARILY_UNAVAILABLE:
+                        break;
+                    case LocationProvider.OUT_OF_SERVICE:
+                        LocationUtility.this.locationManager.removeUpdates(this);
+                        result.set(null);
+                        break;
+                }
+            }
+
+
+            @Override
+            public void onProviderEnabled(String provider) {
+                Log.d("motoapp", "Location Provider enabled");
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+                Log.d("motoapp", "providerDisabled event " + provider);
+                // TODO K. Orzechowski: FIND way to return it by one method.
+                LocationUtility.this.locationManager.removeUpdates(this);
+                result.set(null);
+            }
+        };
+
+
+        // this is safety timeout - if no location after desired time, it cancells location listening
+
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Log.d("motoapp", "Location timeout");
+                LocationUtility.this.locationManager.removeUpdates(listener);
+                result.set(null);
+            }
+        }, this.gettingLocationTimeout);
+
+
+        Looper.prepare();
         this.locationManager.requestLocationUpdates(
                 LocationManager.GPS_PROVIDER,
                 this.minimumTimeBetweenUpdates,
                 this.minimumDistanceBetweenUpdates,
-                new LocationListener() {
-                    public void onLocationChanged(Location loc) {
-                        if (loc.getAccuracy() >= 0.68) {
-                            callback.onLocationChange(loc);
-                            this.unregisterUpdates();
-                        }
-                    }
+                listener);
+        Looper.loop();
+        Log.d("motoapp", "Location registered");
 
-                    private void unregisterUpdates() {
-                        LocationUtility.this.locationManager.removeUpdates(this);
-                    }
-
-                    @Override
-                    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-                    }
-
-                    @Override
-                    public void onProviderEnabled(String provider) {
-
-                    }
-
-                    @Override
-                    public void onProviderDisabled(String provider) {
-
-                    }
-                });
+        return result;
     }
-
-//    private class MyLocationListener implements LocationListener {//responsible for receiving GPS info
-//
-//        private LocationChangedCallback locationChangedCallback;
-//        private LocationCityChangedCallback locationCityChangedCallback;
-//        private boolean isTrackingCityEnabled;
-//
-//        public MyLocationListener(LocationChangedCallback locationChangedCallback) {
-//            this(locationChangedCallback, false);
-//        }
-//
-//        public MyLocationListener(LocationChangedCallback locationChangedCallback, boolean isTrackingCityEnabled) {
-//            this.locationChangedCallback = locationChangedCallback;
-//            this.isTrackingCityEnabled = isTrackingCityEnabled;
-//        }
-//
-//        @Override
-//        public void onLocationChanged(Location loc) {
-//            if (loc.getAccuracy() >= 0.68) {
-//                if (this.isTrackingCityEnabled) {
-//                    String cityName = null;
-//                    Geocoder gcd = new Geocoder(LocationUtility.this.context, Locale.getDefault());
-//                    List<Address> addresses;
-//                    try {
-//                        addresses = gcd.getFromLocation(loc.getLatitude(), loc.getLongitude(), 1);
-//                        if (addresses.size() > 0) {
-//                            System.out.println(addresses.get(0).getLocality());
-//                        }
-//                        cityName = addresses.get(0).getLocality();
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//
-//                    this.locationCityChangedCallback.onLocationCityChange(loc, cityName);
-//                } else {
-//                    this.locationChangedCallback.onLocationChange(loc);
-//                }
-//            }
-//        }
-//
-//        @Override
-//        public void onProviderDisabled(String provider) {
-//        }
-//
-//        @Override
-//        public void onProviderEnabled(String provider) {
-//        }
-//
-//        @Override
-//        public void onStatusChanged(String provider, int status, Bundle extras) {
-//
-//        }
-//    }
-
 }
