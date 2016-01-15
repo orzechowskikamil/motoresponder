@@ -11,6 +11,11 @@ android {
         versionCode 1
         versionName "1.0"
     }
+
+    dependencies {
+        compile group: 'org.slf4j', name: 'slf4j-android', version: '1.7.13'
+    }
+
     buildTypes {
         release {
             minifyEnabled false

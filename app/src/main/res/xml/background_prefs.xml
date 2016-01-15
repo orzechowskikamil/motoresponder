@@ -2,15 +2,22 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <SwitchPreference
-        android:key="responder_on"
-        android:summary="Decide if background application should be enabled"
-        android:title="Responder ON" />
+        android:key="@string/responder_on"
+        android:summary="@string/responder_on_summary"
+        android:title="@string/responder_on_title" />
 
     <EditTextPreference
-        android:dialogTitle="Response text"
-        android:key="response_text"
-        android:summary="The message which will be sent to recipient"
-        android:title="Response text" />
+        android:dialogTitle="@string/response_text_title"
+        android:key="@string/response_text"
+        android:summary="@string/response_text_summary"
+        android:title="@string/response_text_title" />
+
+    <EditTextPreference
+        android:dialogTitle="@string/response_delay_title"
+        android:key="@string/response_delay"
+        android:summary="@string/response_delay_summary"
+        android:numeric="integer"
+        android:title="@string/response_delay_title" />
 
     <SwitchPreference
         android:key="attach_location_info"
