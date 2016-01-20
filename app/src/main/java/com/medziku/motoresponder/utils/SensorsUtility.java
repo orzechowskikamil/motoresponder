@@ -11,7 +11,7 @@ import android.util.Log;
  * Reports about Light and Proximity current values.
  */
 public class SensorsUtility {
-    // TODO K. Orzechowski: try to make this class not listener, but reading current value from system.
+    // TODO K. Orzechowski: try to make this class not listener, but reading current value from system. Issue #53
 
     private SensorEventListener sensorEventListener;
     private SensorManager sensorManager;
@@ -61,6 +61,7 @@ public class SensorsUtility {
     public boolean isProxime() {
         // maximum is away, and not maximum is proxime.
         // TODO K. Orzechowski: add self teaching mechanism of storing minimum and maximum.
+        // TODO K. Orzechowski: Or think about reliable mechanism to read min and max. Issue #61
         return this.currentProximity != this.proximitySensor.getMaximumRange();
     }
 

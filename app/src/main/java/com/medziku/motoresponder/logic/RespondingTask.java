@@ -18,12 +18,7 @@ public class RespondingTask extends AsyncTask<String, Boolean, Boolean> {
     private NotificationUtility notificationUtility;
     private SettingsUtility settingsUtility;
     private Predicate<Boolean> resultCallback;
-
     private RespondingDecision respondingDecision;
-
-
-
-
 
     public RespondingTask(RespondingDecision respondingDecision, SettingsUtility settingsUtility, NotificationUtility notificationUtility, SMSUtility smsUtility, Predicate<Boolean> resultCallback) {
 
@@ -63,7 +58,6 @@ public class RespondingTask extends AsyncTask<String, Boolean, Boolean> {
     }
 
     private void respondWithSMS(String phoneNumber) {
-        // TODO K. Orzechowski: this probably should be in separate logic class.
         String message = this.settingsUtility.getAutoResponseTextForSMS();
 
         try {
@@ -87,7 +81,7 @@ public class RespondingTask extends AsyncTask<String, Boolean, Boolean> {
     @Override
     protected Boolean doInBackground(String... params) {
         this.handleRespondingTask(params[0]);
-        // TODO K. Orzechowski: refactor, we need void here, not boolean.
+        // TODO K. Orzechowski: refactor, we need void here, not boolean. #Issue not needed
         return true;
     }
 

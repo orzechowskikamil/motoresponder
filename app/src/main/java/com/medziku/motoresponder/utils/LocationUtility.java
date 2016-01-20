@@ -75,7 +75,7 @@ public class LocationUtility {
             @Override
             public void onProviderDisabled(String provider) {
                 Log.d("motoapp", "providerDisabled event " + provider);
-                // TODO K. Orzechowski: FIND way to return it by one method.
+                // TODO K. Orzechowski: FIND way to return it by one method.#Issue not needed
                 LocationUtility.this.locationManager.removeUpdates(this);
                 result.set(null);
             }

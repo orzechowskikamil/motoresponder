@@ -25,7 +25,7 @@ public class ContactsUtility {
 
         Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
 
-        // TODO K. Orzechowski: Learn about E164 representation and use it in other places instead of number!
+        // TODO K. Orzechowski: Learn about E164 representation and use it in other places instead of number! Issue #33
         String selection = ContactsContract.PhoneLookup.NORMALIZED_NUMBER + " = ?";
 
 
@@ -45,7 +45,7 @@ public class ContactsUtility {
     private String normalizePhoneNumber(String phoneNumber) {
         // TODO K. Orzechowski: Get iso country code (48) from locale
         // TODO K. Orzechowski: It require API 21 - do smth with it
-        // TODO K. Orzechowski: it does not work, fix it
+        // TODO K. Orzechowski: it does not work, fix it Issue #33
 
 //        return PhoneNumberUtils.formatNumberToE164(phoneNumber, "48");
         return phoneNumber;
@@ -75,7 +75,7 @@ public class ContactsUtility {
     }
 
     public boolean isGroupContainingContact(String groupName, String phoneNumberOfContact) {
-        // TODO fill me
+        // TODO fill me Issue #16
         return false;
     }
 

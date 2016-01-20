@@ -11,6 +11,7 @@ import com.medziku.motoresponder.utils.*;
  */
 public class Responder {
 
+    // TODO Cleanup Issue #63
     public boolean notifyAboutAutoRespond = true;
     public boolean showPendingNotification = true;
 
@@ -20,7 +21,7 @@ public class Responder {
     /**
      * Time for user to get phone out of pocket and respond
      */
-    // TODO K. Orzechowski: for development set to 100, for real it should be 10 000 at least
+    // TODO K. Orzechowski: for development set to 100, for real it should be 10 000 at least. Issue #57
     public long waitBeforeResponding = 100;
 
 
@@ -81,7 +82,7 @@ public class Responder {
         });
 
 
-        // TODO K. Orzechowski: remove it later because its only for development
+        // TODO K. Orzechowski: remove it later because its only for development #57
         // this.onSMSReceived("791467855");
     }
 
@@ -101,7 +102,7 @@ public class Responder {
 
     public void onPhoneUnlocked() {
         // TODO K. Orzechowski: bind it
-        // call this when phone is unlocked by user
+        // call this when phone is unlocked by user Issue #60
         this.cancelAllHandling();
     }
 
@@ -113,10 +114,6 @@ public class Responder {
      * @param phoneNumber Phone number of incoming call/sms
      */
     private void handleIncoming(final String phoneNumber) {
-
-
-        // TODO K. Orzechowski: not sure if calling method of object from main thread will not block main thread
-        // instead of execute in task. Verify it.
         new RespondingTask(
                 this.respondingDecision, this.settingsUtility, this.notificationUtility, this.smsUtility,
                 new Predicate<Boolean>() {
@@ -131,8 +128,7 @@ public class Responder {
 
 
     private void cancelAllHandling() {
-        // call this to break all autoresponding
-        // TODO K. Orzechowski: Implement it.
+         // TODO already implemented in other branch
     }
 
 

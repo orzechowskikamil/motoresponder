@@ -19,6 +19,6 @@ public class BootReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         log.info("onReceive");
         Intent backgroundServiceStarter = new Intent(context, BackgroundService.class);
-        context.startService(backgroundServiceStarter);//TODO start only if settings say so
+        context.startService(backgroundServiceStarter);//TODO start only if settings say so  Issue #4
     }
 }

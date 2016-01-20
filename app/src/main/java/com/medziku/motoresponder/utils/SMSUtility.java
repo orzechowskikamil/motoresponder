@@ -98,7 +98,7 @@ public class SMSUtility {
     }
 
     public void stopListeningForSMS() {
-        // TODO K. Orzechowski: implement
+        // TODO K. Orzechowski: implement Issue #4
     }
 
     private PendingIntent createPendingIntent(String SENT, BroadcastReceiver broadcastReceiver) {
@@ -109,7 +109,7 @@ public class SMSUtility {
 
     private String normalizeNumber(String phoneNumber, String defaultCountryIso) {
         // TODO K. Orzechowski: nothing work...
-        // TODO K. Orzechowski: for now , plain number, think about something better
+        // TODO K. Orzechowski: for now , plain number, think about something better Issue #33
         return phoneNumber;
 
 //        if (Build.VERSION.SDK_INT >= 21) {
@@ -132,7 +132,7 @@ public class SMSUtility {
 
         boolean result = false;
 
-        // TODO K. Orzechowski: get country code from locale
+        // TODO K. Orzechowski: get country code from locale Issue #33
         String phoneNumberNormalized = this.normalizeNumber(phoneNumber, "48");
         if (cursor != null) {
             if (cursor.moveToFirst()) {
@@ -152,7 +152,7 @@ public class SMSUtility {
     }
 
 
-    // TODO K. Orzechowski: please inline it in some spare time because it looks like shit separated from the context.
+    // TODO K. Orzechowski: please inline it in some spare time because it looks like shit separated from the context. #Issue not needed
     private class IncomingSMSReceiver extends BroadcastReceiver {
 
         private SMSReceivedCallback smsReceivedCallback;

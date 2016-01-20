@@ -16,15 +16,16 @@ public class ResponderAnswered {
 
 
     public boolean responderAnsweredFromLastUserAction(String phoneNumber) {
-        // TODO if there was already an auto response to this number, return true.
+        // TODO if there was already an auto response to this number, return true. Issue #7
         return false;
     }
 
-    public boolean tooMuchAutomaticalAnswersIn24h(String phoneNumber) {
+    public boolean tooMuchAutomaticalAnswersIn24h(String phoneNumber) { 
+        // TODO Issue #7
         return false;
     }
 
-    // TODO K. Orzechowski: Rename class or move this method to more suitable class.
+    // TODO K. Orzechowski: Rename class or move this method to more suitable class. Issue #7
     public boolean shouldNotRespondBecauseDeviceUnlocked() {
         return this.settingsUtility.isPhoneUnlockedInterpretedAsNotRiding()
                 && this.lockStateUtility.isPhoneUnlocked();

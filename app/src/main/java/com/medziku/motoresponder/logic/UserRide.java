@@ -22,7 +22,7 @@ public class UserRide {
      * is caused by being in building, riding through tunnel is rare).
      * If false, it will ignore timeout.
      */
-    // TODO K. Orzechowski: for normal it should be true, for development - false
+    // TODO K. Orzechowski: for normal it should be true, for development - false. #Issue not needed
     public boolean interpretLocationTimeoutAsNotRiding = false;
     /**
      * If true, it will assume not riding if phone proximity sensor read false value (no proximity - not in pocket).
@@ -40,10 +40,8 @@ public class UserRide {
      * If false, it will ignore accelerometer reading
      */
     public boolean includeDeviceMotionCheck = true;
-    // TODO K. Orzechowski: use it later
-    public boolean doAnotherGPSCheckIfNotSure = true;
-
-    // TODO K. Orzechowski: use it later
+    
+    // TODO K.Orzechowski move it to the settings. User should be able to adjust that. Issue #17
     public float maybeRidingSpeed = 15;
     public int maybeRidingTimeoutMs = 30000;
 
@@ -65,31 +63,28 @@ public class UserRide {
         // disable this option).
         // in pocket is proxime (to leg or chest)... If there is no proximity, he is not riding.
         if (this.includeProximityCheck && !this.isProxime()) {
-            // TODO K. Orzechowski: commented for development, uncomment later
+            // TODO K. Orzechowski: commented for development, uncomment later. Issue #27
             //  return false;
             //return false;
         }
 
         // TODO k.orzechowsk: If you know way of making promise, why not make promisable light check and
-        // TODO k.orzechowsk: proximity check? It will save battery aswell...
+        // TODO k.orzechowsk: proximity check? It will save battery aswell... Issue #53
 
         // if phone doesn't report any movement we can also assume that user is not riding motorcycle
         if (this.includeDeviceMotionCheck && !this.motionSensorReportsMovement()) {
-            // TODO K. Orzechowski: commented for development, uncomment later
+            // TODO K. Orzechowski: commented for development, uncomment later  Issue #27
             //  return false;
         }
 
 
-        // TODO k.orzechowsk add Bluetooth Beacon option to identify that you sit on bike IN FUTURE
-        // TODO k.orzechowsk add NFC tag in pocket option to identify that you sit on bike IN FUTURE
-        // TODO k.orzechowsk identify of stolen bikes via beacon in very very future when app will be popular.
+        // TODO k.orzechowsk add Bluetooth Beacon option to identify that you sit on bike IN FUTURE Issue #54
+        // TODO k.orzechowsk add NFC tag in pocket option to identify that you sit on bike IN FUTURE Issue #55
+        // TODO k.orzechowsk identify of stolen bikes via beacon in very very future when app will be popular. Issue #56
 
-        // TODO k.orzechowsk add option to disable GPS, maybe someone don't want to use it, only gyro?
+        // TODO k.orzechowsk add option to disable GPS, maybe someone don't want to use it, only gyro? Issue #10
         float speedKmh = this.getCurrentSpeedKmh();
 
-
-        // TODO K. Orzechowski: this setting is for future, when I implement asking again for location after some time.
-        // TODO K. Orzechowski: for now it's just dumb if
         if (this.interpretLocationTimeoutAsNotRiding && this.isLocationTimeouted(speedKmh)) {
             // if timeout, it means that phone is probably in home with no access to GPS satelites.
             // so if no ride, no need to respond automatically
@@ -134,7 +129,7 @@ public class UserRide {
         return speedKmh == -1;
     }
 
-    // todo k.orzechowsk ridiculous name, fix it
+    // todo k.orzechowsk ridiculous name, fix it, no #Issue needed
     private boolean isSpeedMaybeRiding(float speedKmh) {
         return this.isSpeedForSureNotRiding(speedKmh) == false && this.isSpeedForSureRiding(speedKmh) == false;
     }
@@ -148,7 +143,7 @@ public class UserRide {
         }
 
         // TODO K. Orzechowski: using here also gyroscope and magneometer is not a bad idea
-        // maybe other method will be required for it.
+        // maybe other method will be required for it. Issue #58
 
         // default - false
         return false;

@@ -12,12 +12,12 @@ public class NumberRules {
 
 
     private ContactsUtility contactsUtility;
-    // TODO K. Orzechowski: not needed for 1.00
+    // TODO K. Orzechowski: not needed for 1.00, issue #50
 //    private PhoneNumberVerifier numberVerifier;
 
     public NumberRules(ContactsUtility contactsUtility) {
         this.contactsUtility = contactsUtility;
-        // TODO K. Orzechowski: not needed for 1.00
+        // TODO K. Orzechowski: not needed for 1.00, issue #50
 //        this.numberVerifier = new PhoneNumberVerifier();
 //        this.whiteListGroupNames = new List<String>();
 //        this.blackListGrupNames = new List<String>();
@@ -59,29 +59,29 @@ public class NumberRules {
         boolean respondingConstraintsMeet = false;
         boolean countryRespondingConstraintsMeet = false;
 
-        // TODO k.orzechowsk commented until 1.01
+        // TODO k.orzechowsk commented until 1.01, issue #50
         // if (this.respondingWhitelist === NumberRules.RESPONDING_WHITELIST_ENABLED && this.isNumberOnWhitelist(phoneNumber)==false){
         //     return false;
         // }
 
-        // TODO k.orzechowsk commented until 1.01 
+        // TODO k.orzechowsk commented until 1.01 , issue #50
         // if (this.respondingBlacklist === NumberRules.RESPONDING_BLACKLIST_ENABLED && this.isNumberOnBlacklist(phoneNumber)==true){
         //         return false;
         //     }
 
-        // TODO k.orzechowsk commented until 1.01 
+        // TODO k.orzechowsk commented until 1.01 , issue #50
         // if (this.respondingCountrySettings == NumberRules.COUNTRY_SETTINGS_CURRENT_COUNTRY_ONLY && this.isNumberFromCurrentCountry(phoneNumber)==false){
         //     return false;
         // }
         
-        /* TODO k.orzechowski
+        /* TODO k.orzechowski, issue #50
            break method below into three sections
            First is BLACKLISTING with options: none, blacklist (put in application), contact book group
            Second is WHITELISTING with options: none, all contacts, whitelist (put in application), contact book group
            Third is NORMAL/SHORT numbers with options: everyone / normal numbers / short numbers (like sms premium)
         */
 
-// TODO k.orzechowsk commented until 1.01 
+// TODO k.orzechowsk commented until 1.01, issue #50
 // if (this.respondingSettings == RESPONDING_SETTINGS_RESPOND_EVERY_NORMAL_NUMBER && this.isNormalNumber(phoneNumber)==false){
 // return false;
 // }
@@ -104,12 +104,12 @@ public class NumberRules {
         return phoneNumber.equals(this.contactsUtility.readCurrentDevicePhoneNumber());
     }
 
-    // TODO K. Orzechowski: not needed for 1.00
+    // TODO K. Orzechowski: not needed for 1.00, issue #50
 //    private String getCurrentDeviceCountry() {
 //        return numberVerifier.getUserCountry();
 //    }
 
-    // TODO K. Orzechowski: not needed for 1.00
+    // TODO K. Orzechowski: not needed for 1.00, issue #50
 //    private String getCountryOfNumber(String phoneNumber) {
 //        return this.numberVerifier.getCountryByPhoneNumber(null, phoneNumber);
 //    }
@@ -134,9 +134,9 @@ public class NumberRules {
 
 
     private boolean isNormalNumber(String phoneNumber) {
-        // todo add this to the project https://github.com/KingsMentor/PhoneNumberValidator
+        // todo add this to the project https://github.com/KingsMentor/PhoneNumberValidator , issue #50
 
-        // TODO K. Orzechowski: not needed for 1.00
+        // TODO K. Orzechowski: not needed for 1.00, issue #50
 //        if (this.numberVerifier.isNumberValid(this.getCountryOfNumber(phoneNumber), phoneNumber) == false) {
 //            return false;
 //        }
@@ -150,10 +150,10 @@ public class NumberRules {
         //     return false;   
         // }
 
-        return true; // TODO K. Orzechowski:  return true if normal number - no sms premium or smth.
+        return true; // TODO K. Orzechowski:  return true if normal number - no sms premium or smth., issue #50
     }
 
-    // TODO K. Orzechowski: not needed for 1.00
+    // TODO K. Orzechowski: not needed for 1.00, issue #50
 //    private boolean isNumberFromCurrentCountry(String phoneNumber) {
 //        return this.numberVerifier.isNumberValid(this.getCurrentDeviceCountry(), phoneNumber);
 //    }

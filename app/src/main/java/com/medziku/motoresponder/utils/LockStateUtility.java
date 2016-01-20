@@ -26,11 +26,11 @@ public class LockStateUtility {
 
 
     public void listenToLockStateChanges(Predicate<Boolean> lockStateChangedCallback) {
-        // TODO K. Orzechowski: implement
+        // TODO K. Orzechowski: implement Issue #60
     }
 
     public void stopListeningToLockStateChanges(){
-        // TODO K. Orzechowski: implement
+        // TODO K. Orzechowski: implement Issue #60
     }
 
 

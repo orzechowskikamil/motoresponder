@@ -30,25 +30,25 @@ public class SettingsUtility {
         this.defaultResponseText = context.getString(R.string.default_response_text);
     }
 
-    private boolean getValue(String name, boolean defaultValue) {//TODO key not name
+    private boolean getValue(String name, boolean defaultValue) {//TODO key not name Issue #62
         return this.sharedPreferences.getBoolean(name, defaultValue);
     }
 
-    private void setValue(String name, boolean value) {//TODO key not name
+    private void setValue(String name, boolean value) {//TODO key not name Issue #62
         this.editor.putBoolean(name, value);
         this.editor.commit();
     }
 
-    private String getValue(String name, String defaultValue) {//TODO key not name
+    private String getValue(String name, String defaultValue) {//TODO key not name Issue #62
         return this.sharedPreferences.getString(name, defaultValue);
     }
 
-    private void setValue(String name, String value) {//TODO key not name
+    private void setValue(String name, String value) {//TODO key not name Issue #62
         this.editor.putString(name, value);
         this.editor.commit();
     }
 
-    private int getValue(String name, int defaultValue) {//TODO TODO key not name
+    private int getValue(String name, int defaultValue) {//TODO TODO key not name Issue #62
         return this.sharedPreferences.getInt(name, defaultValue);
     }
 
@@ -68,7 +68,7 @@ public class SettingsUtility {
 
     /**
      * For changing setting of service enabled or disabled.
-     * TODO K. Orzechowski:  it should stop/start service or not?
+     * TODO K. Orzechowski:  it should stop/start service or not? Probably not. Only store it  Issue #62
      * @param value
      */
     public void setServiceEnabled(boolean value) {
@@ -114,8 +114,8 @@ public class SettingsUtility {
      * Return response text stored in preferences.
      * @return
      */
-    //TODO tests
-    public String getResponseText() {//TODO probably there will be need to use phone number argument
+    //TODO tests  Issue #62
+    public String getResponseText() {//TODO probably there will be need to use phone number argument  Issue #62
         return this.sharedPreferences.getString(RESPONSE_TEXT_KEY, getDefaultResponseText());
     }
 

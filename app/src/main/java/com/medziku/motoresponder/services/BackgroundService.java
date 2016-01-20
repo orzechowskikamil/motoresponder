@@ -34,7 +34,7 @@ public class BackgroundService extends Service {
     public void onDestroy() {
         this.responder.stopResponding();
         super.onDestroy();
-        //TODO powinna byc takze mozliwosc wyrejestrowania w on command started dla konkretnej komendy
+        //TODO powinna byc takze mozliwosc wyrejestrowania w on command started dla konkretnej komendy Issue #59
 //        this.sensorsUtility.unregisterSensors();
         Log.d("BackgroundService", "destroed");
     }
