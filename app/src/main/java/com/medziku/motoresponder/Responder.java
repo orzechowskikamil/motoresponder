@@ -71,11 +71,14 @@ public class Responder {
     }
 
     /**
-     * Call this to start responding 
+     * Call this to start responding
      */
-    public void startResponding() {
+    public void startResponding() throws Exception {
+        if (this.isRespondingNow == true) {
+            throw new Exception("Not possible to start responding again if already responding");
+        }
         this.isRespondingNow = true;
-        // TODO K.Orzechowski throw out this smsreceivedcallback and replace it with predicate
+        // TODO K.Orzechowski throw out this smsreceivedcallback and replace it with predicate  #49
         this.smsUtility.listenForSMS(new SMSReceivedCallback() {
             @Override
             public void onSMSReceived(String phoneNumber, String message) {
@@ -91,6 +94,16 @@ public class Responder {
             }
         });
 
+        this.lockStateUtility.listenToLockStateChanges(new Predicate<Boolean>() {
+            @Override
+            public boolean apply(Boolean isLocked) {
+                if (isLocked == false) {
+                    Responder.this.onPhoneUnlocked();
+                }
+                return true;
+            }
+        });
+
 
         // TODO K. Orzechowski: remove it later because its only for development #57
         // this.onSMSReceived("791467855");
@@ -99,12 +112,13 @@ public class Responder {
     /**
      * Call this to stop responding at all.
      */
-    public void stopResponding() {
+    public void stopResponding() throws Exception {
         this.isRespondingNow = false;
         this.cancelAllHandling();
-        
-         this.smsUtility.stopListeningForSMS();
-         this.callsUtility.stopListeningForCalls();
+
+        this.smsUtility.stopListeningForSMS();
+        this.callsUtility.stopListeningForCalls();
+        this.lockStateUtility.stopListeningToLockStateChanges();
     }
 
     /**
@@ -125,7 +139,6 @@ public class Responder {
      * Called when phone will be unlocked by user (screenlock passed)
      */
     public void onPhoneUnlocked() {
-        // TODO K. Orzechowski: bind it call this when phone is unlocked by use
         this.cancelAllHandling();
     }
 
@@ -158,7 +171,7 @@ public class Responder {
      */
     private void cancelAllHandling() {
         for (RespondingTask task : this.pendingRespondingTasks) {
-           task.cancelResponding();
+            task.cancelResponding();
         }
     }
 

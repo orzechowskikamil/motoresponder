@@ -18,24 +18,59 @@ import com.google.common.base.Predicate;
 public class LockStateUtility {
 
     private Context context;
+    private boolean isCallbackRegistered = false;
+    private BroadcastReceiver currentScreenLockReceiver;
+    private BroadcastReceiver currentScreenUnlockReceiver;
 
     public LockStateUtility(Context context) {
         this.context = context;
     }
 
 
+    /**
+     * Call this method for listening to lock state changes.
+     * Method return state by calling callback predicate. Value in callback is true if screen is locked, and false when it is unlocked.
+     * For simplicity, only one observer can listen in one time.
+     */
+    public void listenToLockStateChanges(final Predicate<Boolean> lockStateChangedCallback) throws Exception {
+        if (this.isCallbackRegistered) {
+            // TODO K.Orzechowski maybe use better fitted exception. #Issue not needed
+            throw new Exception("Callback already registered");
+        }
+        this.isCallbackRegistered = true;
 
-    public void listenToLockStateChanges(Predicate<Boolean> lockStateChangedCallback) {
-        // TODO K. Orzechowski: implement Issue #60
+        this.currentScreenLockReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context arg0, Intent intent) {
+                // phone locked
+                lockStateChangedCallback.apply(true);
+            }
+        };
+
+        this.currentScreenUnlockReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context arg0, Intent intent) {
+                // phone unlocked
+                lockStateChangedCallback.apply(false);
+            }
+        };
+
+        this.context.registerReceiver(this.currentScreenUnlockReceiver, new IntentFilter(Intent.ACTION_USER_PRESENT));
+        this.context.registerReceiver(this.currentScreenLockReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
     }
 
-    public void stopListeningToLockStateChanges(){
-        // TODO K. Orzechowski: implement Issue #60
+    /**
+     * Call this method for unsubscribing from listening to lock state changes.
+     */
+    public void stopListeningToLockStateChanges() {
+        this.isCallbackRegistered = false;
+        this.context.unregisterReceiver(this.currentScreenUnlockReceiver);
+        this.context.unregisterReceiver(this.currentScreenLockReceiver);
     }
-
 
     /**
      * If true, phone is unlocked and turned screen on, if false - not
+     * This method doesn't perform constant listening.
      */
     @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
     public boolean isPhoneUnlocked() {
