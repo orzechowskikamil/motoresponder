@@ -13,15 +13,14 @@ import com.medziku.motoresponder.utils.SettingsUtility;
  */
 public class RespondingTask extends AsyncTask<String, Boolean, Boolean> {
 
-
     private SMSUtility smsUtility;
     private NotificationUtility notificationUtility;
     private SettingsUtility settingsUtility;
     private Predicate<Boolean> resultCallback;
     private RespondingDecision respondingDecision;
 
-    public RespondingTask(RespondingDecision respondingDecision, SettingsUtility settingsUtility, NotificationUtility notificationUtility, SMSUtility smsUtility, Predicate<Boolean> resultCallback) {
 
+    public RespondingTask(RespondingDecision respondingDecision, SettingsUtility settingsUtility, NotificationUtility notificationUtility, SMSUtility smsUtility, Predicate<Boolean> resultCallback) {
         this.respondingDecision = respondingDecision;
         this.resultCallback = resultCallback;
         this.settingsUtility = settingsUtility;
@@ -29,14 +28,26 @@ public class RespondingTask extends AsyncTask<String, Boolean, Boolean> {
         this.smsUtility = smsUtility;
     }
 
+    /**
+     * Cancells responding, cleanup (notifications, handlers, etc) and kills task
+     */
+    public void cancelResponding() {
+        this.cancel(true);
+        // remove notification if it was already shown.
+        this.unnotifyAboutPendingAutoRespond();
+    }
+
     private void handleRespondingTask(String phoneNumber) {
-
-
         // wait 30 seconds before responding.
         try {
             Thread.sleep(this.settingsUtility.getDelayBeforeRespondingMs());
         } catch (InterruptedException e) {
             e.printStackTrace();
+        }
+
+        // K. Orzechowski: I am not sure, but I read that I should check for this.
+        if (this.isCancelled()) {
+            return;
         }
 
 
@@ -47,9 +58,11 @@ public class RespondingTask extends AsyncTask<String, Boolean, Boolean> {
 
 
         if (this.respondingDecision.shouldRespond(phoneNumber)) {
+            // this check can took long time so before responding we can check again for cancellation.
+            if (this.isCancelled()) {
+                return;
+            }
             this.respondWithSMS(phoneNumber);
-
-
         }
 
         if (this.settingsUtility.isShowingPendingNotificationEnabled()) {
@@ -85,15 +98,21 @@ public class RespondingTask extends AsyncTask<String, Boolean, Boolean> {
         return true;
     }
 
-    // This is called when doInBackground() is finished
+    /**
+     * This is called when doInBackground() is finished
+     */
     protected void onPostExecute(Boolean... result) {
         this.resultCallback.apply(result[0]);
 
     }
 
-    // This is called each time you call publishProgress()
+    /**
+     * This is called each time you call publishProgress()
+     */
     protected void onProgressUpdate(Boolean... progress) {
         Log.d("motoapp", "RespondingTask progress update called");
     }
+
+
 }
 

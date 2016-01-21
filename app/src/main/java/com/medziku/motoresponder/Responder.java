@@ -6,6 +6,9 @@ import com.medziku.motoresponder.callbacks.SMSReceivedCallback;
 import com.medziku.motoresponder.logic.*;
 import com.medziku.motoresponder.utils.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * It's like all responding logic entry point
  */
@@ -25,6 +28,7 @@ public class Responder {
     public long waitBeforeResponding = 100;
 
 
+    private List<RespondingTask> pendingRespondingTasks;
     private LockStateUtility lockStateUtility;
     private NumberRules numberRules;
     private UserRide userRide;
@@ -37,12 +41,13 @@ public class Responder {
     private CallsUtility callsUtility;
     private SettingsUtility settingsUtility;
     private RespondingDecision respondingDecision;
-
+    private boolean isRespondingNow;
 
     public Responder(Context context) {
         this.context = context;
 
         this.lockStateUtility = new LockStateUtility(context);
+        this.pendingRespondingTasks = new ArrayList<>();
 
         this.smsUtility = new SMSUtility(this.context);
         this.callsUtility = new CallsUtility(this.context);
@@ -65,7 +70,12 @@ public class Responder {
         this.respondingDecision = new RespondingDecision(this.userRide, this.numberRules, this.userResponded, this.responderAnswered);
     }
 
+    /**
+     * Call this to start responding 
+     */
     public void startResponding() {
+        this.isRespondingNow = true;
+        // TODO K.Orzechowski throw out this smsreceivedcallback and replace it with predicate
         this.smsUtility.listenForSMS(new SMSReceivedCallback() {
             @Override
             public void onSMSReceived(String phoneNumber, String message) {
@@ -86,50 +96,70 @@ public class Responder {
         // this.onSMSReceived("791467855");
     }
 
+    /**
+     * Call this to stop responding at all.
+     */
     public void stopResponding() {
-        // TODO K. Orzechowski: stop it really.
+        this.isRespondingNow = false;
+        this.cancelAllHandling();
+        
+         this.smsUtility.stopListeningForSMS();
+         this.callsUtility.stopListeningForCalls();
     }
 
+    /**
+     * Called when user will receive sms
+     */
     public void onSMSReceived(String phoneNumber) {
-        // call this when new SMS is detected
         this.handleIncoming(phoneNumber);
     }
 
+    /**
+     * Called when user will not pick a ringing call
+     */
     public void onUnAnsweredCallReceived(String phoneNumber) {
-        // call this when new call is detected
         this.handleIncoming(phoneNumber);
     }
 
+    /**
+     * Called when phone will be unlocked by user (screenlock passed)
+     */
     public void onPhoneUnlocked() {
-        // TODO K. Orzechowski: bind it
-        // call this when phone is unlocked by user Issue #60
+        // TODO K. Orzechowski: bind it call this when phone is unlocked by use
         this.cancelAllHandling();
     }
 
-
     /**
-     * This is method containing all logic of responding in human readable way.
-     * In other words: it's just an algorithm.
-     *
-     * @param phoneNumber Phone number of incoming call/sms
+     * This method handles incoming sms or call by creating instance of RespondingTask (which handles incoming)
+     * and add it to list of currently pending responses. After successfull autoresponse, it's removed from
+     * this list.
      */
     private void handleIncoming(final String phoneNumber) {
-        new RespondingTask(
+
+        final RespondingTask[] task = new RespondingTask[1];
+
+        task[0] = new RespondingTask(
                 this.respondingDecision, this.settingsUtility, this.notificationUtility, this.smsUtility,
                 new Predicate<Boolean>() {
                     @Override
                     public boolean apply(Boolean input) {
+                        Responder.this.pendingRespondingTasks.remove(task[0]);
                         return true;
                     }
-                }).execute(phoneNumber);
+                });
 
-
+        this.pendingRespondingTasks.add(task[0]);
+        task[0].execute(phoneNumber);
     }
 
 
+    /**
+     * This method cancels all currently pending responding tasks, and clean after themselves.
+     */
     private void cancelAllHandling() {
-         // TODO already implemented in other branch
+        for (RespondingTask task : this.pendingRespondingTasks) {
+           task.cancelResponding();
+        }
     }
-
 
 }
