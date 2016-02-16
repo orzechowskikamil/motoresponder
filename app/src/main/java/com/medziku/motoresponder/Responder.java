@@ -13,14 +13,6 @@ import java.util.List;
  * It's like all responding logic entry point
  */
 public class Responder {
-
-    // TODO Cleanup Issue #63
-    public boolean notifyAboutAutoRespond = true;
-    public boolean showPendingNotification = true;
-
-
-    public long waitForAnotherGPSCheckTimeout = 20000;
-
     /**
      * Time for user to get phone out of pocket and respond
      */
