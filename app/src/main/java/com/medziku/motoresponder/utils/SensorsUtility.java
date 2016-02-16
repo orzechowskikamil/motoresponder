@@ -59,9 +59,6 @@ public class SensorsUtility {
 
 
     public boolean isProxime() {
-        // maximum is away, and not maximum is proxime.
-        // TODO K. Orzechowski: add self teaching mechanism of storing minimum and maximum.
-        // TODO K. Orzechowski: Or think about reliable mechanism to read min and max. Issue #61
         return this.currentProximity != this.proximitySensor.getMaximumRange();
     }
 
