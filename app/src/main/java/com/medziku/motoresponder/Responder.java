@@ -44,38 +44,35 @@ public class Responder {
 
     public Responder(Context context) {
         this.context = context;
-
         this.lockStateUtility = new LockStateUtility(context);
         this.pendingRespondingTasks = new ArrayList<>();
-
         this.smsUtility = new SMSUtility(this.context);
         this.callsUtility = new CallsUtility(this.context);
         this.settingsUtility = new SettingsUtility(this.context);
         this.alreadyResponded = new AlreadyResponded(this.callsUtility, this.smsUtility);
         this.deviceUnlocked = new DeviceUnlocked(this.settingsUtility, this.lockStateUtility);
-
         LocationUtility locationUtility = new LocationUtility(context);
-
+        ContactsUtility contactsUtility = new ContactsUtility(context);
         MotionUtility motionUtility = new MotionUtility(context);
         SensorsUtility sensorsUtility = new SensorsUtility(context);
         this.notificationUtility = new NotificationUtility(context);
-
-        ContactsUtility contactsUtility = new ContactsUtility(context);
-
-
         this.userRide = new UserRide(locationUtility, sensorsUtility, motionUtility);
         this.numberRules = new NumberRules(contactsUtility);
-
         this.respondingDecision = new RespondingDecision(this.userRide, this.numberRules, this.alreadyResponded, this.deviceUnlocked);
     }
 
     /**
      * Call this to start responding
      */
-    public void startResponding() throws Exception {
+    public void startResponding() {
         if (this.isRespondingNow == true) {
-            throw new Exception("Not possible to start responding again if already responding");
+            return;
         }
+
+        if (this.settingsUtility.isServiceEnabled() == false) {
+            return;
+        }
+
         this.isRespondingNow = true;
         // TODO K.Orzechowski throw out this smsreceivedcallback and replace it with predicate  #49
         this.smsUtility.listenForSMS(new SMSReceivedCallback() {
@@ -93,15 +90,19 @@ public class Responder {
             }
         });
 
-        this.lockStateUtility.listenToLockStateChanges(new Predicate<Boolean>() {
-            @Override
-            public boolean apply(Boolean isLocked) {
-                if (isLocked == false) {
-                    Responder.this.onPhoneUnlocked();
+        try {
+            this.lockStateUtility.listenToLockStateChanges(new Predicate<Boolean>() {
+                @Override
+                public boolean apply(Boolean isLocked) {
+                    if (isLocked == false) {
+                        Responder.this.onPhoneUnlocked();
+                    }
+                    return true;
                 }
-                return true;
-            }
-        });
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
         // TODO K. Orzechowski: remove it later because its only for development #57
@@ -111,7 +112,7 @@ public class Responder {
     /**
      * Call this to stop responding at all.
      */
-    public void stopResponding() throws Exception {
+    public void stopResponding() {
         this.isRespondingNow = false;
         this.cancelAllHandling();
 

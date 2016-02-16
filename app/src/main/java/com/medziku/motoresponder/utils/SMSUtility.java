@@ -23,6 +23,8 @@ public class SMSUtility {
 
     private Context context;
     private SmsManager sms;
+    private boolean isCurrentlyListening;
+    private IncomingSMSReceiver incomingSMSReceiver;
 
     public SMSUtility(Context context) {
         this.context = context;
@@ -33,7 +35,6 @@ public class SMSUtility {
         if (phoneNumber == null || phoneNumber.length() == 0) {
             throw new Exception("Phone number empty or zero length");
         }
-
 
         PendingIntent sentPI = this.createPendingIntent("SMS_SENT", new BroadcastReceiver() {
             @Override
@@ -89,15 +90,29 @@ public class SMSUtility {
         this.sms.sendTextMessage(phoneNumber, null, message, sentPI, deliveredPI);
     }
 
+
+    /**
+     * You can listen only with one smsReceivedCallback. If You wish to listen with another smsReceivedCallback,
+     * you need to unregister old with stopListeningForSMS() method.
+     * @param smsReceivedCallback
+     */
     public void listenForSMS(SMSReceivedCallback smsReceivedCallback) {
-        this.context.registerReceiver(
-                new IncomingSMSReceiver(smsReceivedCallback),
-                new IntentFilter("android.provider.Telephony.SMS_RECEIVED")
-        );
+        if (this.isCurrentlyListening == true) {
+            return;
+        }
+        this.isCurrentlyListening = true;
+
+
+        this.incomingSMSReceiver = new IncomingSMSReceiver(smsReceivedCallback);
+        this.context.registerReceiver(this.incomingSMSReceiver, new IntentFilter("android.provider.Telephony.SMS_RECEIVED"));
     }
 
     public void stopListeningForSMS() {
-        // TODO K. Orzechowski: implement Issue #4
+        if (this.isCurrentlyListening == false) {
+            return;
+        }
+
+        this.context.unregisterReceiver(this.incomingSMSReceiver);
     }
 
     private PendingIntent createPendingIntent(String SENT, BroadcastReceiver broadcastReceiver) {
