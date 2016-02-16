@@ -13,13 +13,6 @@ import java.util.List;
  * It's like all responding logic entry point
  */
 public class Responder {
-    /**
-     * Time for user to get phone out of pocket and respond
-     */
-    // TODO K. Orzechowski: for development set to 100, for real it should be 10 000 at least. Issue #57
-    public long waitBeforeResponding = 100;
-
-
     private List<RespondingTask> pendingRespondingTasks;
     private LockStateUtility lockStateUtility;
     private NumberRules numberRules;
@@ -95,10 +88,6 @@ public class Responder {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
-        // TODO K. Orzechowski: remove it later because its only for development #57
-        // this.onSMSReceived("791467855");
     }
 
     /**

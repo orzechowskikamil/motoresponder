@@ -88,6 +88,7 @@ public class SettingsUtility {
      * Should we treat phone unlocked as not riding or not?
      * @return
      */
+    // TODO K. Orzechowski: Change to real configurable according   to issue #67
     public boolean isPhoneUnlockedInterpretedAsNotRiding() {
         return true;
     }
@@ -97,6 +98,7 @@ public class SettingsUtility {
      * Should we display notification when motoresponder is measuring if user is riding or not?
      * @return
      */
+    // TODO K. Orzechowski: Change to real configurable according   to issue #67
     public boolean isShowingPendingNotificationEnabled() {
         return true;
     }
@@ -107,7 +109,8 @@ public class SettingsUtility {
      * @return
      */
     public int getDelayBeforeRespondingMs() {
-        return   30000;
+        // TODO K. Orzechowski: Change to real configurable according   to issue #67
+        return 30000;
     }
 
     /**
