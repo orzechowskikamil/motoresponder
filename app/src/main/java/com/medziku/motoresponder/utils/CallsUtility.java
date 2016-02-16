@@ -12,18 +12,33 @@ public class CallsUtility {
 
     private Context context;
     private Predicate<String> callCallback;
+    private TelephonyManager telephonyManager;
+    private PhoneStateListener phoneStateListener;
+    private boolean isCurrentlyListening;
 
     public CallsUtility(Context context) {
         this.context = context;
+        this.telephonyManager = (TelephonyManager) this.context.getSystemService(Context.TELEPHONY_SERVICE);
     }
 
+    /**
+     * You can listen for calls only once.
+     * To register another callCallback you need to call method stopListeningForCalls() before.
+     *
+     * @param callCallback
+     */
     public void listenForCalls(Predicate<String> callCallback) {
         if (this.callCallback != null) {
             throw new IllegalStateException("Utility is already listening for calls");
         }
 
-        TelephonyManager telephonyManager = (TelephonyManager) this.context.getSystemService(Context.TELEPHONY_SERVICE);
-        PhoneStateListener phoneStateListener = new PhoneStateListener() {
+        if (this.isCurrentlyListening == true) {
+            return;
+        }
+
+        this.isCurrentlyListening = true;
+
+        this.phoneStateListener = new PhoneStateListener() {
             @Override
             public void onCallStateChanged(int state, String incomingNumber) {
                 super.onCallStateChanged(state, incomingNumber);
@@ -40,17 +55,19 @@ public class CallsUtility {
                 }
             }
         };
-        telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+        this.telephonyManager.listen(this.phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
         this.callCallback = callCallback;
     }
 
-    public void stopListeningForCalls() throws Exception {
-        // TODO K. Orzechowski: fill me, Issue #4
-        throw new Exception("not implemented");
+    public void stopListeningForCalls() {
+        if (this.isCurrentlyListening == false) {
+            return;
+        }
+        this.telephonyManager.listen(this.phoneStateListener, PhoneStateListener.LISTEN_NONE);
     }
 
 
-    public boolean isOutgoingCallAfterDate(Date date, String phoneNumber) {
+    public boolean wasOutgoingCallAfterDate(Date date, String phoneNumber) {
         // TODO K. Orzechowski: it may still contain a flaw, since phone number sometimes is returned as
         // TODO K. Orzechowski: XXXXXXXXX, sometimes as +48XXXXXXXXX, and sometimes as 0048XXXXXXXXX.
         // TODO K. Orzechowski: verify it later. Issue #33

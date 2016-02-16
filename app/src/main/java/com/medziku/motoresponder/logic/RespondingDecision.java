@@ -1,7 +1,5 @@
 package com.medziku.motoresponder.logic;
 
-import com.google.common.base.Predicate;
-
 import java.util.Date;
 
 /**
@@ -9,38 +7,25 @@ import java.util.Date;
  */
 public class RespondingDecision {
 
-
-    private ResponderAnswered responderAnswered;
-    private UserResponded userResponded;
+    private final DeviceUnlocked deviceUnlocked;
+    private AlreadyResponded alreadyResponded;
     private NumberRules numberRules;
     private UserRide userRide;
 
 
-    public RespondingDecision(UserRide userRide, NumberRules numberRules, UserResponded userResponded, ResponderAnswered responderAnswered) {
+    public RespondingDecision(UserRide userRide, NumberRules numberRules, AlreadyResponded alreadyResponded,DeviceUnlocked deviceUnlocked) {
         this.userRide = userRide;
         this.numberRules = numberRules;
-        this.userResponded = userResponded;
-        this.responderAnswered = responderAnswered;
+        this.alreadyResponded = alreadyResponded;
+        this.deviceUnlocked = deviceUnlocked;
     }
 
     public boolean shouldRespond(String phoneNumber) {
-
-        if (this.responderAnswered.shouldNotRespondBecauseDeviceUnlocked()) {
+        if (this.deviceUnlocked.shouldNotRespondBecauseDeviceUnlocked()) {
             return false;
         }
 
         Date dateOfReceiving = new Date();
-
-        // send auto respose only on first message on phone number, do not spam with responses. User action will unlock responding.
-        if (this.responderAnswered.responderAnsweredFromLastUserAction(phoneNumber) == true) {
-            return false;
-        }
-
-        // limit daily responses
-        if (this.responderAnswered.tooMuchAutomaticalAnswersIn24h(phoneNumber) == true) {
-            return false;
-        }
-
 
         // do not answer numbers which user doesnt want to autorespond
         // this check is relatively cheap compared to measuring if user is riding
@@ -48,6 +33,20 @@ public class RespondingDecision {
         if (!this.numberRules.shouldRespondToThisNumber(phoneNumber)) {
             return false;
         }
+        
+        // this this will check if user or application already responded to this number. In case if he is already responded
+        // we don't respond automatically. App can have some delay between receiving message and starting responding process
+        // to allow user respond manually, so this check checks if it happened
+        if (this.alreadyResponded.isUserRespondedSince(dateOfReceiving, phoneNumber)) {
+            return false;
+        }
+        
+        // we shouldn't sent auto responses over and over, so sent only if last response was call / sms to given number,
+        // not the auto response.
+        if (this.alreadyResponded.isUserNotAnsweredSinceLastAutomaticalResponse(phoneNumber)){
+            return false;
+        }
+
 
         // TODO k.orzechowski: idea: check if you are not in public transportation by checking
         // for available wifi, or many bluetooth devices around you. Issue #52
@@ -56,14 +55,15 @@ public class RespondingDecision {
         // TODO K. Orzechowski: allow user to respond himself and then check. Issue #51
 
 
-        if (this.userResponded.isUserRespondedSince(dateOfReceiving, phoneNumber)) {
-            return false;
-        }
-
-
         // this check is more expensive in terms of power and battery
         // so it's performed later.
         if (!this.userRide.isUserRiding()) {
+            return false;
+        }
+        
+        // and now because isUserRiding can took several seconds, we check again if user doesn't use this time for responding.
+        // if he returned, we prevent auto responding.
+        if (this.alreadyResponded.isUserRespondedSince(dateOfReceiving, phoneNumber)) {
             return false;
         }
 

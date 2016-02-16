@@ -32,15 +32,14 @@ public class Responder {
     private LockStateUtility lockStateUtility;
     private NumberRules numberRules;
     private UserRide userRide;
-    private UserResponded userResponded;
-    private ResponderAnswered responderAnswered;
-
+    private AlreadyResponded alreadyResponded;
     private Context context;
     private NotificationUtility notificationUtility;
     private SMSUtility smsUtility;
     private CallsUtility callsUtility;
     private SettingsUtility settingsUtility;
     private RespondingDecision respondingDecision;
+    private DeviceUnlocked deviceUnlocked;
     private boolean isRespondingNow;
 
     public Responder(Context context) {
@@ -52,8 +51,8 @@ public class Responder {
         this.smsUtility = new SMSUtility(this.context);
         this.callsUtility = new CallsUtility(this.context);
         this.settingsUtility = new SettingsUtility(this.context);
-        this.responderAnswered = new ResponderAnswered(this.settingsUtility, this.lockStateUtility);
-        this.userResponded = new UserResponded(this.callsUtility, this.smsUtility);
+        this.alreadyResponded = new AlreadyResponded(this.callsUtility, this.smsUtility);
+        this.deviceUnlocked = new DeviceUnlocked(this.settingsUtility, this.lockStateUtility);
 
         LocationUtility locationUtility = new LocationUtility(context);
 
@@ -67,7 +66,7 @@ public class Responder {
         this.userRide = new UserRide(locationUtility, sensorsUtility, motionUtility);
         this.numberRules = new NumberRules(contactsUtility);
 
-        this.respondingDecision = new RespondingDecision(this.userRide, this.numberRules, this.userResponded, this.responderAnswered);
+        this.respondingDecision = new RespondingDecision(this.userRide, this.numberRules, this.alreadyResponded, this.deviceUnlocked);
     }
 
     /**

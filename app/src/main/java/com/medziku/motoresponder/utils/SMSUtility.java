@@ -13,6 +13,7 @@ import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 import android.util.Log;
 
+import com.medziku.motoresponder.BuildConfig;
 import com.medziku.motoresponder.callbacks.SMSReceivedCallback;
 import com.medziku.motoresponder.callbacks.SendSMSCallback;
 
@@ -60,8 +61,6 @@ public class SMSUtility {
                 if (sendSMSCallback != null) {
                     sendSMSCallback.onSMSSent(status);
                 }
-
-
             }
         });
 
@@ -119,18 +118,68 @@ public class SMSUtility {
 //        }
     }
 
-    public boolean wasOutgoingSMSSentAfterDate(Date date, String phoneNumber) {
-        String[] whichColumns = {Telephony.Sms.ADDRESS};
+    private String getApplicationPackageName() {
+        return BuildConfig.APPLICATION_ID;
+    }
 
-        String selections = Telephony.Sms.DATE + " > ?";
+    /**
+     * This method query for last SMS sent to given phone number.
+     *
+     * @param phoneNumber          phone number which should receive message
+     * @param shouldBeSentByOurApp If true, method will look for messages sent by our app, while if false, it will look for
+     *                             messages sent by user himself.
+     */
+    public Date getDateOfLastSMSSent(String phoneNumber, boolean shouldBeSentByOurApp) {
+        String creator = this.getApplicationPackageName();
 
-        String[] selectionArgs = {String.valueOf(date.getTime())};
+        String[] whichColumns = {Telephony.Sms.DATE};
+
+        String selections = Telephony.Sms.ADDRESS + " = ? AND " + Telephony.Sms.CREATOR + (shouldBeSentByOurApp ? " = " : " != ") + " ?";
+
+        String[] selectionArgs = {phoneNumber, creator};
 
         String sortOrder = Telephony.Sms.DATE + " DESC";
         Cursor cursor = context.getContentResolver().query(Telephony.Sms.Sent.CONTENT_URI,
                 whichColumns, selections, selectionArgs, sortOrder);
 
-        boolean result = false;
+        Date result = null;
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                do {
+                    long unixTimestampDate = cursor.getLong(cursor.getColumnIndex(Telephony.Sms.DATE_SENT));
+                    Date sentMsgDate = new Date(unixTimestampDate * 1000);
+                    result = sentMsgDate;
+                    break;
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        }
+        return result;
+    }
+
+
+    /**
+     * This method check if outgoing SMS was sent after date.
+     * Because it performs normalization on phone number, note that it will query ALL sms messages since
+     * given date, and then iterate through them in order to find fitting phoneNumber, so do not use this method for
+     * date very far away from current
+     */
+    // TODO k.orzechowski change it from bool to int (howManyOutgoingSMSSentAfterDate)
+    public int howManyOutgoingSMSSentAfterDate(Date date, String phoneNumber, boolean shouldBeSentByOurApp) {
+        String creator = this.getApplicationPackageName();
+
+        String[] whichColumns = {Telephony.Sms.ADDRESS};
+
+        String selections = Telephony.Sms.DATE + " > ? AND " + Telephony.Sms.CREATOR + (shouldBeSentByOurApp ? " = " : " != ") + " ?";
+
+        String[] selectionArgs = {String.valueOf(date.getTime()), creator};
+
+        String sortOrder = Telephony.Sms.DATE + " DESC";
+        Cursor cursor = context.getContentResolver().query(Telephony.Sms.Sent.CONTENT_URI,
+                whichColumns, selections, selectionArgs, sortOrder);
+
+        int result = 0;
 
         // TODO K. Orzechowski: get country code from locale Issue #33
         String phoneNumberNormalized = this.normalizeNumber(phoneNumber, "48");
@@ -141,14 +190,17 @@ public class SMSUtility {
                     String sentMsgPhoneNumberNormalized = this.normalizeNumber(sentMsgPhoneNumber, "48");
 
                     if (sentMsgPhoneNumberNormalized.equals(phoneNumberNormalized)) {
-                        result = true;
-                        break;
+                        result++;
                     }
                 } while (cursor.moveToNext());
             }
             cursor.close();
         }
         return result;
+    }
+
+    public boolean wasOutgoindSMSSentAfterDate(Date date, String phoneNumber, boolean shouldBeSentByOurApp) {
+        return this.howManyOutgoingSMSSentAfterDate(date, phoneNumber, shouldBeSentByOurApp) > 0;
     }
 
 
