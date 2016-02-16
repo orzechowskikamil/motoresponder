@@ -55,7 +55,7 @@ public class NumberRules {
     public List<String> whiteListGroupNames;
     public List<String> blackListGroupNames;
 
-    public boolean shouldRespondToThisNumber(String phoneNumber) {
+    public boolean numberRulesAllowResponding(String phoneNumber) {
         boolean respondingConstraintsMeet = false;
         boolean countryRespondingConstraintsMeet = false;
 

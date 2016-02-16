@@ -29,8 +29,7 @@ public class RespondingDecision {
 
         // do not answer numbers which user doesnt want to autorespond
         // this check is relatively cheap compared to measuring if user is riding
-        // TODO K. Orzechowski: rename to smth like numberRulesAllowResponding? Issue #51
-        if (!this.numberRules.shouldRespondToThisNumber(phoneNumber)) {
+        if (!this.numberRules.numberRulesAllowResponding(phoneNumber)) {
             return false;
         }
         
@@ -50,9 +49,6 @@ public class RespondingDecision {
 
         // TODO k.orzechowski: idea: check if you are not in public transportation by checking
         // for available wifi, or many bluetooth devices around you. Issue #52
-
-        // TODO K. Orzechowski: sleep here for long time. Issue #51
-        // TODO K. Orzechowski: allow user to respond himself and then check. Issue #51
 
 
         // this check is more expensive in terms of power and battery
