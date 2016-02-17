@@ -78,11 +78,12 @@ public class RespondingTask extends AsyncTask<String, Boolean, Boolean> {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+        // TODO K. Orzechowski: move strings into resources #69
         this.notificationUtility.showToast("Notification sended!");
     }
 
     private void notifyAboutPendingAutoRespond() {
+        // TODO K. Orzechowski: move strings into resources #69
         this.notificationUtility.showNotification("MotoResponder", "Moto responder is determining if should automatically respond", "");
     }
 
@@ -93,14 +94,21 @@ public class RespondingTask extends AsyncTask<String, Boolean, Boolean> {
 
     @Override
     protected Boolean doInBackground(String... params) {
-        this.handleRespondingTask(params[0]);
-        // TODO K. Orzechowski: refactor, we need void here, not boolean. #Issue not needed
+        try {
+            // This must be wrapped into try.. catch... otherwise errors in 'doItBackground' method of async task will break application.
+            this.handleRespondingTask(params[0]);
+            // TODO K. Orzechowski: refactor, we need void here, not boolean. #Issue not needed
+        } catch (Exception e) {
+            // best place for catching errors from respondingTask
+            e.printStackTrace();
+        }
         return true;
     }
 
     /**
      * This is called when doInBackground() is finished
      */
+
     protected void onPostExecute(Boolean... result) {
         this.resultCallback.apply(result[0]);
 

@@ -29,6 +29,13 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
         addPreferencesFromResource(R.xml.background_prefs);
         PreferenceManager.getDefaultSharedPreferences(this)
                 .registerOnSharedPreferenceChangeListener(this);
+
+        this.startBackgroundService();
+    }
+
+    private void startBackgroundService() {
+        Intent backgroundServiceStarter = new Intent(this, BackgroundService.class);
+        this.startService(backgroundServiceStarter);
     }
 
     @Override

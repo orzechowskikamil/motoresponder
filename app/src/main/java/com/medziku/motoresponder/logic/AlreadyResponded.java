@@ -26,7 +26,7 @@ public class AlreadyResponded {
             return true;
         }
 
-        if (this.smsUtility.wasOutgoindSMSSentAfterDate(time, phoneNumber, false)) {
+        if (this.smsUtility.wasOutgoingSMSSentAfterDate(time, phoneNumber, false)) {
             return true;
         }
 

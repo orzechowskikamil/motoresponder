@@ -29,18 +29,13 @@ public class UserRide {
      * If false, it will ignore proximity check.
      */
     public boolean includeProximityCheck = true;
-    /**
-     * If true, it will assume not riding if there is light on the sensor (phone not in pocket).
-     * If false, it will ignore light readings.
-     */
-    public boolean includeLightCheck = true;
 
     /**
      * If true, if accelerometer will report staying still, app will assume that staying = not riding.
      * If false, it will ignore accelerometer reading
      */
     public boolean includeDeviceMotionCheck = true;
-    
+
     // TODO K.Orzechowski move it to the settings. User should be able to adjust that. Issue #17
     public float maybeRidingSpeed = 15;
     public int maybeRidingTimeoutMs = 30000;
@@ -63,9 +58,8 @@ public class UserRide {
         // disable this option).
         // in pocket is proxime (to leg or chest)... If there is no proximity, he is not riding.
         if (this.includeProximityCheck && !this.isProxime()) {
-            // TODO K. Orzechowski: commented for development, uncomment later. Issue #27
-            //  return false;
-            //return false;
+            return false;
+
         }
 
         // TODO k.orzechowsk: If you know way of making promise, why not make promisable light check and
@@ -73,8 +67,7 @@ public class UserRide {
 
         // if phone doesn't report any movement we can also assume that user is not riding motorcycle
         if (this.includeDeviceMotionCheck && !this.motionSensorReportsMovement()) {
-            // TODO K. Orzechowski: commented for development, uncomment later  Issue #27
-            //  return false;
+            return false;
         }
 
 

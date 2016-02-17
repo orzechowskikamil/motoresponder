@@ -8,7 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.provider.Telephony;
+import android.provider.Telephony.Sms;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 import android.util.Log;
@@ -94,6 +94,7 @@ public class SMSUtility {
     /**
      * You can listen only with one smsReceivedCallback. If You wish to listen with another smsReceivedCallback,
      * you need to unregister old with stopListeningForSMS() method.
+     *
      * @param smsReceivedCallback
      */
     public void listenForSMS(SMSReceivedCallback smsReceivedCallback) {
@@ -104,7 +105,7 @@ public class SMSUtility {
 
 
         this.incomingSMSReceiver = new IncomingSMSReceiver(smsReceivedCallback);
-        this.context.registerReceiver(this.incomingSMSReceiver, new IntentFilter("android.provider.Telephony.SMS_RECEIVED"));
+        this.context.registerReceiver(this.incomingSMSReceiver, new IntentFilter(Sms.Intents.SMS_RECEIVED_ACTION));
     }
 
     public void stopListeningForSMS() {
@@ -147,14 +148,14 @@ public class SMSUtility {
     public Date getDateOfLastSMSSent(String phoneNumber, boolean shouldBeSentByOurApp) {
         String creator = this.getApplicationPackageName();
 
-        String[] whichColumns = {Telephony.Sms.DATE};
+        String[] whichColumns = {Sms.DATE_SENT};
 
-        String selections = Telephony.Sms.ADDRESS + " = ? AND " + Telephony.Sms.CREATOR + (shouldBeSentByOurApp ? " = " : " != ") + " ?";
+        String selections = Sms.ADDRESS + " = ? AND " + Sms.CREATOR + (shouldBeSentByOurApp ? " = " : " != ") + " ?";
 
         String[] selectionArgs = {phoneNumber, creator};
 
-        String sortOrder = Telephony.Sms.DATE + " DESC";
-        Cursor cursor = context.getContentResolver().query(Telephony.Sms.Sent.CONTENT_URI,
+        String sortOrder = Sms.DATE + " DESC";
+        Cursor cursor = context.getContentResolver().query(Sms.Sent.CONTENT_URI,
                 whichColumns, selections, selectionArgs, sortOrder);
 
         Date result = null;
@@ -162,7 +163,7 @@ public class SMSUtility {
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 do {
-                    long unixTimestampDate = cursor.getLong(cursor.getColumnIndex(Telephony.Sms.DATE_SENT));
+                    long unixTimestampDate = cursor.getLong(cursor.getColumnIndex(Sms.DATE_SENT));
                     Date sentMsgDate = new Date(unixTimestampDate * 1000);
                     result = sentMsgDate;
                     break;
@@ -184,14 +185,14 @@ public class SMSUtility {
     public int howManyOutgoingSMSSentAfterDate(Date date, String phoneNumber, boolean shouldBeSentByOurApp) {
         String creator = this.getApplicationPackageName();
 
-        String[] whichColumns = {Telephony.Sms.ADDRESS};
+        String[] whichColumns = {Sms.ADDRESS};
 
-        String selections = Telephony.Sms.DATE + " > ? AND " + Telephony.Sms.CREATOR + (shouldBeSentByOurApp ? " = " : " != ") + " ?";
+        String selections = Sms.DATE + " > ? AND " + Sms.CREATOR + (shouldBeSentByOurApp ? " = " : " != ") + " ?";
 
         String[] selectionArgs = {String.valueOf(date.getTime()), creator};
 
-        String sortOrder = Telephony.Sms.DATE + " DESC";
-        Cursor cursor = context.getContentResolver().query(Telephony.Sms.Sent.CONTENT_URI,
+        String sortOrder = Sms.DATE + " DESC";
+        Cursor cursor = context.getContentResolver().query(Sms.Sent.CONTENT_URI,
                 whichColumns, selections, selectionArgs, sortOrder);
 
         int result = 0;
@@ -201,7 +202,7 @@ public class SMSUtility {
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 do {
-                    String sentMsgPhoneNumber = cursor.getString(cursor.getColumnIndex(Telephony.Sms.ADDRESS));
+                    String sentMsgPhoneNumber = cursor.getString(cursor.getColumnIndex(Sms.ADDRESS));
                     String sentMsgPhoneNumberNormalized = this.normalizeNumber(sentMsgPhoneNumber, "48");
 
                     if (sentMsgPhoneNumberNormalized.equals(phoneNumberNormalized)) {
@@ -214,7 +215,7 @@ public class SMSUtility {
         return result;
     }
 
-    public boolean wasOutgoindSMSSentAfterDate(Date date, String phoneNumber, boolean shouldBeSentByOurApp) {
+    public boolean wasOutgoingSMSSentAfterDate(Date date, String phoneNumber, boolean shouldBeSentByOurApp) {
         return this.howManyOutgoingSMSSentAfterDate(date, phoneNumber, shouldBeSentByOurApp) > 0;
     }
 

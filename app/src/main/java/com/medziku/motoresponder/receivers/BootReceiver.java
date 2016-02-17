@@ -15,6 +15,10 @@ public class BootReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         log.info("onReceive");
+        this.startBackgroundService(context);
+    }
+
+    private void startBackgroundService(Context context) {
         Intent backgroundServiceStarter = new Intent(context, BackgroundService.class);
         context.startService(backgroundServiceStarter);
     }
