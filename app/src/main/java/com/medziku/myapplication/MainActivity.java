@@ -40,37 +40,48 @@ import java.util.Locale;
 public class MainActivity extends Activity {
     private static final String TAG = MainActivity.class.getName();
 
-    Button buttonSendSMS, buttonSendMMS, buttonCall, buttonGetGpsLocation, buttonSendGpsInfo;
-    EditText incomingNumberET, outgoingNumberET, messageET;
-    TextView gpsPositionTV;
-    Context context;
+    private Button buttonSendSMS, buttonSendMMS, buttonCall, buttonGetGpsLocation, buttonSendGpsInfo;
+    private EditText incomingNumberET, outgoingNumberET, messageET;
+    private TextView gpsPositionTV;
+    private Context context;
+    private LocationUtility locationUtility;
+    private SMSUtility smsUtility;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        context = getApplicationContext();
+        this.context = this.getApplicationContext();
 
-        setContentView(R.layout.activity_main);
+        this.locationUtility = new LocationUtility(this);
+        this.smsUtility = new SMSUtility(this);
 
-        incomingNumberET = (EditText) findViewById(R.id.editText);
-        outgoingNumberET = (EditText) findViewById(R.id.editText3);
-        messageET = (EditText) findViewById(R.id.editText2);
-        gpsPositionTV = (TextView) findViewById(R.id.textView2);
-
-        buttonSendSMS = (Button) findViewById(R.id.button);
-        buttonSendSMS.setOnClickListener(new View.OnClickListener() {
+        this.smsUtility.listenForSMS(new SMSReceivedCallback() {
             @Override
-            public void onClick(View v) {
-
-                sendSMS(outgoingNumberET.getText().toString(), messageET.getText().toString());
+            public void onSMSReceived(String phoneNumber, String message) {
+                MainActivity.this.onSMSReceived(phoneNumber, message);
             }
         });
 
-        buttonSendMMS = (Button) findViewById(R.id.button2);
+        this.setContentView(R.layout.activity_main);
 
-        buttonCall = (Button) findViewById(R.id.button3);
-        buttonCall.setOnClickListener(new View.OnClickListener() {
+        this.incomingNumberET = (EditText) findViewById(R.id.editText);
+        this.outgoingNumberET = (EditText) findViewById(R.id.editText3);
+        this.messageET = (EditText) findViewById(R.id.editText2);
+        this.gpsPositionTV = (TextView) findViewById(R.id.textView2);
+
+        this.buttonSendSMS = (Button) findViewById(R.id.button);
+        this.buttonSendSMS.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity.this.onButtonSendSMSClick();
+            }
+        });
+
+        this.buttonSendMMS = (Button) findViewById(R.id.button2);
+
+        this.buttonCall = (Button) findViewById(R.id.button3);
+        this.buttonCall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_CALL);
@@ -80,19 +91,15 @@ public class MainActivity extends Activity {
             }
         });
 
-        buttonGetGpsLocation = (Button) findViewById(R.id.button4);//TODO change to gps on/off
-        buttonGetGpsLocation.setOnClickListener(new View.OnClickListener() {
+        this.buttonGetGpsLocation = (Button) findViewById(R.id.button4);//TODO change to gps on/off
+        this.buttonGetGpsLocation.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                LocationManager locationManager = (LocationManager)
-                        getSystemService(Context.LOCATION_SERVICE);
-                LocationListener locationListener = new MyLocationListener();
-                locationManager.requestLocationUpdates(
-                        LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
+            public void onClick(View view) {
+                MainActivity.this.onButtonGPSLocationClick();
             }
         });
-        buttonSendGpsInfo = (Button) findViewById(R.id.button5);//TODO change to phone state listener on/off
-        buttonSendGpsInfo.setOnClickListener(new View.OnClickListener() {
+        this.buttonSendGpsInfo = (Button) findViewById(R.id.button5);//TODO change to phone state listener on/off
+        this.buttonSendGpsInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
@@ -102,10 +109,48 @@ public class MainActivity extends Activity {
         });
     }
 
+    private void onButtonSendSMSClick() {
+        String phoneNumber = outgoingNumberET.getText().toString();
+        String message = messageET.getText().toString();
+
+        try {
+            this.sendSMS(phoneNumber, message);
+        } catch (Exception e) {
+            Log.i(TAG, "Sending message failed");
+        }
+    }
+
+    private void onButtonGPSLocationClick() {
+        this.locationUtility.listenForLocationChanges(new LocationChangedCallback() {
+            public void onLocationChange(Location location, String cityName) {
+                MainActivity.this.onLocationAndCityKnown(location, cityName);
+            }
+
+            public void onLocationChange(Location location) {
+                MainActivity.this.onLocationKnown(location);
+            }
+        }, true);
+    }
+
+    private void onLocationKnown(Location location) {
+        String textToSet = location.toString();
+        this.gpsPositionTV.setText(textToSet);
+    }
+
+    private void onLocationAndCityKnown(Location location, String cityName) {
+        String textToSet = location.toString() + "cityname: " + cityName;
+
+        this.gpsPositionTV.setText(textToSet);
+    }
+
+    private void onSMSReceived(String phoneNumber, String message) {
+        this.showToast("SMS arrived! Phone number: " + phoneNumber + ", message: " + message);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        this.getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -124,127 +169,245 @@ public class MainActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void sendSMS(String message) {
-        sendSMS(outgoingNumberET.getText().toString(), message);
+    private void showToast(String toastText) {
+        Context baseContext = MainActivity.this.getBaseContext();
+        Toast toast = Toast.makeText(baseContext, toastText, Toast.LENGTH_SHORT);
+        toast.show();
     }
 
-    private void sendSMS(String phoneNumber, String message) {
-        if(phoneNumber == null || phoneNumber.length() ==0 ){
-            Log.v(TAG, "Phone number empty or zero-length");
-            return;
-        }
-
-        String SENT = "SMS_SENT";
-        String DELIVERED = "SMS_DELIVERED";
-
-        PendingIntent sentPI = PendingIntent.getBroadcast(this, 0,
-                new Intent(SENT), 0);
-
-        PendingIntent deliveredPI = PendingIntent.getBroadcast(this, 0,
-                new Intent(DELIVERED), 0);
-
-        //---when the SMS has been sent---
-        registerReceiver(new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context arg0, Intent arg1) {
-                switch (getResultCode()) {
-                    case Activity.RESULT_OK:
-                        Toast.makeText(getBaseContext(), "SMS sent",
-                                Toast.LENGTH_SHORT).show();
-                        break;
-                    case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
-                        Toast.makeText(getBaseContext(), "Generic failure",
-                                Toast.LENGTH_SHORT).show();
-                        break;
-                    case SmsManager.RESULT_ERROR_NO_SERVICE:
-                        Toast.makeText(getBaseContext(), "No service",
-                                Toast.LENGTH_SHORT).show();
-                        break;
-                    case SmsManager.RESULT_ERROR_NULL_PDU:
-                        Toast.makeText(getBaseContext(), "Null PDU",
-                                Toast.LENGTH_SHORT).show();
-                        break;
-                    case SmsManager.RESULT_ERROR_RADIO_OFF:
-                        Toast.makeText(getBaseContext(), "Radio off",
-                                Toast.LENGTH_SHORT).show();
-                        break;
+    private void sendSMS(String phoneNumber, String message) throws Exception {
+        this.smsUtility.sendSMS(phoneNumber, message, new SendSMSCallback() {
+            public void onSMSDelivered(String status) {
+                if (status != null) {
+                    MainActivity.this.showToast(status);
                 }
             }
-        }, new IntentFilter(SENT));
 
-        //---when the SMS has been delivered---
-        registerReceiver(new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context arg0, Intent arg1) {
-                switch (getResultCode()) {
-                    case Activity.RESULT_OK:
-                        Toast.makeText(getBaseContext(), "SMS delivered",
-                                Toast.LENGTH_SHORT).show();
-                        break;
-                    case Activity.RESULT_CANCELED:
-                        Toast.makeText(getBaseContext(), "SMS not delivered",
-                                Toast.LENGTH_SHORT).show();
-                        break;
+            public void onSMSSent(String status) {
+                if (status != null) {
+                    MainActivity.this.showToast(status);
                 }
             }
-        }, new IntentFilter(DELIVERED));
-
-        SmsManager sms = SmsManager.getDefault();
-        sms.sendTextMessage(phoneNumber, null, message, sentPI, deliveredPI);
+        });
     }
 
-    private class MyLocationListener implements LocationListener {//responsible for receiving GPS info
+    interface LocationChangedCallback {
+        void onLocationChange(Location location, String cityName);
 
-        private final String TAG = MyLocationListener.class.getName();
+        void onLocationChange(Location location);
+    }
 
-        @Override
-        public void onLocationChanged(Location loc) {
-            gpsPositionTV.setText("");
-            Toast.makeText(
-                    getBaseContext(),
-                    "Location changed: Lat: " + loc.getLatitude() + " Lng: "
-                            + loc.getLongitude() + " Alt: " + loc.getAltitude() + " Speed: "
-                            + loc.getSpeed() + "(m/s) Bearing: " + loc.getBearing(), Toast.LENGTH_SHORT).show();
-            String longitude = "Longitude: " + loc.getLongitude();
-            Log.v(TAG, longitude);
-            String latitude = "Latitude: " + loc.getLatitude();
-            Log.v(TAG, latitude);
-            String altitude = "Altitude: " + loc.getAltitude();
-            Log.v(TAG, altitude);
-            String bearing = "Bearing: " + loc.getBearing();
-            Log.v(TAG, bearing);
+    interface SendSMSCallback {
+        void onSMSSent(String status);
 
-        /*------- To get city name from coordinates -------- */
-            String cityName = null;
-            Geocoder gcd = new Geocoder(getBaseContext(), Locale.getDefault());
-            List<Address> addresses;
-            try {
-                addresses = gcd.getFromLocation(loc.getLatitude(),
-                        loc.getLongitude(), 1);
-                if (addresses.size() > 0)
-                    System.out.println(addresses.get(0).getLocality());
-                cityName = addresses.get(0).getLocality();
-            } catch (IOException e) {
-                e.printStackTrace();
+        void onSMSDelivered(String status);
+    }
+
+    interface SMSReceivedCallback {
+        void onSMSReceived(String phoneNumber, String message);
+    }
+
+    class SMSUtility {
+
+        private Context context;
+        private SmsManager sms;
+
+        public SMSUtility(Context context) {
+            this.context = context;
+            this.sms = SmsManager.getDefault();
+        }
+
+        public void sendSMS(String phoneNumber, String message, final SendSMSCallback sendSMSCallback) throws Exception {
+            if (phoneNumber == null || phoneNumber.length() == 0) {
+                throw new Exception("Phone number empty or zero length");
             }
-            String s = longitude + "\n" + latitude + "\n" + altitude + "\n" + bearing + "\n\nMy Current City is: " + cityName;
-            gpsPositionTV.setText(s);
 
-            sendSMS(s);
+
+            PendingIntent sentPI = this.createPendingIntent("SMS_SENT", new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context arg0, Intent arg1) {
+                    String status = null;
+
+                    switch (this.getResultCode()) {
+                        case Activity.RESULT_OK:
+                            status = "SMS sent";
+                            break;
+                        case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
+                            status = "Generic failure";
+                            break;
+                        case SmsManager.RESULT_ERROR_NO_SERVICE:
+                            status = "No service";
+                            break;
+                        case SmsManager.RESULT_ERROR_NULL_PDU:
+                            status = "Null PDU";
+                            break;
+                        case SmsManager.RESULT_ERROR_RADIO_OFF:
+                            status = "Radio off";
+                            break;
+                    }
+
+                    if (sendSMSCallback != null) {
+                        sendSMSCallback.onSMSSent(status);
+                    }
+
+
+                }
+            });
+
+
+            PendingIntent deliveredPI = this.createPendingIntent("SMS_DELIVERED", new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context arg0, Intent arg1) {
+                    String status = null;
+                    switch (this.getResultCode()) {
+                        case Activity.RESULT_OK:
+                            status = "SMS delivered";
+                            break;
+                        case Activity.RESULT_CANCELED:
+                            status = "SMS not delivered";
+                            break;
+                    }
+
+                    if (sendSMSCallback != null) {
+                        sendSMSCallback.onSMSDelivered(status);
+                    }
+
+                }
+            });
+
+
+            this.sms.sendTextMessage(phoneNumber, null, message, sentPI, deliveredPI);
         }
 
-        @Override
-        public void onProviderDisabled(String provider) {
+        public void listenForSMS(SMSReceivedCallback smsReceivedCallback) {
+            this.context.registerReceiver(
+                    new IncomingSMSReceiver(smsReceivedCallback),
+                    new IntentFilter("android.provider.Telephony.SMS_RECEIVED")
+            );
         }
 
-        @Override
-        public void onProviderEnabled(String provider) {
+        private PendingIntent createPendingIntent(String SENT, BroadcastReceiver broadcastReceiver) {
+            PendingIntent sentPI = PendingIntent.getBroadcast(this.context, 0, new Intent(SENT), 0);
+            this.context.registerReceiver(broadcastReceiver, new IntentFilter(SENT));
+            return sentPI;
         }
 
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
+        private class IncomingSMSReceiver extends BroadcastReceiver {
 
+            private SMSReceivedCallback smsReceivedCallback;
+
+            public IncomingSMSReceiver(SMSReceivedCallback smsReceivedCallback) {
+                this.smsReceivedCallback = smsReceivedCallback;
+            }
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                boolean receivedIntentIsSMS = intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED");
+
+                if (receivedIntentIsSMS) {
+                    Bundle bundle = intent.getExtras();
+
+                    if (bundle != null) {
+                        try {
+                            Object[] pdus = (Object[]) bundle.get("pdus");
+                            SmsMessage[] smsMessages = null;
+                            smsMessages = new SmsMessage[pdus.length];
+
+                            for (int i = 0; i < smsMessages.length; i++) {
+                                smsMessages[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
+
+                                String phoneNumber = smsMessages[i].getOriginatingAddress();
+                                String message = smsMessages[i].getMessageBody();
+
+                                if (this.smsReceivedCallback != null) {
+                                    this.smsReceivedCallback.onSMSReceived(phoneNumber, message);
+                                }
+                            }
+                        } catch (Exception e) {
+                            Log.d("Exception caught", e.getMessage());
+                        }
+                    }
+                }
+            }
         }
+
+    }
+
+    class LocationUtility {
+
+        private LocationManager locationManager;
+        private int minimumTimeBetweenUpdates;
+        private int minimumDistanceBetweenUpdates;
+
+        public LocationUtility(Context context, int minimumTimeBetweenUpdates, int minimumDistanceBetweenUpdates) {
+            this.locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+            this.minimumDistanceBetweenUpdates = minimumDistanceBetweenUpdates;
+            this.minimumTimeBetweenUpdates = minimumTimeBetweenUpdates;
+        }
+
+        public LocationUtility(Context context) {
+            this(context, 5000, 10);
+        }
+
+        public void listenForLocationChanges(LocationChangedCallback locationChangedCallback, boolean shouldReceiveCity) {
+            this.locationManager.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER,
+                    this.minimumTimeBetweenUpdates,
+                    this.minimumDistanceBetweenUpdates,
+                    new MyLocationListener(locationChangedCallback, shouldReceiveCity)
+            );
+        }
+
+        private class MyLocationListener implements LocationListener {//responsible for receiving GPS info
+
+            private LocationChangedCallback locationChangedCallback;
+            private boolean isTrackingCityEnabled;
+
+            public MyLocationListener(LocationChangedCallback locationChangedCallback) {
+                this(locationChangedCallback, false);
+            }
+
+            public MyLocationListener(LocationChangedCallback locationChangedCallback, boolean isTrackingCityEnabled) {
+                this.locationChangedCallback = locationChangedCallback;
+                this.isTrackingCityEnabled = isTrackingCityEnabled;
+            }
+
+            @Override
+            public void onLocationChanged(Location loc) {
+                if (this.isTrackingCityEnabled) {
+                    String cityName = null;
+                    Geocoder gcd = new Geocoder(MainActivity.this.getBaseContext(), Locale.getDefault());
+                    List<Address> addresses;
+                    try {
+                        addresses = gcd.getFromLocation(loc.getLatitude(), loc.getLongitude(), 1);
+                        if (addresses.size() > 0) {
+                            System.out.println(addresses.get(0).getLocality());
+                        }
+                        cityName = addresses.get(0).getLocality();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    this.locationChangedCallback.onLocationChange(loc, cityName);
+                } else {
+                    this.locationChangedCallback.onLocationChange(loc);
+                }
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+        }
+
     }
 
     private class MyPhoneStateListener extends PhoneStateListener {//Responsible for incoming phone calls, phone state etc
@@ -252,7 +415,7 @@ public class MainActivity extends Activity {
         public String TAG = MyPhoneStateListener.class.getName();
 
         public MyPhoneStateListener(Context context) {
-            mContext = context;
+            this.mContext = context;
         }
 
         @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
@@ -388,43 +551,6 @@ public class MainActivity extends Activity {
         public void onMessageWaitingIndicatorChanged(boolean mwi) {
             super.onMessageWaitingIndicatorChanged(mwi);
             Log.i(TAG, "onMessageWaitingIndicatorChanged: " + mwi);
-        }
-    }
-
-    public static class MySmsListener extends BroadcastReceiver{//Incoming SMS
-    //TODO export to separate class
-
-        private final String TAG = MySmsListener.class.getName();
-
-        public MySmsListener() {
-        }
-
-        //private SharedPreferences preferences;
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            // TODO Auto-generated method stub
-
-            if(intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED")){
-                Log.v(TAG, "SMS received");
-                Bundle bundle = intent.getExtras();           //---get the SMS message passed in---
-                SmsMessage[] msgs = null;
-                String msg_from;
-                if (bundle != null){//TODO process message for incoming number, startActivity MainActivity to execute onStartCommand to run send back gps info sms
-                    //---retrieve the SMS message received---
-                    try{
-                        Object[] pdus = (Object[]) bundle.get("pdus");
-                        msgs = new SmsMessage[pdus.length];
-                        for(int i=0; i<msgs.length; i++){
-                            msgs[i] = SmsMessage.createFromPdu((byte[])pdus[i]);
-                            msg_from = msgs[i].getOriginatingAddress();
-                            String msgBody = msgs[i].getMessageBody();
-                        }
-                    }catch(Exception e){
-//                            Log.d("Exception caught",e.getMessage());
-                    }
-                }
-            }
         }
     }
 }
