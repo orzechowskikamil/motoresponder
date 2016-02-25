@@ -3,85 +3,92 @@ package com.medziku.motoresponder.logic;
 import android.os.AsyncTask;
 import android.util.Log;
 import com.google.common.base.Predicate;
+import com.medziku.motoresponder.utils.NotificationUtility;
+import com.medziku.motoresponder.utils.SMSUtility;
+import com.medziku.motoresponder.utils.SettingsUtility;
 
-import java.util.Date;
 
 /**
- * This class makes decision if we should respond to particular SMS or call.
- * You can use every object of this class only once (every object is one decision)
+ * Every task is responding to one call/sms, so every object of this class should be used only once.
  */
 public class RespondingTask extends AsyncTask<String, Boolean, Boolean> {
 
 
-    private ResponderAnswered responderAnswered;
+    private SMSUtility smsUtility;
+    private NotificationUtility notificationUtility;
+    private SettingsUtility settingsUtility;
     private Predicate<Boolean> resultCallback;
-    private UserResponded userResponded;
-    private NumberRules numberRules;
-    private UserRide userRide;
-    private int waitBeforeRespondingMs = 30000;
+
+    private RespondingDecision respondingDecision;
 
 
-    public RespondingTask(UserRide userRide, NumberRules numberRules, UserResponded userResponded, ResponderAnswered responderAnswered, Predicate<Boolean> resultCallback) {
-        this.userRide = userRide;
-        this.numberRules = numberRules;
-        this.userResponded = userResponded;
+
+
+
+    public RespondingTask(RespondingDecision respondingDecision, SettingsUtility settingsUtility, NotificationUtility notificationUtility, SMSUtility smsUtility, Predicate<Boolean> resultCallback) {
+
+        this.respondingDecision = respondingDecision;
         this.resultCallback = resultCallback;
-        this.responderAnswered = responderAnswered;
+        this.settingsUtility = settingsUtility;
+        this.notificationUtility = notificationUtility;
+        this.smsUtility = smsUtility;
     }
 
-    private boolean shouldRespond(String phoneNumber) {
-        Date dateOfReceiving = new Date();
+    private void handleRespondingTask(String phoneNumber) {
 
-        // send auto respose only on first message on phone number, do not spam with responses. User action will unlock responding.
-        if (this.responderAnswered.responderAnsweredFromLastUserAction(phoneNumber) == true) {
-            return false;
-        }
-
-        // limit daily responses
-        if (this.responderAnswered.tooMuchAutomaticalAnswersIn24h(phoneNumber) == true) {
-            return false;
-        }
 
         // wait 30 seconds before responding.
         try {
-            Thread.sleep(this.waitBeforeRespondingMs);
+            Thread.sleep(this.settingsUtility.getDelayBeforeRespondingMs());
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-        // do not answer numbers which user doesnt want to autorespond
-        // this check is relatively cheap compared to measuring if user is riding
-        // TODO K. Orzechowski: rename to smth like numberRulesAllowResponding?
-        if (!this.numberRules.shouldRespondToThisNumber(phoneNumber)) {
-            return false;
-        }
 
-        // TODO k.orzechowski: idea: check if you are not in public transportation by checking
-        // for available wifi, or many bluetooth devices around you.
-
-        // TODO K. Orzechowski: sleep here for long time.
-        // TODO K. Orzechowski: allow user to respond himself and then check.
-
-
-        if (this.userResponded.isUserRespondedSince(dateOfReceiving, phoneNumber)) {
-            return false;
+        // show notification to give user possibiity to cancel autorespond
+        if (this.settingsUtility.isShowingPendingNotificationEnabled()) {
+            this.notifyAboutPendingAutoRespond();
         }
 
 
-        // this check is more expensive in terms of power and battery
-        // so it's performed later.
-        if (!this.userRide.isUserRiding()) {
-            return false;
+        if (this.respondingDecision.shouldRespond(phoneNumber)) {
+            this.respondWithSMS(phoneNumber);
+
+
         }
 
-        // all excluding conditions not met, we should respond.
-        return true;
+        if (this.settingsUtility.isShowingPendingNotificationEnabled()) {
+            this.unnotifyAboutPendingAutoRespond();
+        }
+    }
+
+    private void respondWithSMS(String phoneNumber) {
+        // TODO K. Orzechowski: this probably should be in separate logic class.
+        String message = this.settingsUtility.getAutoResponseTextForSMS();
+
+        try {
+            this.smsUtility.sendSMS(phoneNumber, message, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        this.notificationUtility.showToast("Notification sended!");
+    }
+
+    private void notifyAboutPendingAutoRespond() {
+        this.notificationUtility.showNotification("MotoResponder", "Moto responder is determining if should automatically respond", "");
+    }
+
+    private void unnotifyAboutPendingAutoRespond() {
+        this.notificationUtility.hideNotification();
     }
 
 
     @Override
     protected Boolean doInBackground(String... params) {
-        return this.shouldRespond(params[0]);
+        this.handleRespondingTask(params[0]);
+        // TODO K. Orzechowski: refactor, we need void here, not boolean.
+        return true;
     }
 
     // This is called when doInBackground() is finished

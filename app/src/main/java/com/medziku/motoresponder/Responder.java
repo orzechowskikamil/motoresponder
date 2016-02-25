@@ -15,14 +15,6 @@ public class Responder {
     public boolean showPendingNotification = true;
 
 
-    /**
-     * If true, if phone is unlocked it will be assumed as not riding (no automatical answer).
-     * If false, it will ignore unlocked/locked state.
-     */
-    // TODO K. Orzechowski: It should be true - but for development I set false
-    public boolean assumePhoneUnlockedAsNotRiding = false;
-
-
     public long waitForAnotherGPSCheckTimeout = 20000;
 
     /**
@@ -43,20 +35,22 @@ public class Responder {
     private SMSUtility smsUtility;
     private CallsUtility callsUtility;
     private SettingsUtility settingsUtility;
+    private RespondingDecision respondingDecision;
 
 
     public Responder(Context context) {
-
-        // probably we have to start every onsmsreceived in new thread
         this.context = context;
+
+        this.lockStateUtility = new LockStateUtility(context);
 
         this.smsUtility = new SMSUtility(this.context);
         this.callsUtility = new CallsUtility(this.context);
         this.settingsUtility = new SettingsUtility(this.context);
-        this.responderAnswered = new ResponderAnswered(this.context);
+        this.responderAnswered = new ResponderAnswered(this.settingsUtility, this.lockStateUtility);
+        this.userResponded = new UserResponded(this.callsUtility, this.smsUtility);
 
         LocationUtility locationUtility = new LocationUtility(context);
-        this.lockStateUtility = new LockStateUtility(context);
+
         MotionUtility motionUtility = new MotionUtility(context);
         SensorsUtility sensorsUtility = new SensorsUtility(context);
         this.notificationUtility = new NotificationUtility(context);
@@ -66,6 +60,8 @@ public class Responder {
 
         this.userRide = new UserRide(locationUtility, sensorsUtility, motionUtility);
         this.numberRules = new NumberRules(contactsUtility);
+
+        this.respondingDecision = new RespondingDecision(this.userRide, this.numberRules, this.userResponded, this.responderAnswered);
     }
 
     public void startResponding() {
@@ -117,53 +113,15 @@ public class Responder {
      * @param phoneNumber Phone number of incoming call/sms
      */
     private void handleIncoming(final String phoneNumber) {
-        // if phone is unlocked we do not need to autorespond at all.
-        if (this.assumePhoneUnlockedAsNotRiding && this.phoneIsUnlocked()) {
-            return;
-        }
-
-        // show notification to give user possibiity to cancel autorespond
-        if (this.showPendingNotification) {
-            this.notifyAboutPendingAutoRespond();
-        }
 
 
+        // TODO K. Orzechowski: not sure if calling method of object from main thread will not block main thread
+        // instead of execute in task. Verify it.
         new RespondingTask(
-                this.userRide,
-                this.numberRules,
-                this.userResponded,
-                this.responderAnswered,
+                this.respondingDecision, this.settingsUtility, this.notificationUtility, this.smsUtility,
                 new Predicate<Boolean>() {
                     @Override
                     public boolean apply(Boolean input) {
-                        // TODO K. Orzechowski: uncomment this after getting info out from responding decider
-
-                        // if phone is unlocked now, we can return - user heard ring, get phone and will
-                        // respond manually.
-                        if (Responder.this.assumePhoneUnlockedAsNotRiding && Responder.this.phoneIsUnlocked()) {
-                            return false;
-                        }
-
-                        // wait some time before responding - give user time to get phone from the pocket
-                        // or from the desk and respond manually.
-                        // unlocking phone should break any responding at all
-                        // TODO K. Orzechowski: not sure if I am able to sleep main thread, and not got ANR
-//                Responder.this.sleep(Responder.this.waitBeforeResponding);
-
-                        // now things will go automatically in one milisecond so it's not required to still show this
-                        if (Responder.this.showPendingNotification) {
-                            // TODO K. Orzechowski: hmmm. It can be a flaw - check all returns if some return
-                            // not cause to exit without unnotyfing
-                            Responder.this.unnotifyAboutPendingAutoRespond();
-                        }
-
-
-//        this.bs.showStupidNotify("MotoResponder", "GPS speed: " + speedKmh);
-
-
-                        String message = Responder.this.generateAutoRespondMessage(phoneNumber);
-                        Responder.this.sendSMS(phoneNumber, message);
-                        Responder.this.notifyAboutAutoRespond(phoneNumber);
                         return true;
                     }
                 }).execute(phoneNumber);
@@ -172,64 +130,10 @@ public class Responder {
     }
 
 
-    private void sleep(long timeoutMs) {
-        try {
-            Thread.sleep(timeoutMs);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
     private void cancelAllHandling() {
         // call this to break all autoresponding
         // TODO K. Orzechowski: Implement it.
     }
 
-    private boolean phoneIsUnlocked() {
-        return !this.lockStateUtility.isPhoneUnlocked();
-    }
-
-
-    private void notifyAboutPendingAutoRespond() {
-        // TODO K. Orzechowski:show something, for example toast that autorespond is pending, with possibility to cancel it by user
-    }
-
-    private void unnotifyAboutPendingAutoRespond() {
-        // TODO K. Orzechowski:  hide toast shown by notifyAoutPendingautorespond
-    }
-
-
-    private String generateAutoRespondMessage(String phoneNumber) {
-        return this.settingsUtility.getAutoResponseTextForSMS();
-    }
-
-    private void sendSMS(String phoneNumber, String message) {
-        // TODO K. Orzechowski: this is empty , implement me
-    }
-
-    // TODO K. Orzechowski: add tryNotifyAutoRespond to name or move this.notifyAboutAutoRespond to upper method.
-    // idea is to have all things dependent on settings on one level to improve readability
-    private void notifyAboutAutoRespond(String phoneNumber) {
-        // this should show some toast like this: 'motoresponder responded XXX person for you. call him'
-        // ofc if setting allow this
-        if (!this.notifyAboutAutoRespond) {
-            return;
-        }
-    }
-
-
-    public void showStupidNotify(String title, String content) {
-        this.hideNotification();
-        this.showNotification(title, content, "test info");
-    }
-
-    private void hideNotification() {
-        this.notificationUtility.hideNotification();
-    }
-
-
-    private void showNotification(String title, String content, String info) {
-        this.notificationUtility.showNotification(title, content, info);
-    }
 
 }

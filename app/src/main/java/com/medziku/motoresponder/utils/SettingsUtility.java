@@ -47,16 +47,55 @@ public class SettingsUtility {
     }
 
 
+    /**
+     * If true, it means that autoesponding service is enabled. If not, it's disabled (whole app shouldn't work).
+     * @return
+     */
     public boolean isServiceEnabled() {
         return this.getValue(SERVICE_ENABLED, true);
     }
 
+    /**
+     * For changing setting of service enabled or disabled.
+     * TODO K. Orzechowski:  it should stop/start service or not?
+     * @param value
+     */
     public void setServiceEnabled(boolean value) {
         this.setValue(SERVICE_ENABLED, value);
     }
 
+
+    /**
+     * Return stored text of auto response for SMS message.
+     * @return
+     */
     public String getAutoResponseTextForSMS() {
         return "(Automatyczna odpowiedz) Czesc, jezdze wlasnie motocyklem, odezwe sie jak skonczy mi sie paliwo.";
     }
 
+    /**
+     * Should we treat phone unlocked as not riding or not?
+     * @return
+     */
+    public boolean isPhoneUnlockedInterpretedAsNotRiding() {
+        return true;
+    }
+
+
+    /**
+     * Should we display notification when motoresponder is measuring if user is riding or not?
+     * @return
+     */
+    public boolean isShowingPendingNotificationEnabled() {
+        return true;
+    }
+
+    /**
+     * How long responder should wait since receiving message to starting responding process, to allow user
+     * manually respond if he is not away.
+     * @return
+     */
+    public int getDelayBeforeRespondingMs() {
+        return   30000;
+    }
 }
