@@ -44,7 +44,7 @@ public class UserRide {
     public boolean doAnotherGPSCheckIfNotSure = true;
 
     // TODO K. Orzechowski: use it later
-    public int maybeRidingSpeed = 15;
+    public float maybeRidingSpeed = 15;
     public int maybeRidingTimeoutMs = 30000;
 
     /**
@@ -74,9 +74,9 @@ public class UserRide {
         // TODO k.orzechowsk: proximity check? It will save battery aswell...
 
         // if phone doesn't report any movement we can also assume that user is not riding motorcycle
-        if (this.includeDeviceMotionCheck &&  !this.motionSensorReportsMovement()) {
+        if (this.includeDeviceMotionCheck && !this.motionSensorReportsMovement()) {
             // TODO K. Orzechowski: commented for development, uncomment later
-          //  return false;
+            //  return false;
         }
 
 
@@ -95,8 +95,8 @@ public class UserRide {
             // so if no ride, no need to respond automatically
             return false;
         }
-        
-        if (this.isSpeedForSureNotRiding(speedKmh){
+
+        if (this.isSpeedForSureNotRiding(speedKmh)) {
             return false;
         }
 
@@ -105,11 +105,15 @@ public class UserRide {
         // we hit bigger speed and it become sure.
 
         if (this.isSpeedMaybeRiding(speedKmh)) {
-            Thread.sleep(this.maybeRidingTimeoutMs);
-            
+            try {
+                Thread.sleep(this.maybeRidingTimeoutMs);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
             float secondCheckSpeedKmh = this.getCurrentSpeedKmh();
-            
-            if (this.isSpeedForSureRiding(secondCheckSpeedKhm)==false){
+
+            if (this.isSpeedForSureRiding(secondCheckSpeedKmh) == false) {
                 return false;
             }
         }
@@ -117,22 +121,22 @@ public class UserRide {
         // all conditions when we are sure that user is not riding are not met - so user is riding.
         return true;
     }
-    
-    private boolean isSpeedForSureNotRiding(float speedKmh){
+
+    private boolean isSpeedForSureNotRiding(float speedKmh) {
         return speedKmh < this.maybeRidingSpeed;
     }
-    
-    private boolean isSpeedForSureRiding(float speedKmh){
-        return speedKmh >= this.sureSpeedRiding;
+
+    private boolean isSpeedForSureRiding(float speedKmh) {
+        return speedKmh >= this.sureRidingSpeed;
     }
-    
-    private boolean isLocationTimeouted(float speedKmh){
-        return speedKmh==-1;
+
+    private boolean isLocationTimeouted(float speedKmh) {
+        return speedKmh == -1;
     }
-    
+
     // todo k.orzechowsk ridiculous name, fix it
-    private boolean isSpeedMaybeRiding(float speedKmh){
-        return this.isSpeedForSureNotRiding() == false && this.isSpeedForSureRiding()==false;
+    private boolean isSpeedMaybeRiding(float speedKmh) {
+        return this.isSpeedForSureNotRiding(speedKmh) == false && this.isSpeedForSureRiding(speedKmh) == false;
     }
 
 

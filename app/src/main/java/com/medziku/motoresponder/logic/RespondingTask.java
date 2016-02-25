@@ -10,34 +10,36 @@ import java.util.Date;
  * This class makes decision if we should respond to particular SMS or call.
  * You can use every object of this class only once (every object is one decision)
  */
-public class RespondingDecision extends AsyncTask<String, Boolean, Boolean> {
+public class RespondingTask extends AsyncTask<String, Boolean, Boolean> {
 
 
+    private ResponderAnswered responderAnswered;
     private Predicate<Boolean> resultCallback;
     private UserResponded userResponded;
     private NumberRules numberRules;
     private UserRide userRide;
     private int waitBeforeRespondingMs = 30000;
-    
 
-    public RespondingDecision(UserRide userRide, NumberRules numberRules, UserResponded userResponded, Predicate<Boolean> resultCallback) {
+
+    public RespondingTask(UserRide userRide, NumberRules numberRules, UserResponded userResponded, ResponderAnswered responderAnswered, Predicate<Boolean> resultCallback) {
         this.userRide = userRide;
         this.numberRules = numberRules;
         this.userResponded = userResponded;
         this.resultCallback = resultCallback;
+        this.responderAnswered = responderAnswered;
     }
 
     private boolean shouldRespond(String phoneNumber) {
         Date dateOfReceiving = new Date();
-        
+
         // send auto respose only on first message on phone number, do not spam with responses. User action will unlock responding.
-        if (this.responderAnswered.responderAnsweredFromLastUserAction(phoneNumber)==true){
-            return;
+        if (this.responderAnswered.responderAnsweredFromLastUserAction(phoneNumber) == true) {
+            return false;
         }
-        
+
         // limit daily responses
-        if (this.responderAnswered.tooMuchAutomaticalAnswersIn24h(phoneNumber)==true){
-            return;
+        if (this.responderAnswered.tooMuchAutomaticalAnswersIn24h(phoneNumber) == true) {
+            return false;
         }
 
         // wait 30 seconds before responding.
@@ -90,7 +92,7 @@ public class RespondingDecision extends AsyncTask<String, Boolean, Boolean> {
 
     // This is called each time you call publishProgress()
     protected void onProgressUpdate(Boolean... progress) {
-        Log.d("motoapp", "RespondingDecision progress update called");
+        Log.d("motoapp", "RespondingTask progress update called");
     }
 }
 
