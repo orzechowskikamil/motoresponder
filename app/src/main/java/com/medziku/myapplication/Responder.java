@@ -12,7 +12,8 @@ public class Responder {
 
     // todo create action log where every decision is stored and user can debug settings
 
-    LocationUtility locationUtility;
+    private LocationUtility locationUtility;
+    private SensorsUtility sensorsUtility;
 
     public boolean notifyAboutAutoRespond = true;
     public boolean showPendingNotification = true;
@@ -26,8 +27,9 @@ public class Responder {
 
     public int maybeRidingSpeed = 15;
     public int sureRidingSpeed = 60;
-    public int waitForAnotherGPSCheckTimeout = 20000;
-    public int waitBeforeResponding = 10000;
+    public long waitForAnotherGPSCheckTimeout = 20000;
+    public long waitAfterReceivingMsgOrCall = 1000;
+    public long waitBeforeResponding = 10000;
     public int respondingCountrySettings = 0;
     public int respondingSettings = 2;
 
@@ -38,11 +40,16 @@ public class Responder {
     public static final int RESPONDING_SETTINGS_RESPOND_EVERY_NORMAL_NUMBER = 1;
     public static final int RESPONDING_SETTINGS_RESPOND_ONLY_CONTACT_BOOK = 2;
     public static final int RESPONDING_SETTINGS_RESPOND_ONLY_GROUP = 3;
+    private LockStateUtility lockStateUtility;
 
 
-    public Responder(LocationUtility locationUtility) {
-        this.locationUtility = locationUtility;
+    public Responder(LocationUtility locationUtility, SensorsUtility proximityUtility, LockStateUtility lockStateUtility) {
         // probably we have to start every onsmsreceived in new thread
+        this.locationUtility = locationUtility;
+        this.sensorsUtility = proximityUtility;
+        this.lockStateUtility = lockStateUtility;
+
+        this.sensorsUtility.registerSensorUpdates();
     }
 
     public void onSMSReceived(String phoneNumber) {
@@ -61,8 +68,14 @@ public class Responder {
     }
 
     private void handleIncoming(final String phoneNumber) {
+        // for now for simplification just wait one second forclaryfying sensor values
+        try {
+            Thread.sleep(this.waitAfterReceivingMsgOrCall);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         // if phone is unlocked we do not need to autorespond at all.
-        if (this.phoneIsUnlocked()) {
+        if (this.assumePhoneUnlockedAsNotRiding && this.phoneIsUnlocked()) {
             return;
         }
 
@@ -89,7 +102,10 @@ public class Responder {
         // wait some time before responding - give user time to get phone from the pocket
         // or from the desk and respond manually.
         // unlocking phone should break any responding at all
-        this.wait(this.waitBeforeResponding);
+        try {
+            Thread.sleep(this.waitBeforeResponding);
+        } catch (InterruptedException e) {
+        }
 
         // now things will go automatically in one milisecond so it's not required to still show this
         if (this.showPendingNotification) {
@@ -107,29 +123,20 @@ public class Responder {
             return;
         }
 
-        this.locationUtility.listenForLocationOnce(new LocationChangedCallback() {
-
-            // TODO: 2015-09-16 promises welcome?
-            @Override
-            public void onLocationChange(Location location) {
-                Responder.this.onLocationFirstDetermined(phoneNumber, location);
-            }
-
-        });
+        this.getLocationAndProceed(phoneNumber);
     }
 
 
-    private void onLocationFirstDetermined(String phoneNumber, Location location) {
+    private void handleIncomingSecondStep(String phoneNumber, Location location) {
 
         boolean locationTimeouted = false;
         float firstMeasurementSpeed = location.getSpeed();
         float secondMeasurementSpeed = 0;
         float biggerMeasurementSpeed = 0;
 
-        if (Responder.this.interpretLocationTimeoutAsNotRiding && locationTimeouted) {
+        if (this.interpretLocationTimeoutAsNotRiding && locationTimeouted) {
             // if timeout, it means that phone is probably in home with no access to GPS satelites.
             // so if no ride, no need to respond automatically
-            // TODO add option to disable this.
             return;
         }
 
@@ -140,7 +147,7 @@ public class Responder {
 //            // speed is small. too small. not sure if he rides or not.
 //            // try to recheck in few minutes.
 //            this.wait(this.waitForAnotherGPSCheckTimeout);
-//            location = this.getLocation();
+//            location = this.getLocationAndProceed();
 //            // reinit speed and location
 //            secondMeasurementSpeed = 0;
 //        }
@@ -173,7 +180,8 @@ public class Responder {
 
     private boolean phoneIsUnlocked() {
         // return false if phone is unlocked, true if it has screen lock.
-        return false;
+        // TODO: 2015-09-18 FOR NOW IT ALWAYS REPORT LOCKED, CHANGE IT! 
+        return !this.lockStateUtility.isPhoneUnlocked();
     }
 
     private boolean phoneReportsStayingStill() {
@@ -189,10 +197,16 @@ public class Responder {
         // hide toast shown by notifyAoutPendingautorespond
     }
 
-    private Location getLocation() {
+    private void getLocationAndProceed(final String phoneNumber) {
+        this.locationUtility.listenForLocationOnce(new LocationChangedCallback() {
 
+            // TODO: 2015-09-16 promises welcome?
+            @Override
+            public void onLocationChange(Location location) {
+                Responder.this.handleIncomingSecondStep(phoneNumber, location);
+            }
 
-        return null;
+        });
     }
 
     private boolean isNormalNumber(String phoneNumber) {
@@ -266,12 +280,14 @@ public class Responder {
 
     private boolean isProxime() {
         // return true if phone reports proximity to smth.
-        return false;
+        // TODO: 2015-09-16 recheck, probably invalid 
+        return this.sensorsUtility.isProxime();
     }
 
     private boolean isLightOutside() {
         // return true if light sensor reports light
-        return false;
+        // TODO: 2015-09-16 probably invalid 
+        return this.sensorsUtility.isLightOutside();
     }
 
 }
