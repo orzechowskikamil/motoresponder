@@ -1,22 +1,28 @@
 package com.medziku.motoresponder.logic;
 
+import com.medziku.motoresponder.utils.ContactsUtility;
+
+
 /**
  * This class is responsible for filtering numbers which shouldn't be answered.
  */
 public class NumberRules {
 
 
-    public NumberRules() {
+    private ContactsUtility contactsUtility;
+
+    public NumberRules(ContactsUtility contactsUtility) {
+        this.contactsUtility = contactsUtility;
     }
 
     /**
      * Responding current country or also abroad.
      */
-    public int respondingCountrySettings = 0;
+    public int respondingCountrySettings = NumberRules.RESPONDING_COUNTRY_SETTINGS_ANY_COUNTRY;
     /**
      * Responding to group, contact book, normal numbers or everyone.
      */
-    public int respondingSettings = 2;
+    public int respondingSettings = NumberRules.RESPONDING_SETTINGS_RESPOND_ONLY_CONTACT_BOOK;
 
     public static final int RESPONDING_COUNTRY_SETTINGS_CURRENT_COUNTRY_ONLY = 0;
     public static final int RESPONDING_COUNTRY_SETTINGS_ANY_COUNTRY = 1;
@@ -85,7 +91,7 @@ public class NumberRules {
     }
 
     private boolean isInContactBook(String phoneNumber) {
-        return true;// TODO K. Orzechowski:  check if in contact book
+        return this.contactsUtility.contactBookContainsContact(phoneNumber);
     }
 
     private boolean isInGroup(String phoneNumber) {
