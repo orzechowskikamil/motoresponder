@@ -4,84 +4,99 @@ package com.medziku.motoresponder.utils;
 import android.content.Context;
 import android.location.*;
 import android.os.Bundle;
+import android.util.Log;
 import com.google.common.util.concurrent.SettableFuture;
 
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.Future;
 
 /**
- * This utility allow to listen for location once and get linear response instead of cyclic
- * notifications like LocationListener serves.
- * NOTE: It allow you only to listen once per one time (simpler to implement and for now no need to do multiply
- * listening).
- * TODO K. Orzechowski: maybe it should be not LocationUtility but object designed for handling one listening.
+ * This utility allow to listen for accurate location and get response as promise.
  */
 public class LocationUtility {
 
     private Context context;
     private LocationManager locationManager;
-    private int minimumTimeBetweenUpdates;
-    private int minimumDistanceBetweenUpdates;
+    private int minimumTimeBetweenUpdates = 500;
+    private double goodAccuracy = 0.68;
+    private int minimumDistanceBetweenUpdates = 0;
+    // 30 seconds is enough...
+    private int gettingLocationTimeout = 30 * 1000;
 
-    public LocationUtility(Context context, int minimumTimeBetweenUpdates, int minimumDistanceBetweenUpdates) {
+    public LocationUtility(Context context) {
         this.context = context;
         this.locationManager = (LocationManager) this.context.getSystemService(Context.LOCATION_SERVICE);
-        this.minimumDistanceBetweenUpdates = minimumDistanceBetweenUpdates;
-        this.minimumTimeBetweenUpdates = minimumTimeBetweenUpdates;
     }
 
 
     /**
-     * Initiate location utility with 5000ms as time between location updates and 10m minimum distance
-     * between location updates.
-     */
-    public LocationUtility(Context context) {
-        this(context, 5000, 10);
-    }
-
-    /**
-     * Listens for location (only one listener per one time)
+     * Listens for location update
      *
      * @return Future which is fullfilled when location with appropriate accuracy is known, or null if timeout/error.
      */
-    public Future<Location> listenForLocationOnce(){
-        // TODO K. Orzechowski: maybe it will be good to move minimumDistance and minimumTime settings
-        // from constructor to this method.
-
+    public Future<Location> getAccurateLocation() {
         final SettableFuture<Location> result = SettableFuture.create();
+
+        final LocationListener listener = new LocationListener() {
+
+
+            public void onLocationChanged(Location loc) {
+                // TODO K. Orzechowski: magic number, fix it
+                Log.d("loc", "Location changed " + loc.getSpeed());
+                if (loc.getAccuracy() >= LocationUtility.this.goodAccuracy) {
+                    LocationUtility.this.locationManager.removeUpdates(this);
+                    result.set(loc);
+                }
+            }
+
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+                Log.d("loc", "Status changed " + status);
+                switch (status) {
+                    case LocationProvider.AVAILABLE:
+                        break;
+                    case LocationProvider.TEMPORARILY_UNAVAILABLE:
+                        break;
+                    case LocationProvider.OUT_OF_SERVICE:
+                        LocationUtility.this.locationManager.removeUpdates(this);
+                        result.set(null);
+                        break;
+                }
+            }
+
+
+            @Override
+            public void onProviderEnabled(String provider) {
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+                Log.d("loc", "Provider disabled " + provider);
+                // TODO K. Orzechowski: FIND way to return it by one method.
+                LocationUtility.this.locationManager.removeUpdates(this);
+                result.set(null);
+            }
+        };
+
+
+        // this is safety timeout - if no location after desired time, it cancells location listening
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Log.d("loc", "location timeout");
+                LocationUtility.this.locationManager.removeUpdates(listener);
+                result.set(null);
+            }
+        }, gettingLocationTimeout);
 
         this.locationManager.requestLocationUpdates(
                 LocationManager.GPS_PROVIDER,
                 this.minimumTimeBetweenUpdates,
                 this.minimumDistanceBetweenUpdates,
-                new LocationListener() {
-                    public void onLocationChanged(Location loc) {
-                        // TODO K. Orzechowski: magic number, fix it
-                        if (loc.getAccuracy() >= 0.68) {
-                            result.set(loc);
-                        }
-                    }
+                listener);
 
-
-                    @Override
-                    public void onStatusChanged(String provider, int status, Bundle extras) {
-                        if (status == LocationProvider.OUT_OF_SERVICE) {
-                            result.set(null);
-                        }
-                    }
-
-                    // TODO k.orzechowsk resolve future also on timeout for example 10 000 ms
-
-                    @Override
-                    public void onProviderEnabled(String provider) {
-                        // TODO K. Orzechowski: probably needs to do nothing, Marcin - correct me if I am wrong
-                    }
-
-                    @Override
-                    public void onProviderDisabled(String provider) {
-                        // TODO K. Orzechowski: probably needs to return timeout - Marcin correct me if I am wrong
-                        result.set(null);
-                    }
-                });
         return result;
     }
 }
