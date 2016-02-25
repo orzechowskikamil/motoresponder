@@ -18,6 +18,7 @@ public class RespondingDecision extends AsyncTask<String, Boolean, Boolean> {
     private NumberRules numberRules;
     private UserRide userRide;
     private int waitBeforeRespondingMs = 30000;
+    
 
     public RespondingDecision(UserRide userRide, NumberRules numberRules, UserResponded userResponded, Predicate<Boolean> resultCallback) {
         this.userRide = userRide;
@@ -28,6 +29,16 @@ public class RespondingDecision extends AsyncTask<String, Boolean, Boolean> {
 
     private boolean shouldRespond(String phoneNumber) {
         Date dateOfReceiving = new Date();
+        
+        // send auto respose only on first message on phone number, do not spam with responses. User action will unlock responding.
+        if (this.responderAnswered.responderAnsweredFromLastUserAction(phoneNumber)==true){
+            return;
+        }
+        
+        // limit daily responses
+        if (this.responderAnswered.tooMuchAutomaticalAnswersIn24h(phoneNumber)==true){
+            return;
+        }
 
         // wait 30 seconds before responding.
         try {
