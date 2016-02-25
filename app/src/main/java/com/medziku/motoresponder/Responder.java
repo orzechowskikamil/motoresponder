@@ -50,6 +50,7 @@ public class Responder {
     private NotificationUtility notificationUtility;
     private SMSUtility smsUtility;
     private CallsUtility callsUtility;
+    private SettingsUtility settingsUtility;
 
 
     public Responder(Context context) {
@@ -59,6 +60,7 @@ public class Responder {
 
         this.smsUtility = new SMSUtility(this.context);
         this.callsUtility = new CallsUtility(this.context);
+        this.settingsUtility = new SettingsUtility(this.context);
 
         LocationUtility locationUtility = new LocationUtility(context);
         this.lockStateUtility = new LockStateUtility(context);
@@ -201,7 +203,7 @@ public class Responder {
 
     private String generateAutoRespondMessage(String phoneNumber) {
 
-        return "Jadę właśnie motocyklem i nie mogę odebrać. Oddzwonię później.";
+        return this.settingsUtility.getAutoResponseTextForSMS();
         // TODO K. Orzechowski: add possibility to personalize message IN LATER STAGE
 
         // TODO K. Orzechowski: separate messages for sms and call would be nice
