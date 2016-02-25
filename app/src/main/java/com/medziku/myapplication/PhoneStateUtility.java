@@ -120,58 +120,58 @@ public class PhoneStateUtility {
                     break;
             }
         }
-
-        @TargetApi(Build.VERSION_CODES.GINGERBREAD)
-        @Override
-        public void onCellLocationChanged(CellLocation location) {//Gsm location info
-            super.onCellLocationChanged(location);
-            if (location instanceof GsmCellLocation) {
-                GsmCellLocation gcLoc = (GsmCellLocation) location;
-                Log.i(TAG,
-                        "onCellLocationChanged: GsmCellLocation "
-                                + gcLoc.toString());
-                Log.i(TAG, "onCellLocationChanged: GsmCellLocation getCid "
-                        + gcLoc.getCid());
-                Log.i(TAG, "onCellLocationChanged: GsmCellLocation getLac "
-                        + gcLoc.getLac());
-                Log.i(TAG, "onCellLocationChanged: GsmCellLocation getPsc"
-                        + gcLoc.getPsc()); // Requires min API 9
-            } else if (location instanceof CdmaCellLocation) {
-                CdmaCellLocation ccLoc = (CdmaCellLocation) location;
-                Log.i(TAG,
-                        "onCellLocationChanged: CdmaCellLocation "
-                                + ccLoc.toString());
-                Log.i(TAG,
-                        "onCellLocationChanged: CdmaCellLocation getBaseStationId "
-                                + ccLoc.getBaseStationId());
-                Log.i(TAG,
-                        "onCellLocationChanged: CdmaCellLocation getBaseStationLatitude "
-                                + ccLoc.getBaseStationLatitude());
-                Log.i(TAG,
-                        "onCellLocationChanged: CdmaCellLocation getBaseStationLongitude"
-                                + ccLoc.getBaseStationLongitude());
-                Log.i(TAG,
-                        "onCellLocationChanged: CdmaCellLocation getNetworkId "
-                                + ccLoc.getNetworkId());
-                Log.i(TAG,
-                        "onCellLocationChanged: CdmaCellLocation getSystemId "
-                                + ccLoc.getSystemId());
-            } else {
-                Log.i(TAG, "onCellLocationChanged: " + location.toString());
-            }
-        }
-
-        @Override
-        public void onCallForwardingIndicatorChanged(boolean cfi) {
-            super.onCallForwardingIndicatorChanged(cfi);
-            Log.i(TAG, "onCallForwardingIndicatorChanged: " + cfi);
-        }
-
-        @Override
-        public void onMessageWaitingIndicatorChanged(boolean mwi) {
-            super.onMessageWaitingIndicatorChanged(mwi);
-            Log.i(TAG, "onMessageWaitingIndicatorChanged: " + mwi);
-        }
+//
+//        @TargetApi(Build.VERSION_CODES.GINGERBREAD)
+//        @Override
+//        public void onCellLocationChanged(CellLocation location) {//Gsm location info
+//            super.onCellLocationChanged(location);
+//            if (location instanceof GsmCellLocation) {
+//                GsmCellLocation gcLoc = (GsmCellLocation) location;
+//                Log.i(TAG,
+//                        "onCellLocationChanged: GsmCellLocation "
+//                                + gcLoc.toString());
+//                Log.i(TAG, "onCellLocationChanged: GsmCellLocation getCid "
+//                        + gcLoc.getCid());
+//                Log.i(TAG, "onCellLocationChanged: GsmCellLocation getLac "
+//                        + gcLoc.getLac());
+//                Log.i(TAG, "onCellLocationChanged: GsmCellLocation getPsc"
+//                        + gcLoc.getPsc()); // Requires min API 9
+//            } else if (location instanceof CdmaCellLocation) {
+//                CdmaCellLocation ccLoc = (CdmaCellLocation) location;
+//                Log.i(TAG,
+//                        "onCellLocationChanged: CdmaCellLocation "
+//                                + ccLoc.toString());
+//                Log.i(TAG,
+//                        "onCellLocationChanged: CdmaCellLocation getBaseStationId "
+//                                + ccLoc.getBaseStationId());
+//                Log.i(TAG,
+//                        "onCellLocationChanged: CdmaCellLocation getBaseStationLatitude "
+//                                + ccLoc.getBaseStationLatitude());
+//                Log.i(TAG,
+//                        "onCellLocationChanged: CdmaCellLocation getBaseStationLongitude"
+//                                + ccLoc.getBaseStationLongitude());
+//                Log.i(TAG,
+//                        "onCellLocationChanged: CdmaCellLocation getNetworkId "
+//                                + ccLoc.getNetworkId());
+//                Log.i(TAG,
+//                        "onCellLocationChanged: CdmaCellLocation getSystemId "
+//                                + ccLoc.getSystemId());
+//            } else {
+//                Log.i(TAG, "onCellLocationChanged: " + location.toString());
+//            }
+//        }
+//
+//        @Override
+//        public void onCallForwardingIndicatorChanged(boolean cfi) {
+//            super.onCallForwardingIndicatorChanged(cfi);
+//            Log.i(TAG, "onCallForwardingIndicatorChanged: " + cfi);
+//        }
+//
+//        @Override
+//        public void onMessageWaitingIndicatorChanged(boolean mwi) {
+//            super.onMessageWaitingIndicatorChanged(mwi);
+//            Log.i(TAG, "onMessageWaitingIndicatorChanged: " + mwi);
+//        }
     }
 
 
