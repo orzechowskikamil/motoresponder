@@ -4,7 +4,9 @@ package com.medziku.motoresponder.utils;
 import android.content.Context;
 import android.location.*;
 import android.os.Bundle;
-import com.google.common.util.concurrent.*;
+import com.google.common.util.concurrent.SettableFuture;
+
+import java.util.concurrent.Future;
 
 /**
  * This utility allow to listen for location once and get linear response instead of cyclic
@@ -39,13 +41,13 @@ public class LocationUtility {
     /**
      * Listens for location (only one listener per one time)
      *
-     * @throws Exception When second callback tried to be registered when another is listening
+     * @return Future which is fullfilled when location with appropriate accuracy is known, or null if timeout/error.
      */
-    public Future<Location> listenForLocationOnce() throws Exception {
+    public Future<Location> listenForLocationOnce(){
         // TODO K. Orzechowski: maybe it will be good to move minimumDistance and minimumTime settings
         // from constructor to this method.
-        
-        SettableFuture<Location> result = SettableFuture.create();
+
+        final SettableFuture<Location> result = SettableFuture.create();
 
         this.locationManager.requestLocationUpdates(
                 LocationManager.GPS_PROVIDER,
@@ -63,10 +65,10 @@ public class LocationUtility {
                     @Override
                     public void onStatusChanged(String provider, int status, Bundle extras) {
                         if (status == LocationProvider.OUT_OF_SERVICE) {
-                           result.set(null);
+                            result.set(null);
                         }
                     }
-                    
+
                     // TODO k.orzechowsk resolve future also on timeout for example 10 000 ms
 
                     @Override

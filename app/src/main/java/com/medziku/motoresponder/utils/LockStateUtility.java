@@ -40,7 +40,7 @@ public class LockStateUtility {
         @Override
         public void onReceive(Context arg0, Intent intent) {
 
-            // TODO K. Orzechowski: This is why floating notification is required - because
+            // This is why floating notification is required - because
             // app should respond always when screen is locked. Initially I thought that
             // there is no point of notification because when app works screen is always off but it is not true
             // because when screen is on but phone is not unlocked also auto respond will be sent.
