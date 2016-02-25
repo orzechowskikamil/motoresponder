@@ -1,6 +1,7 @@
 package com.medziku.motoresponder.logic;
 
 import android.location.Location;
+import android.util.Log;
 import com.medziku.motoresponder.utils.LocationUtility;
 import com.medziku.motoresponder.utils.MotionUtility;
 import com.medziku.motoresponder.utils.SensorsUtility;
@@ -59,7 +60,10 @@ public class UserRide {
         // in pocket is proxime (to leg or chest)... If there is no proximity, he is not riding.
         if (this.includeProximityCheck && !this.isProxime()) {
             // TODO K. Orzechowski: it's for development uncomment it later
+            Log.d("motoapp", "Device isn't proxime to pocket");
             //  return false;
+        } else {
+            Log.d("motoapp", "Device is proxime to pocket");
         }
 
         // TODO k.orzechowsk: If you know way of making promise, why not make promisable light check and
@@ -68,7 +72,10 @@ public class UserRide {
         // inside pocket should be dark. if it's light, he is probably not riding
         if (this.includeLightCheck && this.isLightOutside()) {
             // TODO K. Orzechowski: it's for development uncomment it later
+            Log.d("motoapp", "Device isn't in dark pocket");
             //   return false;
+        } else {
+            Log.d("motoapp", "Device is in dark pocket");
         }
 
 
@@ -76,8 +83,12 @@ public class UserRide {
         // TODO k.orzechowsk this name is plural, refactor it to motionSensorsReportsMovement
         boolean deviceStayingStill = !this.motionSensorReportsMovement();
         if (this.includeDeviceMotionCheck && deviceStayingStill) {
+            Log.d("motoapp", "Device isn't in motion");
             return false;
+        } else {
+            Log.d("motoapp", "Device is in motion");
         }
+
 
         // TODO k.orzechowsk add Bluetooth Beacon option to identify that you sit on bike IN FUTURE
         // TODO k.orzechowsk add NFC tag in pocket option to identify that you sit on bike IN FUTURE

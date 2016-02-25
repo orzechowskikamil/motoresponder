@@ -1,9 +1,15 @@
 package com.medziku.motoresponder.logic;
 
+import android.os.AsyncTask;
+import android.util.Log;
+
+import java.net.URL;
+
 /**
  * This class makes decision if we should respond to particular SMS or ll.
  */
-public class RespondingDecider {
+// TODO K. Orzechowski: rename now
+public class RespondingDecider extends AsyncTask<String, Boolean, Boolean> {
 
 
     private NumberRules numberRules;
@@ -15,7 +21,7 @@ public class RespondingDecider {
 
     }
 
-    public boolean shouldRespond(String phoneNumber) {
+    private boolean shouldRespond(String phoneNumber) {
         // do not answer numbers which user doesnt want to autorespond
         // this check is relatively cheap compared to measuring if user is riding
         if (!this.numberRules.shouldRespondToThisNumber(phoneNumber)) {
@@ -34,4 +40,20 @@ public class RespondingDecider {
     }
 
 
+    @Override
+    protected Boolean doInBackground(String... params) {
+        return this.shouldRespond(params[0]);
+    }
+
+    // This is called when doInBackground() is finished
+    protected void onPostExecute(Boolean... result) {
+        Log.d("motoapp", "RespondingDecider post execute called");
+
+    }
+
+    // This is called each time you call publishProgress()
+    protected void onProgressUpdate(Boolean... progress) {
+        Log.d("motoapp", "RespondingDecider progress update called");
+    }
 }
+

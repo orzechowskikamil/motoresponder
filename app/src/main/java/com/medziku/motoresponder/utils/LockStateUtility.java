@@ -1,9 +1,14 @@
 package com.medziku.motoresponder.utils;
 
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
+import android.app.KeyguardManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
+import android.os.PowerManager;
 import android.util.Log;
 
 /**
@@ -11,49 +16,31 @@ import android.util.Log;
  */
 public class LockStateUtility {
 
-    private boolean phoneUnlocked;
+    private Context context;
 
     public LockStateUtility(Context context) {
-        context.registerReceiver(new UserPresentBroadcastReceiver(),
-                new IntentFilter("android.intent.action.USER_PRESENT"));
-
-        context.registerReceiver(new UserPresentBroadcastReceiver(),
-                new IntentFilter("android.intent.action.SCREEN_OFF"));
-
-        // if somebody started app, phone must be unlocked at start
-        // TODO K. Orzechowski: That can be not true if app will start with phone startup or as a service...
-        this.phoneUnlocked = true;
+        this.context = context;
     }
 
+
+    /**
+     * If true, phone is unlocked and turned screen on, if false - not
+     *
+     * @return
+     */
+    @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
     public boolean isPhoneUnlocked() {
-        return phoneUnlocked;
-    }
 
-    private void setPhoneUnlocked(boolean phoneUnlocked) {
-        this.phoneUnlocked = phoneUnlocked;
-    }
+        KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
+        boolean isPhoneLocked = keyguardManager.inKeyguardRestrictedInputMode();
 
-    private class UserPresentBroadcastReceiver extends BroadcastReceiver {
+        PowerManager powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+        boolean isScreenAwake = (Build.VERSION.SDK_INT < 20
+                ? powerManager.isScreenOn()
+                : powerManager.isInteractive());
 
-        @Override
-        public void onReceive(Context arg0, Intent intent) {
+        boolean phoneIsUnlocked = isScreenAwake && !isPhoneLocked;
 
-            // This is why floating notification is required - because
-            // app should respond always when screen is locked. Initially I thought that
-            // there is no point of notification because when app works screen is always off but it is not true
-            // because when screen is on but phone is not unlocked also auto respond will be sent.
-
-            // Sent when the user is present after device wakes up (e.g when the keyguard is gone)
-            if (intent.getAction().equals(Intent.ACTION_USER_PRESENT)) {
-                LockStateUtility.this.setPhoneUnlocked(true);
-                Log.d("motoapp", "LockStateUtility: Phone unlocked");
-            }
-            // Device screen is off
-            else if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
-                LockStateUtility.this.setPhoneUnlocked(false);
-                Log.d("motoapp", "LockStateUtility: Phone locked");
-            }
-        }
-
+        return phoneIsUnlocked;
     }
 }

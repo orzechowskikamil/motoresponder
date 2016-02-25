@@ -44,15 +44,23 @@ public class Responder {
 
 
     private LockStateUtility lockStateUtility;
-    private RespondingDecider respondingDecider;
+    private NumberRules numberRules;
+    private UserRide userRide;
 
 
-    public Responder(BackgroundService bs, LocationUtility locationUtility, LockStateUtility lockStateUtility, SensorsUtility sensorsUtility, MotionUtility motionUtility) {
+    public Responder(BackgroundService bs) {
+
         // probably we have to start every onsmsreceived in new thread
-        // TODO k.orzechowski: refactor it to something like RespondTask constructed again for every response.
-        this.lockStateUtility = lockStateUtility;
 
-        this.respondingDecider = new RespondingDecider(new UserRide(locationUtility, sensorsUtility, motionUtility), new NumberRules());
+        LocationUtility locationUtility = new LocationUtility(bs);
+        this.lockStateUtility = new LockStateUtility(bs);
+        MotionUtility motionUtility = new MotionUtility(bs);
+        SensorsUtility sensorsUtility = new SensorsUtility(bs);
+
+
+        this.userRide = new UserRide(locationUtility, sensorsUtility, motionUtility);
+        this.numberRules = new NumberRules();
+
     }
 
     public void onSMSReceived(String phoneNumber) {
@@ -89,36 +97,35 @@ public class Responder {
         }
 
 
-        if (!this.respondingDecider.shouldRespond(phoneNumber)) {
-            return;
-        }
+        new RespondingDecider(this.userRide, this.numberRules).execute(phoneNumber);
 
-        // wait some time before responding - give user time to get phone from the pocket
-        // or from the desk and respond manually.
-        // unlocking phone should break any responding at all
-        // TODO K. Orzechowski: not sure if I am able to sleep main thread, and not got ANR
-        this.sleep(this.waitBeforeResponding);
-
-        // now things will go automatically in one milisecond so it's not required to still show this
-        if (this.showPendingNotification) {
-            // TODO K. Orzechowski: hmmm. It can be a flaw - check all returns if some return
-            // not cause to exit without unnotyfing
-            this.unnotifyAboutPendingAutoRespond();
-        }
-
-        // if phone is unlocked now, we can return - user heard ring, get phone and will
-        // respond manually.
-        if (this.assumePhoneUnlockedAsNotRiding && this.phoneIsUnlocked()) {
-            return;
-        }
-
-
-//        this.bs.showStupidNotify("MotoResponder", "GPS speed: " + speedKmh);
-
-
-        String message = this.generateAutoRespondMessage(phoneNumber);
-        this.sendSMS(phoneNumber, message);
-        this.notifyAboutAutoRespond(phoneNumber);
+//
+//        // wait some time before responding - give user time to get phone from the pocket
+//        // or from the desk and respond manually.
+//        // unlocking phone should break any responding at all
+//        // TODO K. Orzechowski: not sure if I am able to sleep main thread, and not got ANR
+//        this.sleep(this.waitBeforeResponding);
+//
+//        // now things will go automatically in one milisecond so it's not required to still show this
+//        if (this.showPendingNotification) {
+//            // TODO K. Orzechowski: hmmm. It can be a flaw - check all returns if some return
+//            // not cause to exit without unnotyfing
+//            this.unnotifyAboutPendingAutoRespond();
+//        }
+//
+//        // if phone is unlocked now, we can return - user heard ring, get phone and will
+//        // respond manually.
+//        if (this.assumePhoneUnlockedAsNotRiding && this.phoneIsUnlocked()) {
+//            return;
+//        }
+//
+//
+////        this.bs.showStupidNotify("MotoResponder", "GPS speed: " + speedKmh);
+//
+//
+//        String message = this.generateAutoRespondMessage(phoneNumber);
+//        this.sendSMS(phoneNumber, message);
+//        this.notifyAboutAutoRespond(phoneNumber);
 
 
     }
