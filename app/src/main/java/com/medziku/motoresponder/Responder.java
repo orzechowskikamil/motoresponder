@@ -1,19 +1,18 @@
 package com.medziku.motoresponder;
 
-import android.location.Location;
-
 import com.medziku.motoresponder.logic.NumberRules;
 import com.medziku.motoresponder.logic.RespondingDecider;
 import com.medziku.motoresponder.logic.UserRide;
 import com.medziku.motoresponder.services.BackgroundService;
 import com.medziku.motoresponder.utils.LocationUtility;
 import com.medziku.motoresponder.utils.LockStateUtility;
+import com.medziku.motoresponder.utils.MotionUtility;
+import com.medziku.motoresponder.utils.SensorsUtility;
 
 /**
  * Created by Kamil on 2015-09-08.
  */
 public class Responder {
-    private final LocationUtility locationUtility;
 
     // TODO refactor it to create RespondingDecider class where this class will become abstract decision about responding or not
     // while extracting to other classes process of gathering location or sending sms logic
@@ -43,19 +42,17 @@ public class Responder {
     // TODO K. Orzechowski: for development set to 100, for real it should be 10 000 at least
     public long waitBeforeResponding = 100;
 
-    private LockStateUtility lockStateUtility;
 
-    private BackgroundService bs;//TODO
+    private LockStateUtility lockStateUtility;
     private RespondingDecider respondingDecider;
 
 
-    public Responder(BackgroundService bs, LocationUtility locationUtility, LockStateUtility lockStateUtility) {
+    public Responder(BackgroundService bs, LocationUtility locationUtility, LockStateUtility lockStateUtility, SensorsUtility sensorsUtility, MotionUtility motionUtility) {
         // probably we have to start every onsmsreceived in new thread
         // TODO k.orzechowski: refactor it to something like RespondTask constructed again for every response.
-        this.bs = bs;
-        this.locationUtility = locationUtility;
         this.lockStateUtility = lockStateUtility;
-        this.respondingDecider=new RespondingDecider(new UserRide(this.bs, this.locationUtility), new NumberRules());
+
+        this.respondingDecider = new RespondingDecider(new UserRide(locationUtility, sensorsUtility, motionUtility), new NumberRules());
     }
 
     public void onSMSReceived(String phoneNumber) {
@@ -171,7 +168,7 @@ public class Responder {
     private void notifyAboutAutoRespond(String phoneNumber) {
         // this should show some toast like this: 'motoresponder responded XXX person for you. call him'
         // ofc if setting allow this
-        if (this.notifyAboutAutoRespond == false) {
+        if (!this.notifyAboutAutoRespond) {
             return;
         }
         // TODO K. Orzechowski: Implement showing notification , best if with events.

@@ -7,8 +7,6 @@ import android.app.Service;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
-import android.hardware.Sensor;
-import android.hardware.SensorManager;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -25,25 +23,11 @@ import com.medziku.motoresponder.utils.*;
  */
 public class BackgroundService extends Service {
 
-
-
-
-
-    private boolean sensorListenersRegistered = false;
-
-
-
     private int notificationId = 0;
 
     //from activity
 
-    private LocationUtility locationUtility;
-    private SMSUtility smsUtility;
-
-    private CallsUtility callsUtility;
-
     private Responder responder;
-    private LockStateUtility lockStateUtility;
     private SensorsUtility sensorsUtility;
 
     //end from activity
@@ -76,22 +60,23 @@ public class BackgroundService extends Service {
 
         //from activity
 
-        this.locationUtility = new LocationUtility(this);
-        this.smsUtility = new SMSUtility(this);
-        this.callsUtility = new CallsUtility(this);
-        this.lockStateUtility = new LockStateUtility(this);
+        LocationUtility locationUtility = new LocationUtility(this);
+        SMSUtility smsUtility = new SMSUtility(this);
+        CallsUtility callsUtility = new CallsUtility(this);
+        LockStateUtility lockStateUtility = new LockStateUtility(this);
+        MotionUtility motionUtility = new MotionUtility(this);
         this.sensorsUtility = new SensorsUtility(this);
 
-        this.responder = new Responder(this, this.locationUtility, this.lockStateUtility);
+        this.responder = new Responder(this, locationUtility, lockStateUtility, this.sensorsUtility, motionUtility);
 
-        this.smsUtility.listenForSMS(new SMSReceivedCallback() {
+        smsUtility.listenForSMS(new SMSReceivedCallback() {
             @Override
             public void onSMSReceived(String phoneNumber, String message) {
                 BackgroundService.this.onSMSReceived(phoneNumber, message);
             }
         });
 
-        this.callsUtility.listenForCalls(new CallCallback() {
+        callsUtility.listenForCalls(new CallCallback() {
             @Override
             public void onCall(String phoneNumber) {
                 BackgroundService.this.onCallReceived(phoneNumber);
@@ -101,6 +86,10 @@ public class BackgroundService extends Service {
         //end from activity
 
         showNotification();
+
+        // TODO K. Orzechowski: remove it later because its only for development
+
+        this.responder.onSMSReceived("79146755");
     }
 
 
@@ -157,8 +146,6 @@ public class BackgroundService extends Service {
     }
 
 
-
-
     //from activity
 
     private void onCallReceived(String phoneNumber) {
@@ -174,8 +161,6 @@ public class BackgroundService extends Service {
     }
 
     //end from activity
-
-
 
 
 }

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.telephony.*;
 
 import com.medziku.motoresponder.callbacks.CallCallback;
-import com.medziku.motoresponder.callbacks.CellStateCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +22,7 @@ public class CallsUtility {
         // TODO: 2015-09-08 add more callbacks!
         //medziku: no more callbacks!
         this.context = context;
-        this.callCallbacksList = new ArrayList<CallCallback>();
+        this.callCallbacksList = new ArrayList<>();
     }
 
     public void listenForCalls(CallCallback callCallback) {

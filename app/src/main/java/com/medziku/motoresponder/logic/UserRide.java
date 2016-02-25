@@ -1,19 +1,19 @@
 package com.medziku.motoresponder.logic;
 
 import android.location.Location;
-import com.medziku.motoresponder.services.BackgroundService;
 import com.medziku.motoresponder.utils.LocationUtility;
+import com.medziku.motoresponder.utils.MotionUtility;
+import com.medziku.motoresponder.utils.SensorsUtility;
+
 
 /**
  * This class represent if user ride or not.
  */
 public class UserRide {
 
-    // TODO K. Orzechowski: remove that dependency!
-    private BackgroundService bs;
-
-
     private LocationUtility locationUtility;
+    private SensorsUtility sensorsUtility;
+    private MotionUtility motionUtility;
 
 
     /**
@@ -38,15 +38,18 @@ public class UserRide {
      * If true, if accelerometer will report staying still, app will assume that staying = not riding.
      * If false, it will ignore accelerometer reading
      */
-    public boolean includeAccelerometerCheck = true;
+    public boolean includeDeviceMotionCheck = true;
+    // TODO K. Orzechowski: use it later
     public boolean doAnotherGPSCheckIfNotSure = true;
 
+    // TODO K. Orzechowski: use it later
     public int maybeRidingSpeed = 15;
     public int sureRidingSpeed = 60;
 
-    public UserRide(BackgroundService bs, LocationUtility locationUtility) {
-        this.bs = bs;
+    public UserRide(LocationUtility locationUtility, SensorsUtility sensorsUtility, MotionUtility motionUtility) {
         this.locationUtility = locationUtility;
+        this.sensorsUtility = sensorsUtility;
+        this.motionUtility = motionUtility;
     }
 
 
@@ -55,7 +58,8 @@ public class UserRide {
         // disable this option).
         // in pocket is proxime (to leg or chest)... If there is no proximity, he is not riding.
         if (this.includeProximityCheck && !this.isProxime()) {
-            return false;
+            // TODO K. Orzechowski: it's for development uncomment it later
+            //  return false;
         }
 
         // TODO k.orzechowsk: If you know way of making promise, why not make promisable light check and
@@ -63,14 +67,15 @@ public class UserRide {
 
         // inside pocket should be dark. if it's light, he is probably not riding
         if (this.includeLightCheck && this.isLightOutside()) {
-            return false;
+            // TODO K. Orzechowski: it's for development uncomment it later
+            //   return false;
         }
 
 
         // if phone doesn't report any movement we can also assume that user is not riding motorcycle
         // TODO k.orzechowsk this name is plural, refactor it to motionSensorsReportsMovement
         boolean deviceStayingStill = !this.motionSensorReportsMovement();
-        if (this.includeAccelerometerCheck && deviceStayingStill) {
+        if (this.includeDeviceMotionCheck && deviceStayingStill) {
             return false;
         }
 
@@ -105,23 +110,27 @@ public class UserRide {
 
 
     private boolean motionSensorReportsMovement() {
+        try {
+            return this.motionUtility.isDeviceInMotion().get();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         // TODO K. Orzechowski: using here also gyroscope and magneometer is not a bad idea
         // maybe other method will be required for it.
-        // TODO K. Orzechowski: if accelerometer does not report movement, return false, otherwise true.
-        return true;
+
+        // default - false
+        return false;
     }
 
     private boolean isProxime() {
-        // return true if phone reports proximity to smth.
-        // TODO: 2015-09-16 recheck, probably invalid
-        return this.bs.isProxime();
+        return this.sensorsUtility.isProxime();
     }
 
     private boolean isLightOutside() {
-        // return true if light sensor reports light
-        // TODO: 2015-09-16 probably invalid
-        return this.bs.isLightOutside();
+        return this.sensorsUtility.isLightOutside();
     }
+
 
     /**
      * @return Speed in km/h or -1 if location request timeouted.
@@ -136,8 +145,7 @@ public class UserRide {
 
         // -1 is value of speed for timeouted request.
         float speedMs = (location == null) ? -1 : location.getSpeed();
-        float speedKmh = this.msToKmh(speedMs);
-        return speedKmh;
+        return this.msToKmh(speedMs);
     }
 
 
