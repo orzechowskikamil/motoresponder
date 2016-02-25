@@ -15,7 +15,7 @@ public class Responder {
     // TODO refactor it to create RespondingDecision class where this class will become abstract decision about responding or not 
     // while extracting to other classes process of gathering location or sending sms logic
 
-    // todo create action log where every decision is stored and user can debug settings
+    // TODO k.orzechowskk create action log where every decision is stored and USER can debug settings and see FLOW of algorithm
 
     private LocationUtility locationUtility;
     //private SensorsUtility sensorsUtility;
@@ -111,16 +111,15 @@ public class Responder {
     /**
      * This is method containing all logic of responding in human readable way.
      * In other words: it's just an algorithm.
+     *
+     * @param phoneNumber Phone number of incoming call/sms
      */
     private void handleIncoming(final String phoneNumber) {
         // for now for simplification just wait one second forclaryfying sensor values
 
         // TODO K. Orzechowski: not sure if this is safe or lock main thread
-        try {
-            Thread.sleep(this.waitAfterReceivingMsgOrCall);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        this.sleep(waitAfterReceivingMsgOrCall);
+
         // if phone is unlocked we do not need to autorespond at all.
         if (this.assumePhoneUnlockedAsNotRiding && this.phoneIsUnlocked()) {
             return;
@@ -156,11 +155,8 @@ public class Responder {
         // wait some time before responding - give user time to get phone from the pocket
         // or from the desk and respond manually.
         // unlocking phone should break any responding at all
-        try {
-            // TODO K. Orzechowski: not sure if I am able to sleep main thread, and not got ANR
-            Thread.sleep(this.waitBeforeResponding);
-        } catch (InterruptedException e) {
-        }
+        // TODO K. Orzechowski: not sure if I am able to sleep main thread, and not got ANR
+        this.sleep(this.waitBeforeResponding);
 
         // now things will go automatically in one milisecond so it's not required to still show this
         if (this.showPendingNotification) {
@@ -177,66 +173,62 @@ public class Responder {
         }
 
         // if phone doesn't report any movement we can also assume that user is not riding motorcycle
-        if (this.includeAccelerometerCheck && this.phoneReportsStayingStill()) {
+        // TODO k.orzechowsk this name is plural, refactor it to motionSensorsReportsMovement
+        if (this.includeAccelerometerCheck && !this.motionSensorReportsMovement()) {
             return;
         }
+        
+        // TODO k.orzechowsk add Bluetooth Beacon option to identify that you sit on bike IN FUTURE
+        // TODO k.orzechowsk add NFC tag in pocket option to identify that you sit on bike IN FUTURE
+        // TODO k.orzechowsk identify of stolen bikes via beacon in very very future when app will be popular.
 
-        // this will try to get location and call 2nd step of algorithm
-        // TODO K. Orzechowski: rewrite it to some promise or other construct which will be linear
-        this.locationUtility.listenForLocationOnce(new LocationChangedCallback() {
-            @Override
-            public void onLocationChange(Location location) {
-                Responder.this.handleIncomingSecondStep(phoneNumber, location);
-            }
+        Location location = this.locationUtility.listenForLocationOnce();
+        this.handleIncomingSecondStep(phoneNumber, location);
+        
+        float speed = location.getSpeed();
 
-        });
-    }
-
-
-    private void handleIncomingSecondStep(String phoneNumber, Location location) {
-
-        boolean locationTimeouted = false;
-        float firstMeasurementSpeed = location.getSpeed();
-        float secondMeasurementSpeed = 0;
-        float biggerMeasurementSpeed = 0;
-
+        boolean locationTimeouted = location == null;
         if (this.interpretLocationTimeoutAsNotRiding && locationTimeouted) {
             // if timeout, it means that phone is probably in home with no access to GPS satelites.
             // so if no ride, no need to respond automatically
             return;
         }
 
-        biggerMeasurementSpeed = (secondMeasurementSpeed > firstMeasurementSpeed)
-                ? secondMeasurementSpeed
-                : firstMeasurementSpeed;
+        // TODO K. Orzechowski: add second check of speed if user is between sure riding speed and no riding speed
+        // for example: 15 km/h. It can be motorcycle or running. We make another check in few minutes - maybe
+        // we hit bigger speed and it become sure.
 
-
-        if (biggerMeasurementSpeed < this.sureRidingSpeed) {
-            // user is not riding. no need to autorespond
+        if (speed <= this.sureRidingSpeed) {
             return;
         }
 
         String message = this.generateAutoRespondMessage(phoneNumber);
         this.sendSMS(phoneNumber, message);
         this.notifyAboutAutoRespond(phoneNumber);
+        
+        
     }
 
+    private void sleep(long timeoutMs) {
+        try {
+            Thread.sleep(timeoutMs);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 
     private void cancelAllHandling() {
         // call this to break all autoresponding
+        // TODO K. Orzechowski: Implement it.
     }
-
-
-    private void wait(int amountMs) {
-        // wait for given milliseconds
-    }
-
 
     private boolean phoneIsUnlocked() {
         return !this.lockStateUtility.isPhoneUnlocked();
     }
 
-    private boolean phoneReportsStayingStill() {
+    private boolean motionSensorReportsMovement() {
+        // TODO K. Orzechowski: using here also gyroscope and magneometer is not a bad idea
+        // maybe other method will be required for it.
         // TODO K. Orzechowski: if accelerometer does not report movement, return false, otherwise true.
         return false;
     }
@@ -246,7 +238,7 @@ public class Responder {
     }
 
     private void unnotifyAboutPendingAutoRespond() {
-        // hide toast shown by notifyAoutPendingautorespond
+        // TODO K. Orzechowski:  hide toast shown by notifyAoutPendingautorespond
     }
 
     private boolean isNormalNumber(String phoneNumber) {
@@ -281,6 +273,14 @@ public class Responder {
                 break;
         }
 
+
+        /* TODO k.orzechowski 
+           break method below into three sections
+           First is BLACKLISTING with options: none, blacklist (put in application), contact book group 
+           Second is WHITELISTING with options: none, all contacts, whitelist (put in application), contact book group
+           Third is NORMAL/SHORT numbers with options: everyone / normal numbers / short numbers (like sms premium)
+        */
+        
         switch (this.respondingSettings) {
             case Responder.RESPONDING_SETTINGS_RESPOND_EVERYONE:
                 respondingConstraintsMeet = true;
@@ -313,13 +313,15 @@ public class Responder {
         // TODO K. Orzechowski: this is empty , implement me
     }
 
+    // TODO K. Orzechowski: add tryNotifyAutoRespond to name or move this.notifyAboutAutoRespond to upper method.
+    // idea is to have all things dependent on settings on one level to improve readability
     private void notifyAboutAutoRespond(String phoneNumber) {
         // this should show some toast like this: 'motoresponder responded XXX person for you. call him'
         // ofc if setting allow this
         if (this.notifyAboutAutoRespond == false) {
             return;
         }
-        // do logic.
+        // TODO K. Orzechowski: Implement showing notification , best if with events.
     }
 
     private boolean isProxime() {
