@@ -2,6 +2,7 @@ package com.medziku.motoresponder.utils;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.os.Looper;
 import android.provider.CallLog;
 import android.telephony.*;
 import com.google.common.base.Predicate;
@@ -15,10 +16,20 @@ public class CallsUtility {
     private TelephonyManager telephonyManager;
     private PhoneStateListener phoneStateListener;
     private boolean isCurrentlyListening;
+    private Looper looperForListeningThread;
 
+    /**
+     * This constructor is dedicated for real usage
+     *
+     * @param context
+     */
     public CallsUtility(Context context) {
         this.context = context;
-        this.telephonyManager = (TelephonyManager) this.context.getSystemService(Context.TELEPHONY_SERVICE);
+        this.telephonyManager = getTelephonyManager();
+    }
+
+    protected TelephonyManager getTelephonyManager() {
+        return (TelephonyManager) this.context.getSystemService(Context.TELEPHONY_SERVICE);
     }
 
     /**
@@ -37,6 +48,22 @@ public class CallsUtility {
         }
 
         this.isCurrentlyListening = true;
+        this.callCallback = callCallback;
+
+
+        (new Thread() {
+            @Override
+            public void run() {
+                CallsUtility.this.registerPhoneStateListener();
+            }
+        }).start();
+    }
+
+    /**
+     * This will run in separate thread
+     */
+    private void registerPhoneStateListener() {
+        this.prepareLooper();
 
         this.phoneStateListener = new PhoneStateListener() {
             @Override
@@ -56,7 +83,8 @@ public class CallsUtility {
             }
         };
         this.telephonyManager.listen(this.phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
-        this.callCallback = callCallback;
+
+        this.loopLooper();
     }
 
     public void stopListeningForCalls() {
@@ -64,6 +92,7 @@ public class CallsUtility {
             return;
         }
         this.telephonyManager.listen(this.phoneStateListener, PhoneStateListener.LISTEN_NONE);
+        this.quitLooper();
     }
 
 
@@ -71,23 +100,36 @@ public class CallsUtility {
         // TODO K. Orzechowski: it may still contain a flaw, since phone number sometimes is returned as
         // TODO K. Orzechowski: XXXXXXXXX, sometimes as +48XXXXXXXXX, and sometimes as 0048XXXXXXXXX.
         // TODO K. Orzechowski: verify it later. Issue #33
-        String[] whichColumns = {CallLog.Calls.NUMBER};
+        String[] projection = {CallLog.Calls.NUMBER};
 
-        String selections = CallLog.Calls.DATE + " > ? AND " + CallLog.Calls.NUMBER + " = ? AND "
-                + CallLog.Calls.TYPE + " = ?";
+        String selections = CallLog.Calls.DATE + ">? AND " + CallLog.Calls.NUMBER + "=? AND " + CallLog.Calls.TYPE + "=?";
 
         String[] selectionArgs = {String.valueOf(date.getTime()), phoneNumber, String.valueOf(CallLog.Calls.OUTGOING_TYPE)};
 
         String sortOrder = CallLog.Calls.DATE + " DESC";
 
         Cursor cursor = this.context.getContentResolver()
-                .query(CallLog.Calls.CONTENT_URI, whichColumns, selections, selectionArgs, sortOrder);
+                .query(CallLog.Calls.CONTENT_URI, projection, selections, selectionArgs, sortOrder);
 
         boolean result = cursor.getCount() > 0;
 
         cursor.close();
 
         return result;
+    }
+
+
+    protected void prepareLooper() {
+        Looper.prepare();
+        this.looperForListeningThread = Looper.myLooper();
+    }
+
+    protected void loopLooper() {
+        this.looperForListeningThread.loop();
+    }
+
+    protected void quitLooper() {
+        this.looperForListeningThread.quitSafely();
     }
 
 }

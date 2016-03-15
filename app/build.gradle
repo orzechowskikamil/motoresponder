@@ -10,6 +10,7 @@ android {
         targetSdkVersion 22
         versionCode 1
         versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
     dependencies {
@@ -21,6 +22,10 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+
+        debug {
+            testCoverageEnabled = true
+        }
     }
 }
 
@@ -28,4 +33,17 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:22.0.0'
     compile group: 'com.google.guava', name: 'guava', version: '15.0'
+    testCompile 'junit:junit:4.12'
+    testCompile "org.mockito:mockito-core:1.9.5"
+    androidTestCompile 'com.android.support:support-annotations:22.0.0'
+    androidTestCompile 'com.android.support.test:runner:0.4.1'
+    androidTestCompile 'com.android.support.test:rules:0.4.1'
+    androidTestCompile 'com.android.support.test.espresso:espresso-idling-resource:2.2.1'
+}
+
+configurations.all {
+    resolutionStrategy {
+        force 'org.hamcrest:hamcrest-core:1.1', 'org.hamcrest:hamcrest-core:1.1'
+        force 'com.android.support:support-annotations:22.0.0'
+    }
 }

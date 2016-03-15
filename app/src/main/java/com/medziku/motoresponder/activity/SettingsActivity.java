@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 
+import com.medziku.motoresponder.utils.utilitiesrunner.UtilitiesRunner;
 import com.medziku.motoresponder.R;
 import com.medziku.motoresponder.services.BackgroundService;
 import com.medziku.motoresponder.utils.SettingsUtility;
@@ -30,7 +31,11 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
         PreferenceManager.getDefaultSharedPreferences(this)
                 .registerOnSharedPreferenceChangeListener(this);
 
-        this.startBackgroundService();
+        if (UtilitiesRunner.ARE_PSEUDOTESTS_ENABLED == true) {
+            this.runPseudoTesting();
+        } else {
+            this.startBackgroundService();
+        }
     }
 
     private void startBackgroundService() {
@@ -51,5 +56,13 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
                 stopService(intent);
             }
         }
+    }
+
+    /**
+     * Special mode in which app instead of doing it's work, run this method to start utilities on real device.
+     * Because there is no possibility of good testing utilities by unit tests or instrumented tests.
+     */
+    private void runPseudoTesting() {
+        new UtilitiesRunner(this.getApplicationContext()).run();
     }
 }

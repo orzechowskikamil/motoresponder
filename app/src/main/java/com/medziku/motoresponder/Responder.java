@@ -1,6 +1,7 @@
 package com.medziku.motoresponder;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import com.google.common.base.Predicate;
 import com.medziku.motoresponder.callbacks.SMSReceivedCallback;
 import com.medziku.motoresponder.logic.*;
@@ -13,38 +14,37 @@ import java.util.List;
  * It's like all responding logic entry point
  */
 public class Responder {
-    private List<RespondingTask> pendingRespondingTasks;
-    private LockStateUtility lockStateUtility;
-    private NumberRules numberRules;
-    private UserRide userRide;
-    private AlreadyResponded alreadyResponded;
-    private Context context;
-    private NotificationUtility notificationUtility;
-    private SMSUtility smsUtility;
-    private CallsUtility callsUtility;
-    private SettingsUtility settingsUtility;
-    private RespondingDecision respondingDecision;
-    private DeviceUnlocked deviceUnlocked;
-    private boolean isRespondingNow;
+    protected RespondingTasksQueue respondingTasksQueue;
+    protected LockStateUtility lockStateUtility;
+    protected NumberRules numberRules;
+    protected UserRide userRide;
+    protected AlreadyResponded alreadyResponded;
+    protected Context context;
+    protected NotificationUtility notificationUtility;
+    protected SMSUtility smsUtility;
+    protected CallsUtility callsUtility;
+    protected SettingsUtility settingsUtility;
+    protected RespondingDecision respondingDecision;
+    protected DeviceUnlocked deviceUnlocked;
+    protected LocationUtility locationUtility;
+    protected ContactsUtility contactsUtility;
+    protected MotionUtility motionUtility;
+    protected SensorsUtility sensorsUtility;
+    protected boolean isRespondingNow;
 
     public Responder(Context context) {
         this.context = context;
-        this.lockStateUtility = new LockStateUtility(context);
-        this.pendingRespondingTasks = new ArrayList<>();
-        this.smsUtility = new SMSUtility(this.context);
-        this.callsUtility = new CallsUtility(this.context);
-        this.settingsUtility = new SettingsUtility(this.context);
-        this.alreadyResponded = new AlreadyResponded(this.callsUtility, this.smsUtility);
-        this.deviceUnlocked = new DeviceUnlocked(this.settingsUtility, this.lockStateUtility);
-        LocationUtility locationUtility = new LocationUtility(context);
-        ContactsUtility contactsUtility = new ContactsUtility(context);
-        MotionUtility motionUtility = new MotionUtility(context);
-        SensorsUtility sensorsUtility = new SensorsUtility(context);
-        this.notificationUtility = new NotificationUtility(context);
-        this.userRide = new UserRide(locationUtility, sensorsUtility, motionUtility);
-        this.numberRules = new NumberRules(contactsUtility);
-        this.respondingDecision = new RespondingDecision(this.userRide, this.numberRules, this.alreadyResponded, this.deviceUnlocked);
+
+        this.createUtilities();
+
+        this.alreadyResponded = this.createAlreadyResponded();
+        this.deviceUnlocked = this.createDeviceUnlocked();
+        this.userRide = this.createUserRide();
+        this.numberRules = this.createNumberRules();
+        this.respondingDecision = this.createRespondingDecision();
+        this.respondingTasksQueue = this.createRespondingTasksQueue();
     }
+
 
     /**
      * Call this to start responding
@@ -60,47 +60,26 @@ public class Responder {
 
         this.isRespondingNow = true;
         // TODO K.Orzechowski throw out this smsreceivedcallback and replace it with predicate  #49
-        this.smsUtility.listenForSMS(new SMSReceivedCallback() {
-            @Override
-            public void onSMSReceived(String phoneNumber, String message) {
-                Responder.this.onSMSReceived(phoneNumber);
-            }
-        });
-
-        this.callsUtility.listenForCalls(new Predicate<String>() {
-            @Override
-            public boolean apply(String phoneNumber) {
-                Responder.this.onUnAnsweredCallReceived(phoneNumber);
-                return true;
-            }
-        });
-
-        try {
-            this.lockStateUtility.listenToLockStateChanges(new Predicate<Boolean>() {
-                @Override
-                public boolean apply(Boolean isLocked) {
-                    if (isLocked == false) {
-                        Responder.this.onPhoneUnlocked();
-                    }
-                    return true;
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        this.listenToProximityChanges();
+        this.listenForSMS();
+        this.listenForCalls();
+        this.listenForLockStateChanges();
     }
+
 
     /**
      * Call this to stop responding at all.
      */
     public void stopResponding() {
         this.isRespondingNow = false;
-        this.cancelAllHandling();
+        this.respondingTasksQueue.cancelAllHandling();
 
-        this.smsUtility.stopListeningForSMS();
-        this.callsUtility.stopListeningForCalls();
-        this.lockStateUtility.stopListeningToLockStateChanges();
+        this.stopListeningForProximity();
+        this.stopListeningForSMS();
+        this.stopListeningForCalls();
+        this.stopListeningForLockStateChanges();
     }
+
 
     /**
      * Called when user will receive sms
@@ -120,7 +99,7 @@ public class Responder {
      * Called when phone will be unlocked by user (screenlock passed)
      */
     public void onPhoneUnlocked() {
-        this.cancelAllHandling();
+        this.respondingTasksQueue.cancelAllHandling();
     }
 
     /**
@@ -128,32 +107,108 @@ public class Responder {
      * and add it to list of currently pending responses. After successfull autoresponse, it's removed from
      * this list.
      */
-    private void handleIncoming(final String phoneNumber) {
-
-        final RespondingTask[] task = new RespondingTask[1];
-
-        task[0] = new RespondingTask(
-                this.respondingDecision, this.settingsUtility, this.notificationUtility, this.smsUtility,
-                new Predicate<Boolean>() {
-                    @Override
-                    public boolean apply(Boolean input) {
-                        Responder.this.pendingRespondingTasks.remove(task[0]);
-                        return true;
-                    }
-                });
-
-        this.pendingRespondingTasks.add(task[0]);
-        task[0].execute(phoneNumber);
+    protected void handleIncoming(String phoneNumber) {
+        this.respondingTasksQueue.createAndExecuteRespondingTask(phoneNumber);
     }
 
 
-    /**
-     * This method cancels all currently pending responding tasks, and clean after themselves.
-     */
-    private void cancelAllHandling() {
-        for (RespondingTask task : this.pendingRespondingTasks) {
-            task.cancelResponding();
+    protected void listenForSMS() {
+        this.smsUtility.listenForSMS(new SMSReceivedCallback() {
+            @Override
+            public void onSMSReceived(String phoneNumber, String message) {
+                Responder.this.onSMSReceived(phoneNumber);
+            }
+        });
+    }
+
+    protected void listenForLockStateChanges() {
+        try {
+            this.lockStateUtility.listenToLockStateChanges(new Predicate<Boolean>() {
+                @Override
+                public boolean apply(Boolean isLocked) {
+                    if (isLocked == false) {
+                        Responder.this.onPhoneUnlocked();
+                    }
+                    return true;
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
+    protected void listenForCalls() {
+        this.callsUtility.listenForCalls(new Predicate<String>() {
+            @Override
+            public boolean apply(String phoneNumber) {
+                Responder.this.onUnAnsweredCallReceived(phoneNumber);
+                return true;
+            }
+        });
+    }
+
+    protected void stopListeningForLockStateChanges() {
+        this.lockStateUtility.stopListeningToLockStateChanges();
+    }
+
+    protected void stopListeningForCalls() {
+        this.callsUtility.stopListeningForCalls();
+    }
+
+    protected void stopListeningForSMS() {
+        this.smsUtility.stopListeningForSMS();
+    }
+
+    protected void listenToProximityChanges() {
+        this.sensorsUtility.registerSensors();
+    }
+
+    protected void stopListeningForProximity() {
+        this.sensorsUtility.unregisterSensors();
+
+    }
+    // region factory methods
+
+    protected void createUtilities() {
+        this.lockStateUtility = new LockStateUtility(this.context);
+        this.smsUtility = new SMSUtility(this.context);
+        this.callsUtility = new CallsUtility(this.context);
+        this.settingsUtility = new SettingsUtility(this.context);
+        this.notificationUtility = new NotificationUtility(this.context);
+        this.locationUtility = new LocationUtility(this.context);
+        this.contactsUtility = new ContactsUtility(this.context);
+        this.motionUtility = new MotionUtility(this.context);
+        this.sensorsUtility = new SensorsUtility(this.context);
+    }
+
+    protected AlreadyResponded createAlreadyResponded() {
+        return new AlreadyResponded(this.callsUtility, this.smsUtility);
+    }
+
+
+    protected DeviceUnlocked createDeviceUnlocked() {
+        return new DeviceUnlocked(this.settingsUtility, this.lockStateUtility);
+    }
+
+
+    protected UserRide createUserRide() {
+        return new UserRide(this.locationUtility, this.sensorsUtility, this.motionUtility);
+    }
+
+
+    protected NumberRules createNumberRules() {
+        return new NumberRules(this.contactsUtility);
+    }
+
+
+    protected RespondingTasksQueue createRespondingTasksQueue() {
+        return new RespondingTasksQueue(this.notificationUtility, this.smsUtility, this.settingsUtility, this.respondingDecision);
+    }
+
+
+    protected RespondingDecision createRespondingDecision() {
+        return new RespondingDecision(this.userRide, this.numberRules, this.alreadyResponded, this.deviceUnlocked);
+    }
+
+    // endregion
 }

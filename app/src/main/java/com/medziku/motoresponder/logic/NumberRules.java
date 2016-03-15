@@ -15,6 +15,11 @@ public class NumberRules {
     // TODO K. Orzechowski: not needed for 1.00, issue #50
 //    private PhoneNumberVerifier numberVerifier;
 
+    /**
+     * This is for real usage
+     *
+     * @param contactsUtility
+     */
     public NumberRules(ContactsUtility contactsUtility) {
         this.contactsUtility = contactsUtility;
         // TODO K. Orzechowski: not needed for 1.00, issue #50
@@ -52,12 +57,15 @@ public class NumberRules {
     public static final int RESPONDING_BLACKLIST_ENABLED = 1;
 
 
-    public List<String> whiteListGroupNames;
-    public List<String> blackListGroupNames;
+    // TODO K. Orzechowski: not needed for now, issue #50
+//    public List<String> whiteListGroupNames;
+//    public List<String> blackListGroupNames;
+
 
     public boolean numberRulesAllowResponding(String phoneNumber) {
-        boolean respondingConstraintsMeet = false;
-        boolean countryRespondingConstraintsMeet = false;
+        // TODO K. Orzechowski: issue #50, not needed right now
+//        boolean respondingConstraintsMeet = false;
+//        boolean countryRespondingConstraintsMeet = false;
 
         // TODO k.orzechowsk commented until 1.01, issue #50
         // if (this.respondingWhitelist === NumberRules.RESPONDING_WHITELIST_ENABLED && this.isNumberOnWhitelist(phoneNumber)==false){
@@ -100,8 +108,13 @@ public class NumberRules {
 
 
     private boolean isCurrentDevicePhoneNumber(String phoneNumber) {
-        // todo it should be kept in storage since readCurrentDevicePhoneNumber can return null
-        return phoneNumber.equals(this.contactsUtility.readCurrentDevicePhoneNumber());
+        // todo it should be kept in storage since readCurrentDevicePhoneNumber can return null Issue #71
+        try {
+            return phoneNumber.equals(this.contactsUtility.readCurrentDevicePhoneNumber());
+        } catch (Exception e) {
+            // TODO K. Orzechowski: return it from storage issue #71
+            return false;
+        }
     }
 
     // TODO K. Orzechowski: not needed for 1.00, issue #50
@@ -113,45 +126,46 @@ public class NumberRules {
 //    private String getCountryOfNumber(String phoneNumber) {
 //        return this.numberVerifier.getCountryByPhoneNumber(null, phoneNumber);
 //    }
-
-    private boolean isNumberOnWhiteList(String phoneNumber) {
-        for (String whiteListGroupName : this.whiteListGroupNames) {
-            if (this.contactsUtility.isGroupContainingContact(whiteListGroupName, phoneNumber) == true) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean isNumberOnBlacklist(String phoneNumber) {
-        for (String blackListGroupName : this.blackListGroupNames) {
-            if (this.contactsUtility.isGroupContainingContact(blackListGroupName, phoneNumber) == true) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-
-    private boolean isNormalNumber(String phoneNumber) {
-        // todo add this to the project https://github.com/KingsMentor/PhoneNumberValidator , issue #50
-
-        // TODO K. Orzechowski: not needed for 1.00, issue #50
-//        if (this.numberVerifier.isNumberValid(this.getCountryOfNumber(phoneNumber), phoneNumber) == false) {
-//            return false;
+//
+//    private boolean isNumberOnWhiteList(String phoneNumber) {
+//        for (String whiteListGroupName : this.whiteListGroupNames) {
+//            if (this.contactsUtility.isGroupContainingContact(whiteListGroupName, phoneNumber) == true) {
+//                return true;
+//            }
 //        }
+//        return false;
+//    }
+//
+//    private boolean isNumberOnBlacklist(String phoneNumber) {
+//        for (String blackListGroupName : this.blackListGroupNames) {
+//            if (this.contactsUtility.isGroupContainingContact(blackListGroupName, phoneNumber) == true) {
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
 
-        // if (!PhoneNumberUtils.isGlobalPhoneNumber("+912012185234")){
-        // return false;
-        // }
 
-
-        // if (!android.util.Patterns.PHONE.matcher(phoneNumber).matches()){
-        //     return false;   
-        // }
-
-        return true; // TODO K. Orzechowski:  return true if normal number - no sms premium or smth., issue #50
-    }
+    // TODO K. Orzechowski: not needed for 1.00, issue #50
+//    private boolean isNormalNumber(String phoneNumber) {
+//        // todo add this to the project https://github.com/KingsMentor/PhoneNumberValidator , issue #50
+//
+//        // TODO K. Orzechowski: not needed for 1.00, issue #50
+////        if (this.numberVerifier.isNumberValid(this.getCountryOfNumber(phoneNumber), phoneNumber) == false) {
+////            return false;
+////        }
+//
+//        // if (!PhoneNumberUtils.isGlobalPhoneNumber("+912012185234")){
+//        // return false;
+//        // }
+//
+//
+//        // if (!android.util.Patterns.PHONE.matcher(phoneNumber).matches()){
+//        //     return false;
+//        // }
+//
+//        return true; // TODO K. Orzechowski:  return true if normal number - no sms premium or smth., issue #50
+//    }
 
     // TODO K. Orzechowski: not needed for 1.00, issue #50
 //    private boolean isNumberFromCurrentCountry(String phoneNumber) {

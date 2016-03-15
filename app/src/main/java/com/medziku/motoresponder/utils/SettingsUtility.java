@@ -18,17 +18,100 @@ public class SettingsUtility {
     public static final int DEFAULT_RESPONSE_DELAY = 10;
 
     private final String APP_SHARED_PREFERENCES = "AppSharedPreferences";
+    private Context context;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
 
-    private final String defaultResponseText;
-
+    /**
+     * This is the real constructor
+     *
+     * @param context Activity context
+     */
     public SettingsUtility(Context context) {
         this.sharedPreferences = context.getSharedPreferences(this.APP_SHARED_PREFERENCES, Context.MODE_PRIVATE);
         this.editor = this.sharedPreferences.edit();
 
-        this.defaultResponseText = context.getString(R.string.default_response_text);
+        this.context = context;
     }
+
+
+    /**
+     * If true, it means that autoesponding service is enabled. If not, it's disabled (whole app shouldn't work).
+     *
+     * @return
+     */
+    public boolean isServiceEnabled() {
+        return this.getValue(RESPONDER_SERVICE_ENABLED_KEY, true);
+    }
+
+    /**
+     * For changing setting of service enabled or disabled.
+     * TODO K. Orzechowski:  it should stop/start service or not? Probably not. Only store it  Issue #62
+     *
+     * @param value
+     */
+    public void setServiceEnabled(boolean value) {
+        this.setValue(RESPONDER_SERVICE_ENABLED_KEY, value);
+    }
+
+
+    /**
+     * Return stored text of auto response for SMS message.
+     *
+     * @return
+     */
+    public String getAutoResponseTextForSMS() {
+        return this.getValue(RESPONSE_TEXT_KEY, this.context.getString(R.string.default_response_text));
+    }
+
+    public void setAutoResponseTextForSMS(String responseSMSText) {
+        this.setValue(RESPONSE_TEXT_KEY, responseSMSText);
+    }
+
+    /**
+     * Should we treat phone unlocked as not riding or not?
+     *
+     * @return
+     */
+    // TODO K. Orzechowski: Change to real configurable according   to issue #67
+    public boolean isPhoneUnlockedInterpretedAsNotRiding() {
+        return true;
+    }
+
+
+    /**
+     * Should we display notification when motoresponder is measuring if user is riding or not?
+     *
+     * @return
+     */
+    // TODO K. Orzechowski: Change to real configurable according   to issue #67
+    public boolean isShowingPendingNotificationEnabled() {
+        return true;
+    }
+
+    /**
+     * How long responder should wait since receiving message to starting responding process, to allow user
+     * manually respond if he is not away.
+     *
+     * @return
+     */
+    public int getDelayBeforeRespondingMs() {
+        // TODO K. Orzechowski: Change to real configurable according   to issue #67
+        return 30000;
+    }
+
+
+    /**
+     * Delay in seconds after which the response will be sent.
+     *
+     * @return
+     */
+    public int getResponseDelay() {
+        return this.sharedPreferences.getInt(RESPONSE_DELAY_KEY, DEFAULT_RESPONSE_DELAY);
+    }
+
+
+    //region private
 
     private boolean getValue(String name, boolean defaultValue) {//TODO key not name Issue #62
         return this.sharedPreferences.getBoolean(name, defaultValue);
@@ -57,84 +140,5 @@ public class SettingsUtility {
         this.editor.commit();
     }
 
-
-    /**
-     * If true, it means that autoesponding service is enabled. If not, it's disabled (whole app shouldn't work).
-     * @return
-     */
-    public boolean isServiceEnabled() {
-        return this.getValue(RESPONDER_SERVICE_ENABLED_KEY, true);
-    }
-
-    /**
-     * For changing setting of service enabled or disabled.
-     * TODO K. Orzechowski:  it should stop/start service or not? Probably not. Only store it  Issue #62
-     * @param value
-     */
-    public void setServiceEnabled(boolean value) {
-        this.setValue(RESPONDER_SERVICE_ENABLED_KEY, value);
-    }
-
-
-    /**
-     * Return stored text of auto response for SMS message.
-     * @return
-     */
-    public String getAutoResponseTextForSMS() {
-        return defaultResponseText;
-    }
-
-    /**
-     * Should we treat phone unlocked as not riding or not?
-     * @return
-     */
-    // TODO K. Orzechowski: Change to real configurable according   to issue #67
-    public boolean isPhoneUnlockedInterpretedAsNotRiding() {
-        return true;
-    }
-
-
-    /**
-     * Should we display notification when motoresponder is measuring if user is riding or not?
-     * @return
-     */
-    // TODO K. Orzechowski: Change to real configurable according   to issue #67
-    public boolean isShowingPendingNotificationEnabled() {
-        return true;
-    }
-
-    /**
-     * How long responder should wait since receiving message to starting responding process, to allow user
-     * manually respond if he is not away.
-     * @return
-     */
-    public int getDelayBeforeRespondingMs() {
-        // TODO K. Orzechowski: Change to real configurable according   to issue #67
-        return 30000;
-    }
-
-    /**
-     * Return response text stored in preferences.
-     * @return
-     */
-    //TODO tests  Issue #62
-    public String getResponseText() {//TODO probably there will be need to use phone number argument  Issue #62
-        return this.sharedPreferences.getString(RESPONSE_TEXT_KEY, getDefaultResponseText());
-    }
-
-    /**
-     * Return default response text.
-     * @return
-     */
-    public String getDefaultResponseText() {
-        return this.defaultResponseText;
-    }
-
-    /**
-     * Delay in seconds after which the response will be sent.
-     * @return
-     */
-    public int getResponseDelay(){
-        return this.sharedPreferences.getInt(RESPONSE_DELAY_KEY, DEFAULT_RESPONSE_DELAY);
-    }
+    // endregion
 }

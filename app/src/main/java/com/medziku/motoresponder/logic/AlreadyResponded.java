@@ -13,6 +13,12 @@ public class AlreadyResponded {
     private CallsUtility callsUtility;
     private SMSUtility smsUtility;
 
+    /**
+     * For real usage
+     *
+     * @param callsUtility
+     * @param smsUtility
+     */
     public AlreadyResponded(CallsUtility callsUtility, SMSUtility smsUtility) {
         this.callsUtility = callsUtility;
         this.smsUtility = smsUtility;
@@ -37,16 +43,16 @@ public class AlreadyResponded {
     /**
      * Check if user answered given number with SMS or call after application answered automatically
      */
-    public boolean isUserNotAnsweredSinceLastAutomaticalResponse(String phoneNumber) {
+    public boolean isAutomaticalResponseLast(String phoneNumber) {
         Date dateOfLastAutomaticalAnswer = this.getDateOfLastAutomaticalResponse(phoneNumber);
 
         if (dateOfLastAutomaticalAnswer == null) {
-            // if no automatical response before, no problem, user response can't be more old than automatical response
+            // if no automatical response before, no problem, user response can't be older than automatical response
             return false;
         }
 
 
-        return this.isUserRespondedSince(dateOfLastAutomaticalAnswer, phoneNumber);
+        return !this.isUserRespondedSince(dateOfLastAutomaticalAnswer, phoneNumber);
     }
 
 
@@ -54,7 +60,7 @@ public class AlreadyResponded {
         return this.smsUtility.getDateOfLastSMSSent(phoneNumber, true);
     }
 
-    private Date getDateOfLastUserResponse(String phoneNumber) {
-        return this.smsUtility.getDateOfLastSMSSent(phoneNumber, false);
-    }
+//    private Date getDateOfLastUserResponse(String phoneNumber) {
+//        return this.smsUtility.getDateOfLastSMSSent(phoneNumber, false);
+//    }
 }

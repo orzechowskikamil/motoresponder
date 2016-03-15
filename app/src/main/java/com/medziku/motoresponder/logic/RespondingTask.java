@@ -8,9 +8,6 @@ import com.medziku.motoresponder.utils.SMSUtility;
 import com.medziku.motoresponder.utils.SettingsUtility;
 
 
-/**
- * Every task is responding to one call/sms, so every object of this class should be used only once.
- */
 public class RespondingTask extends AsyncTask<String, Boolean, Boolean> {
 
     private SMSUtility smsUtility;
@@ -37,7 +34,7 @@ public class RespondingTask extends AsyncTask<String, Boolean, Boolean> {
         this.unnotifyAboutPendingAutoRespond();
     }
 
-    private void handleRespondingTask(String phoneNumber) {
+    protected void handleRespondingTask(String phoneNumber) {
         // wait 30 seconds before responding.
         try {
             Thread.sleep(this.settingsUtility.getDelayBeforeRespondingMs());
@@ -46,7 +43,7 @@ public class RespondingTask extends AsyncTask<String, Boolean, Boolean> {
         }
 
         // K. Orzechowski: I am not sure, but I read that I should check for this.
-        if (this.isCancelled()) {
+        if (this.isTerminated()) {
             return;
         }
 
@@ -59,7 +56,7 @@ public class RespondingTask extends AsyncTask<String, Boolean, Boolean> {
 
         if (this.respondingDecision.shouldRespond(phoneNumber)) {
             // this check can took long time so before responding we can check again for cancellation.
-            if (this.isCancelled()) {
+            if (this.isTerminated()) {
                 return;
             }
             this.respondWithSMS(phoneNumber);
@@ -84,11 +81,11 @@ public class RespondingTask extends AsyncTask<String, Boolean, Boolean> {
 
     private void notifyAboutPendingAutoRespond() {
         // TODO K. Orzechowski: move strings into resources #69
-        this.notificationUtility.showNotification("MotoResponder", "Moto responder is determining if should automatically respond", "");
+        this.notificationUtility.showOngoingNotification("MotoResponder", "Moto responder is determining if should automatically respond", "");
     }
 
     private void unnotifyAboutPendingAutoRespond() {
-        this.notificationUtility.hideNotification();
+        this.notificationUtility.hideOngoingNotification();
     }
 
 
@@ -114,6 +111,10 @@ public class RespondingTask extends AsyncTask<String, Boolean, Boolean> {
 
     }
 
+
+    protected boolean isTerminated() {
+        return this.isCancelled();
+    }
     /**
      * This is called each time you call publishProgress()
      */

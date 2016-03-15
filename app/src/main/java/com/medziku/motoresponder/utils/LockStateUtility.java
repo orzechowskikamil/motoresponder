@@ -21,6 +21,8 @@ public class LockStateUtility {
     private boolean isCallbackRegistered = false;
     private BroadcastReceiver currentScreenLockReceiver;
     private BroadcastReceiver currentScreenUnlockReceiver;
+    private boolean isCurrentlyLocked = false;
+    private boolean isFirstEvent = true;
 
     public LockStateUtility(Context context) {
         this.context = context;
@@ -43,7 +45,12 @@ public class LockStateUtility {
             @Override
             public void onReceive(Context arg0, Intent intent) {
                 // phone locked
-                lockStateChangedCallback.apply(true);
+                if (LockStateUtility.this.isCurrentlyLocked == false || LockStateUtility.this.isFirstEvent) {
+                    LockStateUtility.this.isCurrentlyLocked = true;
+                    LockStateUtility.this.isFirstEvent = false;
+                    LockStateUtility.this.log("isLocked = " + LockStateUtility.this.isCurrentlyLocked);
+                    lockStateChangedCallback.apply(LockStateUtility.this.isCurrentlyLocked);
+                }
             }
         };
 
@@ -51,22 +58,33 @@ public class LockStateUtility {
             @Override
             public void onReceive(Context arg0, Intent intent) {
                 // phone unlocked
-                lockStateChangedCallback.apply(false);
+                if (LockStateUtility.this.isCurrentlyLocked == true ||  LockStateUtility.this.isFirstEvent) {
+                    LockStateUtility.this.isCurrentlyLocked = false;
+                    LockStateUtility.this.isFirstEvent = false;
+                    LockStateUtility.this.log("isLocked = " + LockStateUtility.this.isCurrentlyLocked);
+                    lockStateChangedCallback.apply(LockStateUtility.this.isCurrentlyLocked);
+                }
             }
         };
 
         this.context.registerReceiver(this.currentScreenUnlockReceiver, new IntentFilter(Intent.ACTION_USER_PRESENT));
         this.context.registerReceiver(this.currentScreenLockReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
+        this.log("Started listening to lock state changes.");
     }
 
     /**
      * Call this method for unsubscribing from listening to lock state changes.
      */
     public void stopListeningToLockStateChanges() {
+        if (this.isCallbackRegistered == false) {
+            return;
+        }
         this.isCallbackRegistered = false;
         this.context.unregisterReceiver(this.currentScreenUnlockReceiver);
         this.context.unregisterReceiver(this.currentScreenLockReceiver);
+        this.log("Stopped listening for lock state changes.");
     }
+
 
     /**
      * If true, phone is unlocked and turned screen on, if false - not
@@ -87,4 +105,10 @@ public class LockStateUtility {
 
         return phoneIsUnlocked;
     }
+
+    protected void log(String msg) {
+        Log.d("LockStateUtility", msg);
+    }
+
+
 }

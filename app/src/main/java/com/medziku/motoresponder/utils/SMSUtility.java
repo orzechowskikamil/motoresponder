@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.provider.Telephony;
 import android.provider.Telephony.Sms;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
@@ -26,6 +27,18 @@ public class SMSUtility {
     private boolean isCurrentlyListening;
     private IncomingSMSReceiver incomingSMSReceiver;
 
+    /**
+     * This constructor is used only for mocking and testing
+     */
+    public SMSUtility() {
+    }
+
+
+    /**
+     * This constructor is dedicated for real usage
+     *
+     * @param context
+     */
     public SMSUtility(Context context) {
         this.context = context;
         this.sms = SmsManager.getDefault();
@@ -148,30 +161,27 @@ public class SMSUtility {
     public Date getDateOfLastSMSSent(String phoneNumber, boolean shouldBeSentByOurApp) {
         String creator = this.getApplicationPackageName();
 
-        String[] whichColumns = {Sms.DATE_SENT};
-
-        String selections = Sms.ADDRESS + " = ? AND " + Sms.CREATOR + (shouldBeSentByOurApp ? " = " : " != ") + " ?";
-
+        String[] whichColumns = {Sms.DATE};
+        String selections = Sms.ADDRESS + "=? AND " + Sms.CREATOR + (shouldBeSentByOurApp ? "=" : "!=") + "?";
         String[] selectionArgs = {phoneNumber, creator};
 
         String sortOrder = Sms.DATE + " DESC";
         Cursor cursor = context.getContentResolver().query(Sms.Sent.CONTENT_URI,
                 whichColumns, selections, selectionArgs, sortOrder);
 
-        Date result = null;
+        Date sentMsgDate = null;
 
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 do {
-                    long unixTimestampDate = cursor.getLong(cursor.getColumnIndex(Sms.DATE_SENT));
-                    Date sentMsgDate = new Date(unixTimestampDate * 1000);
-                    result = sentMsgDate;
+                    long millisecondsTimestampOfSentDate = cursor.getLong(cursor.getColumnIndex(Sms.DATE));
+                    sentMsgDate = new Date(millisecondsTimestampOfSentDate);
                     break;
                 } while (cursor.moveToNext());
             }
             cursor.close();
         }
-        return result;
+        return sentMsgDate;
     }
 
 
@@ -182,13 +192,11 @@ public class SMSUtility {
      * date very far away from current
      */
     // TODO k.orzechowski change it from bool to int (howManyOutgoingSMSSentAfterDate)
-    public int howManyOutgoingSMSSentAfterDate(Date date, String phoneNumber, boolean shouldBeSentByOurApp) {
+    protected int howManyOutgoingSMSSentAfterDate(Date date, String phoneNumber, boolean shouldBeSentByOurApp) {
         String creator = this.getApplicationPackageName();
 
         String[] whichColumns = {Sms.ADDRESS};
-
-        String selections = Sms.DATE + " > ? AND " + Sms.CREATOR + (shouldBeSentByOurApp ? " = " : " != ") + " ?";
-
+        String selections = Sms.DATE + ">? AND " + Sms.CREATOR + (shouldBeSentByOurApp ? "=" : "!=") + "?";
         String[] selectionArgs = {String.valueOf(date.getTime()), creator};
 
         String sortOrder = Sms.DATE + " DESC";
@@ -198,16 +206,19 @@ public class SMSUtility {
         int result = 0;
 
         // TODO K. Orzechowski: get country code from locale Issue #33
-        String phoneNumberNormalized = this.normalizeNumber(phoneNumber, "48");
+//        String phoneNumberNormalized = this.normalizeNumber(phoneNumber, "48");
+
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 do {
                     String sentMsgPhoneNumber = cursor.getString(cursor.getColumnIndex(Sms.ADDRESS));
-                    String sentMsgPhoneNumberNormalized = this.normalizeNumber(sentMsgPhoneNumber, "48");
-
-                    if (sentMsgPhoneNumberNormalized.equals(phoneNumberNormalized)) {
+                    // TODO K. Orzechowski: get country code from locale Issue #33
+//                    String sentMsgPhoneNumberNormalized = this.normalizeNumber(sentMsgPhoneNumber, "48");
+//                    if (sentMsgPhoneNumberNormalized.equals(phoneNumberNormalized)) {
+                    if (sentMsgPhoneNumber.equals(phoneNumber)) {
                         result++;
                     }
+
                 } while (cursor.moveToNext());
             }
             cursor.close();

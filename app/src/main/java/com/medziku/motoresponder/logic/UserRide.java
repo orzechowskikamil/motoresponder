@@ -12,6 +12,7 @@ import com.medziku.motoresponder.utils.SensorsUtility;
  */
 public class UserRide {
 
+    public static final int TIMEOUTED_SPEED_VALUE = -1;
     private LocationUtility locationUtility;
     private SensorsUtility sensorsUtility;
     private MotionUtility motionUtility;
@@ -22,8 +23,8 @@ public class UserRide {
      * is caused by being in building, riding through tunnel is rare).
      * If false, it will ignore timeout.
      */
-    // TODO K. Orzechowski: for normal it should be true, for development - false. #Issue not needed
-    public boolean interpretLocationTimeoutAsNotRiding = false;
+    // TODO K. Orzechowski: for normal it should be true, for development - false. issue #50
+//    public boolean interpretLocationTimeoutAsNotRiding = false;
     /**
      * If true, it will assume not riding if phone proximity sensor read false value (no proximity - not in pocket).
      * If false, it will ignore proximity check.
@@ -46,6 +47,14 @@ public class UserRide {
      */
     public double sureRidingSpeed = 40;
 
+
+    /**
+     * For real usage
+     *
+     * @param locationUtility
+     * @param sensorsUtility
+     * @param motionUtility
+     */
     public UserRide(LocationUtility locationUtility, SensorsUtility sensorsUtility, MotionUtility motionUtility) {
         this.locationUtility = locationUtility;
         this.sensorsUtility = sensorsUtility;
@@ -78,7 +87,9 @@ public class UserRide {
         // TODO k.orzechowsk add option to disable GPS, maybe someone don't want to use it, only gyro? Issue #10
         float speedKmh = this.getCurrentSpeedKmh();
 
-        if (this.interpretLocationTimeoutAsNotRiding && this.isLocationTimeouted(speedKmh)) {
+        // TODO K. Orzechowski: Issue #70: this is ridiculous. No matter of setting, it will be handled as no riding.
+        // we need second check on timeout if interpretLocation... is set to false.
+        if (/*this.interpretLocationTimeoutAsNotRiding &&*/ this.isLocationTimeouted(speedKmh)) {
             // if timeout, it means that phone is probably in home with no access to GPS satelites.
             // so if no ride, no need to respond automatically
             return false;
@@ -119,7 +130,7 @@ public class UserRide {
     }
 
     private boolean isLocationTimeouted(float speedKmh) {
-        return speedKmh == -1;
+        return speedKmh == UserRide.TIMEOUTED_SPEED_VALUE;
     }
 
     // todo k.orzechowsk ridiculous name, fix it, no #Issue needed
@@ -159,7 +170,10 @@ public class UserRide {
         }
 
         // -1 is value of speed for timeouted request.
-        float speedMs = (location == null) ? -1 : location.getSpeed();
+        if (location == null) {
+            return UserRide.TIMEOUTED_SPEED_VALUE;
+        }
+        float speedMs = location.getSpeed();
         return this.msToKmh(speedMs);
     }
 

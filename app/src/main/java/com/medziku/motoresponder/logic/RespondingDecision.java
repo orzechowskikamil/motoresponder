@@ -7,7 +7,7 @@ import java.util.Date;
  */
 public class RespondingDecision {
 
-    private final DeviceUnlocked deviceUnlocked;
+    private DeviceUnlocked deviceUnlocked;
     private AlreadyResponded alreadyResponded;
     private NumberRules numberRules;
     private UserRide userRide;
@@ -21,7 +21,7 @@ public class RespondingDecision {
     }
 
     public boolean shouldRespond(String phoneNumber) {
-        if (this.deviceUnlocked.deviceUnlockShouldPreventResponding()) {
+        if (this.deviceUnlocked.isNotRiding()) {
             return false;
         }
 
@@ -42,7 +42,7 @@ public class RespondingDecision {
 
         // we shouldn't sent auto responses over and over, so sent only if last response was call / sms to given number,
         // not the auto response.
-        if (this.alreadyResponded.isUserNotAnsweredSinceLastAutomaticalResponse(phoneNumber)) {
+        if (this.alreadyResponded.isAutomaticalResponseLast(phoneNumber)) {
             return false;
         }
 
@@ -58,7 +58,7 @@ public class RespondingDecision {
         }
 
         // and now because isUserRiding can took several seconds, we check again if user not unlocked phone during this time.
-        if (this.deviceUnlocked.deviceUnlockShouldPreventResponding()) {
+        if (this.deviceUnlocked.isNotRiding()) {
             return false;
         }
 

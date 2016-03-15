@@ -17,7 +17,7 @@ import java.util.concurrent.Future;
  */
 public class MotionUtility {
 
-    private final Sensor linearAccelerometer;
+    private Sensor linearAccelerometer;
 
     /**
      * for TYPE_LINEAR_ACCELERATION linearAccelerometer, differences between accelerations of laying still
@@ -49,6 +49,8 @@ public class MotionUtility {
         this.linearAccelerometer = this.sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
     }
 
+
+    // TODO K. Orzechowski: handle devices which dont report motion with locked screen Issue #74
     public Future<Boolean> isDeviceInMotion() {
         final SettableFuture<Boolean> result = SettableFuture.create();
 
@@ -64,8 +66,6 @@ public class MotionUtility {
 
 
             public void onSensorChanged(SensorEvent e) {
-//                Log.d("motoapp", "MotionUtility: sensorChanged motion event");
-
                 double x = e.values[this.xCoord];
                 double y = e.values[this.yCoord];
                 double z = e.values[this.zCoord];
@@ -80,16 +80,15 @@ public class MotionUtility {
 
                 double delta = this.accelerationLast - accelerationCurrent;
 
-
-//                Log.d("motoapp", "MotionUtility: delta is " + delta + ", acc cur: " + accelerationCurrent);
+                MotionUtility.this.log("Event happened (delta=" + delta + ")");
 
                 if (delta > MotionUtility.this.accelerationDeltaTresholdForMovement) {
                     eventCounter++;
-//                    Log.d("motoapp", "MotionUtility: delta overreached");
+                    MotionUtility.this.log("Shake hard enough to count as motion event.");
                 }
 
                 if (eventCounter > MotionUtility.this.aboveTresholdEventsNeededToAssumeMovement) {
-//                    Log.d("motoapp", "MotionUtility: enough events captured, assuming motion");
+                    MotionUtility.this.log("Enough events captured, assuming motion.");
                     MotionUtility.this.sensorManager.unregisterListener(this);
                     result.set(true);
                 }
@@ -104,15 +103,26 @@ public class MotionUtility {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-//                Log.d("motoapp", "MotionUtility: unregistered motion listener");
+                MotionUtility.this.log("Timeout.");
                 MotionUtility.this.sensorManager.unregisterListener(listener);
                 result.set(false);
             }
         }, this.measuringMovementTimeout);
 
         this.sensorManager.registerListener(listener, this.linearAccelerometer, this.accelerometerDelayUs);
-//        Log.d("motoapp", "MotionUtility: registered listener");
 
         return result;
     }
+
+
+    /**
+     * Must be method of class, to allow mocking it in unit test (static method is hard to mock).
+     *
+     * @param msg
+     */
+    protected void log(String msg) {
+        Log.d("MotionUtility", msg);
+    }
+
+
 }

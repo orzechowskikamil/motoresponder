@@ -25,7 +25,7 @@ public class NotificationUtility {
     }
 
 
-    public void showNotification(String title, String content, String info, int notificationID) {
+    public void showOngoingNotification(String title, String content, String info, int notificationID) {
         Class<SettingsActivity> activityClass = SettingsActivity.class;
 
         Intent resultIntent = new Intent(this.context, activityClass);
@@ -50,16 +50,16 @@ public class NotificationUtility {
         notificationManager.notify(notificationID, notification);
     }
 
-    public void showNotification(String title, String content, String info) {
-        this.showNotification(title, content, info, this.defaultNotificationID);
+    public void showOngoingNotification(String title, String content, String info) {
+        this.showOngoingNotification(title, content, info, this.defaultNotificationID);
     }
 
-    public void hideNotification(int notificationID) {
+    public void hideOngoingNotification(int notificationID) {
         this.notificationManager.cancel(notificationID);
     }
 
-    public void hideNotification() {
-        this.hideNotification(this.defaultNotificationID);
+    public void hideOngoingNotification() {
+        this.hideOngoingNotification(this.defaultNotificationID);
     }
 
     public void showToast(String message) {
