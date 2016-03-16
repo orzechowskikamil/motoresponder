@@ -26,7 +26,12 @@ public class MotionUtilityRunner {
     public void testOfIsDeviceInMotion() {
         this.setUp();
 
-        Future<Boolean> future = this.motionUtility.isDeviceInMotion();
+        Future<Boolean> future = null;
+        try {
+            future = this.motionUtility.isDeviceInMotion();
+        } catch (UnsupportedOperationException e) {
+            Log.d(TAG, "Device screen is turned off, no possibility to grab events.");
+        }
         Boolean isInMotion = null;
         try {
             isInMotion = future.get();

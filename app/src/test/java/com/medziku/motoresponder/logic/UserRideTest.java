@@ -83,6 +83,11 @@ public class UserRideTest {
 
         this.setDeviceInMotionValue(false);
         this.expectUserRideIsUserRidingToBe(true);
+
+
+        this.setIncludeDeviceMotionCheck(true);
+        this.setDeviceInMotionToException();
+        this.expectUserRideIsUserRidingToBe(true);
     }
 
     @Test
@@ -102,6 +107,7 @@ public class UserRideTest {
 
         this.setSensorsUtilityIsProximeValue(false);
         this.expectUserRideIsUserRidingToBe(true);
+
     }
 
     @Test
@@ -125,6 +131,13 @@ public class UserRideTest {
         SettableFuture<Boolean> result = SettableFuture.create();
         result.set(value);
         Mockito.when(this.motionUtility.isDeviceInMotion()).thenReturn(result);
+    }
+
+    /**
+     * Exception is thrown when screen is turned off
+     */
+    private void setDeviceInMotionToException() {
+        Mockito.when(this.motionUtility.isDeviceInMotion()).thenThrow(UnsupportedOperationException.class);
     }
 
     private void setIncludeDeviceMotionCheck(boolean value) {

@@ -142,6 +142,9 @@ public class UserRide {
     private boolean motionSensorReportsMovement() {
         try {
             return this.motionUtility.isDeviceInMotion().get();
+        } catch (UnsupportedOperationException e) {
+            // screen turned off - can't assume if it is moving or not - so we use non blocking behavior for process (riding)
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
         }

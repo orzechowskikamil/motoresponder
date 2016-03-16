@@ -1,10 +1,13 @@
 package com.medziku.motoresponder.utils;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Build;
+import android.os.PowerManager;
 import android.util.Log;
 import com.google.common.util.concurrent.SettableFuture;
 
@@ -43,15 +46,28 @@ public class MotionUtility {
     public int accelerometerDelayUs = 300 * 1000;
 
     private SensorManager sensorManager;
+    private PowerManager powerManager;
 
     public MotionUtility(Context context) {
+        this.powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
         this.sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         this.linearAccelerometer = this.sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
     }
 
 
-    // TODO K. Orzechowski: handle devices which dont report motion with locked screen Issue #74
-    public Future<Boolean> isDeviceInMotion() {
+    /**
+     * Reports if device is in motion or not.
+     *
+     * @return
+     * @throws UnsupportedOperationException When device screen is off and utility can't properly measure movement
+     */
+    public Future<Boolean> isDeviceInMotion() throws UnsupportedOperationException {
+        if (this.isDeviceScreenTurnedOff()) {
+            throw new UnsupportedOperationException("Can't measure motion while screen is turned off, most of the devices " +
+                    "doesn't support that.");
+        }
+
+
         final SettableFuture<Boolean> result = SettableFuture.create();
 
         final SensorEventListener listener = new SensorEventListener() {
@@ -112,6 +128,11 @@ public class MotionUtility {
         this.sensorManager.registerListener(listener, this.linearAccelerometer, this.accelerometerDelayUs);
 
         return result;
+    }
+
+    @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
+    private boolean isDeviceScreenTurnedOff() {
+        return !this.powerManager.isInteractive();
     }
 
 
