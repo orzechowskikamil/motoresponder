@@ -92,7 +92,7 @@ public class UserRide {
         if (/*this.interpretLocationTimeoutAsNotRiding &&*/ this.isLocationTimeouted(speedKmh)) {
             // if timeout, it means that phone is probably in home with no access to GPS satelites.
             // so if no ride, no need to respond automatically
-            return false;
+            //   return false;
         }
 
         if (this.isSpeedForSureNotRiding(speedKmh)) {
@@ -121,25 +121,25 @@ public class UserRide {
         return true;
     }
 
-    private boolean isSpeedForSureNotRiding(float speedKmh) {
+    protected boolean isSpeedForSureNotRiding(float speedKmh) {
         return speedKmh < this.maybeRidingSpeed;
     }
 
-    private boolean isSpeedForSureRiding(float speedKmh) {
+    protected boolean isSpeedForSureRiding(float speedKmh) {
         return speedKmh >= this.sureRidingSpeed;
     }
 
-    private boolean isLocationTimeouted(float speedKmh) {
+    protected boolean isLocationTimeouted(float speedKmh) {
         return speedKmh == UserRide.TIMEOUTED_SPEED_VALUE;
     }
 
     // todo k.orzechowsk ridiculous name, fix it, no #Issue needed
-    private boolean isSpeedMaybeRiding(float speedKmh) {
+    protected boolean isSpeedMaybeRiding(float speedKmh) {
         return this.isSpeedForSureNotRiding(speedKmh) == false && this.isSpeedForSureRiding(speedKmh) == false;
     }
 
 
-    private boolean motionSensorReportsMovement() {
+    protected boolean motionSensorReportsMovement() {
         try {
             return this.motionUtility.isDeviceInMotion().get();
         } catch (UnsupportedOperationException e) {
@@ -156,15 +156,22 @@ public class UserRide {
         return false;
     }
 
-    private boolean isProxime() {
-        return this.sensorsUtility.isProxime();
+    protected boolean isProxime() {
+        boolean result = false;
+        try {
+            result = this.sensorsUtility.isProxime();
+        } catch (InstantiationException e) {
+            // we need to silence this exception, but in reality, in well written code it should never happen!
+            e.printStackTrace();
+        }
+        return result;
     }
 
 
     /**
      * @return Speed in km/h or -1 if location request timeouted.
      */
-    private float getCurrentSpeedKmh() {
+    protected float getCurrentSpeedKmh() {
         Location location = null;
         try {
             location = this.locationUtility.getAccurateLocation().get();
@@ -181,7 +188,7 @@ public class UserRide {
     }
 
 
-    private float msToKmh(float speedMs) {
+    protected float msToKmh(float speedMs) {
         return (float) (speedMs * 3.6);
     }
 }

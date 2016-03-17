@@ -21,7 +21,7 @@ public class DeviceUnlocked {
         this.lockStateUtility = lockStateUtility;
     }
 
-    public boolean isNotRiding() {
+    public boolean isNotRidingBecausePhoneUnlocked() {
         return this.settingsUtility.isPhoneUnlockedInterpretedAsNotRiding() && this.lockStateUtility.isPhoneUnlocked();
     }
 }

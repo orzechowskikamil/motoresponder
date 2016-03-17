@@ -5,7 +5,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.util.Log;
+
 
 /**
  * Reports about Light and Proximity current values.
@@ -21,12 +21,6 @@ public class SensorsUtility {
     private float currentProximity;
     private boolean isListening;
     private boolean isProxime;
-
-    /**
-     * Default constructor for testing, do not use normally
-     */
-    public SensorsUtility() {
-    }
 
     public SensorsUtility(Context context) {
         this.sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
@@ -68,12 +62,13 @@ public class SensorsUtility {
     private void setCurrentProximity(float currentProximity) {
         this.currentProximity = currentProximity;
         this.isProxime = this.currentProximity != this.proximitySensor.getMaximumRange();
-
-        this.log("isProxime is now " + this.isProxime + "");
     }
 
 
-    public boolean isProxime() {
+    public boolean isProxime() throws InstantiationException {
+        if (this.isListening == false) {
+            throw new InstantiationException("You should call registerSensors method first");
+        }
         return this.isProxime;
     }
 
@@ -86,12 +81,5 @@ public class SensorsUtility {
         this.sensorManager.unregisterListener(this.sensorEventListener);
     }
 
-    /**
-     * Method for logging instead of static to easier mocking in unit tests.
-     * @param msg
-     */
-    protected void log(String msg) {
-        Log.d("SensorsUtility", msg);
-    }
-
+    
 }

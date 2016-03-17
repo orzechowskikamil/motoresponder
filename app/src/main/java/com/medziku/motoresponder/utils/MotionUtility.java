@@ -8,7 +8,6 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.PowerManager;
-import android.util.Log;
 import com.google.common.util.concurrent.SettableFuture;
 
 import java.util.Timer;
@@ -96,15 +95,11 @@ public class MotionUtility {
 
                 double delta = this.accelerationLast - accelerationCurrent;
 
-                MotionUtility.this.log("Event happened (delta=" + delta + ")");
-
                 if (delta > MotionUtility.this.accelerationDeltaTresholdForMovement) {
                     eventCounter++;
-                    MotionUtility.this.log("Shake hard enough to count as motion event.");
                 }
 
                 if (eventCounter > MotionUtility.this.aboveTresholdEventsNeededToAssumeMovement) {
-                    MotionUtility.this.log("Enough events captured, assuming motion.");
                     MotionUtility.this.sensorManager.unregisterListener(this);
                     result.set(true);
                 }
@@ -119,7 +114,6 @@ public class MotionUtility {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                MotionUtility.this.log("Timeout.");
                 MotionUtility.this.sensorManager.unregisterListener(listener);
                 result.set(false);
             }
@@ -134,16 +128,5 @@ public class MotionUtility {
     private boolean isDeviceScreenTurnedOff() {
         return !this.powerManager.isInteractive();
     }
-
-
-    /**
-     * Must be method of class, to allow mocking it in unit test (static method is hard to mock).
-     *
-     * @param msg
-     */
-    protected void log(String msg) {
-        Log.d("MotionUtility", msg);
-    }
-
 
 }

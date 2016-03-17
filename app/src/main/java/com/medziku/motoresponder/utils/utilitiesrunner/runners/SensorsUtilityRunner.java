@@ -20,11 +20,25 @@ public class SensorsUtilityRunner {
     }
 
 
-    public void proximitySensorTest(){
+    public void proximitySensorTest() {
         this.setUp();
 
         Log.d(TAG, "----Active test of proximity sensor----");
-        Log.d(TAG, "Place your hand on phone proximity sensor and take it off (or not) but you must provide some input to the sensor");
-        Log.d(TAG, "And watch console for proximity updates");
+        Log.d(TAG, "Place your hand on phone proximity sensor and take it off (or not) but you must provide some input to the sensor, and wait 3s");
+
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        Log.d(TAG, "And now grabbing the result!");
+        boolean result = false;
+        try {
+            result = this.sensorsUtility.isProxime();
+        } catch (InstantiationException e) {
+            Log.d(TAG, "Test is badly written.");
+        }
+        Log.d(TAG, "in current time SensorsUtility.isProxime()=" + result);
+
     }
 }

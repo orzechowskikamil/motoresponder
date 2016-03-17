@@ -5,6 +5,7 @@ import android.content.Context;
 import android.location.*;
 import android.os.Bundle;
 import android.os.Looper;
+
 import android.util.Log;
 import com.google.common.util.concurrent.SettableFuture;
 
@@ -44,8 +45,7 @@ public class LocationUtility {
  * Must be a separate class to be testable.
  */
 class GettingAccurateLocationProcess implements LocationListener {
-
-    private static final String TAG = "AccurateLocProcess";
+    private static final String TAG = "Location";
     private final SettableFuture<Location> result;
     private LocationManager locationManager;
     private Looper looperForListeningThread;
@@ -53,22 +53,21 @@ class GettingAccurateLocationProcess implements LocationListener {
     /**
      * Location must be more precise than 20 meters, if reported speed is not 0.0
      */
-    public double goodAccuracyForMoving = 20;
+    // TODO K. Orzechowski: it's increased temporary because i get only one event  #issue #80
+    public double goodAccuracyForMoving = 60;
     /**
-     * Location must be more precise than 60 meters if reported speed is 0.0
+     * Location must be more precise than 60 meters if reported speed is 0.0 , also increased
+     * // TODO K. Orzechowski: because of issue #80
      */
-    public double goodAccuracyForStayingStill = 60;
+    public double goodAccuracyForStayingStill = 80;
 
     public int gettingLocationTimeout = 30 * 1000;
-    public int minimumTimeBetweenUpdates = 500;
+    public int minimumTimeBetweenUpdates = 0;
     public int minimumDistanceBetweenUpdates = 0;
     /**
      * Speed smaller than this will be assumed as staying still
      */
     public double stayingStillSpeed = 1.0;
-
-    // todo add removlocationupdates and requestlocationupdates
-
 
     /**
      * Use one class instance per one location.
@@ -116,8 +115,7 @@ class GettingAccurateLocationProcess implements LocationListener {
 
         // this is safety timeout - if no location after desired time, it cancells location listening
         this.setSafetyTimeout();
-
-        this.log("Started listening for location updates");
+        
         this.locationManager.requestLocationUpdates(
                 LocationManager.GPS_PROVIDER,
                 this.minimumTimeBetweenUpdates,
@@ -134,7 +132,6 @@ class GettingAccurateLocationProcess implements LocationListener {
      * This is also running in separate thread
      */
     public void onTimeout() {
-        this.log("Not received location event with correct accuracy. Timeout!");
         this.setEmptyResultAndStopListening();
     }
 
@@ -146,13 +143,12 @@ class GettingAccurateLocationProcess implements LocationListener {
         float accuracy = location.getAccuracy();
         float speed = location.getSpeed();
 
-        this.log("Location changed event, speed=" + speed + ", accuracy=" + accuracy);
+        Log.d(TAG, "Location event, accuracy is " + accuracy + ", speed is " + speed + "");
 
         boolean accurateMovingEvent = accuracy <= this.goodAccuracyForMoving;
         boolean accurateStayingStillEvent = accuracy <= this.goodAccuracyForStayingStill && speed < this.stayingStillSpeed;
 
         if (accurateMovingEvent || accurateStayingStillEvent) {
-            this.log("Received location event with correct accuracy. Success!");
             this.setResultAndStopListening(location);
         }
     }
@@ -162,7 +158,7 @@ class GettingAccurateLocationProcess implements LocationListener {
      */
     @Override
     public void onStatusChanged(String provider, int status, Bundle bundle) {
-        this.log("LocationProvider status changed");
+        
         switch (status) {
             case LocationProvider.AVAILABLE:
                 break;
@@ -179,7 +175,6 @@ class GettingAccurateLocationProcess implements LocationListener {
      */
     @Override
     public void onProviderEnabled(String provider) {
-        this.log("Location provider enabled");
     }
 
     /**
@@ -187,7 +182,6 @@ class GettingAccurateLocationProcess implements LocationListener {
      */
     @Override
     public void onProviderDisabled(String provider) {
-        this.log("Location provider disabled");
         this.setEmptyResultAndStopListening();
     }
 
@@ -220,9 +214,6 @@ class GettingAccurateLocationProcess implements LocationListener {
 
     // region wrapped static & unmockable methods
 
-    protected void log(String msg) {
-        Log.d(TAG, msg);
-    }
 
     protected void prepareLooper() {
         Looper.prepare();
@@ -248,5 +239,4 @@ class GettingAccurateLocationProcess implements LocationListener {
     }
 
     // endregion
-
 }

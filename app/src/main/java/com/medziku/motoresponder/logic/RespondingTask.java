@@ -35,6 +35,8 @@ public class RespondingTask extends AsyncTask<String, Boolean, Boolean> {
     }
 
     protected void handleRespondingTask(String phoneNumber) {
+        // TODO K. Orzechowski: here should be break if phone is turned on and screen available Issue #33
+
         // wait 30 seconds before responding.
         try {
             Thread.sleep(this.settingsUtility.getDelayBeforeRespondingMs());
@@ -81,7 +83,7 @@ public class RespondingTask extends AsyncTask<String, Boolean, Boolean> {
 
     private void notifyAboutPendingAutoRespond() {
         // TODO K. Orzechowski: move strings into resources #69
-        this.notificationUtility.showOngoingNotification("MotoResponder", "Moto responder is determining if should automatically respond", "");
+        this.notificationUtility.showOngoingNotification("MotoResponder", "Moto responder is determining if it should automatically respond", "");
     }
 
     private void unnotifyAboutPendingAutoRespond() {

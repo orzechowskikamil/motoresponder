@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
 import android.os.PowerManager;
-import android.util.Log;
 import com.google.common.base.Predicate;
 
 /**
@@ -48,8 +47,6 @@ public class LockStateUtility {
                 if (LockStateUtility.this.isCurrentlyLocked == false || LockStateUtility.this.isFirstEvent) {
                     LockStateUtility.this.isCurrentlyLocked = true;
                     LockStateUtility.this.isFirstEvent = false;
-                    LockStateUtility.this.log("isLocked = " + LockStateUtility.this.isCurrentlyLocked);
-                    lockStateChangedCallback.apply(LockStateUtility.this.isCurrentlyLocked);
                 }
             }
         };
@@ -61,7 +58,6 @@ public class LockStateUtility {
                 if (LockStateUtility.this.isCurrentlyLocked == true ||  LockStateUtility.this.isFirstEvent) {
                     LockStateUtility.this.isCurrentlyLocked = false;
                     LockStateUtility.this.isFirstEvent = false;
-                    LockStateUtility.this.log("isLocked = " + LockStateUtility.this.isCurrentlyLocked);
                     lockStateChangedCallback.apply(LockStateUtility.this.isCurrentlyLocked);
                 }
             }
@@ -69,7 +65,6 @@ public class LockStateUtility {
 
         this.context.registerReceiver(this.currentScreenUnlockReceiver, new IntentFilter(Intent.ACTION_USER_PRESENT));
         this.context.registerReceiver(this.currentScreenLockReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
-        this.log("Started listening to lock state changes.");
     }
 
     /**
@@ -82,7 +77,6 @@ public class LockStateUtility {
         this.isCallbackRegistered = false;
         this.context.unregisterReceiver(this.currentScreenUnlockReceiver);
         this.context.unregisterReceiver(this.currentScreenLockReceiver);
-        this.log("Stopped listening for lock state changes.");
     }
 
 
@@ -105,10 +99,5 @@ public class LockStateUtility {
 
         return phoneIsUnlocked;
     }
-
-    protected void log(String msg) {
-        Log.d("LockStateUtility", msg);
-    }
-
 
 }

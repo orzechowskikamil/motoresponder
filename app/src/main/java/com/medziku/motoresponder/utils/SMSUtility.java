@@ -12,7 +12,7 @@ import android.provider.Telephony;
 import android.provider.Telephony.Sms;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
-import android.util.Log;
+
 
 import com.medziku.motoresponder.BuildConfig;
 import com.medziku.motoresponder.callbacks.SMSReceivedCallback;
@@ -138,7 +138,13 @@ public class SMSUtility {
     private String normalizeNumber(String phoneNumber, String defaultCountryIso) {
         // TODO K. Orzechowski: nothing work...
         // TODO K. Orzechowski: for now , plain number, think about something better Issue #33
-        return phoneNumber;
+        // TODO K. Orzechowski: move normalization of numbers to separate Logic class or smth.
+        String normalizedNumber = phoneNumber.replace(" ", "");
+        if (normalizedNumber.startsWith("+")) {
+            normalizedNumber = normalizedNumber.substring(3, normalizedNumber.length());
+        }
+
+        return normalizedNumber;
 
 //        if (Build.VERSION.SDK_INT >= 21) {
 //            return PhoneNumberUtils.formatNumberToE164(phoneNumber, defaultCountryIso);
@@ -206,16 +212,15 @@ public class SMSUtility {
         int result = 0;
 
         // TODO K. Orzechowski: get country code from locale Issue #33
-//        String phoneNumberNormalized = this.normalizeNumber(phoneNumber, "48");
+        String phoneNumberNormalized = this.normalizeNumber(phoneNumber, "48");
 
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 do {
                     String sentMsgPhoneNumber = cursor.getString(cursor.getColumnIndex(Sms.ADDRESS));
                     // TODO K. Orzechowski: get country code from locale Issue #33
-//                    String sentMsgPhoneNumberNormalized = this.normalizeNumber(sentMsgPhoneNumber, "48");
-//                    if (sentMsgPhoneNumberNormalized.equals(phoneNumberNormalized)) {
-                    if (sentMsgPhoneNumber.equals(phoneNumber)) {
+                    String sentMsgPhoneNumberNormalized = this.normalizeNumber(sentMsgPhoneNumber, "48");
+                    if (sentMsgPhoneNumberNormalized.equals(phoneNumberNormalized)) {
                         result++;
                     }
 
@@ -264,7 +269,7 @@ public class SMSUtility {
                             }
                         }
                     } catch (Exception e) {
-                        Log.d("Exception caught", e.getMessage());
+                        e.printStackTrace();
                     }
                 }
             }

@@ -80,7 +80,7 @@ public class RespondingDecisionTest {
             @Override
             public Boolean answer(InvocationOnMock invocation) throws Throwable {
                 // simulate unlocking screen after determining location.
-                Mockito.when(RespondingDecisionTest.this.deviceUnlocked.isNotRiding()).thenReturn(true);
+                Mockito.when(RespondingDecisionTest.this.deviceUnlocked.isNotRidingBecausePhoneUnlocked()).thenReturn(true);
                 return true;
             }
         });
@@ -117,7 +117,7 @@ public class RespondingDecisionTest {
     }
 
     private void setDeviceUnlockedIsNotRidingReturnValue(boolean returnValue) {
-        Mockito.when(this.deviceUnlocked.isNotRiding()).thenReturn(returnValue);
+        Mockito.when(this.deviceUnlocked.isNotRidingBecausePhoneUnlocked()).thenReturn(returnValue);
     }
 
 

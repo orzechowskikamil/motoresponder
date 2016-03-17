@@ -21,7 +21,7 @@ public class RespondingDecision {
     }
 
     public boolean shouldRespond(String phoneNumber) {
-        if (this.deviceUnlocked.isNotRiding()) {
+        if (this.deviceUnlocked.isNotRidingBecausePhoneUnlocked()) {
             return false;
         }
 
@@ -58,7 +58,7 @@ public class RespondingDecision {
         }
 
         // and now because isUserRiding can took several seconds, we check again if user not unlocked phone during this time.
-        if (this.deviceUnlocked.isNotRiding()) {
+        if (this.deviceUnlocked.isNotRidingBecausePhoneUnlocked()) {
             return false;
         }
 

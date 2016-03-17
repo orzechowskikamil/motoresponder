@@ -38,6 +38,7 @@ public class CallsUtility {
      *
      * @param callCallback
      */
+    // TODO K. Orzechowski: fix it app is answering to all calls, should only answer to unanswered #79
     public void listenForCalls(Predicate<String> callCallback) {
         if (this.callCallback != null) {
             throw new IllegalStateException("Utility is already listening for calls");

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 
+import com.medziku.motoresponder.logic.integrationtesting.IntegrationTester;
 import com.medziku.motoresponder.utils.utilitiesrunner.UtilitiesRunner;
 import com.medziku.motoresponder.R;
 import com.medziku.motoresponder.services.BackgroundService;
@@ -31,11 +32,17 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
         PreferenceManager.getDefaultSharedPreferences(this)
                 .registerOnSharedPreferenceChangeListener(this);
 
-        if (UtilitiesRunner.ARE_PSEUDOTESTS_ENABLED == true) {
+        if (this.arePseudoTestsEnabled()) {
             this.runPseudoTesting();
+        } else if (this.areIntegrationPseudoTestsEnabled()) {
+            this.runPseudoIntegrationTesting();
         } else {
             this.startBackgroundService();
         }
+    }
+
+    private boolean areIntegrationPseudoTestsEnabled() {
+        return IntegrationTester.ARE_INTEGRATION_TESTS_ENABLED == true;
     }
 
     private void startBackgroundService() {
@@ -64,5 +71,18 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
      */
     private void runPseudoTesting() {
         new UtilitiesRunner(this.getApplicationContext()).run();
+    }
+
+    /**
+     * Special mode in which app instead of doing it's work, run this method to check some part of the application
+     * if it run correctly or not. Because it's look like it's not good and easy way to reliable test application
+     * integration by instrumented tests
+     */
+    private void runPseudoIntegrationTesting() {
+        new IntegrationTester(this.getApplicationContext()).run();
+    }
+
+    private boolean arePseudoTestsEnabled() {
+        return UtilitiesRunner.ARE_PSEUDOTESTS_ENABLED == true;
     }
 }

@@ -1,14 +1,10 @@
 package com.medziku.motoresponder;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import com.google.common.base.Predicate;
 import com.medziku.motoresponder.callbacks.SMSReceivedCallback;
 import com.medziku.motoresponder.logic.*;
 import com.medziku.motoresponder.utils.*;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * It's like all responding logic entry point
@@ -74,7 +70,7 @@ public class Responder {
         this.isRespondingNow = false;
         this.respondingTasksQueue.cancelAllHandling();
 
-        this.stopListeningForProximity();
+        this.stopListeningForProximityChanges();
         this.stopListeningForSMS();
         this.stopListeningForCalls();
         this.stopListeningForLockStateChanges();
@@ -163,7 +159,7 @@ public class Responder {
         this.sensorsUtility.registerSensors();
     }
 
-    protected void stopListeningForProximity() {
+    protected void stopListeningForProximityChanges() {
         this.sensorsUtility.unregisterSensors();
 
     }

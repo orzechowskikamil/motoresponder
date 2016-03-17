@@ -15,7 +15,8 @@ public class SMSUtilityRunner {
     private Context context;
     private SMSUtility smsUtility;
     private String TEST_PHONE_NUMBER = "791467855";
-    ;
+    private String TEST_PHONE_NUMBER_COUNTRY_ISO = "+48791467855";
+    private String TEST_PHONE_NUMBER_SPACES = "+48 791 467 855";
 
     public SMSUtilityRunner(Context context) {
         this.context = context;
@@ -87,9 +88,13 @@ public class SMSUtilityRunner {
 
         boolean resultYesterday = this.smsUtility.wasOutgoingSMSSentAfterDate(dateYesterday, TEST_PHONE_NUMBER, false);
         boolean result30SecondsAgo = this.smsUtility.wasOutgoingSMSSentAfterDate(date30SecondsAgo, TEST_PHONE_NUMBER, false);
+        boolean resultYesterdayCountryIso = this.smsUtility.wasOutgoingSMSSentAfterDate(dateYesterday, TEST_PHONE_NUMBER_COUNTRY_ISO, false);
+        boolean resultYesterdaySpaces= this.smsUtility.wasOutgoingSMSSentAfterDate(dateYesterday, TEST_PHONE_NUMBER_SPACES, false);
 
         Log.d(TAG, "Since yesterday sms to number " + TEST_PHONE_NUMBER + " was sent? = " + resultYesterday);
         Log.d(TAG, "Since 30 seconds ago sms to number " + TEST_PHONE_NUMBER + " was sent? = " + result30SecondsAgo);
+        Log.d(TAG, "Since yesterday sms to number " + TEST_PHONE_NUMBER_COUNTRY_ISO + " was sent? = " + resultYesterdayCountryIso);
+        Log.d(TAG, "Since yesterday sms to number " + TEST_PHONE_NUMBER_SPACES + " was sent? = " + resultYesterdaySpaces);
 
 
     }
@@ -104,6 +109,8 @@ public class SMSUtilityRunner {
         this.testSendingSMS();
 
         Date dateOfLastSMSSent = this.smsUtility.getDateOfLastSMSSent(TEST_PHONE_NUMBER, true);
+
         Log.d(TAG, "Date of last sms sent by our app is: " + dateOfLastSMSSent.toString() + ". Date should be close to NOW");
+
     }
 }
