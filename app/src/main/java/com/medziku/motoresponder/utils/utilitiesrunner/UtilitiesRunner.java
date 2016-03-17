@@ -32,7 +32,7 @@ public class UtilitiesRunner {
     /**
      * When this is true, debug utilities (tests of utilities) will be run instead of motoresponder application.
      */
-    public static final boolean ARE_PSEUDOTESTS_ENABLED = false;
+    public static final boolean ARE_PSEUDOTESTS_ENABLED = true;
 
 
     private LockStateUtilityRunner lockStateUtilityRunner;
@@ -75,7 +75,7 @@ public class UtilitiesRunner {
             private void runTest() {
                 // choose the test which you are interested in
                 // after performing, leave short note with date here about result of test
-                switch (1) {
+                switch (61) {
                     case 1:
                         // this is working 11.03.2016 on Android 5.1
                         // beware! I test it only at home at staying still
@@ -118,8 +118,8 @@ public class UtilitiesRunner {
                         UtilitiesRunner.this.callsUtilityRunnner.testWasOutgoingCallAfterDate();
                         break;
                     case 61:
-                        // this is working 15.03.2016 on Android 5.1
-                        UtilitiesRunner.this.callsUtilityRunnner.testListenForCalls();
+                        // this is working 19.03.2016 - only unanswered calls trigger callback
+                        UtilitiesRunner.this.callsUtilityRunnner.testListenForUnansweredCalls();
                         break;
                     case 62:
                         // this is working 15.03.2016 on Android 5.1

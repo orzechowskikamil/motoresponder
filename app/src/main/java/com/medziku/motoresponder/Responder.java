@@ -134,7 +134,7 @@ public class Responder {
     }
 
     protected void listenForCalls() {
-        this.callsUtility.listenForCalls(new Predicate<String>() {
+        this.callsUtility.listenForUnansweredCalls(new Predicate<String>() {
             @Override
             public boolean apply(String phoneNumber) {
                 Responder.this.onUnAnsweredCallReceived(phoneNumber);

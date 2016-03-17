@@ -2,9 +2,12 @@ package com.medziku.motoresponder.logic;
 
 import android.location.Location;
 import android.util.Log;
+import com.medziku.motoresponder.utils.AccelerometerNotAvailableException;
 import com.medziku.motoresponder.utils.LocationUtility;
 import com.medziku.motoresponder.utils.MotionUtility;
 import com.medziku.motoresponder.utils.SensorsUtility;
+
+import java.util.concurrent.ExecutionException;
 
 
 /**
@@ -75,8 +78,12 @@ public class UserRide {
         // TODO k.orzechowsk: proximity check? It will save battery aswell... Issue #53
 
         // if phone doesn't report any movement we can also assume that user is not riding motorcycle
-        if (this.includeDeviceMotionCheck && !this.motionSensorReportsMovement()) {
-            return false;
+        try {
+            if (this.includeDeviceMotionCheck && !this.motionSensorReportsMovement()) {
+                return false;
+            }
+        } catch (AccelerometerNotAvailableException e) {
+            // do nothing - it's normal situation if accelerometer not available, continue.
         }
 
 
@@ -139,20 +146,17 @@ public class UserRide {
     }
 
 
-    protected boolean motionSensorReportsMovement() {
+    private boolean motionSensorReportsMovement() throws AccelerometerNotAvailableException {
         try {
             return this.motionUtility.isDeviceInMotion().get();
-        } catch (UnsupportedOperationException e) {
-            // screen turned off - can't assume if it is moving or not - so we use non blocking behavior for process (riding)
-            return true;
-        } catch (Exception e) {
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
             e.printStackTrace();
         }
-
         // TODO K. Orzechowski: using here also gyroscope and magneometer is not a bad idea
         // maybe other method will be required for it. Issue #58
 
-        // default - false
         return false;
     }
 

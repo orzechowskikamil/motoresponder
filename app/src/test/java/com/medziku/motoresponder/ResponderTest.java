@@ -150,7 +150,7 @@ class ExposedResponder extends Responder {
                 ExposedResponder.this.currentCallCallback = callback;
                 return null;
             }
-        }).when(mock).listenForCalls(any(Predicate.class));
+        }).when(mock).listenForUnansweredCalls(any(Predicate.class));
         return mock;
     }
 

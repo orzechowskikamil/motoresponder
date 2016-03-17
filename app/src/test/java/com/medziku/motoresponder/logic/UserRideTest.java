@@ -2,6 +2,7 @@ package com.medziku.motoresponder.logic;
 
 import android.location.Location;
 import com.google.common.util.concurrent.SettableFuture;
+import com.medziku.motoresponder.utils.AccelerometerNotAvailableException;
 import com.medziku.motoresponder.utils.LocationUtility;
 import com.medziku.motoresponder.utils.MotionUtility;
 import com.medziku.motoresponder.utils.SensorsUtility;
@@ -120,7 +121,11 @@ public class UserRideTest {
 
 
     private void setSensorsUtilityIsProximeValue(boolean value) {
-        Mockito.when(this.sensorsUtility.isProxime()).thenReturn(value);
+        try {
+            Mockito.when(this.sensorsUtility.isProxime()).thenReturn(value);
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        }
     }
 
     private void expectUserRideIsUserRidingToBe(boolean result) {
@@ -130,14 +135,22 @@ public class UserRideTest {
     private void setDeviceInMotionValue(boolean value) {
         SettableFuture<Boolean> result = SettableFuture.create();
         result.set(value);
-        Mockito.when(this.motionUtility.isDeviceInMotion()).thenReturn(result);
+        try {
+            Mockito.when(this.motionUtility.isDeviceInMotion()).thenReturn(result);
+        } catch (AccelerometerNotAvailableException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
      * Exception is thrown when screen is turned off
      */
     private void setDeviceInMotionToException() {
-        Mockito.when(this.motionUtility.isDeviceInMotion()).thenThrow(UnsupportedOperationException.class);
+        try {
+            Mockito.when(this.motionUtility.isDeviceInMotion()).thenThrow(AccelerometerNotAvailableException.class);
+        } catch (AccelerometerNotAvailableException e) {
+            e.printStackTrace();
+        }
     }
 
     private void setIncludeDeviceMotionCheck(boolean value) {

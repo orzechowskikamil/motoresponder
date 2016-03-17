@@ -65,15 +65,18 @@ public class CallsUtilityRunner {
     }
 
 
-    public void testListenForCalls() {
+    /**
+     * This test test if callback is firing only for unanswered calls.
+     */
+    public void testListenForUnansweredCalls() {
         this.setUp();
         Log.d(TAG, "Call your cell phone from someone's else phone and verify if callback is firing by examining the console.");
 
 
-        this.callsUtility.listenForCalls(new Predicate<String>() {
+        this.callsUtility.listenForUnansweredCalls(new Predicate<String>() {
             @Override
             public boolean apply(String input) {
-                Log.d(TAG, "Someone called you with number: " + input);
+                Log.d(TAG, "Someone called you with number " + input + " and you didn't answer call");
                 return false;
             }
         });
@@ -85,7 +88,7 @@ public class CallsUtilityRunner {
         Log.d(TAG, "IN THIS TEST CALLBACK SHOULDN'T BE FIRED - IF IT IS - IT MEANS METHOD BROKEN.");
 
 
-        this.callsUtility.listenForCalls(new Predicate<String>() {
+        this.callsUtility.listenForUnansweredCalls(new Predicate<String>() {
             @Override
             public boolean apply(String input) {
                 Log.d(TAG, "Someone called you with number: " + input);

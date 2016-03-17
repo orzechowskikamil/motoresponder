@@ -39,7 +39,7 @@ public class CallsUtility {
      * @param callCallback
      */
     // TODO K. Orzechowski: fix it app is answering to all calls, should only answer to unanswered #79
-    public void listenForCalls(Predicate<String> callCallback) {
+    public void listenForUnansweredCalls(Predicate<String> callCallback) {
         if (this.callCallback != null) {
             throw new IllegalStateException("Utility is already listening for calls");
         }
@@ -67,20 +67,31 @@ public class CallsUtility {
         this.prepareLooper();
 
         this.phoneStateListener = new PhoneStateListener() {
+            private boolean isRinging = false;
+
             @Override
             public void onCallStateChanged(int state, String incomingNumber) {
                 super.onCallStateChanged(state, incomingNumber);
                 switch (state) {
                     case TelephonyManager.CALL_STATE_IDLE:
+                        if (this.isRinging == true) {
+                            this.isRinging = false;
+                            this.callCallback(incomingNumber);
+                        }
                         break;
                     case TelephonyManager.CALL_STATE_RINGING:
-                        CallsUtility.this.callCallback.apply(incomingNumber);
+                        this.isRinging = true;
                         break;
                     case TelephonyManager.CALL_STATE_OFFHOOK:
+                        this.isRinging = false;
                         break;
                     default:
                         break;
                 }
+            }
+
+            private void callCallback(String incomingNumber) {
+                CallsUtility.this.callCallback.apply(incomingNumber);
             }
         };
         this.telephonyManager.listen(this.phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);

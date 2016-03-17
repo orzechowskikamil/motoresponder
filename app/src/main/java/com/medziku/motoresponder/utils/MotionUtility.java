@@ -58,12 +58,11 @@ public class MotionUtility {
      * Reports if device is in motion or not.
      *
      * @return
-     * @throws UnsupportedOperationException When device screen is off and utility can't properly measure movement
+     * @throws AccelerometerNotAvailableException When device screen is off and utility can't properly measure movement
      */
-    public Future<Boolean> isDeviceInMotion() throws UnsupportedOperationException {
+    public Future<Boolean> isDeviceInMotion() throws AccelerometerNotAvailableException {
         if (this.isDeviceScreenTurnedOff()) {
-            throw new UnsupportedOperationException("Can't measure motion while screen is turned off, most of the devices " +
-                    "doesn't support that.");
+            throw new AccelerometerNotAvailableException();
         }
 
 
@@ -130,3 +129,4 @@ public class MotionUtility {
     }
 
 }
+

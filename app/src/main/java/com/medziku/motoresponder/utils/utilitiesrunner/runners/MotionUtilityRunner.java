@@ -2,6 +2,7 @@ package com.medziku.motoresponder.utils.utilitiesrunner.runners;
 
 import android.content.Context;
 import android.util.Log;
+import com.medziku.motoresponder.utils.AccelerometerNotAvailableException;
 import com.medziku.motoresponder.utils.MotionUtility;
 
 import java.util.concurrent.Future;
@@ -29,7 +30,7 @@ public class MotionUtilityRunner {
         Future<Boolean> future = null;
         try {
             future = this.motionUtility.isDeviceInMotion();
-        } catch (UnsupportedOperationException e) {
+        } catch (AccelerometerNotAvailableException e) {
             Log.d(TAG, "Device screen is turned off, no possibility to grab events.");
         }
         Boolean isInMotion = null;
