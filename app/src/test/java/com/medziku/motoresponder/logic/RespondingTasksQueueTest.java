@@ -64,14 +64,18 @@ public class RespondingTasksQueueTest {
     public void testOfCancellingTasks() {
         this.exposedRespondingTasksQueue.createAndExecuteRespondingTask(this.FAKE_PHONE_NUMBER);
         this.exposedRespondingTasksQueue.createAndExecuteRespondingTask(this.FAKE_PHONE_NUMBER);
+        this.exposedRespondingTasksQueue.createAndExecuteRespondingTask(this.FAKE_PHONE_NUMBER);
 
         RespondingTask firstTask = this.exposedRespondingTasksQueue.getTasksList().get(0);
-        RespondingTask secondTask = this.exposedRespondingTasksQueue.getTasksList().get(0);
+        RespondingTask secondTask = this.exposedRespondingTasksQueue.getTasksList().get(1);
+        RespondingTask thirdTask = this.exposedRespondingTasksQueue.getTasksList().get(2);
 
         this.exposedRespondingTasksQueue.cancelAllHandling();
 
         verify(firstTask, times(1)).cancelResponding();
         verify(secondTask, times(1)).cancelResponding();
+        verify(thirdTask, times(1)).cancelResponding();
+        assertTrue(this.exposedRespondingTasksQueue.pendingRespondingTasks.size() == 0);
 
     }
 

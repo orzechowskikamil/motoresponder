@@ -37,8 +37,8 @@ public class RespondingTasksQueue {
     public void cancelAllHandling() {
         for (RespondingTask task : this.pendingRespondingTasks) {
             task.cancelResponding();
-            this.pendingRespondingTasks.remove(task);
         }
+        this.pendingRespondingTasks.clear();
     }
 
 
