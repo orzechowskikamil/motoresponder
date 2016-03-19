@@ -65,9 +65,9 @@ public class SensorsUtility {
     }
 
 
-    public boolean isProxime() throws InstantiationException {
+    public boolean isProxime() {
         if (this.isListening == false) {
-            throw new InstantiationException("You should call registerSensors method first");
+            throw new RuntimeException("You should call registerSensors method first");
         }
         return this.isProxime;
     }
@@ -81,5 +81,5 @@ public class SensorsUtility {
         this.sensorManager.unregisterListener(this.sensorEventListener);
     }
 
-    
+
 }

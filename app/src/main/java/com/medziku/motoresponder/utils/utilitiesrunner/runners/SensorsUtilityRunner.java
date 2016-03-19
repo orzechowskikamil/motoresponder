@@ -32,13 +32,7 @@ public class SensorsUtilityRunner {
             e.printStackTrace();
         }
         Log.d(TAG, "And now grabbing the result!");
-        boolean result = false;
-        try {
-            result = this.sensorsUtility.isProxime();
-        } catch (InstantiationException e) {
-            Log.d(TAG, "Test is badly written.");
-        }
-        Log.d(TAG, "in current time SensorsUtility.isProxime()=" + result);
+        Log.d(TAG, "in current time SensorsUtility.isProxime()=" + this.sensorsUtility.isProxime());
 
     }
 }

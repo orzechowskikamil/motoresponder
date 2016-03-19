@@ -146,7 +146,7 @@ public class UserRide {
     }
 
 
-    private boolean motionSensorReportsMovement() throws AccelerometerNotAvailableException {
+    protected boolean motionSensorReportsMovement() throws AccelerometerNotAvailableException {
         try {
             return this.motionUtility.isDeviceInMotion().get();
         } catch (InterruptedException e) {
@@ -161,14 +161,7 @@ public class UserRide {
     }
 
     protected boolean isProxime() {
-        boolean result = false;
-        try {
-            result = this.sensorsUtility.isProxime();
-        } catch (InstantiationException e) {
-            // we need to silence this exception, but in reality, in well written code it should never happen!
-            e.printStackTrace();
-        }
-        return result;
+        return this.sensorsUtility.isProxime();
     }
 
 

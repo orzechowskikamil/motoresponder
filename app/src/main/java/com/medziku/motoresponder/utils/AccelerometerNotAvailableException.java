@@ -1,4 +1,4 @@
 package com.medziku.motoresponder.utils;
 
-public class AccelerometerNotAvailableException extends Exception {
+public class AccelerometerNotAvailableException extends RuntimeException {
 }
