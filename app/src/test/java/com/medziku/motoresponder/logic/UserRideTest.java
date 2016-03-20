@@ -123,7 +123,7 @@ public class UserRideTest {
     private void setSensorsUtilityIsProximeValue(boolean value) {
         try {
             Mockito.when(this.sensorsUtility.isProxime()).thenReturn(value);
-        } catch (InstantiationException e) {
+        } catch (RuntimeException e) {
             e.printStackTrace();
         }
     }

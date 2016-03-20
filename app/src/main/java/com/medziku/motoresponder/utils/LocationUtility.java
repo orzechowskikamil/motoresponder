@@ -143,8 +143,6 @@ class GettingAccurateLocationProcess implements LocationListener {
         float accuracy = location.getAccuracy();
         float speed = location.getSpeed();
 
-        Log.d(TAG, "Location event, accuracy is " + accuracy + ", speed is " + speed + "");
-
         boolean accurateMovingEvent = accuracy <= this.goodAccuracyForMoving;
         boolean accurateStayingStillEvent = accuracy <= this.goodAccuracyForStayingStill && speed < this.stayingStillSpeed;
 

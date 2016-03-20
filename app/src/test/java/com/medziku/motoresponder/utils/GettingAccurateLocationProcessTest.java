@@ -212,9 +212,6 @@ class ExposedGettingAccurateLocationProcess extends GettingAccurateLocationProce
         super(locationManager);
     }
 
-    @Override
-    protected void log(String msg) {
-    }
 
     @Override
     protected void loopLooper() {

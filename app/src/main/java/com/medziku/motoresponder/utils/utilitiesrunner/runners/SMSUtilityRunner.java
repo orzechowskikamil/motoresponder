@@ -17,6 +17,8 @@ public class SMSUtilityRunner {
     private String TEST_PHONE_NUMBER = "791467855";
     private String TEST_PHONE_NUMBER_COUNTRY_ISO = "+48791467855";
     private String TEST_PHONE_NUMBER_SPACES = "+48 791 467 855";
+    private String TEST_PHONE_NUMBER_ZERO_ZERO = "+48 791 467 855";
+    private String TEST_PHONE_NUMBER_CODE = "48 791 467 855";
 
     public SMSUtilityRunner(Context context) {
         this.context = context;
@@ -29,13 +31,18 @@ public class SMSUtilityRunner {
     public void testGettingDateOfLastSMSSent() {
         this.setUp();
 
-        Log.d(TAG, "This test will return last date of sms sent to given user by device owner.");
+        Log.d(TAG, "This test will return last date of sms sent to given user by device owner. Dates should be the same.");
+        this.testGettingDateOfLastSmsSentCase(TEST_PHONE_NUMBER);
+        this.testGettingDateOfLastSmsSentCase(TEST_PHONE_NUMBER_COUNTRY_ISO);
+        this.testGettingDateOfLastSmsSentCase(TEST_PHONE_NUMBER_SPACES);
+        this.testGettingDateOfLastSmsSentCase(TEST_PHONE_NUMBER_ZERO_ZERO);
+        this.testGettingDateOfLastSmsSentCase(TEST_PHONE_NUMBER_CODE);
 
-        Date dateSent = this.smsUtility.getDateOfLastSMSSent(TEST_PHONE_NUMBER, false);
+    }
 
-        Log.d(TAG, "Date of last sms sent by device owner to number " + TEST_PHONE_NUMBER + " is: " + dateSent.toString());
-
-
+    private void testGettingDateOfLastSmsSentCase(String phoneNumber) {
+        Date date = this.smsUtility.getDateOfLastSMSSent(phoneNumber, false);
+        Log.d(TAG, "Date of last sms sent by device owner to number " + phoneNumber + " is: " + ((date == null) ? "null" : date.toString()));
     }
 
     public void testListeningForSMS() {
@@ -86,17 +93,21 @@ public class SMSUtilityRunner {
         Date dateYesterday = new Date(new Date().getTime() - 60 * 60 * 24 * 1000);
         Date date30SecondsAgo = new Date(new Date().getTime() - 30 * 1000);
 
-        boolean resultYesterday = this.smsUtility.wasOutgoingSMSSentAfterDate(dateYesterday, TEST_PHONE_NUMBER, false);
-        boolean result30SecondsAgo = this.smsUtility.wasOutgoingSMSSentAfterDate(date30SecondsAgo, TEST_PHONE_NUMBER, false);
-        boolean resultYesterdayCountryIso = this.smsUtility.wasOutgoingSMSSentAfterDate(dateYesterday, TEST_PHONE_NUMBER_COUNTRY_ISO, false);
-        boolean resultYesterdaySpaces= this.smsUtility.wasOutgoingSMSSentAfterDate(dateYesterday, TEST_PHONE_NUMBER_SPACES, false);
+        this.testcaseOutgoingSMSAfterDate(dateYesterday, TEST_PHONE_NUMBER);
+        this.testcaseOutgoingSMSAfterDate(dateYesterday, TEST_PHONE_NUMBER_COUNTRY_ISO);
+        this.testcaseOutgoingSMSAfterDate(dateYesterday, TEST_PHONE_NUMBER_SPACES);
+        this.testcaseOutgoingSMSAfterDate(dateYesterday, TEST_PHONE_NUMBER_CODE);
+        this.testcaseOutgoingSMSAfterDate(dateYesterday, TEST_PHONE_NUMBER_ZERO_ZERO);
+        this.testcaseOutgoingSMSAfterDate(date30SecondsAgo, TEST_PHONE_NUMBER);
 
-        Log.d(TAG, "Since yesterday sms to number " + TEST_PHONE_NUMBER + " was sent? = " + resultYesterday);
-        Log.d(TAG, "Since 30 seconds ago sms to number " + TEST_PHONE_NUMBER + " was sent? = " + result30SecondsAgo);
-        Log.d(TAG, "Since yesterday sms to number " + TEST_PHONE_NUMBER_COUNTRY_ISO + " was sent? = " + resultYesterdayCountryIso);
-        Log.d(TAG, "Since yesterday sms to number " + TEST_PHONE_NUMBER_SPACES + " was sent? = " + resultYesterdaySpaces);
+        Log.d(TAG, "Yesterday date should be true (all), 30 seconds ago should be false");
+    }
 
+    private boolean testcaseOutgoingSMSAfterDate(Date date, String mobileNumber) {
+        boolean result = this.smsUtility.wasOutgoingSMSSentAfterDate(date, mobileNumber, false);
 
+        Log.d(TAG, "Since " + date.toString() + " sms to number " + mobileNumber + " was sent? = " + result);
+        return result;
     }
 
     public void testSendingSMSAndGettingItsDate() {

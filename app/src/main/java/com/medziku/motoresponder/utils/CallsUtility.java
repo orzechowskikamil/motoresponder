@@ -6,6 +6,7 @@ import android.os.Looper;
 import android.provider.CallLog;
 import android.telephony.*;
 import com.google.common.base.Predicate;
+import com.medziku.motoresponder.logic.PhoneNumbersComparator;
 
 import java.util.Date;
 
@@ -38,7 +39,6 @@ public class CallsUtility {
      *
      * @param callCallback
      */
-    // TODO K. Orzechowski: fix it app is answering to all calls, should only answer to unanswered #79
     public void listenForUnansweredCalls(Predicate<String> callCallback) {
         if (this.callCallback != null) {
             throw new IllegalStateException("Utility is already listening for calls");
@@ -109,25 +109,34 @@ public class CallsUtility {
 
 
     public boolean wasOutgoingCallAfterDate(Date date, String phoneNumber) {
-        // TODO K. Orzechowski: it may still contain a flaw, since phone number sometimes is returned as
-        // TODO K. Orzechowski: XXXXXXXXX, sometimes as +48XXXXXXXXX, and sometimes as 0048XXXXXXXXX.
-        // TODO K. Orzechowski: verify it later. Issue #33
         String[] projection = {CallLog.Calls.NUMBER};
-
-        String selections = CallLog.Calls.DATE + ">? AND " + CallLog.Calls.NUMBER + "=? AND " + CallLog.Calls.TYPE + "=?";
-
-        String[] selectionArgs = {String.valueOf(date.getTime()), phoneNumber, String.valueOf(CallLog.Calls.OUTGOING_TYPE)};
-
+        String selections = CallLog.Calls.DATE + ">? AND " + CallLog.Calls.TYPE + "=?";
+        String[] selectionArgs = {String.valueOf(date.getTime()), String.valueOf(CallLog.Calls.OUTGOING_TYPE)};
         String sortOrder = CallLog.Calls.DATE + " DESC";
 
         Cursor cursor = this.context.getContentResolver()
                 .query(CallLog.Calls.CONTENT_URI, projection, selections, selectionArgs, sortOrder);
 
-        boolean result = cursor.getCount() > 0;
+        boolean result = false;
+
+        if (cursor.moveToFirst()) {
+            do {
+                String phoneNumberQuery = cursor.getString(cursor.getColumnIndex(CallLog.Calls.NUMBER));
+                if (this.numbersAreEqual(phoneNumber, phoneNumberQuery)) {
+                    result = true;
+                    break;
+                }
+            } while (cursor.moveToNext());
+        }
 
         cursor.close();
 
         return result;
+    }
+
+    private boolean numbersAreEqual(String phoneNumber, String phoneNumberQuery) {
+        return PhoneNumbersComparator.areNumbersEqual(phoneNumber, phoneNumberQuery);
+
     }
 
 

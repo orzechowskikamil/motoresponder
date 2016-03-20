@@ -65,7 +65,7 @@ public class SensorsUtility {
     }
 
 
-    public boolean isProxime() {
+    public boolean isProxime()  {
         if (this.isListening == false) {
             throw new RuntimeException("You should call registerSensors method first");
         }

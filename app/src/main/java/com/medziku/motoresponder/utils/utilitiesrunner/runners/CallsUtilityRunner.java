@@ -13,6 +13,10 @@ public class CallsUtilityRunner {
 
     public static final String PHONE_NUMBER_NEVER_CALLED = "777777777";
     public static final String PHONE_NUMBER_CALLED_NO_LATER_THAN_ONE_DAY_AGO = "791467855";
+    public static final String PHONE_NUMBER_CALLED_NO_LATER_THAN_ONE_DAY_AGO_ISO_CODE = "+48791467855";
+    public static final String PHONE_NUMBER_CALLED_NO_LATER_THAN_ONE_DAY_AGO_SPACES = "+48 791 467 855";
+    public static final String PHONE_NUMBER_CALLED_NO_LATER_THAN_ONE_DAY_AGO_ZERO_ZERO = "0048 791 467 855";
+    public static final String PHONE_NUMBER_CALLED_NO_LATER_THAN_ONE_DAY_AGO_CODE = "48 791 467 855";
     /**
      * It's great and cheap shooting range in Warsaw BTW. You can use here Glock pistols, TT, WALTHERs, or
      * if you have luck, AK-47.
@@ -50,6 +54,23 @@ public class CallsUtilityRunner {
         Log.d(TAG, "wasOutgoingCallAfterDate(oneDayAgo, " + PHONE_NUMBER_CALLED_NO_LATER_THAN_ONE_DAY_AGO + ")=" +
                 resultNoLaterOneDayAgo + ", should be = true");
 
+        boolean resultNoLaterOneDayAgoSpaces = this.callsUtility.wasOutgoingCallAfterDate(dateOneDayAgo, PHONE_NUMBER_CALLED_NO_LATER_THAN_ONE_DAY_AGO_SPACES);
+        Log.d(TAG, "wasOutgoingCallAfterDate(oneDayAgo, " + PHONE_NUMBER_CALLED_NO_LATER_THAN_ONE_DAY_AGO_SPACES + ")=" +
+                resultNoLaterOneDayAgoSpaces + ", should be = true");
+
+        boolean resultNoLaterOneDayAgoIsoCode = this.callsUtility.wasOutgoingCallAfterDate(dateOneDayAgo, PHONE_NUMBER_CALLED_NO_LATER_THAN_ONE_DAY_AGO_ISO_CODE);
+        Log.d(TAG, "wasOutgoingCallAfterDate(oneDayAgo, " + PHONE_NUMBER_CALLED_NO_LATER_THAN_ONE_DAY_AGO_ISO_CODE + ")=" +
+                resultNoLaterOneDayAgoIsoCode + ", should be = true");
+
+        boolean resultNoLaterOneDayAgoCode = this.callsUtility.wasOutgoingCallAfterDate(dateOneDayAgo, PHONE_NUMBER_CALLED_NO_LATER_THAN_ONE_DAY_AGO_CODE);
+        Log.d(TAG, "wasOutgoingCallAfterDate(oneDayAgo, " + PHONE_NUMBER_CALLED_NO_LATER_THAN_ONE_DAY_AGO_CODE + ")=" +
+                resultNoLaterOneDayAgoCode + ", should be = true");
+
+
+        boolean resultNoLaterOneDayAgoZeroZero = this.callsUtility.wasOutgoingCallAfterDate(dateOneDayAgo, PHONE_NUMBER_CALLED_NO_LATER_THAN_ONE_DAY_AGO_ZERO_ZERO);
+        Log.d(TAG, "wasOutgoingCallAfterDate(oneDayAgo, " + PHONE_NUMBER_CALLED_NO_LATER_THAN_ONE_DAY_AGO_ZERO_ZERO + ")=" +
+                resultNoLaterOneDayAgoZeroZero + ", should be = true");
+
         boolean result30SecondsAgo = this.callsUtility.wasOutgoingCallAfterDate(date30SecondsAgo, PHONE_NUMBER_CALLED_NO_LATER_THAN_ONE_DAY_AGO);
         Log.d(TAG, "wasOutgoingCallAfterDate(30secondsAgo, " + PHONE_NUMBER_CALLED_NO_LATER_THAN_ONE_DAY_AGO + ")=" +
                 result30SecondsAgo + ", should be = false (impossible to make so quick call)");
@@ -61,7 +82,7 @@ public class CallsUtilityRunner {
         boolean resultNeverCalled = this.callsUtility.wasOutgoingCallAfterDate(dateOneDayAgo, PHONE_NUMBER_NEVER_CALLED);
         Log.d(TAG, "wasOutgoingCallAfterDate(oneDayAgo, " + PHONE_NUMBER_NEVER_CALLED + ")=" + resultNeverCalled + ", should be = false");
 
-        Log.d(TAG, "Overall result: " + (resultNoLaterOneDayAgo && !resultLaterDayAgo && !resultNeverCalled));
+        Log.d(TAG, "Overall result: " + (resultNoLaterOneDayAgo && resultNoLaterOneDayAgoZeroZero && resultNoLaterOneDayAgoCode && resultNoLaterOneDayAgoSpaces && resultNoLaterOneDayAgoIsoCode && !resultLaterDayAgo && !resultNeverCalled));
     }
 
 
@@ -91,7 +112,7 @@ public class CallsUtilityRunner {
         this.callsUtility.listenForUnansweredCalls(new Predicate<String>() {
             @Override
             public boolean apply(String input) {
-                Log.d(TAG, "Someone called you with number: " + input);
+                Log.d(TAG, "FAILURE! Someone called you with number: " + input);
                 return false;
             }
         });

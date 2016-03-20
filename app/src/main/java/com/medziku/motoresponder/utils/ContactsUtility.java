@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,19 +21,14 @@ public class ContactsUtility {
     }
 
     public boolean contactBookContainsContact(String phoneNumber) {
-        String[] columns = new String[]{ContactsContract.PhoneLookup.NUMBER};
-
+        String[] projection = new String[]{ContactsContract.PhoneLookup.NORMALIZED_NUMBER};
         Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
-
-        // TODO K. Orzechowski: Learn about E164 representation and use it in other places instead of number! Issue #33
+        // it's interesting property because it looks like it accepts number in any format, while always returning
+        // when selected number as +<ISO_CODE><PHONE_NUMBER>, so no manual normalization is needed here.
         String selection = ContactsContract.PhoneLookup.NORMALIZED_NUMBER + " = ?";
-//        String phoneNumberNormalized = this.normalizePhoneNumber(phoneNumber);
-        String phoneNumberNormalized = phoneNumber;
+        String[] selectionArgs = {phoneNumber};
 
-        String[] selectionArgs = {phoneNumberNormalized};
-
-        Cursor cursor = this.context.getContentResolver().query(
-                uri, columns, selection, selectionArgs, null);
+        Cursor cursor = this.context.getContentResolver().query(uri, projection, selection, selectionArgs, null);
 
         boolean result = cursor.getCount() > 0;
 
@@ -71,6 +67,7 @@ public class ContactsUtility {
 
     /**
      * Reads current SIM card phone number.
+     *
      * @return SIM card phone number.
      * @throws UnsupportedOperationException When SIM card doesn't allow reading it's phone number.
      */
@@ -85,15 +82,6 @@ public class ContactsUtility {
             throw new UnsupportedOperationException("Not capable to read phone number from API on this device");
         }
 
-        return phoneNumber;
-    }
-
-    private String normalizePhoneNumber(String phoneNumber) {
-        // TODO K. Orzechowski: Get iso country code (48) from locale
-        // TODO K. Orzechowski: It require API 21 - do smth with it
-        // TODO K. Orzechowski: it does not work, fix it Issue #33
-
-//        return PhoneNumberUtils.formatNumberToE164(phoneNumber, "48");
         return phoneNumber;
     }
 

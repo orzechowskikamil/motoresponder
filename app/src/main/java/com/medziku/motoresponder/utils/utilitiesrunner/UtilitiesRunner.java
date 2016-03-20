@@ -32,7 +32,7 @@ public class UtilitiesRunner {
     /**
      * When this is true, debug utilities (tests of utilities) will be run instead of motoresponder application.
      */
-    public static final boolean ARE_PSEUDOTESTS_ENABLED = true;
+    public static final boolean ARE_PSEUDOTESTS_ENABLED = false;
 
 
     private LockStateUtilityRunner lockStateUtilityRunner;
@@ -113,8 +113,7 @@ public class UtilitiesRunner {
                         break;
 
                     case 60:
-                        // this is working 15.03.2016 if number is strictly following putted number on Android 5.1
-                        // normalization not work.
+                        // this is working 20.03.2016 on Android 5.1
                         UtilitiesRunner.this.callsUtilityRunnner.testWasOutgoingCallAfterDate();
                         break;
                     case 61:
@@ -127,7 +126,7 @@ public class UtilitiesRunner {
                         break;
 
                     case 70:
-                        // this is working 12.03.2016 on Android 5.1
+                        // this is working 20.03.2016 on Android 5.1
                         UtilitiesRunner.this.contactsUtilityRunner.testContactBookContainsContact();
                         break;
                     case 71:
@@ -142,8 +141,7 @@ public class UtilitiesRunner {
                         break;
 
                     case 90:
-                        // this is working on 14.03.2016 on Android 5.1 motog
-                        // normalization not work.
+                        // this is working on 20.03.2016 on Android 5.1 motog
                         UtilitiesRunner.this.smsUtilityRunner.testGettingDateOfLastSMSSent();
                         break;
                     case 91:
@@ -156,11 +154,10 @@ public class UtilitiesRunner {
                         break;
                     case 93:
                         // this is working on 14.03.2016 on Android 5.1 motog
-                        // normalization not work.
                         UtilitiesRunner.this.smsUtilityRunner.testSendingSMSAndGettingItsDate();
                         break;
                     case 94:
-                        // this is working on 14.03.2016 on Android 5.1 motog.
+                        // this is working on 20.03.2016 on Android 5.1 motog
                         UtilitiesRunner.this.smsUtilityRunner.testWasOutgoingSMSSentAfterDate();
                         break;
                 }

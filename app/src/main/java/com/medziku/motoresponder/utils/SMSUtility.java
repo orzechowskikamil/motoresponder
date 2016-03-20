@@ -17,6 +17,7 @@ import android.telephony.SmsMessage;
 import com.medziku.motoresponder.BuildConfig;
 import com.medziku.motoresponder.callbacks.SMSReceivedCallback;
 import com.medziku.motoresponder.callbacks.SendSMSCallback;
+import com.medziku.motoresponder.logic.PhoneNumbersComparator;
 
 import java.util.Date;
 
@@ -135,23 +136,6 @@ public class SMSUtility {
         return sentPI;
     }
 
-    private String normalizeNumber(String phoneNumber, String defaultCountryIso) {
-        // TODO K. Orzechowski: nothing work...
-        // TODO K. Orzechowski: for now , plain number, think about something better Issue #33
-        // TODO K. Orzechowski: move normalization of numbers to separate Logic class or smth.
-        String normalizedNumber = phoneNumber.replace(" ", "");
-        if (normalizedNumber.startsWith("+")) {
-            normalizedNumber = normalizedNumber.substring(3, normalizedNumber.length());
-        }
-
-        return normalizedNumber;
-
-//        if (Build.VERSION.SDK_INT >= 21) {
-//            return PhoneNumberUtils.formatNumberToE164(phoneNumber, defaultCountryIso);
-//        } else {
-//            return PhoneNumberUtils.formatNumber(phoneNumber);
-//        }
-    }
 
     private String getApplicationPackageName() {
         return BuildConfig.APPLICATION_ID;
@@ -167,9 +151,9 @@ public class SMSUtility {
     public Date getDateOfLastSMSSent(String phoneNumber, boolean shouldBeSentByOurApp) {
         String creator = this.getApplicationPackageName();
 
-        String[] whichColumns = {Sms.DATE};
-        String selections = Sms.ADDRESS + "=? AND " + Sms.CREATOR + (shouldBeSentByOurApp ? "=" : "!=") + "?";
-        String[] selectionArgs = {phoneNumber, creator};
+        String[] whichColumns = {Sms.DATE, Sms.ADDRESS};
+        String selections = Sms.CREATOR + (shouldBeSentByOurApp ? "=" : "!=") + "?";
+        String[] selectionArgs = {creator};
 
         String sortOrder = Sms.DATE + " DESC";
         Cursor cursor = context.getContentResolver().query(Sms.Sent.CONTENT_URI,
@@ -181,8 +165,11 @@ public class SMSUtility {
             if (cursor.moveToFirst()) {
                 do {
                     long millisecondsTimestampOfSentDate = cursor.getLong(cursor.getColumnIndex(Sms.DATE));
-                    sentMsgDate = new Date(millisecondsTimestampOfSentDate);
-                    break;
+                    String sentMsgPhoneNumber = cursor.getString(cursor.getColumnIndex(Sms.ADDRESS));
+                    if (this.areNumbersEqual(sentMsgPhoneNumber, phoneNumber)) {
+                        sentMsgDate = new Date(millisecondsTimestampOfSentDate);
+                        break;
+                    }
                 } while (cursor.moveToNext());
             }
             cursor.close();
@@ -197,11 +184,11 @@ public class SMSUtility {
      * given date, and then iterate through them in order to find fitting phoneNumber, so do not use this method for
      * date very far away from current
      */
-    // TODO k.orzechowski change it from bool to int (howManyOutgoingSMSSentAfterDate)
     protected int howManyOutgoingSMSSentAfterDate(Date date, String phoneNumber, boolean shouldBeSentByOurApp) {
         String creator = this.getApplicationPackageName();
 
         String[] whichColumns = {Sms.ADDRESS};
+
         String selections = Sms.DATE + ">? AND " + Sms.CREATOR + (shouldBeSentByOurApp ? "=" : "!=") + "?";
         String[] selectionArgs = {String.valueOf(date.getTime()), creator};
 
@@ -211,16 +198,11 @@ public class SMSUtility {
 
         int result = 0;
 
-        // TODO K. Orzechowski: get country code from locale Issue #33
-        String phoneNumberNormalized = this.normalizeNumber(phoneNumber, "48");
-
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 do {
                     String sentMsgPhoneNumber = cursor.getString(cursor.getColumnIndex(Sms.ADDRESS));
-                    // TODO K. Orzechowski: get country code from locale Issue #33
-                    String sentMsgPhoneNumberNormalized = this.normalizeNumber(sentMsgPhoneNumber, "48");
-                    if (sentMsgPhoneNumberNormalized.equals(phoneNumberNormalized)) {
+                    if (this.areNumbersEqual(phoneNumber, sentMsgPhoneNumber)) {
                         result++;
                     }
 
@@ -229,6 +211,10 @@ public class SMSUtility {
             cursor.close();
         }
         return result;
+    }
+
+    private boolean areNumbersEqual(String firstPhoneNumber, String secondPhoneNuber) {
+        return PhoneNumbersComparator.areNumbersEqual(firstPhoneNumber, secondPhoneNuber);
     }
 
     public boolean wasOutgoingSMSSentAfterDate(Date date, String phoneNumber, boolean shouldBeSentByOurApp) {
