@@ -23,21 +23,22 @@ import org.slf4j.LoggerFactory;
 public class SettingsActivity extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final Logger log = LoggerFactory.getLogger(SettingsActivity.class);
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        addPreferencesFromResource(R.xml.background_prefs);
-        PreferenceManager.getDefaultSharedPreferences(this)
-                .registerOnSharedPreferenceChangeListener(this);
+        this.addPreferencesFromResource(R.xml.background_prefs);
+        this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        this.sharedPreferences.registerOnSharedPreferenceChangeListener(this);
 
         if (this.arePseudoTestsEnabled()) {
             this.runPseudoTesting();
         } else if (this.areIntegrationPseudoTestsEnabled()) {
             this.runPseudoIntegrationTesting();
         } else {
-            this.startBackgroundService();
+            this.toggleBackgroundServiceAccordingToSettings();
         }
     }
 
@@ -45,23 +46,38 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
         return IntegrationTester.ARE_INTEGRATION_TESTS_ENABLED == true;
     }
 
-    private void startBackgroundService() {
-        Intent backgroundServiceStarter = new Intent(this, BackgroundService.class);
-        this.startService(backgroundServiceStarter);
-    }
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         log.info("SharedPrefsKeyChanged: {}", key);
 
         if (key.equals(SettingsUtility.RESPONDER_SERVICE_ENABLED_KEY)) {
-            Intent intent = new Intent(this, BackgroundService.class);
-            boolean serviceEnabled = sharedPreferences.getBoolean(key, false);
-            if (serviceEnabled) {
-                startService(intent);
-            } else {
-                stopService(intent);
-            }
+            this.toggleBackgroundServiceAccordingToSettings();
+        }
+    }
+
+
+    /**
+     * Get current value from settings
+     */
+    private void toggleBackgroundServiceAccordingToSettings() {
+        // TODO K. Orzechowski: Use here settings utility pls. #Issue not needed
+        boolean serviceEnabled = this.sharedPreferences.getBoolean(SettingsUtility.RESPONDER_SERVICE_ENABLED_KEY, false);
+        this.toggleBackgroundService(serviceEnabled);
+    }
+
+
+    /**
+     * Enables or disables background service, by sending intent
+     *
+     * @param serviceEnabled True for enabled service, false for disabled.
+     */
+    private void toggleBackgroundService(boolean serviceEnabled) {
+        Intent intent = new Intent(this, BackgroundService.class);
+        if (serviceEnabled) {
+            this.startService(intent);
+        } else {
+            this.stopService(intent);
         }
     }
 

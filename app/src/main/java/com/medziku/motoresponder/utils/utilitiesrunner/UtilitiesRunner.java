@@ -75,7 +75,7 @@ public class UtilitiesRunner {
             private void runTest() {
                 // choose the test which you are interested in
                 // after performing, leave short note with date here about result of test
-                switch (61) {
+                switch (2) {
                     case 1:
                         // this is working 11.03.2016 on Android 5.1
                         // beware! I test it only at home at staying still
