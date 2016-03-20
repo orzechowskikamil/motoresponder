@@ -1,10 +1,9 @@
-package com.medziku.motoresponder;
+package com.medziku.motoresponder.logic;
 
 import android.content.Context;
 import android.test.mock.MockContext;
 import com.google.common.base.Predicate;
 import com.medziku.motoresponder.callbacks.SMSReceivedCallback;
-import com.medziku.motoresponder.logic.RespondingTasksQueue;
 import com.medziku.motoresponder.utils.*;
 import org.junit.Before;
 import org.junit.Test;

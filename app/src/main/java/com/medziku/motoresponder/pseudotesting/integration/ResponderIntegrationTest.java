@@ -2,7 +2,7 @@ package com.medziku.motoresponder.pseudotesting.integration;
 
 import android.content.Context;
 import android.util.Log;
-import com.medziku.motoresponder.Responder;
+import com.medziku.motoresponder.logic.Responder;
 import com.medziku.motoresponder.logic.RespondingDecision;
 
 /**

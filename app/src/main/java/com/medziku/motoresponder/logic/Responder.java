@@ -1,9 +1,8 @@
-package com.medziku.motoresponder;
+package com.medziku.motoresponder.logic;
 
 import android.content.Context;
 import com.google.common.base.Predicate;
 import com.medziku.motoresponder.callbacks.SMSReceivedCallback;
-import com.medziku.motoresponder.logic.*;
 import com.medziku.motoresponder.utils.*;
 
 /**

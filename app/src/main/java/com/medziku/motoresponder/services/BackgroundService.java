@@ -1,22 +1,13 @@
 package com.medziku.motoresponder.services;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.DialogFragment;
 import android.app.Service;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
 
-import com.medziku.motoresponder.R;
-import com.medziku.motoresponder.Responder;
-
-import java.io.*;
+import com.medziku.motoresponder.logic.Responder;
 
 
 /**
