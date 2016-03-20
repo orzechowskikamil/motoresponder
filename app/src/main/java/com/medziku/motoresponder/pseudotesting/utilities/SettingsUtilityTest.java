@@ -1,17 +1,17 @@
-package com.medziku.motoresponder.utils.utilitiesrunner.runners;
+package com.medziku.motoresponder.pseudotesting.utilities;
 
 
 import android.content.Context;
 import android.util.Log;
 import com.medziku.motoresponder.utils.SettingsUtility;
 
-public class SettingsUtilityRunner {
+public class SettingsUtilityTest {
 
-    private static final String TAG = "SettingsUtilityRunner";
+    private static final String TAG = "SettingsUtilityTest";
     private Context context;
     private SettingsUtility settingsUtility;
 
-    public SettingsUtilityRunner(Context context) {
+    public SettingsUtilityTest(Context context) {
         this.context = context;
     }
 

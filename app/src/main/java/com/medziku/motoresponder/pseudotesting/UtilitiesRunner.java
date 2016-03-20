@@ -1,9 +1,9 @@
-package com.medziku.motoresponder.utils.utilitiesrunner;
+package com.medziku.motoresponder.pseudotesting;
 
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
-import com.medziku.motoresponder.utils.utilitiesrunner.runners.*;
+import com.medziku.motoresponder.pseudotesting.utilities.*;
 
 /**
  * This class can be used to test real behavior of Utilities on some device or emulator, because it looks like
@@ -35,27 +35,27 @@ public class UtilitiesRunner {
     public static final boolean ARE_PSEUDOTESTS_ENABLED = false;
 
 
-    private LockStateUtilityRunner lockStateUtilityRunner;
-    private LocationUtilityRunner locationUtilityRunner;
-    private MotionUtilityRunner motionUtilityRunner;
-    private NotificationUtilityRunner notificationUtilityRunner;
-    private SensorsUtilityRunner sensorsUtilityRunner;
-    private CallsUtilityRunner callsUtilityRunnner;
-    private ContactsUtilityRunner contactsUtilityRunner;
-    private SettingsUtilityRunner settingsUtilityRunner;
-    private SMSUtilityRunner smsUtilityRunner;
+    private LockStateUtilityTest lockStateUtilityTest;
+    private LocationUtilityTest locationUtilityTest;
+    private MotionUtilityTest motionUtilityTest;
+    private NotificationUtilityTest notificationUtilityTest;
+    private SensorsUtilityTest sensorsUtilityTest;
+    private CallsUtilityTest callsUtilityRunnner;
+    private ContactsUtilityTest contactsUtilityTest;
+    private SettingsUtilityTest settingsUtilityTest;
+    private SMSUtilityTest smsUtilityTest;
 
 
     public UtilitiesRunner(Context context) {
-        this.locationUtilityRunner = new LocationUtilityRunner(context);
-        this.motionUtilityRunner = new MotionUtilityRunner(context);
-        this.lockStateUtilityRunner = new LockStateUtilityRunner(context);
-        this.notificationUtilityRunner = new NotificationUtilityRunner(context);
-        this.sensorsUtilityRunner = new SensorsUtilityRunner(context);
-        this.callsUtilityRunnner = new CallsUtilityRunner(context);
-        this.contactsUtilityRunner = new ContactsUtilityRunner(context);
-        this.settingsUtilityRunner = new SettingsUtilityRunner(context);
-        this.smsUtilityRunner = new SMSUtilityRunner(context);
+        this.locationUtilityTest = new LocationUtilityTest(context);
+        this.motionUtilityTest = new MotionUtilityTest(context);
+        this.lockStateUtilityTest = new LockStateUtilityTest(context);
+        this.notificationUtilityTest = new NotificationUtilityTest(context);
+        this.sensorsUtilityTest = new SensorsUtilityTest(context);
+        this.callsUtilityRunnner = new CallsUtilityTest(context);
+        this.contactsUtilityTest = new ContactsUtilityTest(context);
+        this.settingsUtilityTest = new SettingsUtilityTest(context);
+        this.smsUtilityTest = new SMSUtilityTest(context);
     }
 
 
@@ -81,35 +81,35 @@ public class UtilitiesRunner {
                         // beware! I test it only at home at staying still
                         // newer received more than one event - maybe because of being at home
                         // not outside
-                        UtilitiesRunner.this.locationUtilityRunner.testOfGettingAccurateLocation();
+                        UtilitiesRunner.this.locationUtilityTest.testOfGettingAccurateLocation();
                         break;
 
                     case 2:
                         // this is working 07.03.2016 on Android 5.1
-                        UtilitiesRunner.this.motionUtilityRunner.testOfIsDeviceInMotion();
+                        UtilitiesRunner.this.motionUtilityTest.testOfIsDeviceInMotion();
                         break;
 
                     case 30:
                         // this is working 09.03.2016 on Android 5.1
-                        UtilitiesRunner.this.lockStateUtilityRunner.testOfListeningToLockStateChanges();
+                        UtilitiesRunner.this.lockStateUtilityTest.testOfListeningToLockStateChanges();
                         break;
                     case 31:
                         // this is working 09.03.2016 on Android 5.1
-                        UtilitiesRunner.this.lockStateUtilityRunner.testOfIsLocked();
+                        UtilitiesRunner.this.lockStateUtilityTest.testOfIsLocked();
                         break;
 
                     case 40:
                         // this is working 09.03.2016 on Android 5.1
-                        UtilitiesRunner.this.notificationUtilityRunner.testOfShowingAndHidingOngoingNotification();
+                        UtilitiesRunner.this.notificationUtilityTest.testOfShowingAndHidingOngoingNotification();
                         break;
                     case 41:
                         // this is working 09.03.2016 on Android 5.1
-                        UtilitiesRunner.this.notificationUtilityRunner.testOfShowingToast();
+                        UtilitiesRunner.this.notificationUtilityTest.testOfShowingToast();
                         break;
 
                     case 5:
                         // this is working 09.03.2016 on Android 5.1
-                        UtilitiesRunner.this.sensorsUtilityRunner.proximitySensorTest();
+                        UtilitiesRunner.this.sensorsUtilityTest.proximitySensorTest();
                         break;
 
                     case 60:
@@ -127,38 +127,38 @@ public class UtilitiesRunner {
 
                     case 70:
                         // this is working 20.03.2016 on Android 5.1
-                        UtilitiesRunner.this.contactsUtilityRunner.testContactBookContainsContact();
+                        UtilitiesRunner.this.contactsUtilityTest.testContactBookContainsContact();
                         break;
                     case 71:
                         // this is working 12.03.2016 on Android 5.1 motog 1 gen - correctly throw exception on
                         // SIM card which doesn't allow reading current phone number.
-                        UtilitiesRunner.this.contactsUtilityRunner.testReadCurrentDevicePhoneNumber();
+                        UtilitiesRunner.this.contactsUtilityTest.testReadCurrentDevicePhoneNumber();
                         break;
 
                     case 8:
                         // this is working on 14.03.2016 on Android 5.1 motog
-                        UtilitiesRunner.this.settingsUtilityRunner.testSettingResponseText();
+                        UtilitiesRunner.this.settingsUtilityTest.testSettingResponseText();
                         break;
 
                     case 90:
                         // this is working on 20.03.2016 on Android 5.1 motog
-                        UtilitiesRunner.this.smsUtilityRunner.testGettingDateOfLastSMSSent();
+                        UtilitiesRunner.this.smsUtilityTest.testGettingDateOfLastSMSSent();
                         break;
                     case 91:
                         // this is working on 14.03.2016 on Android 5.1 motog
-                        UtilitiesRunner.this.smsUtilityRunner.testListeningForSMS();
+                        UtilitiesRunner.this.smsUtilityTest.testListeningForSMS();
                         break;
                     case 92:
                         // this is working on 14.03.2016 on Android 5.1 motog
-                        UtilitiesRunner.this.smsUtilityRunner.testSendingSMS();
+                        UtilitiesRunner.this.smsUtilityTest.testSendingSMS();
                         break;
                     case 93:
                         // this is working on 14.03.2016 on Android 5.1 motog
-                        UtilitiesRunner.this.smsUtilityRunner.testSendingSMSAndGettingItsDate();
+                        UtilitiesRunner.this.smsUtilityTest.testSendingSMSAndGettingItsDate();
                         break;
                     case 94:
                         // this is working on 20.03.2016 on Android 5.1 motog
-                        UtilitiesRunner.this.smsUtilityRunner.testWasOutgoingSMSSentAfterDate();
+                        UtilitiesRunner.this.smsUtilityTest.testWasOutgoingSMSSentAfterDate();
                         break;
                 }
             }

@@ -1,4 +1,4 @@
-package com.medziku.motoresponder.utils.utilitiesrunner.runners;
+package com.medziku.motoresponder.pseudotesting.utilities;
 
 import android.content.Context;
 import android.util.Log;
@@ -7,14 +7,14 @@ import com.medziku.motoresponder.utils.MotionUtility;
 
 import java.util.concurrent.Future;
 
-public class MotionUtilityRunner {
+public class MotionUtilityTest {
 
-    private static final String TAG = "MotionUtilityRunner";
+    private static final String TAG = "MotionUtilityTest";
 
     private MotionUtility motionUtility;
     private Context context;
 
-    public MotionUtilityRunner(Context context) {
+    public MotionUtilityTest(Context context) {
         this.context = context;
     }
 

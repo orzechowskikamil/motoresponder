@@ -1,15 +1,15 @@
-package com.medziku.motoresponder.utils.utilitiesrunner.runners;
+package com.medziku.motoresponder.pseudotesting.utilities;
 
 import android.content.Context;
 import android.util.Log;
 import com.medziku.motoresponder.utils.NotificationUtility;
 
-public class NotificationUtilityRunner {
+public class NotificationUtilityTest {
     private static final String TAG = "NotifUtilityRunner";
     private Context context;
     private NotificationUtility notificationUtility;
 
-    public NotificationUtilityRunner(Context context) {
+    public NotificationUtilityTest(Context context) {
         this.context = context;
     }
 

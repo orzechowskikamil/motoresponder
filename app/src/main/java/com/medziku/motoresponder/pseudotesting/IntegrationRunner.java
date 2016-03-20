@@ -1,10 +1,10 @@
-package com.medziku.motoresponder.logic.integrationtesting;
+package com.medziku.motoresponder.pseudotesting;
 
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
-import com.medziku.motoresponder.logic.integrationtesting.tests.ResponderIntegrationTest;
-import com.medziku.motoresponder.logic.integrationtesting.tests.RespondingDecisionIntegrationTest;
+import com.medziku.motoresponder.pseudotesting.integration.ResponderIntegrationTest;
+import com.medziku.motoresponder.pseudotesting.integration.RespondingDecisionIntegrationTest;
 
 /**
  * This class allow to test integration of components of application in semi-isolation.
@@ -14,18 +14,18 @@ import com.medziku.motoresponder.logic.integrationtesting.tests.RespondingDecisi
  * by walking with phone, while it doesn"t need to get incoming message in isolated test.
  */
 // TODO K. Orzechowski Rewrite pseudo integration test to something acceptable #Issue #78
-public class IntegrationTester {
+public class IntegrationRunner {
     /**
      * This flag enables integration testing - it will be run instead of application.
      * Remember that UtilitiesRunner.ARE_PSEUDO_TESTS_ENABLED should be set to false
      */
     public static final boolean ARE_INTEGRATION_TESTS_ENABLED = false;
-    public final static String TAG = "IntegrationTester";
+    public final static String TAG = "IntegrationRunner";
 
     private ResponderIntegrationTest responderIntegrationTest;
     private RespondingDecisionIntegrationTest respondingDecisionIntegrationTest;
 
-    public IntegrationTester(Context context) {
+    public IntegrationRunner(Context context) {
 
         this.responderIntegrationTest = new ResponderIntegrationTest(context);
         this.respondingDecisionIntegrationTest = new RespondingDecisionIntegrationTest(context);
@@ -37,9 +37,9 @@ public class IntegrationTester {
             protected Boolean doInBackground(Boolean... params) {
                 // unfortunately I can"t show those errors in any different way that throwing exception
                 // and catching it here. Hope it will be enough to test.
-                Log.d(TAG, "IntegrationTester... starting...");
-                IntegrationTester.this.runTest();
-                Log.d(TAG, "IntegrationTester... finished...");
+                Log.d(TAG, "IntegrationRunner... starting...");
+                IntegrationRunner.this.runTest();
+                Log.d(TAG, "IntegrationRunner... finished...");
 
                 return null;
             }

@@ -1,17 +1,17 @@
-package com.medziku.motoresponder.utils.utilitiesrunner.runners;
+package com.medziku.motoresponder.pseudotesting.utilities;
 
 import android.content.Context;
 import android.util.Log;
 import com.google.common.base.Predicate;
 import com.medziku.motoresponder.utils.LockStateUtility;
 
-public class LockStateUtilityRunner {
+public class LockStateUtilityTest {
 
-    private static final String TAG = "LockStateUtilityRunner";
+    private static final String TAG = "LockStateUtilityTest";
     private Context context;
     private LockStateUtility lockStateUtility;
 
-    public LockStateUtilityRunner(Context context) {
+    public LockStateUtilityTest(Context context) {
         this.context = context;
     }
 

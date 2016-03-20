@@ -1,4 +1,4 @@
-package com.medziku.motoresponder.utils.utilitiesrunner.runners;
+package com.medziku.motoresponder.pseudotesting.utilities;
 
 
 import android.content.Context;
@@ -8,9 +8,9 @@ import com.medziku.motoresponder.utils.ContactsUtility;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
-public class ContactsUtilityRunner {
+public class ContactsUtilityTest {
 
-    private static final String TAG = "ContactsUtilityRunner";
+    private static final String TAG = "ContactsUtilityTest";
     private Context context;
     private ContactsUtility contactsUtility;
     /**
@@ -26,7 +26,7 @@ public class ContactsUtilityRunner {
      */
     private String nonExistingPhoneNumberInContacts = "666666666";
 
-    public ContactsUtilityRunner(Context context) {
+    public ContactsUtilityTest(Context context) {
         this.context = context;
     }
 

@@ -1,7 +1,6 @@
-package com.medziku.motoresponder.logic.integrationtesting.tests;
+package com.medziku.motoresponder.pseudotesting.integration;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.util.Log;
 import com.medziku.motoresponder.logic.*;
 import com.medziku.motoresponder.utils.*;

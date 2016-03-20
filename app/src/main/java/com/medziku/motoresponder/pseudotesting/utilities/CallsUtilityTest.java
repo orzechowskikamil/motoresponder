@@ -1,4 +1,4 @@
-package com.medziku.motoresponder.utils.utilitiesrunner.runners;
+package com.medziku.motoresponder.pseudotesting.utilities;
 
 
 import android.content.Context;
@@ -8,8 +8,8 @@ import com.medziku.motoresponder.utils.CallsUtility;
 
 import java.util.Date;
 
-public class CallsUtilityRunner {
-    private static final String TAG = "CallsUtilityRunner";
+public class CallsUtilityTest {
+    private static final String TAG = "CallsUtilityTest";
 
     public static final String PHONE_NUMBER_NEVER_CALLED = "777777777";
     public static final String PHONE_NUMBER_CALLED_NO_LATER_THAN_ONE_DAY_AGO = "791467855";
@@ -27,7 +27,7 @@ public class CallsUtilityRunner {
     private CallsUtility callsUtility;
 
 
-    public CallsUtilityRunner(Context context) {
+    public CallsUtilityTest(Context context) {
         this.context = context;
     }
 

@@ -1,16 +1,16 @@
-package com.medziku.motoresponder.utils.utilitiesrunner.runners;
+package com.medziku.motoresponder.pseudotesting.utilities;
 
 
 import android.content.Context;
 import android.util.Log;
 import com.medziku.motoresponder.utils.SensorsUtility;
 
-public class SensorsUtilityRunner {
-    private static final String TAG = "SensorsUtilityRunner";
+public class SensorsUtilityTest {
+    private static final String TAG = "SensorsUtilityTest";
     private Context context;
     private SensorsUtility sensorsUtility;
 
-    public SensorsUtilityRunner(Context context) {
+    public SensorsUtilityTest(Context context) {
         this.context = context;
     }
 

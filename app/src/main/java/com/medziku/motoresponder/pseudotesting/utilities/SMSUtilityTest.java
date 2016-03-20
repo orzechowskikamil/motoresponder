@@ -1,4 +1,4 @@
-package com.medziku.motoresponder.utils.utilitiesrunner.runners;
+package com.medziku.motoresponder.pseudotesting.utilities;
 
 
 import android.content.Context;
@@ -9,9 +9,9 @@ import com.medziku.motoresponder.utils.SMSUtility;
 
 import java.util.Date;
 
-public class SMSUtilityRunner {
+public class SMSUtilityTest {
 
-    private static final String TAG = "SMSUtilityRunner";
+    private static final String TAG = "SMSUtilityTest";
     private Context context;
     private SMSUtility smsUtility;
     private String TEST_PHONE_NUMBER = "791467855";
@@ -20,7 +20,7 @@ public class SMSUtilityRunner {
     private String TEST_PHONE_NUMBER_ZERO_ZERO = "+48 791 467 855";
     private String TEST_PHONE_NUMBER_CODE = "48 791 467 855";
 
-    public SMSUtilityRunner(Context context) {
+    public SMSUtilityTest(Context context) {
         this.context = context;
     }
 

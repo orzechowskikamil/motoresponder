@@ -7,8 +7,8 @@ import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 
-import com.medziku.motoresponder.logic.integrationtesting.IntegrationTester;
-import com.medziku.motoresponder.utils.utilitiesrunner.UtilitiesRunner;
+import com.medziku.motoresponder.pseudotesting.IntegrationRunner;
+import com.medziku.motoresponder.pseudotesting.UtilitiesRunner;
 import com.medziku.motoresponder.R;
 import com.medziku.motoresponder.services.BackgroundService;
 import com.medziku.motoresponder.utils.SettingsUtility;
@@ -43,7 +43,7 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
     }
 
     private boolean areIntegrationPseudoTestsEnabled() {
-        return IntegrationTester.ARE_INTEGRATION_TESTS_ENABLED == true;
+        return IntegrationRunner.ARE_INTEGRATION_TESTS_ENABLED == true;
     }
 
 
@@ -95,7 +95,7 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
      * integration by instrumented tests
      */
     private void runPseudoIntegrationTesting() {
-        new IntegrationTester(this.getApplicationContext()).run();
+        new IntegrationRunner(this.getApplicationContext()).run();
     }
 
     private boolean arePseudoTestsEnabled() {

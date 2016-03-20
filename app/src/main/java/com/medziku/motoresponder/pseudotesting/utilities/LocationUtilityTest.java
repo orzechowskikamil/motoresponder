@@ -1,4 +1,4 @@
-package com.medziku.motoresponder.utils.utilitiesrunner.runners;
+package com.medziku.motoresponder.pseudotesting.utilities;
 
 import android.content.Context;
 import android.location.Location;
@@ -7,15 +7,15 @@ import com.medziku.motoresponder.utils.LocationUtility;
 
 import java.util.concurrent.Future;
 
-public class LocationUtilityRunner {
+public class LocationUtilityTest {
 
-    public static final String TAG = "LocationUtilityRunner";
+    public static final String TAG = "LocationUtilityTest";
 
     private LocationUtility locationUtility;
 
     private final Context context;
 
-    public LocationUtilityRunner(Context context) {
+    public LocationUtilityTest(Context context) {
         this.context = context;
     }
 
