@@ -31,10 +31,10 @@ public class LocationUtility {
      *
      * @return Future which is fullfilled when location with appropriate accuracy is known, or null if timeout/error.
      */
-    public Future<Location> getAccurateLocation() {
+    public Future<Location> getAccurateLocation(float expectedSpeed, float expectedAccuracy, long timeoutMs) {
         // whole content of this method was moved to separate class GettingAccurateLocationProcess,
         // which represent process of getting location, but I didn't want to break api so this method is almost empty.
-        return new GettingAccurateLocationProcess(this.locationManager).getLocation();
+        return new GettingAccurateLocationProcess(this.locationManager, expectedSpeed, expectedAccuracy, timeoutMs).getLocation();
     }
 
 }
@@ -45,36 +45,29 @@ public class LocationUtility {
  * Must be a separate class to be testable.
  */
 class GettingAccurateLocationProcess implements LocationListener {
-    private static final String TAG = "Location";
+
+
+    public int minimumTimeBetweenUpdates = 0;
+    public int minimumDistanceBetweenUpdates = 0;
+
+    private long timeoutMs;
+    private float expectedSpeed;
+    private float expectedAccuracy;
     private final SettableFuture<Location> result;
     private LocationManager locationManager;
     private Looper looperForListeningThread;
 
-    /**
-     * Location must be more precise than 20 meters, if reported speed is not 0.0
-     */
-    public double goodAccuracyForMoving = 40;
-    /**
-     * Location must be more precise than 60 meters if reported speed is 0.0 , also increased
-     * // TODO K. Orzechowski: because of issue #80
-     */
-    public double goodAccuracyForStayingStill = 20;
-
-    public int gettingLocationTimeout = 80 * 1000;
-    public int minimumTimeBetweenUpdates = 0;
-    public int minimumDistanceBetweenUpdates = 0;
-    /**
-     * Speed smaller than this will be assumed as staying still
-     */
-    public double stayingStillSpeed = 1.0;
 
     /**
      * Use one class instance per one location.
      *
      * @param locationManager
      */
-    public GettingAccurateLocationProcess(LocationManager locationManager) {
+    public GettingAccurateLocationProcess(LocationManager locationManager, float expectedSpeedMs, float expectedAccuracyMeters, long timeoutMs) {
         this.locationManager = locationManager;
+        this.expectedSpeed = expectedSpeedMs;
+        this.expectedAccuracy = expectedAccuracyMeters;
+        this.timeoutMs = timeoutMs;
         this.result = SettableFuture.create();
     }
 
@@ -142,10 +135,7 @@ class GettingAccurateLocationProcess implements LocationListener {
         float accuracy = location.getAccuracy();
         float speed = location.getSpeed();
 
-        boolean accurateMovingEvent = accuracy <= this.goodAccuracyForMoving;
-        boolean accurateStayingStillEvent = accuracy <= this.goodAccuracyForStayingStill && speed < this.stayingStillSpeed;
-
-        if (accurateMovingEvent || accurateStayingStillEvent) {
+        if (accuracy <= this.expectedAccuracy && speed >= this.expectedSpeed) {
             this.setResultAndStopListening(location);
         }
     }
@@ -205,7 +195,7 @@ class GettingAccurateLocationProcess implements LocationListener {
                     GettingAccurateLocationProcess.this.onTimeout();
                 }
             }
-        }, this.gettingLocationTimeout);
+        }, this.timeoutMs);
     }
 
 

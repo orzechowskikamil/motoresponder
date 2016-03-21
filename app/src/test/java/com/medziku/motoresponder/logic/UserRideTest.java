@@ -10,6 +10,13 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+
+import java.util.concurrent.Future;
+
+import static org.mockito.Matchers.anyFloat;
+import static org.mockito.Matchers.anyLong;
 
 
 public class UserRideTest {
@@ -22,9 +29,8 @@ public class UserRideTest {
     private double msToKmh = 3.6;
     private double FAKE_FOR_SURE_MOVING_SPEED = 70 / msToKmh;
     private int FAKE_TIMEOUT_SPEED = -1;
-    private double FAKE_FOR_SURE_NOT_MOVING_SPEED = 1 / msToKmh;
-    private double FAKE_UNSURE_MOVING_SPEED = 20 / msToKmh;
-    public static final int DELAY_BETWEEN_UNSURE_AND_SURE_SPEED_LOCATION = 2000;
+    private double FAKE_UNSURE_MOVING_SPEED = 10 / msToKmh;
+    public static final int DELAY_BETWEEN_UNSURE_AND_SURE_SPEED_LOCATION = 10;
 
     @Before
     public void setUp() throws Exception {
@@ -43,29 +49,37 @@ public class UserRideTest {
     }
 
     @Test
-    public void testIfLocationTimeoutIsProperlyHandled() {
+    public void testIfSureRidingSpeed1stHitProperlyHandled() {
+        this.setLocationUtilityGetAccurateLocationSpeedResult(this.FAKE_FOR_SURE_MOVING_SPEED);
+
+        this.expectUserRideIsUserRidingToBe(true);
+    }
+
+    @Test
+    public void testIfTimeouted1stHitIsProperlyHandled() {
         this.setLocationUtilityGetAccurateLocationSpeedResult(this.FAKE_TIMEOUT_SPEED);
-        this.expectUserRideIsUserRidingToBe(false);
 
-        this.setLocationUtilityGetAccurateLocationSpeedResult(this.FAKE_FOR_SURE_MOVING_SPEED);
-        this.expectUserRideIsUserRidingToBe(true);
+        this.expectUserRideIsUserRidingToBe(false);
     }
 
     @Test
-    public void testIfLocationSureSpeedsAreProperlyHandled() {
-        this.setLocationUtilityGetAccurateLocationSpeedResult(this.FAKE_FOR_SURE_NOT_MOVING_SPEED);
+    public void testIfNotTimeouted1stHitThenTimeoutedIsProperlyHandled() {
+        this.setLocationUtilityGetAccurateLocationSpeedResult(this.FAKE_UNSURE_MOVING_SPEED, this.FAKE_TIMEOUT_SPEED);
         this.expectUserRideIsUserRidingToBe(false);
-
-        this.setLocationUtilityGetAccurateLocationSpeedResult(this.FAKE_FOR_SURE_MOVING_SPEED);
-        this.expectUserRideIsUserRidingToBe(true);
     }
 
     @Test
-    public void testIfLocationNotSureSpeedIsProperlyHandled() {
-        this.testUnsureSpeedCase(true, this.FAKE_UNSURE_MOVING_SPEED, this.FAKE_FOR_SURE_MOVING_SPEED);
-        this.testUnsureSpeedCase(false, this.FAKE_UNSURE_MOVING_SPEED, this.FAKE_UNSURE_MOVING_SPEED);
-        this.testUnsureSpeedCase(false, this.FAKE_UNSURE_MOVING_SPEED, this.FAKE_FOR_SURE_NOT_MOVING_SPEED);
+    public void testIfNotTimeouted1stHitThenUnsureRidingSpeedProperlyHandled() {
+        this.setLocationUtilityGetAccurateLocationSpeedResult(this.FAKE_UNSURE_MOVING_SPEED, this.FAKE_UNSURE_MOVING_SPEED);
+        this.expectUserRideIsUserRidingToBe(false);
     }
+
+    @Test
+    public void testIfNotTimeouted1stHitThenSureRidingSpeedProperlyHandled() {
+        this.setLocationUtilityGetAccurateLocationSpeedResult(this.FAKE_UNSURE_MOVING_SPEED, this.FAKE_FOR_SURE_MOVING_SPEED);
+        this.expectUserRideIsUserRidingToBe(true);
+    }
+
 
     @Test
     public void testIfIncludeDeviceMotionCheckIsProperlyHandled() {
@@ -113,6 +127,7 @@ public class UserRideTest {
 
     @Test
     public void testIsUserRiding() throws Exception {
+        // all checks are by default true so we need to just check for true value.
         this.expectUserRideIsUserRidingToBe(true);
 
     }
@@ -168,29 +183,33 @@ public class UserRideTest {
         Location location = Mockito.mock(Location.class);
         Mockito.when(location.getSpeed()).thenReturn((float) value);
 
-        Location valueOfFuture = (value > -1.0) ? location : null;
+        Location valueOfFuture = (value > this.FAKE_TIMEOUT_SPEED) ? location : null;
         result.set(valueOfFuture);
-        Mockito.when(this.locationUtility.getAccurateLocation()).thenReturn(result);
+        Mockito.when(this.locationUtility.getAccurateLocation(anyFloat(), anyFloat(), anyLong())).thenReturn(result);
     }
 
-    private void testUnsureSpeedCase(boolean expectedResult, double firstCheckSpeed, final double secondCheckSpeed) {
-        this.userRide.maybeRidingTimeoutMs = UserRideTest.DELAY_BETWEEN_UNSURE_AND_SURE_SPEED_LOCATION * 2;
-        this.setLocationUtilityGetAccurateLocationSpeedResult(firstCheckSpeed);
+    private void setLocationUtilityGetAccurateLocationSpeedResult(final double firstValue, final double secondValue) {
+        final boolean[] secondCall = {false};
 
-        (new Thread() {
+        Mockito.when(this.locationUtility.getAccurateLocation(anyFloat(), anyFloat(), anyLong())).thenAnswer(new Answer<Future<Location>>() {
             @Override
-            public void run() {
-                try {
-                    this.sleep(UserRideTest.DELAY_BETWEEN_UNSURE_AND_SURE_SPEED_LOCATION);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                UserRideTest.this.setLocationUtilityGetAccurateLocationSpeedResult(secondCheckSpeed);
-            }
-        }).start();
+            public Future answer(InvocationOnMock invocation) throws Throwable {
+                float value = (float) ((secondCall[0]) ? secondValue : firstValue);
 
-        this.expectUserRideIsUserRidingToBe(expectedResult);
+                final SettableFuture<Location> result = SettableFuture.create();
+                Location location = Mockito.mock(Location.class);
+                Mockito.when(location.getSpeed()).thenReturn(value);
+
+                Location valueOfFuture = (value > UserRideTest.this.FAKE_TIMEOUT_SPEED) ? location : null;
+                result.set(valueOfFuture);
+                if (secondCall[0] == false) {
+                    secondCall[0] = true;
+                }
+                return result;
+            }
+        });
     }
+
 
     // endregion
 

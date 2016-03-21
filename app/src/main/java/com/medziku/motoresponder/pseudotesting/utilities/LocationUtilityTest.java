@@ -32,7 +32,7 @@ public class LocationUtilityTest {
         Location location = null;
 
         try {
-            Future<Location> accurateLocation = this.locationUtility.getAccurateLocation();
+            Future<Location> accurateLocation = this.locationUtility.getAccurateLocation(-1, 20, 60 * 1000);
             location = accurateLocation.get();
         } catch (Exception e) {
             Log.e(TAG, "Error happened during getting location");

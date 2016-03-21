@@ -1,7 +1,6 @@
 package com.medziku.motoresponder.logic;
 
 import android.location.Location;
-import android.util.Log;
 import com.medziku.motoresponder.utils.AccelerometerNotAvailableException;
 import com.medziku.motoresponder.utils.LocationUtility;
 import com.medziku.motoresponder.utils.MotionUtility;
@@ -15,19 +14,10 @@ import java.util.concurrent.ExecutionException;
  */
 public class UserRide {
 
-    public static final int TIMEOUTED_SPEED_VALUE = -1;
     private LocationUtility locationUtility;
     private SensorsUtility sensorsUtility;
     private MotionUtility motionUtility;
 
-
-    /**
-     * If true, it will interpret timeout during gathering location as being in home (often location timeout
-     * is caused by being in building, riding through tunnel is rare).
-     * If false, it will ignore timeout.
-     */
-    // TODO K. Orzechowski: for normal it should be true, for development - false. issue #50
-//    public boolean interpretLocationTimeoutAsNotRiding = false;
     /**
      * If true, it will assume not riding if phone proximity sensor read false value (no proximity - not in pocket).
      * If false, it will ignore proximity check.
@@ -40,15 +30,33 @@ public class UserRide {
      */
     public boolean includeDeviceMotionCheck = true;
 
-    // TODO K.Orzechowski move it to the settings. User should be able to adjust that. Issue #17
-    public float maybeRidingSpeed = 15;
-    public int maybeRidingTimeoutMs = 30000;
 
     /**
      * This is speed in kilometers which for sure is speed achieveable only by riding on motorcycle, and
      * for example, not walking or running.
      */
-    public double sureRidingSpeed = 40;
+    public float sureRidingSpeedKmh = 40;
+
+    /**
+     * This is speed considered as staying still.
+     */
+    public float stayingStillSpeedKmh = 0;
+
+    /**
+     * This accuracy is required for correct location always
+     */
+    public float requiredAccuracyMeters = 40;
+
+    /**
+     * This is how long will last quick check of location
+     */
+    public long quickCheckTimeoutMs = 30 * 1000;
+
+    /**
+     * This is how long will last long check of location (for example, when it's unsure if you are not staying at
+     * traffic lights)
+     */
+    public long longCheckTimeoutMs = 4 * 60 * 1000;
 
 
     /**
@@ -92,34 +100,28 @@ public class UserRide {
         // TODO k.orzechowsk identify of stolen bikes via beacon in very very future when app will be popular. Issue #56
 
         // TODO k.orzechowsk add option to disable GPS, maybe someone don't want to use it, only gyro? Issue #10
-        float speedKmh = this.getCurrentSpeedKmh();
 
-        // TODO K. Orzechowski: Issue #70: this is ridiculous. No matter of setting, it will be handled as no riding.
-        // we need second check on timeout if interpretLocation... is set to false.
-        if (/*this.interpretLocationTimeoutAsNotRiding &&*/ this.isLocationTimeouted(speedKmh)) {
-            // if timeout, it means that phone is probably in home with no access to GPS satelites.
-            // so if no ride, no need to respond automatically
-            //   return false;
-        }
 
-        if (this.isSpeedForSureNotRiding(speedKmh)) {
+        Float quickCheckSpeedKmh = this.getQuickCheckCurrentSpeedKmh();
+
+        if (this.isLocationTimeouted(quickCheckSpeedKmh)) {
+            // if quick check is timeouted, it means that user is in building with quick access to GPS signal, so he is not riding.
             return false;
         }
 
-        // second check of speed if user is between sure riding speed and no riding speed
-        // for example: 15 km/h. It can be motorcycle or running. We make another check in few minutes - maybe
-        // we hit bigger speed and it become sure.
+        if (!this.isSpeedForSureRiding(quickCheckSpeedKmh)) {
+            // if quick check returned speed below sure riding speed, but no timeout, it means that user is outside but 
+            // he is not moving with motorcycle speed. We need to verify if it is not staying at traffic lights,
+            // so we need to perform long GPS check for 3-4 minutes and wait for sureRidingSpeedKmh speed from GPS.
+            Float longCheckSpeedKmh = this.getLongCheckCurrentSpeedKmh();
 
-        if (this.isSpeedMaybeRiding(speedKmh)) {
-            try {
-                Thread.sleep(this.maybeRidingTimeoutMs);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            if (this.isLocationTimeouted(longCheckSpeedKmh)) {
+                // but if again timeouted, then no mercy...
+                return false;
             }
 
-            float secondCheckSpeedKmh = this.getCurrentSpeedKmh();
-
-            if (this.isSpeedForSureRiding(secondCheckSpeedKmh) == false) {
+            if (!this.isSpeedForSureRiding(longCheckSpeedKmh)) {
+                // if he don't reach sureRidingSpeedKmh in time of long check, then he for sure is not riding.
                 return false;
             }
         }
@@ -128,23 +130,13 @@ public class UserRide {
         return true;
     }
 
-    protected boolean isSpeedForSureNotRiding(float speedKmh) {
-        return speedKmh < this.maybeRidingSpeed;
-    }
-
     protected boolean isSpeedForSureRiding(float speedKmh) {
-        return speedKmh >= this.sureRidingSpeed;
+        return speedKmh >= this.sureRidingSpeedKmh;
     }
 
-    protected boolean isLocationTimeouted(float speedKmh) {
-        return speedKmh == UserRide.TIMEOUTED_SPEED_VALUE;
+    protected boolean isLocationTimeouted(Float speedKmh) {
+        return speedKmh == null;
     }
-
-    // todo k.orzechowsk ridiculous name, fix it, no #Issue needed
-    protected boolean isSpeedMaybeRiding(float speedKmh) {
-        return this.isSpeedForSureNotRiding(speedKmh) == false && this.isSpeedForSureRiding(speedKmh) == false;
-    }
-
 
     protected boolean motionSensorReportsMovement() throws AccelerometerNotAvailableException {
         try {
@@ -164,28 +156,55 @@ public class UserRide {
         return this.sensorsUtility.isProxime();
     }
 
+    /**
+     * This method will make quick check to see if device's GPS will return timeout (home), 0-40 speed (maybe traffic jam
+     * and maybe home - need to make long check) and +40 - for sure riding.
+     *
+     * @return
+     */
+    protected Float getQuickCheckCurrentSpeedKmh() {
+        return this.getCurrentSpeedKmh(this.stayingStillSpeedKmh, this.requiredAccuracyMeters, this.quickCheckTimeoutMs);
+    }
+
+
+    /**
+     * This method will wait until sureRidingSpeed will be grabbed by location services for smth like 4 minutes.
+     * It's only for clarification for cases where it's unsure if you are staying in traffic jam or not riding.
+     *
+     * @return
+     */
+    protected Float getLongCheckCurrentSpeedKmh() {
+        return this.getCurrentSpeedKmh(this.sureRidingSpeedKmh, this.requiredAccuracyMeters, this.longCheckTimeoutMs);
+    }
+
 
     /**
      * @return Speed in km/h or -1 if location request timeouted.
      */
-    protected float getCurrentSpeedKmh() {
+    protected Float getCurrentSpeedKmh(float requiredSpeedKmh, float requiredAccuracyMeters, long timeoutMs) {
         Location location = null;
+        float requiredSpeedMs = this.kmhToMs(requiredSpeedKmh) - 1; // to avoid rounding error problems during comparations.
         try {
-            location = this.locationUtility.getAccurateLocation().get();
+            location = this.locationUtility.getAccurateLocation(requiredSpeedMs, requiredAccuracyMeters, timeoutMs).get();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        // -1 is value of speed for timeouted request.
         if (location == null) {
-            return UserRide.TIMEOUTED_SPEED_VALUE;
+            return null;
         }
+
         float speedMs = location.getSpeed();
+
         return this.msToKmh(speedMs);
     }
 
 
     protected float msToKmh(float speedMs) {
         return (float) (speedMs * 3.6);
+    }
+
+    protected float kmhToMs(float speedKmh) {
+        return (float) (speedKmh / 3.6);
     }
 }

@@ -78,9 +78,6 @@ public class UtilitiesRunner {
                 switch (1) {
                     case 1:
                         // this is working 11.03.2016 on Android 5.1
-                        // beware! I test it only at home at staying still
-                        // newer received more than one event - maybe because of being at home
-                        // not outside
                         UtilitiesRunner.this.locationUtilityTest.testOfGettingAccurateLocation();
                         break;
 
