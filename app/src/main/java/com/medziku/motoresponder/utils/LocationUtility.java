@@ -53,15 +53,14 @@ class GettingAccurateLocationProcess implements LocationListener {
     /**
      * Location must be more precise than 20 meters, if reported speed is not 0.0
      */
-    // TODO K. Orzechowski: it's increased temporary because i get only one event  #issue #80
-    public double goodAccuracyForMoving = 60;
+    public double goodAccuracyForMoving = 40;
     /**
      * Location must be more precise than 60 meters if reported speed is 0.0 , also increased
      * // TODO K. Orzechowski: because of issue #80
      */
-    public double goodAccuracyForStayingStill = 80;
+    public double goodAccuracyForStayingStill = 20;
 
-    public int gettingLocationTimeout = 30 * 1000;
+    public int gettingLocationTimeout = 80 * 1000;
     public int minimumTimeBetweenUpdates = 0;
     public int minimumDistanceBetweenUpdates = 0;
     /**
@@ -115,7 +114,7 @@ class GettingAccurateLocationProcess implements LocationListener {
 
         // this is safety timeout - if no location after desired time, it cancells location listening
         this.setSafetyTimeout();
-        
+
         this.locationManager.requestLocationUpdates(
                 LocationManager.GPS_PROVIDER,
                 this.minimumTimeBetweenUpdates,
@@ -156,7 +155,7 @@ class GettingAccurateLocationProcess implements LocationListener {
      */
     @Override
     public void onStatusChanged(String provider, int status, Bundle bundle) {
-        
+
         switch (status) {
             case LocationProvider.AVAILABLE:
                 break;
