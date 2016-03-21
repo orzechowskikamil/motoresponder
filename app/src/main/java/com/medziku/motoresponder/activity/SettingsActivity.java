@@ -24,6 +24,7 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
 
     private static final Logger log = LoggerFactory.getLogger(SettingsActivity.class);
     private SharedPreferences sharedPreferences;
+    private SettingsUtility settingsUtility;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +33,8 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
         this.addPreferencesFromResource(R.xml.background_prefs);
         this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         this.sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+
+        this.settingsUtility = new SettingsUtility(this);
 
         if (this.arePseudoTestsEnabled()) {
             this.runPseudoTesting();
@@ -53,6 +56,14 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
 
         if (key.equals(SettingsUtility.RESPONDER_SERVICE_ENABLED_KEY)) {
             this.toggleBackgroundServiceAccordingToSettings();
+        }
+
+        if (key.equals(SettingsUtility.RESPONSE_TEXT_KEY)) {
+            // TODO K. Orzechowski: this is fucked up. it's bad pattern to not encapsulate whole settings logic
+            // TODO K. Orzechowski: inside settings utility. For 1.0 it's enough but for 1.01 and more it must be improved
+            // TODO K. Orzechowski: Improve settings utility encapsulation Issue #93
+            String value = sharedPreferences.getString(SettingsUtility.RESPONSE_TEXT_KEY, "");
+            this.settingsUtility.setAutoResponseTextForSMS(value);
         }
     }
 

@@ -75,7 +75,7 @@ public class UtilitiesRunner {
             private void runTest() {
                 // choose the test which you are interested in
                 // after performing, leave short note with date here about result of test
-                switch (1) {
+                switch (81) {
                     case 1:
                         // this is working 11.03.2016 on Android 5.1
                         UtilitiesRunner.this.locationUtilityTest.testOfGettingAccurateLocation();
@@ -132,9 +132,12 @@ public class UtilitiesRunner {
                         UtilitiesRunner.this.contactsUtilityTest.testReadCurrentDevicePhoneNumber();
                         break;
 
-                    case 8:
+                    case 80:
                         // this is working on 14.03.2016 on Android 5.1 motog
                         UtilitiesRunner.this.settingsUtilityTest.testSettingResponseText();
+                        break;
+                    case 81:
+                        UtilitiesRunner.this.settingsUtilityTest.testIfResponseTextInSettingsIsUpdatedWithUI();
                         break;
 
                     case 90:

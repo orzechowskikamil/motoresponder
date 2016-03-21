@@ -61,7 +61,8 @@ public class SettingsUtility {
      * @return
      */
     public String getAutoResponseTextForSMS() {
-        return this.getValue(RESPONSE_TEXT_KEY, this.context.getString(R.string.default_response_text));
+        String value = this.getValue(RESPONSE_TEXT_KEY, this.context.getString(R.string.default_response_text));
+        return value;
     }
 
     public void setAutoResponseTextForSMS(String responseSMSText) {
