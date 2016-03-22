@@ -1,21 +1,22 @@
 <resources>
     <string name="app_name">Moto Responder</string>
-    <string name="settings_activity_label">Moto Responder Settings</string>
+    <string name="settings_activity_label">Ustawienia Moto Respondera</string>
 
-    <string name="responder_on_summary">With this setting on, application will automatically respond unanswered SMS
-        messages and calls, if you are riding in that moment.
+    <string name="responder_on_summary">Gdy to ustawienie jest włączone, w momencie gdy nie odczytasz wiadomości, lub
+        gdy nie odbierzesz telefonu, Moto Responder spróbuje ustalić czy właśnie jedziesz na motocyklu, i jeśli tak -
+        automatycznie odpowie nadawcy że nie możesz w tym momencie rozmawiać.
     </string>
-    <string name="responder_on_title">Automatical responding enabled</string>
+    <string name="responder_on_title">Moto Responder włączony</string>
 
-    <string name="response_text_title">Response text</string>
-    <string name="response_text_summary">This text will be used as automatical response.</string>
+    <string name="response_text_title">Treść automatycznej odpowiedzi</string>
+    <string name="response_text_summary">Ten tekst będzie użyty jako automatyczna odpowiedź.</string>
 
     <!--<string name="response_delay_title">Respond delay</string>-->
     <!--<string name="response_delay_summary">The time in seconds after which the response will be sent</string>-->
 
     <!-- DEFAULT VALUES -->
-    <string name="default_response_text">(Automatical response) Hello, I am riding my motorcycle now. I will call you
-        back when I will run out of fuel.
+    <string name="default_response_text">(Automatyczna odpowiedź) Cześć. W tym momencie jeżdzę motocyklem. Oddzwonię gdy
+        skończy mi się paliwo.
     </string>
 
     <!-- KEYS -->
