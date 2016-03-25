@@ -25,6 +25,7 @@ public class Responder {
     protected ContactsUtility contactsUtility;
     protected MotionUtility motionUtility;
     protected SensorsUtility sensorsUtility;
+    protected ResponsePreparator responsePreparator;
     protected boolean isRespondingNow;
 
     public Responder(Context context) {
@@ -38,6 +39,7 @@ public class Responder {
         this.numberRules = this.createNumberRules();
         this.respondingDecision = this.createRespondingDecision();
         this.respondingTasksQueue = this.createRespondingTasksQueue();
+        this.responsePreparator = this.createResponsePreparator();
     }
 
 
@@ -79,15 +81,15 @@ public class Responder {
     /**
      * Called when user will receive sms
      */
-    public void onSMSReceived(String phoneNumber) {
-        this.handleIncoming(phoneNumber);
+    public void onSMSReceived(String phoneNumber, String message) {
+        this.handleIncoming(new SMSRespondingSubject(phoneNumber, message));
     }
 
     /**
      * Called when user will not pick a ringing call
      */
     public void onUnAnsweredCallReceived(String phoneNumber) {
-        this.handleIncoming(phoneNumber);
+        this.handleIncoming(new CallRespondingSubject(phoneNumber));
     }
 
     /**
@@ -102,8 +104,8 @@ public class Responder {
      * and add it to list of currently pending responses. After successfull autoresponse, it's removed from
      * this list.
      */
-    protected void handleIncoming(String phoneNumber) {
-        this.respondingTasksQueue.createAndExecuteRespondingTask(phoneNumber);
+    protected void handleIncoming(RespondingSubject subject) {
+        this.respondingTasksQueue.createAndExecuteRespondingTask(subject);
     }
 
 
@@ -111,7 +113,7 @@ public class Responder {
         this.smsUtility.listenForSMS(new SMSReceivedCallback() {
             @Override
             public void onSMSReceived(String phoneNumber, String message) {
-                Responder.this.onSMSReceived(phoneNumber);
+                Responder.this.onSMSReceived(phoneNumber, message);
             }
         });
     }
@@ -195,9 +197,18 @@ public class Responder {
         return new NumberRules(this.contactsUtility);
     }
 
+    protected ResponsePreparator createResponsePreparator() {
+        return new ResponsePreparator(this.settingsUtility, this.locationUtility);
+    }
 
     protected RespondingTasksQueue createRespondingTasksQueue() {
-        return new RespondingTasksQueue(this.notificationUtility, this.smsUtility, this.settingsUtility, this.respondingDecision);
+        return new RespondingTasksQueue(
+                this.notificationUtility,
+                this.smsUtility,
+                this.settingsUtility,
+                this.respondingDecision,
+                this.responsePreparator
+        );
     }
 
 

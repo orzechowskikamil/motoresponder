@@ -15,9 +15,18 @@
     <!--<string name="response_delay_summary">The time in seconds after which the response will be sent</string>-->
 
     <!-- DEFAULT VALUES -->
-    <string name="default_response_text">(Automatyczna odpowiedź) Cześć. W tym momencie jeżdzę motocyklem. Oddzwonię gdy
-        skończy mi się paliwo.
+    <string name="default_response_text_sms">(Automatyczna odpowiedź) Cześć. Nie mogę odpisać, gdyż właśnie jadę
+        motocyklem. Oddzwonię gdy skończy mi się paliwo.
     </string>
+
+    <string name="default_response_text_sms_geolocation" formatted="false">(Automatyczna odpowiedź) Cześć.
+        Aktualnie jadę motocyklem i znajduję sie w %location%.
+    </string>
+
+    <string name="default_response_to_call_text">(Automatyczna odpowiedź) Cześć. Nie mogę oddzwonić, gdyż właśnie jadę
+        motocyklem. Oddzwonię gdy skończy mi się paliwo.
+    </string>
+
 
     <!-- KEYS -->
     <string name="responder_on">responder_on</string>

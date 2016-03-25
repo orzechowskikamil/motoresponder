@@ -60,12 +60,11 @@ public class SettingsUtility {
      *
      * @return
      */
-    public String getAutoResponseTextForSMS() {
-        String value = this.getValue(RESPONSE_TEXT_KEY, this.context.getString(R.string.default_response_text));
-        return value;
+    public String getAutoResponseText() {
+        return this.getValue(RESPONSE_TEXT_KEY, this.context.getString(R.string.default_response_to_call_text));
     }
 
-    public void setAutoResponseTextForSMS(String responseSMSText) {
+    public void setAutoResponseText(String responseSMSText) {
         this.setValue(RESPONSE_TEXT_KEY, responseSMSText);
     }
 
@@ -101,6 +100,13 @@ public class SettingsUtility {
         return 30000;
     }
 
+    public String[] getAutoResponsePatterns() {
+        return new String[]{"Gdzie jesteś", "Gdzie jestes"}; // TODO K. Orzechowski: #83 create real setting for this
+    }
+
+    public boolean isRespondingWithGeolocationEnabled() {
+        return true; // TODO K. Orzechowski: create real setting for this #83
+    }
 
     /**
      * Delay in seconds after which the response will be sent.
@@ -111,6 +117,13 @@ public class SettingsUtility {
         return this.sharedPreferences.getInt(RESPONSE_DELAY_KEY, DEFAULT_RESPONSE_DELAY);
     }
 
+    public String getAutoResponseTextWithGeolocation() {
+        return this.context.getString(R.string.default_response_text_sms_geolocation);
+    }
+
+    public String getAutoResponseTextToCall() {
+        return this.context.getString(R.string.default_response_to_call_text);
+    }
 
     //region private
 
@@ -140,6 +153,7 @@ public class SettingsUtility {
         this.editor.putInt(name, value);
         this.editor.commit();
     }
+
 
     // endregion
 }

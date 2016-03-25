@@ -26,7 +26,7 @@ public class RespondingTasksQueueTest {
 
     @Test
     public void testAddingTask() {
-        this.exposedRespondingTasksQueue.createAndExecuteRespondingTask(this.FAKE_PHONE_NUMBER);
+        this.exposedRespondingTasksQueue.createAndExecuteRespondingTask(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
         RespondingTask lastTask = this.exposedRespondingTasksQueue.lastMockedRespondingTask;
 
         assertEquals(1, this.exposedRespondingTasksQueue.getTasksList().size());
@@ -36,17 +36,17 @@ public class RespondingTasksQueueTest {
         assertEquals(0, this.exposedRespondingTasksQueue.getTasksList().size());
 
         verify(lastTask, times(0)).cancelResponding();
-        verify(lastTask, times(1)).execute(anyString());
+        verify(lastTask, times(1)).execute(any(CallRespondingSubject.class));
 
     }
 
     @Test
     public void testOfAddingTwoTasks() {
-        this.exposedRespondingTasksQueue.createAndExecuteRespondingTask(this.FAKE_PHONE_NUMBER);
+        this.exposedRespondingTasksQueue.createAndExecuteRespondingTask(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
         assertEquals(1, this.exposedRespondingTasksQueue.getTasksList().size());
         Predicate<Boolean> firstCallback = this.exposedRespondingTasksQueue.lastResultCallback;
 
-        this.exposedRespondingTasksQueue.createAndExecuteRespondingTask(this.FAKE_PHONE_NUMBER);
+        this.exposedRespondingTasksQueue.createAndExecuteRespondingTask(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
         assertEquals(2, this.exposedRespondingTasksQueue.getTasksList().size());
         Predicate<Boolean> secondCallback = this.exposedRespondingTasksQueue.lastResultCallback;
 
@@ -57,14 +57,14 @@ public class RespondingTasksQueueTest {
 
         assertEquals(0, this.exposedRespondingTasksQueue.getTasksList().size());
         verify(lastTask, times(0)).cancelResponding();
-        verify(lastTask, times(1)).execute(anyString());
+        verify(lastTask, times(1)).execute(any(CallRespondingSubject.class));
     }
 
     @Test
     public void testOfCancellingTasks() {
-        this.exposedRespondingTasksQueue.createAndExecuteRespondingTask(this.FAKE_PHONE_NUMBER);
-        this.exposedRespondingTasksQueue.createAndExecuteRespondingTask(this.FAKE_PHONE_NUMBER);
-        this.exposedRespondingTasksQueue.createAndExecuteRespondingTask(this.FAKE_PHONE_NUMBER);
+        this.exposedRespondingTasksQueue.createAndExecuteRespondingTask(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
+        this.exposedRespondingTasksQueue.createAndExecuteRespondingTask(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
+        this.exposedRespondingTasksQueue.createAndExecuteRespondingTask(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
 
         RespondingTask firstTask = this.exposedRespondingTasksQueue.getTasksList().get(0);
         RespondingTask secondTask = this.exposedRespondingTasksQueue.getTasksList().get(1);
@@ -90,7 +90,7 @@ class ExposedRespondingTasksQueue extends RespondingTasksQueue {
 
 
     public ExposedRespondingTasksQueue() {
-        super(null, null, null, null);
+        super(null, null, null, null, null);
     }
 
     @Override

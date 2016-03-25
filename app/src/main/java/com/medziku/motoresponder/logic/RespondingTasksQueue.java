@@ -14,19 +14,29 @@ public class RespondingTasksQueue {
     private SettingsUtility settingsUtility;
     private NotificationUtility notificationUtility;
     private SMSUtility smsUtility;
+    private ResponsePreparator responsePreparator;
 
-    public RespondingTasksQueue(NotificationUtility notificationUtility, SMSUtility smsUtility, SettingsUtility settingsUtility, RespondingDecision respondingDecision) {
+    public RespondingTasksQueue(NotificationUtility notificationUtility,
+                                SMSUtility smsUtility,
+                                SettingsUtility settingsUtility,
+                                RespondingDecision respondingDecision,
+                                ResponsePreparator responsePreparator) {
         this.pendingRespondingTasks = new ArrayList<>();
         this.notificationUtility = notificationUtility;
         this.smsUtility = smsUtility;
         this.settingsUtility = settingsUtility;
         this.respondingDecision = respondingDecision;
+        this.responsePreparator = responsePreparator;
     }
 
 
     protected RespondingTask createRespondingTask(Predicate<Boolean> resultCallback) {
         return new RespondingTask(
-                respondingDecision, this.settingsUtility, this.notificationUtility, this.smsUtility,
+                this.respondingDecision,
+                this.settingsUtility,
+                this.notificationUtility,
+                this.smsUtility,
+                this.responsePreparator,
                 resultCallback);
     }
 
@@ -42,7 +52,7 @@ public class RespondingTasksQueue {
     }
 
 
-    public void createAndExecuteRespondingTask(String phoneNumber) {
+    public void createAndExecuteRespondingTask(RespondingSubject subject) {
         final RespondingTask[] task = new RespondingTask[1];
 
         task[0] = this.createRespondingTask(new Predicate<Boolean>() {
@@ -54,7 +64,7 @@ public class RespondingTasksQueue {
         });
 
         this.pendingRespondingTasks.add(task[0]);
-        task[0].execute(phoneNumber);
+        task[0].execute(subject);
     }
 
 }

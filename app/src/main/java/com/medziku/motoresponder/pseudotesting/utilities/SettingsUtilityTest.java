@@ -25,9 +25,9 @@ public class SettingsUtilityTest {
         Log.d(TAG, "This test will store setting in SettingsUtility. Beware - it can change your real settings on your device.");
 
         String exampleResponseText = "Example response text";
-        this.settingsUtility.setAutoResponseTextForSMS(exampleResponseText);
+        this.settingsUtility.setAutoResponseText(exampleResponseText);
 
-        String responseTextFromSettings = this.settingsUtility.getAutoResponseTextForSMS();
+        String responseTextFromSettings = this.settingsUtility.getAutoResponseText();
 
         Log.d(TAG, "Response text stored in settings = '" + exampleResponseText + "', text read from settings = '" + responseTextFromSettings + "'");
     }
@@ -45,7 +45,7 @@ public class SettingsUtilityTest {
                         e.printStackTrace();
                     }
 
-                    String responseText = SettingsUtilityTest.this.settingsUtility.getAutoResponseTextForSMS();
+                    String responseText = SettingsUtilityTest.this.settingsUtility.getAutoResponseText();
                     Log.d(TAG, "Currently response text stored in settings is: " + responseText);
                 } while (true);
             }

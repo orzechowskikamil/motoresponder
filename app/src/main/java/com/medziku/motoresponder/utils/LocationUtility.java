@@ -19,6 +19,7 @@ import java.util.concurrent.Future;
 public class LocationUtility {
 
     private LocationManager locationManager;
+    private SettableFuture<Location> locationFuture;
 
 
     public LocationUtility(Context context) {
@@ -34,9 +35,14 @@ public class LocationUtility {
     public Future<Location> getAccurateLocation(float expectedSpeed, float expectedAccuracy, long timeoutMs) {
         // whole content of this method was moved to separate class GettingAccurateLocationProcess,
         // which represent process of getting location, but I didn't want to break api so this method is almost empty.
-        return new GettingAccurateLocationProcess(this.locationManager, expectedSpeed, expectedAccuracy, timeoutMs).getLocation();
+        this.locationFuture = new GettingAccurateLocationProcess(this.locationManager, expectedSpeed, expectedAccuracy, timeoutMs)
+                .getLocation();
+        return this.locationFuture;
     }
 
+    public Future<Location> getLastRequestedLocation() {
+        return this.locationFuture;
+    }
 }
 
 

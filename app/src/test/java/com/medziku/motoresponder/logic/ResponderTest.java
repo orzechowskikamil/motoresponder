@@ -34,7 +34,7 @@ public class ResponderTest {
         this.responder.currentCallCallback.apply(this.FAKE_PHONE_NUMBER);
 
 
-        verify(this.responder.respondingTasksQueueMock, times(1)).createAndExecuteRespondingTask(anyString());
+        verify(this.responder.respondingTasksQueueMock, times(1)).createAndExecuteRespondingTask(any(CallRespondingSubject.class));
     }
 
     @Test
@@ -43,7 +43,7 @@ public class ResponderTest {
         this.responder.currentSMSCallback.onSMSReceived(this.FAKE_PHONE_NUMBER, "mock message");
 
 
-        verify(this.responder.respondingTasksQueueMock, times(1)).createAndExecuteRespondingTask(anyString());
+        verify(this.responder.respondingTasksQueueMock, times(1)).createAndExecuteRespondingTask(any(SMSRespondingSubject.class));
     }
 
 
@@ -54,7 +54,7 @@ public class ResponderTest {
         this.responder.currentSMSCallback.onSMSReceived(this.FAKE_PHONE_NUMBER, "mock message");
 
 
-        verify(this.responder.respondingTasksQueueMock, times(1)).createAndExecuteRespondingTask(anyString());
+        verify(this.responder.respondingTasksQueueMock, times(1)).createAndExecuteRespondingTask(any(RespondingSubject.class));
     }
 
     @Test
@@ -72,7 +72,7 @@ public class ResponderTest {
         this.responder.currentLockStateCallback.apply(false);
 
         verify(this.responder.respondingTasksQueueMock, times(1)).cancelAllHandling();
-        verify(this.responder.respondingTasksQueueMock, times(0)).createAndExecuteRespondingTask(anyString());
+        verify(this.responder.respondingTasksQueueMock, times(0)).createAndExecuteRespondingTask(any(RespondingSubject.class));
     }
 
 
@@ -131,7 +131,7 @@ class ExposedResponder extends Responder {
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                Predicate callback = (Predicate)invocation.getArguments()[0];
+                Predicate callback = (Predicate) invocation.getArguments()[0];
                 ExposedResponder.this.currentLockStateCallback = callback;
                 return null;
 
@@ -145,7 +145,7 @@ class ExposedResponder extends Responder {
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                Predicate callback =  (Predicate)invocation.getArguments()[0];
+                Predicate callback = (Predicate) invocation.getArguments()[0];
                 ExposedResponder.this.currentCallCallback = callback;
                 return null;
             }
@@ -160,7 +160,7 @@ class ExposedResponder extends Responder {
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                SMSReceivedCallback callback = (SMSReceivedCallback)invocation.getArguments()[0];
+                SMSReceivedCallback callback = (SMSReceivedCallback) invocation.getArguments()[0];
                 ExposedResponder.this.currentSMSCallback = callback;
                 return null;
             }

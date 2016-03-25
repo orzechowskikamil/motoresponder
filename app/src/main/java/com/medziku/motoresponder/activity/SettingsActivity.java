@@ -63,7 +63,7 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
             // TODO K. Orzechowski: inside settings utility. For 1.0 it's enough but for 1.01 and more it must be improved
             // TODO K. Orzechowski: Improve settings utility encapsulation Issue #93
             String value = sharedPreferences.getString(SettingsUtility.RESPONSE_TEXT_KEY, "");
-            this.settingsUtility.setAutoResponseTextForSMS(value);
+            this.settingsUtility.setAutoResponseText(value);
         }
     }
 
