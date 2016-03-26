@@ -42,7 +42,7 @@ public class UtilitiesRunner {
     private SensorsUtilityTest sensorsUtilityTest;
     private CallsUtilityTest callsUtilityRunnner;
     private ContactsUtilityTest contactsUtilityTest;
-    private SettingsUtilityTest settingsUtilityTest;
+    private SharedPreferencesUtilityTest sharedPreferencesUtilityTest;
     private SMSUtilityTest smsUtilityTest;
 
 
@@ -54,7 +54,7 @@ public class UtilitiesRunner {
         this.sensorsUtilityTest = new SensorsUtilityTest(context);
         this.callsUtilityRunnner = new CallsUtilityTest(context);
         this.contactsUtilityTest = new ContactsUtilityTest(context);
-        this.settingsUtilityTest = new SettingsUtilityTest(context);
+        this.sharedPreferencesUtilityTest = new SharedPreferencesUtilityTest(context);
         this.smsUtilityTest = new SMSUtilityTest(context);
     }
 
@@ -133,11 +133,12 @@ public class UtilitiesRunner {
                         break;
 
                     case 80:
-                        // this is working on 14.03.2016 on Android 5.1 motog
-                        UtilitiesRunner.this.settingsUtilityTest.testSettingResponseText();
+                        // TODO K. Orzechowski: Rerun test Issue #104
+                        UtilitiesRunner.this.sharedPreferencesUtilityTest.testSettingResponseText();
                         break;
                     case 81:
-                        UtilitiesRunner.this.settingsUtilityTest.testIfResponseTextInSettingsIsUpdatedWithUI();
+                        // TODO K. Orzechowski: Rerun test Issue #104
+                        UtilitiesRunner.this.sharedPreferencesUtilityTest.testReadingFromResources();
                         break;
 
                     case 90:

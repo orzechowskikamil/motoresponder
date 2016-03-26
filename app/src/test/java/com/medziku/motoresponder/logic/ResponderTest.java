@@ -11,7 +11,6 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
 
@@ -98,7 +97,7 @@ class ExposedResponder extends Responder {
             this.lockStateUtility = this.createMockLockStateUtility();
             this.callsUtility = this.createMockCallsUtility();
             this.smsUtility = this.createMockSMSUtility();
-            this.settingsUtility = this.createMockSettingsUtility();
+            this.settings = this.createMockSettingsUtility();
             this.sensorsUtility = this.createSensorsUtility();
 
             this.mockSMSUtility = this.smsUtility;
@@ -112,10 +111,10 @@ class ExposedResponder extends Responder {
         return mock(SensorsUtility.class);
     }
 
-    private SettingsUtility createMockSettingsUtility() {
-        SettingsUtility mock = mock(SettingsUtility.class);
+    private Settings createMockSettingsUtility() {
+        Settings mock = mock(Settings.class);
 
-        when(mock.isServiceEnabled()).thenReturn(true);
+        when(mock.isResponderEnabled()).thenReturn(true);
         return mock;
     }
 

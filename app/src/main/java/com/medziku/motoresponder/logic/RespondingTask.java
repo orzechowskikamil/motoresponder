@@ -1,22 +1,16 @@
 package com.medziku.motoresponder.logic;
 
-import android.location.Location;
 import android.os.AsyncTask;
-import android.util.Log;
 import com.google.common.base.Predicate;
-import com.medziku.motoresponder.utils.LocationUtility;
 import com.medziku.motoresponder.utils.NotificationUtility;
 import com.medziku.motoresponder.utils.SMSUtility;
-import com.medziku.motoresponder.utils.SettingsUtility;
-
-import java.util.concurrent.ExecutionException;
 
 
 public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolean> {
 
     private SMSUtility smsUtility;
     private NotificationUtility notificationUtility;
-    private SettingsUtility settingsUtility;
+    private Settings settings;
     private Predicate<Boolean> resultCallback;
     private RespondingDecision respondingDecision;
     private RespondingSubject respondingSubject;
@@ -24,14 +18,14 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
 
 
     public RespondingTask(RespondingDecision respondingDecision,
-                          SettingsUtility settingsUtility,
+                          Settings settings,
                           NotificationUtility notificationUtility,
                           SMSUtility smsUtility,
                           ResponsePreparator responsePreparator,
                           Predicate<Boolean> resultCallback) {
         this.respondingDecision = respondingDecision;
         this.resultCallback = resultCallback;
-        this.settingsUtility = settingsUtility;
+        this.settings = settings;
         this.notificationUtility = notificationUtility;
         this.smsUtility = smsUtility;
         this.responsePreparator = responsePreparator;
@@ -49,11 +43,9 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
     protected void handleRespondingTask(RespondingSubject subject) {
         this.respondingSubject = subject;
 
-        // TODO K. Orzechowski: here should be break if phone is turned on and screen available Issue #33
-
-        // wait 30 seconds before responding.
+        // wait some time before responding, to allow user manually
         try {
-            Thread.sleep(this.settingsUtility.getDelayBeforeRespondingMs());
+            Thread.sleep(this.settings.getDelayBeforeResponseMs());
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -65,7 +57,7 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
 
 
         // show notification to give user possibiity to cancel autorespond
-        if (this.settingsUtility.isShowingPendingNotificationEnabled()) {
+        if (this.settings.isShowingPendingNotificationEnabled()) {
             this.notifyAboutPendingAutoRespond();
         }
 
@@ -78,7 +70,7 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
             this.respondWithSMS();
         }
 
-        if (this.settingsUtility.isShowingPendingNotificationEnabled()) {
+        if (this.settings.isShowingPendingNotificationEnabled()) {
             this.unnotifyAboutPendingAutoRespond();
         }
     }

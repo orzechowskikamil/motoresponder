@@ -3,7 +3,6 @@ package com.medziku.motoresponder.logic;
 import com.google.common.base.Predicate;
 import com.medziku.motoresponder.utils.NotificationUtility;
 import com.medziku.motoresponder.utils.SMSUtility;
-import com.medziku.motoresponder.utils.SettingsUtility;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,20 +10,20 @@ import java.util.List;
 public class RespondingTasksQueue {
     protected List<RespondingTask> pendingRespondingTasks;
     private RespondingDecision respondingDecision;
-    private SettingsUtility settingsUtility;
+    private Settings settings;
     private NotificationUtility notificationUtility;
     private SMSUtility smsUtility;
     private ResponsePreparator responsePreparator;
 
     public RespondingTasksQueue(NotificationUtility notificationUtility,
                                 SMSUtility smsUtility,
-                                SettingsUtility settingsUtility,
+                                Settings settings,
                                 RespondingDecision respondingDecision,
                                 ResponsePreparator responsePreparator) {
         this.pendingRespondingTasks = new ArrayList<>();
         this.notificationUtility = notificationUtility;
         this.smsUtility = smsUtility;
-        this.settingsUtility = settingsUtility;
+        this.settings = settings;
         this.respondingDecision = respondingDecision;
         this.responsePreparator = responsePreparator;
     }
@@ -33,7 +32,7 @@ public class RespondingTasksQueue {
     protected RespondingTask createRespondingTask(Predicate<Boolean> resultCallback) {
         return new RespondingTask(
                 this.respondingDecision,
-                this.settingsUtility,
+                this.settings,
                 this.notificationUtility,
                 this.smsUtility,
                 this.responsePreparator,

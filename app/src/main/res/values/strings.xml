@@ -2,35 +2,34 @@
     <string name="app_name">Moto Responder</string>
     <string name="settings_activity_label">Ustawienia Moto Respondera</string>
 
-    <string name="responder_on_summary">Gdy to ustawienie jest włączone, w momencie gdy nie odczytasz wiadomości, lub
-        gdy nie odbierzesz telefonu, Moto Responder spróbuje ustalić czy właśnie jedziesz na motocyklu, i jeśli tak -
+    <!-- Responder enabled -->
+    <string name="responder_enabled_control_id">responder_enabled</string>
+    <string name="responder_enabled_title">Moto Responder włączony</string>
+    <string name="responder_enabled_summary">Gdy to ustawienie jest włączone, w momencie gdy nie odczytasz wiadomości,
+        lubgdy nie odbierzesz telefonu, Moto Responder spróbuje ustalić czy właśnie jedziesz na motocyklu, i jeśli tak -
         automatycznie odpowie nadawcy że nie możesz w tym momencie rozmawiać.
     </string>
-    <string name="responder_on_title">Moto Responder włączony</string>
 
-    <string name="response_text_title">Treść automatycznej odpowiedzi</string>
-    <string name="response_text_summary">Ten tekst będzie użyty jako automatyczna odpowiedź.</string>
 
-    <!--<string name="response_delay_title">Respond delay</string>-->
-    <!--<string name="response_delay_summary">The time in seconds after which the response will be sent</string>-->
-
-    <!-- DEFAULT VALUES -->
-    <string name="default_response_text_sms">(Automatyczna odpowiedź) Cześć. Nie mogę odpisać, gdyż właśnie jadę
-        motocyklem. Oddzwonię gdy skończy mi się paliwo.
-    </string>
-
-    <string name="default_response_text_sms_geolocation" formatted="false">(Automatyczna odpowiedź) Cześć.
-        Aktualnie jadę motocyklem i znajduję sie w %location%.
-    </string>
-
-    <string name="default_response_to_call_text">(Automatyczna odpowiedź) Cześć. Nie mogę oddzwonić, gdyż właśnie jadę
-        motocyklem. Oddzwonię gdy skończy mi się paliwo.
+    <!-- Auto response to sms template -->
+    <string name="auto_response_to_sms_template_control_id">auto_response_to_sms_template</string>
+    <string name="auto_response_to_sms_template_title">Treść automatycznej odpowiedzi</string>
+    <string name="auto_response_to_sms_template_summary">Ten tekst będzie użyty jako automatyczna odpowiedź.</string>
+    <string name="auto_response_to_sms_template_default_value">(Automatyczna odpowiedź) Cześć. Nie mogę odpisać, gdyż
+        właśnie jadę motocyklem. Oddzwonię gdy skończy mi się paliwo.
     </string>
 
 
-    <!-- KEYS -->
-    <string name="responder_on">responder_on</string>
-    <string name="response_text">response_text</string>
-    <!--<string name="response_delay">response_delay</string>-->
+    <!-- Auto response to call -->
+    <string name="auto_response_to_call_template_default_value">(Automatyczna odpowiedź) Cześć. Nie mogę oddzwonić, gdyż
+        właśnie jadę motocyklem. Oddzwonię gdy skończy mi się paliwo.
+    </string>
+
+
+    <!-- Auto response to sms with geolocation -->
+    <string name="auto_response_to_sms_with_geolocation_template_default_value" formatted="false">(Automatyczna
+        odpowiedź) Cześć. Aktualnie jadę motocyklem i znajduję sie w %location%.
+    </string>
+
 
 </resources>

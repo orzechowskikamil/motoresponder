@@ -2,26 +2,25 @@ package com.medziku.motoresponder.logic;
 
 
 import com.medziku.motoresponder.utils.LockStateUtility;
-import com.medziku.motoresponder.utils.SettingsUtility;
 
 public class DeviceUnlocked {
 
-    private SettingsUtility settingsUtility;
+    private Settings settings;
     private LockStateUtility lockStateUtility;
-
 
 
     /**
      * For real usage
-     * @param settingsUtility
+     *
+     * @param settings
      * @param lockStateUtility
      */
-    public DeviceUnlocked(SettingsUtility settingsUtility, LockStateUtility lockStateUtility) {
-        this.settingsUtility = settingsUtility;
+    public DeviceUnlocked(Settings settings, LockStateUtility lockStateUtility) {
+        this.settings = settings;
         this.lockStateUtility = lockStateUtility;
     }
 
     public boolean isNotRidingBecausePhoneUnlocked() {
-        return this.settingsUtility.isPhoneUnlockedInterpretedAsNotRiding() && this.lockStateUtility.isPhoneUnlocked();
+        return this.settings.isPhoneUnlockedInterpretedAsNotRiding() && this.lockStateUtility.isPhoneUnlocked();
     }
 }

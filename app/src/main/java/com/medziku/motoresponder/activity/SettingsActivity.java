@@ -2,79 +2,96 @@ package com.medziku.motoresponder.activity;
 
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.EditTextPreference;
+import android.preference.Preference;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceManager;
-
+import android.preference.SwitchPreference;
+import com.google.common.base.Predicate;
+import com.medziku.motoresponder.logic.Settings;
 import com.medziku.motoresponder.pseudotesting.IntegrationRunner;
 import com.medziku.motoresponder.pseudotesting.UtilitiesRunner;
 import com.medziku.motoresponder.R;
 import com.medziku.motoresponder.services.BackgroundService;
-import com.medziku.motoresponder.utils.SettingsUtility;
+import com.medziku.motoresponder.utils.SharedPreferencesUtility;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This activity is UI of this application.
  * Main functionality of application doesn't have UI, so only UI of the app is settings panel of application.
  */
-public class SettingsActivity extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class SettingsActivity extends PreferenceActivity {
 
-    private static final Logger log = LoggerFactory.getLogger(SettingsActivity.class);
-    private SharedPreferences sharedPreferences;
-    private SettingsUtility settingsUtility;
+
+    private SharedPreferencesUtility sharedPreferencesUtility;
+    private Settings settings;
+    EditTextPreference autoResponseMessageControl;
+    private SwitchPreference responderEnabledControl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.handleControls();
 
+
+        this.sharedPreferencesUtility = new SharedPreferencesUtility(this);
+        this.settings = new Settings(this.sharedPreferencesUtility);
+
+        this.runBackgroundProcessOrPseudotests();
+    }
+
+    private void handleControls() {
         this.addPreferencesFromResource(R.xml.background_prefs);
-        this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        this.sharedPreferences.registerOnSharedPreferenceChangeListener(this);
 
-        this.settingsUtility = new SettingsUtility(this);
+        this.autoResponseMessageControl = (EditTextPreference) this.findPreference(this.getString(R.string.auto_response_to_sms_template_control_id));
+        this.responderEnabledControl = (SwitchPreference) this.findPreference(this.getString(R.string.responder_enabled_control_id));
 
+        this.autoResponseMessageControl.setDefaultValue(this.settings.isResponderEnabled());
+        this.autoResponseMessageControl.setDefaultValue(this.settings.getAutoResponseToSmsTemplate());
+
+        this.autoResponseMessageControl.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                SettingsActivity.this.settings.setAutoResponseToSmsTemplate((String) newValue);
+                return false;
+            }
+        });
+
+        this.responderEnabledControl.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                SettingsActivity.this.settings.setResponderEnabled((Boolean) newValue);
+                return false;
+            }
+        });
+    }
+
+    private void runBackgroundProcessOrPseudotests() {
         if (this.arePseudoTestsEnabled()) {
             this.runPseudoTesting();
         } else if (this.areIntegrationPseudoTestsEnabled()) {
             this.runPseudoIntegrationTesting();
         } else {
             this.toggleBackgroundServiceAccordingToSettings();
+            this.toggleBackgroundServiceOnSettingChange();
         }
     }
 
-    private boolean areIntegrationPseudoTestsEnabled() {
-        return IntegrationRunner.ARE_INTEGRATION_TESTS_ENABLED == true;
+    private void toggleBackgroundServiceOnSettingChange() {
+        this.settings.listenToResponderEnabledChange(new Predicate<Boolean>() {
+            @Override
+            public boolean apply(Boolean input) {
+                SettingsActivity.this.toggleBackgroundServiceAccordingToSettings();
+                return false;
+            }
+        });
     }
-
-
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        log.info("SharedPrefsKeyChanged: {}", key);
-
-        if (key.equals(SettingsUtility.RESPONDER_SERVICE_ENABLED_KEY)) {
-            this.toggleBackgroundServiceAccordingToSettings();
-        }
-
-        if (key.equals(SettingsUtility.RESPONSE_TEXT_KEY)) {
-            // TODO K. Orzechowski: this is fucked up. it's bad pattern to not encapsulate whole settings logic
-            // TODO K. Orzechowski: inside settings utility. For 1.0 it's enough but for 1.01 and more it must be improved
-            // TODO K. Orzechowski: Improve settings utility encapsulation Issue #93
-            String value = sharedPreferences.getString(SettingsUtility.RESPONSE_TEXT_KEY, "");
-            this.settingsUtility.setAutoResponseText(value);
-        }
-    }
-
 
     /**
      * Get current value from settings
      */
     private void toggleBackgroundServiceAccordingToSettings() {
-        // TODO K. Orzechowski: Use here settings utility pls. #Issue not needed
-        boolean serviceEnabled = this.sharedPreferences.getBoolean(SettingsUtility.RESPONDER_SERVICE_ENABLED_KEY, false);
-        this.toggleBackgroundService(serviceEnabled);
+        this.toggleBackgroundService(this.settings.isResponderEnabled());
     }
 
 
@@ -111,5 +128,9 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
 
     private boolean arePseudoTestsEnabled() {
         return UtilitiesRunner.ARE_PSEUDOTESTS_ENABLED == true;
+    }
+
+    private boolean areIntegrationPseudoTestsEnabled() {
+        return IntegrationRunner.ARE_INTEGRATION_TESTS_ENABLED == true;
     }
 }

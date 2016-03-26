@@ -1,10 +1,6 @@
 package com.medziku.motoresponder.logic;
 
 import com.google.common.base.Predicate;
-import com.medziku.motoresponder.utils.NotificationUtility;
-import com.medziku.motoresponder.utils.SMSUtility;
-import com.medziku.motoresponder.utils.SettingsUtility;
-import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 

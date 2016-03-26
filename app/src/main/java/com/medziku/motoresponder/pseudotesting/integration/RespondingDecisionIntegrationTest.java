@@ -28,9 +28,10 @@ public class RespondingDecisionIntegrationTest {
         CallsUtility callsUtility = new CallsUtility(this.context);
         SMSUtility smsUtility = new SMSUtility(this.context);
         LockStateUtility lockStateUtility = new LockStateUtility(this.context);
-        SettingsUtility settingsUtility = new SettingsUtility(this.context);
+        SharedPreferencesUtility sharedPreferencesUtility = new SharedPreferencesUtility(this.context);
+        Settings settings = new Settings(sharedPreferencesUtility);
 
-        DeviceUnlocked deviceUnlocked = this.createLoggingDeviceUnlocked(lockStateUtility, settingsUtility);
+        DeviceUnlocked deviceUnlocked = this.createLoggingDeviceUnlocked(lockStateUtility, settings);
         UserRide userRide = this.createLoggingUserRide(locationUtility, sensorsUtility, motionUtility);
         NumberRules numberRules = this.createLoggingUserRules(contactsUtility);
         AlreadyResponded alreadyResponded = this.createLoggingAlreadyResponded(callsUtility, smsUtility);
@@ -102,8 +103,8 @@ public class RespondingDecisionIntegrationTest {
         };
     }
 
-    private DeviceUnlocked createLoggingDeviceUnlocked(final LockStateUtility lockStateUtility, final SettingsUtility settingsUtility) {
-        return new DeviceUnlocked(settingsUtility, lockStateUtility) {
+    private DeviceUnlocked createLoggingDeviceUnlocked(final LockStateUtility lockStateUtility, final Settings settings) {
+        return new DeviceUnlocked(settings, lockStateUtility) {
             public boolean isNotRidingBecausePhoneUnlocked() {
                 boolean result = super.isNotRidingBecausePhoneUnlocked();
                 log("isNotRidingBecausePhoneUnlocked()=" + result);

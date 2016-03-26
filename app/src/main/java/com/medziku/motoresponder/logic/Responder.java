@@ -1,6 +1,7 @@
 package com.medziku.motoresponder.logic;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import com.google.common.base.Predicate;
 import com.medziku.motoresponder.callbacks.SMSReceivedCallback;
 import com.medziku.motoresponder.utils.*;
@@ -18,7 +19,7 @@ public class Responder {
     protected NotificationUtility notificationUtility;
     protected SMSUtility smsUtility;
     protected CallsUtility callsUtility;
-    protected SettingsUtility settingsUtility;
+    protected Settings settings;
     protected RespondingDecision respondingDecision;
     protected DeviceUnlocked deviceUnlocked;
     protected LocationUtility locationUtility;
@@ -26,6 +27,7 @@ public class Responder {
     protected MotionUtility motionUtility;
     protected SensorsUtility sensorsUtility;
     protected ResponsePreparator responsePreparator;
+    protected SharedPreferencesUtility sharedPreferencesUtility;
     protected boolean isRespondingNow;
 
     public Responder(Context context) {
@@ -40,6 +42,12 @@ public class Responder {
         this.respondingDecision = this.createRespondingDecision();
         this.respondingTasksQueue = this.createRespondingTasksQueue();
         this.responsePreparator = this.createResponsePreparator();
+        this.settings = createSharedPreferences();
+    }
+
+    @NonNull
+    private Settings createSharedPreferences() {
+        return new Settings(this.sharedPreferencesUtility);
     }
 
 
@@ -51,7 +59,7 @@ public class Responder {
             return;
         }
 
-        if (this.settingsUtility.isServiceEnabled() == false) {
+        if (this.settings.isResponderEnabled() == false) {
             return;
         }
 
@@ -167,10 +175,10 @@ public class Responder {
     // region factory methods
 
     protected void createUtilities() {
+        this.sharedPreferencesUtility = new SharedPreferencesUtility(this.context);
         this.lockStateUtility = new LockStateUtility(this.context);
         this.smsUtility = new SMSUtility(this.context);
         this.callsUtility = new CallsUtility(this.context);
-        this.settingsUtility = new SettingsUtility(this.context);
         this.notificationUtility = new NotificationUtility(this.context);
         this.locationUtility = new LocationUtility(this.context);
         this.contactsUtility = new ContactsUtility(this.context);
@@ -184,7 +192,7 @@ public class Responder {
 
 
     protected DeviceUnlocked createDeviceUnlocked() {
-        return new DeviceUnlocked(this.settingsUtility, this.lockStateUtility);
+        return new DeviceUnlocked(this.settings, this.lockStateUtility);
     }
 
 
@@ -198,14 +206,14 @@ public class Responder {
     }
 
     protected ResponsePreparator createResponsePreparator() {
-        return new ResponsePreparator(this.settingsUtility, this.locationUtility);
+        return new ResponsePreparator(this.settings, this.locationUtility);
     }
 
     protected RespondingTasksQueue createRespondingTasksQueue() {
         return new RespondingTasksQueue(
                 this.notificationUtility,
                 this.smsUtility,
-                this.settingsUtility,
+                this.settings,
                 this.respondingDecision,
                 this.responsePreparator
         );

@@ -2,24 +2,23 @@ package com.medziku.motoresponder.logic;
 
 import android.location.Location;
 import com.medziku.motoresponder.utils.LocationUtility;
-import com.medziku.motoresponder.utils.SettingsUtility;
 
 import java.util.concurrent.ExecutionException;
 
 public class ResponsePreparator {
 
     public static final String LOCATION_SUBSTITUTION_TAG = "%location%";
-    private SettingsUtility settingsUtility;
+    private Settings settings;
     private LocationUtility locationUtility;
 
-    public ResponsePreparator(SettingsUtility settingsUtility, LocationUtility locationUtility) {
-        this.settingsUtility = settingsUtility;
+    public ResponsePreparator(Settings settings, LocationUtility locationUtility) {
+        this.settings = settings;
         this.locationUtility = locationUtility;
     }
 
 
     public String prepareResponse(RespondingSubject subject) {
-        return this.shouldRespondWithGeolocation(subject) ? this.getAutoResponseMessageWithGeolocation() : this.getAutoResponseMessage();
+        return this.shouldRespondWithGeolocation(subject) ? this.getAutoResponseMessageWithGeolocation() : this.getAutoResponseMessage(subject);
     }
 
     private boolean shouldRespondWithGeolocation(RespondingSubject subject) {
@@ -27,7 +26,7 @@ public class ResponsePreparator {
     }
 
     private String getAutoResponseMessageWithGeolocation() {
-        String messageTemplate = this.settingsUtility.getAutoResponseTextWithGeolocation();
+        String messageTemplate = this.settings.getAutoResponseToSmsWithGeolocationTemplate();
 
         Location location = this.getCurrentLocation();
 
@@ -55,7 +54,7 @@ public class ResponsePreparator {
         if (subject instanceof SMSRespondingSubject) {
             String message = ((SMSRespondingSubject) subject).getMessage().toLowerCase();
 
-            for (String pattern : this.settingsUtility.getAutoResponsePatterns()) {
+            for (String pattern : this.settings.getGeolocationRequestPatterns()) {
                 if (message.indexOf(pattern.toLowerCase()) != -1) {
                     return true;
                 }
@@ -76,12 +75,18 @@ public class ResponsePreparator {
         return null;
     }
 
-    private String getAutoResponseMessage() {
-        return this.settingsUtility.getAutoResponseText();
+    private String getAutoResponseMessage(RespondingSubject subject) {
+        if (subject instanceof SMSRespondingSubject) {
+            return this.settings.getAutoResponseToSmsTemplate();
+        } else if (subject instanceof CallRespondingSubject) {
+            return this.settings.getAutoResponseToCallTemplate();
+        }
+
+        return null; // should never happen
     }
 
     private boolean isRespondingWithGeolocationEnabled() {
-        return this.settingsUtility.isRespondingWithGeolocationEnabled();
+        return this.settings.isRespondingWithGeolocationEnabled();
     }
 
 }
