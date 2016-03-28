@@ -1,35 +1,44 @@
 <resources>
+    <!-- labels -->
     <string name="app_name">Moto Responder</string>
     <string name="settings_activity_label">Ustawienia Moto Respondera</string>
 
-    <!-- Responder enabled -->
-    <string name="responder_enabled_control_id">responder_enabled</string>
+
+    <string name="main_preferences_title">Podstawowe ustawienia</string>
+    <string name="main_preferences_summary">Podstawowe ustawienia aplikacji.</string>
+
     <string name="responder_enabled_title">Moto Responder włączony</string>
     <string name="responder_enabled_summary">Gdy to ustawienie jest włączone, w momencie gdy nie odczytasz wiadomości,
-        lubgdy nie odbierzesz telefonu, Moto Responder spróbuje ustalić czy właśnie jedziesz na motocyklu, i jeśli tak -
-        automatycznie odpowie nadawcy że nie możesz w tym momencie rozmawiać.
+        lub gdy nie odbierzesz telefonu, Moto Responder spróbuje ustalić czy właśnie jedziesz na motocyklu, i jeśli tak
+        - automatycznie odpowie nadawcy że nie możesz w tym momencie rozmawiać.
     </string>
 
 
-    <!-- Auto response to sms template -->
-    <string name="auto_response_to_sms_template_control_id">auto_response_to_sms_template</string>
     <string name="auto_response_to_sms_template_title">Treść automatycznej odpowiedzi</string>
     <string name="auto_response_to_sms_template_summary">Ten tekst będzie użyty jako automatyczna odpowiedź.</string>
-    <string name="auto_response_to_sms_template_default_value">(Automatyczna odpowiedź) Cześć. Nie mogę odpisać, gdyż
-        właśnie jadę motocyklem. Oddzwonię gdy skończy mi się paliwo.
+
+    <!-- keys -->
+    <string name="responder_enabled_key">responder_enabled</string>
+    <string name="auto_response_to_sms_template_key">auto_response_to_sms_template</string>
+
+    <!-- default values -->
+
+    <bool name="responder_enabled_default_value">true</bool>
+    <bool name="responding_with_geolocation_enabled_default_value">true</bool>
+    <bool name="phone_unlocked_interpreted_as_not_riding_default_value">true</bool>
+    <bool name="showing_pending_notification_enabled_default_value">false</bool>
+    <integer name="delay_before_response_ms_default_value">30000</integer>
+    <string name="auto_response_to_call_template_default_value">Cześć. Nie mogę oddzwonić, gdyż
+        właśnie jadę motocyklem.
     </string>
-
-
-    <!-- Auto response to call -->
-    <string name="auto_response_to_call_template_default_value">(Automatyczna odpowiedź) Cześć. Nie mogę oddzwonić, gdyż
-        właśnie jadę motocyklem. Oddzwonię gdy skończy mi się paliwo.
+    <string name="auto_response_to_sms_template_default_value">Cześć. Nie mogę odpisać, gdyż
+        właśnie jadę motocyklem.
     </string>
-
-
-    <!-- Auto response to sms with geolocation -->
-    <string name="auto_response_to_sms_with_geolocation_template_default_value" formatted="false">(Automatyczna
-        odpowiedź) Cześć. Aktualnie jadę motocyklem i znajduję sie w %location%.
+    <string name="auto_response_to_sms_with_geolocation_template_default_value" formatted="false">Cześć. Aktualnie jadę
+        motocyklem i znajduję sie w %location%.
     </string>
+    <string name="geolocation_request_pattern_1_default_value">Gdzie jestes</string>
+    <string name="geolocation_request_pattern_2_default_value">Gdzie jesteś</string>
 
 
 </resources>

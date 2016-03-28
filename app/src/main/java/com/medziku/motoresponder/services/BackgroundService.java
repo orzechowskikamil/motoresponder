@@ -35,13 +35,13 @@ public class BackgroundService extends Service {
         super.onDestroy();
         //TODO powinna byc takze mozliwosc wyrejestrowania w on command started dla konkretnej komendy Issue #59
 //        this.sensorsUtility.unregisterSensors();
-        Log.d("BackgroundService", "destroed");
+        Log.d(TAG, "destroyed");
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d("BackgroundService", "created");
+        Log.d(TAG, "created");
 
         this.responder = new Responder(this);
         this.responder.startResponding();

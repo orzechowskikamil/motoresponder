@@ -18,7 +18,9 @@ public class ResponsePreparator {
 
 
     public String prepareResponse(RespondingSubject subject) {
-        return this.shouldRespondWithGeolocation(subject) ? this.getAutoResponseMessageWithGeolocation() : this.getAutoResponseMessage(subject);
+        boolean addGeolocation = this.shouldRespondWithGeolocation(subject);
+        String result = addGeolocation ? this.getAutoResponseMessageWithGeolocation() : this.getAutoResponseMessage(subject);
+        return result;
     }
 
     private boolean shouldRespondWithGeolocation(RespondingSubject subject) {

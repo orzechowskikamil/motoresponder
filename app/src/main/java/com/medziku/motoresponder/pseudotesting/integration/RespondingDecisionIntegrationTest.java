@@ -134,8 +134,8 @@ public class RespondingDecisionIntegrationTest {
                 return result;
             }
 
-            public Float getCurrentSpeedKmh(float requiredSpeedKmh, float requiredAccuracyMeters, long timeoutMs) {
-                float result = super.getCurrentSpeedKmh(requiredSpeedKmh, requiredAccuracyMeters, timeoutMs);
+            public Float getCurrentSpeedKmh(float minimumSpeedKmh, float maximumAccuracyMeters, long timeoutMs) {
+                Float result = super.getCurrentSpeedKmh(minimumSpeedKmh, maximumAccuracyMeters, timeoutMs);
                 log("getCurrentSpeedKmh()=" + result);
                 return result;
             }

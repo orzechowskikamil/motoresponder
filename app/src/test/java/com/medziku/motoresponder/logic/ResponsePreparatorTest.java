@@ -33,6 +33,7 @@ public class ResponsePreparatorTest {
 
         when(this.settings.getAutoResponseToCallTemplate()).thenReturn(RESPONSE_TEXT);
         when(this.settings.getAutoResponseToSmsWithGeolocationTemplate()).thenReturn(RESPONSE_TEXT_LOCATION);
+        when(this.settings.getAutoResponseToSmsTemplate()).thenReturn(RESPONSE_TEXT);
         when(this.settings.getGeolocationRequestPatterns()).thenReturn(new String[]{"Where are you"});
         when(this.settings.isRespondingWithGeolocationEnabled()).thenReturn(true);
 

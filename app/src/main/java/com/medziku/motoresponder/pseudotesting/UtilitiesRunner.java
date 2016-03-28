@@ -32,7 +32,7 @@ public class UtilitiesRunner {
     /**
      * When this is true, debug utilities (tests of utilities) will be run instead of motoresponder application.
      */
-    public static final boolean ARE_PSEUDOTESTS_ENABLED = false;
+    public static final boolean ARE_PSEUDOTESTS_ENABLED = true;
 
 
     private LockStateUtilityTest lockStateUtilityTest;
@@ -75,7 +75,7 @@ public class UtilitiesRunner {
             private void runTest() {
                 // choose the test which you are interested in
                 // after performing, leave short note with date here about result of test
-                switch (81) {
+                switch (83) {
                     case 1:
                         // this is working 11.03.2016 on Android 5.1
                         UtilitiesRunner.this.locationUtilityTest.testOfGettingAccurateLocation();
@@ -133,12 +133,20 @@ public class UtilitiesRunner {
                         break;
 
                     case 80:
-                        // TODO K. Orzechowski: Rerun test Issue #104
+                        // This is working 29.03.2016 on android 5.1 motog
                         UtilitiesRunner.this.sharedPreferencesUtilityTest.testSettingResponseText();
                         break;
                     case 81:
-                        // TODO K. Orzechowski: Rerun test Issue #104
+                        // This is working 29.03.2016 on android 5.1 motog
                         UtilitiesRunner.this.sharedPreferencesUtilityTest.testReadingFromResources();
+                        break;
+                    case 82:
+                        // this is working 09.04.2016 on android 5.1 motog
+                        UtilitiesRunner.this.sharedPreferencesUtilityTest.testListeningToChanges();
+                        break;
+                    case 83:
+                        // this is working 09.04.2016 on android 5.1 motog
+                        UtilitiesRunner.this.sharedPreferencesUtilityTest.testListeningToChangesInUI();
                         break;
 
                     case 90:
@@ -146,11 +154,11 @@ public class UtilitiesRunner {
                         UtilitiesRunner.this.smsUtilityTest.testGettingDateOfLastSMSSent();
                         break;
                     case 91:
-                        // this is working on 14.03.2016 on Android 5.1 motog
+                        // TODO K. Orzechowski: test it with multipart sms Issue #111
                         UtilitiesRunner.this.smsUtilityTest.testListeningForSMS();
                         break;
                     case 92:
-                        // this is working on 14.03.2016 on Android 5.1 motog
+                        // TODO K. Orzechowski: test it with multipart sms Issue #111
                         UtilitiesRunner.this.smsUtilityTest.testSendingSMS();
                         break;
                     case 93:

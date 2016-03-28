@@ -25,6 +25,8 @@ public class ResponderTest {
     public void setUp() throws Exception {
         this.context = new MockContext();
         this.responder = new ExposedResponder(this.context);
+        when(this.responder.mockSettings.isResponderEnabled()).thenReturn(true);
+
     }
 
     @Test
@@ -85,6 +87,7 @@ class ExposedResponder extends Responder {
     public RespondingTasksQueue respondingTasksQueueMock;
     public CallsUtility mockCallsUtility;
     public SMSUtility mockSMSUtility;
+    public Settings mockSettings;
 
 
     public ExposedResponder(Context context) {
@@ -106,6 +109,7 @@ class ExposedResponder extends Responder {
             e.printStackTrace();
         }
     }
+
 
     private SensorsUtility createSensorsUtility() {
         return mock(SensorsUtility.class);
@@ -165,6 +169,12 @@ class ExposedResponder extends Responder {
             }
         }).when(mock).listenForSMS(any(SMSReceivedCallback.class));
         return mock;
+    }
+
+    @Override
+    protected Settings createSettings() {
+        this.mockSettings = mock(Settings.class);
+        return this.mockSettings;
     }
 }
 

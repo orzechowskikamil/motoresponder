@@ -1,6 +1,7 @@
 package com.medziku.motoresponder.logic;
 
 import android.os.AsyncTask;
+import android.util.Log;
 import com.google.common.base.Predicate;
 import com.medziku.motoresponder.utils.NotificationUtility;
 import com.medziku.motoresponder.utils.SMSUtility;
@@ -83,7 +84,6 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
             e.printStackTrace();
         }
         // TODO K. Orzechowski: move strings into resources #69
-        this.notificationUtility.showToast("Notification sended!");
     }
 
 

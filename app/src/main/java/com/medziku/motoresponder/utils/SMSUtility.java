@@ -14,6 +14,7 @@ import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 
 
+import android.util.Log;
 import com.medziku.motoresponder.BuildConfig;
 import com.medziku.motoresponder.callbacks.SMSReceivedCallback;
 import com.medziku.motoresponder.callbacks.SendSMSCallback;
@@ -57,7 +58,7 @@ public class SMSUtility {
 
                 switch (this.getResultCode()) {
                     case Activity.RESULT_OK:
-                        status = "SMS sent";
+                        status = null;
                         break;
                     case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
                         status = "Generic failure";

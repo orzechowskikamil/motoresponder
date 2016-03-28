@@ -1,17 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" android:key="settings_preference_fragment">
 
-    <SwitchPreference
-            android:summary="@string/responder_enabled_summary"
-            android:title="@string/responder_enabled_title"
-            android:id="@string/responder_enabled_control_id"
-            />
+    <!--<PreferenceCategory-->
+            <!--android:title="@string/main_preferences_title">-->
 
-    <EditTextPreference
-            android:dialogTitle="@string/auto_response_to_sms_template_title"
-            android:id="@string/auto_response_to_sms_template_control_id"
-            android:summary="@string/auto_response_to_sms_template_summary"
-            android:title="@string/auto_response_to_sms_template_title"/>
+        <SwitchPreference
+                android:summary="@string/responder_enabled_summary"
+                android:title="@string/responder_enabled_title"
+                android:key="@string/responder_enabled_key"
+                android:defaultValue="@bool/responder_enabled_default_value"/>
+
+        <EditTextPreference
+                android:dialogTitle="@string/auto_response_to_sms_template_title"
+                android:key="@string/auto_response_to_sms_template_key"
+                android:summary="@string/auto_response_to_sms_template_summary"
+                android:defaultValue="@string/auto_response_to_call_template_default_value"
+                android:title="@string/auto_response_to_sms_template_title"/>
+
+    <!--</PreferenceCategory>-->
 
     <!--<EditTextPreference-->
     <!--android:dialogTitle="@string/response_delay_title"-->

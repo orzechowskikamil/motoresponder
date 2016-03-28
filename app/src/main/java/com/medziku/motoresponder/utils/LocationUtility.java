@@ -32,10 +32,10 @@ public class LocationUtility {
      *
      * @return Future which is fullfilled when location with appropriate accuracy is known, or null if timeout/error.
      */
-    public Future<Location> getAccurateLocation(float expectedSpeed, float expectedAccuracy, long timeoutMs) {
+    public Future<Location> getAccurateLocation(float minimumExpectedSpeed, float expectedAccuracy, long timeoutMs) {
         // whole content of this method was moved to separate class GettingAccurateLocationProcess,
         // which represent process of getting location, but I didn't want to break api so this method is almost empty.
-        this.locationFuture = new GettingAccurateLocationProcess(this.locationManager, expectedSpeed, expectedAccuracy, timeoutMs)
+        this.locationFuture = new GettingAccurateLocationProcess(this.locationManager, minimumExpectedSpeed, expectedAccuracy, timeoutMs)
                 .getLocation();
         return this.locationFuture;
     }

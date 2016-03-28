@@ -13,21 +13,11 @@ public class SettingsTest {
 
     public static final String STORED_VALUE = "AAA";
     private SharedPreferencesUtility sharedPreferencesUtility;
-    private Settings settings;
 
     @Before
     public void setUp() {
         this.sharedPreferencesUtility = mock(SharedPreferencesUtility.class);
-        this.settings = new Settings(this.sharedPreferencesUtility);
-        when(this.sharedPreferencesUtility.getStringValue(anyString())).thenReturn(STORED_VALUE);
+        when(this.sharedPreferencesUtility.getStringValue(anyString(), anyString())).thenReturn(STORED_VALUE);
     }
 
-    @Test
-    public void testTypicalSettingGetSetOperation() {
-        String result = this.settings.getAutoResponseToCallTemplate();
-        assertEquals(result, STORED_VALUE);
-
-        this.settings.setAutoResponseToCallTemplate("New value");
-        verify(this.sharedPreferencesUtility, times(1)).setStringValue(anyString(), anyString());
-    }
 }

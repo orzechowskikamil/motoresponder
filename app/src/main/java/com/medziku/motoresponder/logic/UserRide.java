@@ -33,19 +33,20 @@ public class UserRide {
 
     /**
      * This is speed in kilometers which for sure is speed achieveable only by riding on motorcycle, and
-     * for example, not walking or running.
+     * for example, not walking or running. Speed higher or equal will be considered as riding
      */
-    public float sureRidingSpeedKmh = 40;
+    public float minimumSureRidingSpeedKmh = 40;
 
     /**
-     * This is speed considered as staying still.
+     * Speed lower or equal will be considered as staying still.
+     * Sometimes gps report speed higher than zero when staying still.
      */
-    public float stayingStillSpeedKmh = 0;
+    public float maximumStayingStillSpeedKmh = 3;
 
     /**
      * This accuracy is required for correct location always
      */
-    public float requiredAccuracyMeters = 40;
+    public float requiredAccuracyMeters = 30;
 
     /**
      * This is how long will last quick check of location
@@ -112,7 +113,7 @@ public class UserRide {
         if (!this.isSpeedForSureRiding(quickCheckSpeedKmh)) {
             // if quick check returned speed below sure riding speed, but no timeout, it means that user is outside but 
             // he is not moving with motorcycle speed. We need to verify if it is not staying at traffic lights,
-            // so we need to perform long GPS check for 3-4 minutes and wait for sureRidingSpeedKmh speed from GPS.
+            // so we need to perform long GPS check for 3-4 minutes and wait for minimumSureRidingSpeedKmh speed from GPS.
             Float longCheckSpeedKmh = this.getLongCheckCurrentSpeedKmh();
 
             if (this.isLocationTimeouted(longCheckSpeedKmh)) {
@@ -121,7 +122,7 @@ public class UserRide {
             }
 
             if (!this.isSpeedForSureRiding(longCheckSpeedKmh)) {
-                // if he don't reach sureRidingSpeedKmh in time of long check, then he for sure is not riding.
+                // if he don't reach minimumSureRidingSpeedKmh in time of long check, then he for sure is not riding.
                 return false;
             }
         }
@@ -131,7 +132,7 @@ public class UserRide {
     }
 
     protected boolean isSpeedForSureRiding(float speedKmh) {
-        return speedKmh >= this.sureRidingSpeedKmh;
+        return speedKmh >= this.minimumSureRidingSpeedKmh;
     }
 
     protected boolean isLocationTimeouted(Float speedKmh) {
@@ -163,7 +164,7 @@ public class UserRide {
      * @return
      */
     protected Float getQuickCheckCurrentSpeedKmh() {
-        return this.getCurrentSpeedKmh(this.stayingStillSpeedKmh, this.requiredAccuracyMeters, this.quickCheckTimeoutMs);
+        return this.getCurrentSpeedKmh(this.maximumStayingStillSpeedKmh, this.requiredAccuracyMeters, this.quickCheckTimeoutMs);
     }
 
 
@@ -174,18 +175,18 @@ public class UserRide {
      * @return
      */
     protected Float getLongCheckCurrentSpeedKmh() {
-        return this.getCurrentSpeedKmh(this.sureRidingSpeedKmh, this.requiredAccuracyMeters, this.longCheckTimeoutMs);
+        return this.getCurrentSpeedKmh(this.minimumSureRidingSpeedKmh, this.requiredAccuracyMeters, this.longCheckTimeoutMs);
     }
 
 
     /**
      * @return Speed in km/h or -1 if location request timeouted.
      */
-    protected Float getCurrentSpeedKmh(float requiredSpeedKmh, float requiredAccuracyMeters, long timeoutMs) {
+    protected Float getCurrentSpeedKmh(float minimumSpeedKmh, float maximumAccuracyMeters, long timeoutMs) {
         Location location = null;
-        float requiredSpeedMs = this.kmhToMs(requiredSpeedKmh) - 1; // to avoid rounding error problems during comparations.
+        float minimumSpeedMs = this.kmhToMs(minimumSpeedKmh) - 1; // to avoid rounding error problems during comparations.
         try {
-            location = this.locationUtility.getAccurateLocation(requiredSpeedMs, requiredAccuracyMeters, timeoutMs).get();
+            location = this.locationUtility.getAccurateLocation(minimumSpeedMs, maximumAccuracyMeters, timeoutMs).get();
         } catch (Exception e) {
             e.printStackTrace();
         }

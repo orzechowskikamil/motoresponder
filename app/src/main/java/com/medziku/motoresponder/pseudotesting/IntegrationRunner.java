@@ -47,9 +47,9 @@ public class IntegrationRunner {
     }
 
     private void runTest() {
-        switch (10) {
+        switch (21) {
             case 10:
-                // this is working at 20.03.2016 on Android 5.1 Motog
+                // this is working at 02.04.2016 on Android 5.1 Motog
                 this.responderIntegrationTest.testRespondingProcessWithMockedTrueDecision();
                 break;
             case 11:
@@ -58,7 +58,7 @@ public class IntegrationRunner {
                 break;
 
             case 20:
-                // this is working at 18.03.2016 on Android 5.1 motog
+                // this is working at 02.04.2016 on Android 5.1 motog
                 this.respondingDecisionIntegrationTest.testRespondingDecisionInIsolation();
                 break;
             case 21:

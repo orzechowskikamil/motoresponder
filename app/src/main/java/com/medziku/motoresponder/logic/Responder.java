@@ -35,19 +35,15 @@ public class Responder {
 
         this.createUtilities();
 
+        this.settings = this.createSettings();
+
         this.alreadyResponded = this.createAlreadyResponded();
         this.deviceUnlocked = this.createDeviceUnlocked();
         this.userRide = this.createUserRide();
         this.numberRules = this.createNumberRules();
         this.respondingDecision = this.createRespondingDecision();
-        this.respondingTasksQueue = this.createRespondingTasksQueue();
         this.responsePreparator = this.createResponsePreparator();
-        this.settings = createSharedPreferences();
-    }
-
-    @NonNull
-    private Settings createSharedPreferences() {
-        return new Settings(this.sharedPreferencesUtility);
+        this.respondingTasksQueue = this.createRespondingTasksQueue();
     }
 
 
@@ -208,6 +204,11 @@ public class Responder {
     protected ResponsePreparator createResponsePreparator() {
         return new ResponsePreparator(this.settings, this.locationUtility);
     }
+
+    protected Settings createSettings() {
+        return new Settings(this.sharedPreferencesUtility);
+    }
+
 
     protected RespondingTasksQueue createRespondingTasksQueue() {
         return new RespondingTasksQueue(

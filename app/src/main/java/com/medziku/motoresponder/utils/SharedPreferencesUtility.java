@@ -2,12 +2,10 @@ package com.medziku.motoresponder.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-
 import android.content.res.Resources;
-import android.support.annotation.NonNull;
+import android.preference.PreferenceManager;
 import com.google.common.base.Function;
 import com.medziku.motoresponder.R;
-import com.medziku.motoresponder.pseudotesting.IntegrationRunner;
 
 
 /**
@@ -15,11 +13,10 @@ import com.medziku.motoresponder.pseudotesting.IntegrationRunner;
  */
 public class SharedPreferencesUtility {
 
-    private static final String APP_SHARED_PREFERENCES = "AppSharedPreferences";
     private Context context;
     private SharedPreferences sharedPreferences;
-    private SharedPreferences.Editor editor;
     private Resources resources;
+    private SharedPreferences.OnSharedPreferenceChangeListener sharedListener;
 
     /**
      * This is the real constructor
@@ -27,68 +24,96 @@ public class SharedPreferencesUtility {
      * @param context Activity context
      */
     public SharedPreferencesUtility(Context context) {
-        this.sharedPreferences = context.getSharedPreferences(APP_SHARED_PREFERENCES, Context.MODE_PRIVATE);
-        this.editor = this.sharedPreferences.edit();
         this.context = context;
+        this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.context);
         this.resources = this.context.getResources();
     }
 
 
-    public boolean getBooleanValue(String key) {
-        return this.sharedPreferences.getBoolean(key, this.getBooleanFromRes(this.getDefaultValueName(key)));
+    public boolean getBooleanValue(String key, boolean defValue) {
+        return this.sharedPreferences.getBoolean(key, defValue);
     }
 
 
-    public String getStringValue(String key) {
-        return this.sharedPreferences.getString(key, this.getStringFromRes(this.getDefaultValueName(key)));
+    public String getStringValue(String key, String defValue) {
+        return this.sharedPreferences.getString(key, defValue);
     }
 
 
-    public int getIntValue(String key) {
-        return this.sharedPreferences.getInt(key, this.getIntFromRes(this.getDefaultValueName(key)));
+    public int getIntValue(String key, int defValue) {
+        return this.sharedPreferences.getInt(key, defValue);
     }
 
 
     public void setBooleanValue(String key, boolean value) {
-        this.editor.putBoolean(key, value);
-        this.editor.commit();
+        boolean result = this.sharedPreferences.edit().putBoolean(key, value).commit();
+        if (result == false) {
+            throw new RuntimeException("Failure during saving boolean value with key '" + key + "'");
+        }
     }
 
     public void setStringValue(String key, String value) {
-        this.editor.putString(key, value);
-        this.editor.commit();
+        boolean result = this.sharedPreferences.edit().putString(key, value).commit();
+        if (result == false) {
+            throw new RuntimeException("Failure during saving string value with key '" + key + "'");
+        }
     }
 
 
     public void setIntValue(String key, int value) {
-        this.editor.putInt(key, value);
-        this.editor.commit();
+        boolean result = this.sharedPreferences.edit().putInt(key, value).commit();
+        if (result == false) {
+            throw new RuntimeException("Failure during saving int value with key '" + key + "'");
+        }
     }
 
-    // TODO K. Orzechowski: #104 test this with pseudotest.
     public void listenToSharedPreferenceChanged(final Function<String, Boolean> listener) {
-        this.sharedPreferences.registerOnSharedPreferenceChangeListener(new SharedPreferences.OnSharedPreferenceChangeListener() {
+        if (this.sharedListener != null) {
+            return;
+        }
+        this.sharedListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                 listener.apply(key);
             }
-        });
+        };
+        this.sharedPreferences.registerOnSharedPreferenceChangeListener(this.sharedListener);
     }
 
-    public int getIntFromRes(String name) {
-        return this.resources.getInteger(this.resources.getIdentifier(name, "int", this.context.getPackageName()));
+    public void stopListeningToSharedPreferenceChanged() {
+        if (this.sharedListener == null) {
+            return;
+        }
+        this.sharedPreferences.unregisterOnSharedPreferenceChangeListener(this.sharedListener);
+        this.sharedListener = null;
+    }
+
+    public int getIntegerFromRes(String name) {
+        String resourceName = "@integer/" + name;
+        int id = this.resources.getIdentifier(resourceName, "int", this.context.getPackageName());
+        if (id == 0) {
+            throw new RuntimeException("Integer '" + name + "' not found in resources.");
+        }
+        return this.resources.getInteger(id);
     }
 
     public boolean getBooleanFromRes(String name) {
-        return this.resources.getBoolean(this.resources.getIdentifier(name, "bool", this.context.getPackageName()));
+        String resourceName = "@bool/" + name;
+        int id = this.resources.getIdentifier(resourceName, "bool", this.context.getPackageName());
+        if (id == 0) {
+            throw new RuntimeException("Bool '" + name + "' not found in resources.");
+        }
+        return this.resources.getBoolean(id);
     }
 
     public String getStringFromRes(String name) {
-        return this.resources.getString(this.resources.getIdentifier(name, "string", this.context.getPackageName()));
+        String resourceName = "@string/" + name;
+        int id = this.resources.getIdentifier(resourceName, "string", this.context.getPackageName());
+        if (id == 0) {
+            throw new RuntimeException("String '" + name + "' not found in resources.");
+        }
+        return this.resources.getString(id);
     }
 
-    private String getDefaultValueName(String name) {
-        return name + "_default_value";
-    }
 
 }

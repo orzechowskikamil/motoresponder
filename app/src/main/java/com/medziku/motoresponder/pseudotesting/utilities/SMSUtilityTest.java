@@ -73,11 +73,17 @@ public class SMSUtilityTest {
                 @Override
                 public void onSMSSent(String status) {
                     Log.d(TAG, "SentSMS callback is called");
+                    if (status != null) {
+                        Log.d(TAG, "Status is : " + status);
+                    }
                 }
 
                 @Override
                 public void onSMSDelivered(String status) {
                     Log.d(TAG, "SMSDelivered callback is called");
+                    if (status != null) {
+                        Log.d(TAG, "Status is : " + status);
+                    }
                 }
             });
         } catch (Exception e) {
