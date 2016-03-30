@@ -56,11 +56,13 @@ public class RespondingTaskTest {
     @Test
     public void testOfNotifications() {
         when(this.settings.isShowingPendingNotificationEnabled()).thenReturn(true);
+        this.respondingTask.shouldShowNotification = true;
 
         this.respondingTask.callLogic(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
 
         verify(this.notificationUtility).showOngoingNotification(anyString(), anyString(), anyString());
-        verify(this.notificationUtility).hideOngoingNotification();
+        verify(this.notificationUtility).showBigTextNotification(anyString(), anyString(), anyString());
+        verify(this.notificationUtility).hideNotification();
     }
 
     @Test

@@ -75,7 +75,7 @@ public class UtilitiesRunner {
             private void runTest() {
                 // choose the test which you are interested in
                 // after performing, leave short note with date here about result of test
-                switch (83) {
+                switch (43) {
                     case 1:
                         // this is working 11.03.2016 on Android 5.1
                         UtilitiesRunner.this.locationUtilityTest.testOfGettingAccurateLocation();
@@ -95,13 +95,29 @@ public class UtilitiesRunner {
                         UtilitiesRunner.this.lockStateUtilityTest.testOfIsLocked();
                         break;
 
+
                     case 40:
+                        // this is working 31.03.2016 android 5.1 motog
                         UtilitiesRunner.this.notificationUtilityTest.testOfShowingAndHidingOngoingNotification();
                         break;
-                        
+
                     case 41:
+                        // this is working 31.03.2016 android 5.1 motog
                         UtilitiesRunner.this.notificationUtilityTest.testOfShowingToast();
                         break;
+
+
+                    case 42:
+                        // this is working 31.03.2016 android 5.1 motog
+                        UtilitiesRunner.this.notificationUtilityTest.testOfShowingNotOngoingNotification();
+                        break;
+
+
+                    case 43:
+                        // this is working 31.03.2016 android 5.1 motog
+                        UtilitiesRunner.this.notificationUtilityTest.testOfShowingAndHidingBigTextNotification();
+                        break;
+
 
                     case 5:
                         // this is working 09.03.2016 on Android 5.1

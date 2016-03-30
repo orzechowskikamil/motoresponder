@@ -4,6 +4,7 @@ import android.location.Location;
 import com.medziku.motoresponder.utils.LocationUtility;
 
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 public class ResponsePreparator {
 
@@ -68,7 +69,10 @@ public class ResponsePreparator {
 
     private Location getCurrentLocation() {
         try {
-            return this.locationUtility.getLastRequestedLocation().get();
+            Future<Location> lastRequestedLocation = this.locationUtility.getLastRequestedLocation();
+            if (lastRequestedLocation != null) {
+                return lastRequestedLocation.get();
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {

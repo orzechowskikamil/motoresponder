@@ -17,6 +17,8 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
     private RespondingSubject respondingSubject;
     private ResponsePreparator responsePreparator;
 
+    // TODO K. Orzechowski: Change this to real configurable #67
+    public boolean shouldShowNotification = true;
 
     public RespondingTask(RespondingDecision respondingDecision,
                           Settings settings,
@@ -45,11 +47,11 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
         this.respondingSubject = subject;
 
         // wait some time before responding, to allow user manually
-        try {
-            Thread.sleep(this.settings.getDelayBeforeResponseMs());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Thread.sleep(this.settings.getDelayBeforeResponseMs());
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 
         // K. Orzechowski: I am not sure, but I read that I should check for this.
         if (this.isTerminated()) {
@@ -63,7 +65,8 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
         }
 
 
-        if (this.respondingDecision.shouldRespond(this.respondingSubject.getPhoneNumber())) {
+        boolean shouldRespond = this.respondingDecision.shouldRespond(this.respondingSubject.getPhoneNumber());
+        if (shouldRespond) {
             // this check can took long time so before responding we can check again for cancellation.
             if (this.isTerminated()) {
                 return;
@@ -74,6 +77,21 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
         if (this.settings.isShowingPendingNotificationEnabled()) {
             this.unnotifyAboutPendingAutoRespond();
         }
+
+        if (this.shouldShowNotification) {
+            this.showSummaryNotification(this.respondingSubject.getPhoneNumber(), shouldRespond);
+        }
+    }
+
+    private void showSummaryNotification(String phoneNumber, boolean shouldRespond) {
+        // todo #Issue #69 move strings into resources
+        String summary = (shouldRespond) ? "Answered " + phoneNumber : "Not answered " + phoneNumber;
+
+        String bigText = "You received call/message from '" + phoneNumber + "'" +
+                ((shouldRespond) ? " and because you ride this number received auto response." : " and because you was not riding, no response was sent.");
+
+        String title = "MotoResponder";
+        this.notificationUtility.showBigTextNotification(title, summary, bigText);
     }
 
     private void respondWithSMS() {
@@ -83,7 +101,6 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
         } catch (Exception e) {
             e.printStackTrace();
         }
-        // TODO K. Orzechowski: move strings into resources #69
     }
 
 
@@ -94,7 +111,7 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
 
 
     private void unnotifyAboutPendingAutoRespond() {
-        this.notificationUtility.hideOngoingNotification();
+        this.notificationUtility.hideNotification();
     }
 
 
