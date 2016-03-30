@@ -92,6 +92,7 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
         this.notificationUtility.showOngoingNotification("MotoResponder", "Moto responder is determining if it should automatically respond", "");
     }
 
+
     private void unnotifyAboutPendingAutoRespond() {
         this.notificationUtility.hideOngoingNotification();
     }

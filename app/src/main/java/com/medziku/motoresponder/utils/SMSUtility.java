@@ -14,10 +14,8 @@ import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 
 
-import android.util.Log;
+import com.google.common.base.Predicate;
 import com.medziku.motoresponder.BuildConfig;
-import com.medziku.motoresponder.callbacks.SMSReceivedCallback;
-import com.medziku.motoresponder.callbacks.SendSMSCallback;
 import com.medziku.motoresponder.logic.PhoneNumbersComparator;
 
 import java.util.Date;
@@ -46,7 +44,7 @@ public class SMSUtility {
         this.sms = SmsManager.getDefault();
     }
 
-    public void sendSMS(String phoneNumber, String message, final SendSMSCallback sendSMSCallback) throws Exception {
+    public void sendSMS(String phoneNumber, String message, final Predicate<String> sendSMSCallback) throws Exception {
         if (phoneNumber == null || phoneNumber.length() == 0) {
             throw new Exception("Phone number empty or zero length");
         }
@@ -75,34 +73,12 @@ public class SMSUtility {
                 }
 
                 if (sendSMSCallback != null) {
-                    sendSMSCallback.onSMSSent(status);
+                    sendSMSCallback.apply(status);
                 }
             }
         });
 
-
-        PendingIntent deliveredPI = this.createPendingIntent("SMS_DELIVERED", new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context arg0, Intent arg1) {
-                String status = null;
-                switch (this.getResultCode()) {
-                    case Activity.RESULT_OK:
-                        status = "SMS delivered";
-                        break;
-                    case Activity.RESULT_CANCELED:
-                        status = "SMS not delivered";
-                        break;
-                }
-
-                if (sendSMSCallback != null) {
-                    sendSMSCallback.onSMSDelivered(status);
-                }
-
-            }
-        });
-
-
-        this.sms.sendTextMessage(phoneNumber, null, message, sentPI, deliveredPI);
+        this.sms.sendTextMessage(phoneNumber, null, message, sentPI, null);
     }
 
 
@@ -112,7 +88,7 @@ public class SMSUtility {
      *
      * @param smsReceivedCallback
      */
-    public void listenForSMS(SMSReceivedCallback smsReceivedCallback) {
+    public void listenForSMS(Predicate<SMSObject> smsReceivedCallback) {
         if (this.isCurrentlyListening == true) {
             return;
         }
@@ -226,9 +202,9 @@ public class SMSUtility {
     // TODO K. Orzechowski: please inline it in some spare time because it looks like shit separated from the context. #Issue not needed
     private class IncomingSMSReceiver extends BroadcastReceiver {
 
-        private SMSReceivedCallback smsReceivedCallback;
+        private Predicate<SMSObject> smsReceivedCallback;
 
-        public IncomingSMSReceiver(SMSReceivedCallback smsReceivedCallback) {
+        public IncomingSMSReceiver(Predicate<SMSObject> smsReceivedCallback) {
             this.smsReceivedCallback = smsReceivedCallback;
         }
 
@@ -252,7 +228,7 @@ public class SMSUtility {
                             String message = smsMessages[i].getMessageBody();
 
                             if (this.smsReceivedCallback != null) {
-                                this.smsReceivedCallback.onSMSReceived(phoneNumber, message);
+                                this.smsReceivedCallback.apply(new SMSObject(phoneNumber, message));
                             }
                         }
                     } catch (Exception e) {
@@ -263,4 +239,6 @@ public class SMSUtility {
         }
     }
 
+
 }
+

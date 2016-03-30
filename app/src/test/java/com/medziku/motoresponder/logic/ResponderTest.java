@@ -3,7 +3,7 @@ package com.medziku.motoresponder.logic;
 import android.content.Context;
 import android.test.mock.MockContext;
 import com.google.common.base.Predicate;
-import com.medziku.motoresponder.callbacks.SMSReceivedCallback;
+
 import com.medziku.motoresponder.utils.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,7 +41,7 @@ public class ResponderTest {
     @Test
     public void testReactionOnSMS() {
         this.responder.startResponding();
-        this.responder.currentSMSCallback.onSMSReceived(this.FAKE_PHONE_NUMBER, "mock message");
+        this.responder.currentSMSCallback.apply(new SMSObject(this.FAKE_PHONE_NUMBER, "mock message"));
 
 
         verify(this.responder.respondingTasksQueueMock, times(1)).createAndExecuteRespondingTask(any(SMSRespondingSubject.class));
@@ -52,7 +52,7 @@ public class ResponderTest {
     public void testIfItStartOnlyOnce() {
         this.responder.startResponding();
         this.responder.startResponding();
-        this.responder.currentSMSCallback.onSMSReceived(this.FAKE_PHONE_NUMBER, "mock message");
+        this.responder.currentSMSCallback.apply(new SMSObject(this.FAKE_PHONE_NUMBER, "mock message"));
 
 
         verify(this.responder.respondingTasksQueueMock, times(1)).createAndExecuteRespondingTask(any(RespondingSubject.class));
@@ -83,7 +83,7 @@ public class ResponderTest {
 class ExposedResponder extends Responder {
     public Predicate<Boolean> currentLockStateCallback;
     public Predicate<String> currentCallCallback;
-    public SMSReceivedCallback currentSMSCallback;
+    public  Predicate<SMSObject> currentSMSCallback;
     public RespondingTasksQueue respondingTasksQueueMock;
     public CallsUtility mockCallsUtility;
     public SMSUtility mockSMSUtility;
@@ -158,16 +158,15 @@ class ExposedResponder extends Responder {
 
     private SMSUtility createMockSMSUtility() {
         SMSUtility mock = mock(SMSUtility.class);
-
-
+        
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                SMSReceivedCallback callback = (SMSReceivedCallback) invocation.getArguments()[0];
+                Predicate<SMSObject> callback = (Predicate<SMSObject>)invocation.getArguments()[0];
                 ExposedResponder.this.currentSMSCallback = callback;
                 return null;
             }
-        }).when(mock).listenForSMS(any(SMSReceivedCallback.class));
+        }).when(mock).listenForSMS(any(Predicate.class));
         return mock;
     }
 

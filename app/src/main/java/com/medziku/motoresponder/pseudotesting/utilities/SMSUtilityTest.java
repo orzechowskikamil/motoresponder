@@ -3,8 +3,8 @@ package com.medziku.motoresponder.pseudotesting.utilities;
 
 import android.content.Context;
 import android.util.Log;
-import com.medziku.motoresponder.callbacks.SMSReceivedCallback;
-import com.medziku.motoresponder.callbacks.SendSMSCallback;
+import com.google.common.base.Predicate;
+import com.medziku.motoresponder.utils.SMSObject;
 import com.medziku.motoresponder.utils.SMSUtility;
 
 import java.util.Date;
@@ -51,11 +51,11 @@ public class SMSUtilityTest {
         Log.d(TAG, "This test will print all received by utility SMS messages. Send from someone else's phone SMS to this " +
                 "device and verify if it works.");
 
-        this.smsUtility.listenForSMS(new SMSReceivedCallback() {
+        this.smsUtility.listenForSMS(new Predicate<SMSObject>() {
             @Override
-            public void onSMSReceived(String phoneNumber, String message) {
-                Log.d(TAG, "Phone number " + phoneNumber + " sends you a message: '" + message + "'");
-
+            public boolean apply(SMSObject sms) {
+                Log.d(TAG, "Phone number " + sms.phoneNumber + " sends you a message: '" + sms.message + "'");
+                return true;
             }
         });
     }
@@ -69,22 +69,14 @@ public class SMSUtilityTest {
 
         try {
             Log.d(TAG, "Sending SMS to number " + TEST_PHONE_NUMBER + ", message is '" + message + "'!");
-            this.smsUtility.sendSMS(TEST_PHONE_NUMBER, message, new SendSMSCallback() {
+            this.smsUtility.sendSMS(TEST_PHONE_NUMBER, message, new Predicate<String>() {
                 @Override
-                public void onSMSSent(String status) {
+                public boolean apply(String status) {
                     Log.d(TAG, "SentSMS callback is called");
-                    if (status != null) {
-                        Log.d(TAG, "Status is : " + status);
-                    }
+                    return false;
                 }
 
-                @Override
-                public void onSMSDelivered(String status) {
-                    Log.d(TAG, "SMSDelivered callback is called");
-                    if (status != null) {
-                        Log.d(TAG, "Status is : " + status);
-                    }
-                }
+            
             });
         } catch (Exception e) {
             Log.d(TAG, "Exception happened during testing of sending sms!");

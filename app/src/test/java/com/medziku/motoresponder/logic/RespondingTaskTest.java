@@ -1,7 +1,6 @@
 package com.medziku.motoresponder.logic;
 
 import com.google.common.base.Predicate;
-import com.medziku.motoresponder.callbacks.SendSMSCallback;
 import com.medziku.motoresponder.utils.NotificationUtility;
 import com.medziku.motoresponder.utils.SMSUtility;
 import com.medziku.motoresponder.utils.SharedPreferencesUtility;
@@ -50,7 +49,7 @@ public class RespondingTaskTest {
         when(this.respondingDecision.shouldRespond(anyString())).thenReturn(true);
         this.respondingTask.callLogic(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
 
-        verify(this.smsUtility).sendSMS(anyString(), anyString(), any(SendSMSCallback.class));
+        verify(this.smsUtility).sendSMS(anyString(), anyString(), any(Predicate.class));
 
     }
 
@@ -69,7 +68,7 @@ public class RespondingTaskTest {
         this.respondingTask.terminated = true;
         this.respondingTask.callLogic(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
 
-        verify(this.smsUtility, times(0)).sendSMS(anyString(), anyString(), any(SendSMSCallback.class));
+        verify(this.smsUtility, times(0)).sendSMS(anyString(), anyString(), any(Predicate.class));
     }
 
 }

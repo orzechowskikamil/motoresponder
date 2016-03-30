@@ -32,12 +32,12 @@ public class SettingsActivity extends PreferenceActivity {
     /**
      * Please note that this method will be run everytime user will flip an device, or enter settings fragment -
      * because activity will be killed and created again.
-     *
+     * <p/>
      * So, if some continous operation is needed, it's required to store activity state in Bundle savedInstanceState.
-     *
+     * <p/>
      * Every time when activity get's recreated (when device is flipped or fragment entered) you get here fresh object
      * so you can't persist in this object anything, because every time you will get fresh object.
-     *
+     * <p/>
      * Only savedInstanceState is reliable way to store data.
      *
      * @param savedInstanceState
@@ -79,7 +79,9 @@ public class SettingsActivity extends PreferenceActivity {
     }
 
     protected void onStop() {
-        this.settings.stopListening();
+        if (this.settings != null) {
+            this.settings.stopListening();
+        }
         super.onStop();
     }
 

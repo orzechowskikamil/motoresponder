@@ -32,7 +32,7 @@ public class UtilitiesRunner {
     /**
      * When this is true, debug utilities (tests of utilities) will be run instead of motoresponder application.
      */
-    public static final boolean ARE_PSEUDOTESTS_ENABLED = true;
+    public static final boolean ARE_PSEUDOTESTS_ENABLED = false;
 
 
     private LockStateUtilityTest lockStateUtilityTest;
@@ -96,11 +96,10 @@ public class UtilitiesRunner {
                         break;
 
                     case 40:
-                        // this is working 09.03.2016 on Android 5.1
                         UtilitiesRunner.this.notificationUtilityTest.testOfShowingAndHidingOngoingNotification();
                         break;
+                        
                     case 41:
-                        // this is working 09.03.2016 on Android 5.1
                         UtilitiesRunner.this.notificationUtilityTest.testOfShowingToast();
                         break;
 

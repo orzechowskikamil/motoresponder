@@ -114,10 +114,11 @@ public class Responder {
 
 
     protected void listenForSMS() {
-        this.smsUtility.listenForSMS(new SMSReceivedCallback() {
+        this.smsUtility.listenForSMS(new Predicate<SMSObject>() {
             @Override
-            public void onSMSReceived(String phoneNumber, String message) {
-                Responder.this.onSMSReceived(phoneNumber, message);
+            public boolean apply(SMSObject input) {
+                Responder.this.onSMSReceived(input.phoneNumber, input.message);
+                return false;
             }
         });
     }
