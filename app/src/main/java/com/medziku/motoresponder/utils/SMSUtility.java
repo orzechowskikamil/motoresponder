@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.provider.Telephony;
 import android.provider.Telephony.Sms;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
@@ -18,12 +17,13 @@ import com.google.common.base.Predicate;
 import com.medziku.motoresponder.BuildConfig;
 import com.medziku.motoresponder.logic.PhoneNumbersComparator;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 public class SMSUtility {
 
     private Context context;
-    private SmsManager sms;
+    private SmsManager smsManager;
     private boolean isCurrentlyListening;
     private IncomingSMSReceiver incomingSMSReceiver;
 
@@ -41,7 +41,7 @@ public class SMSUtility {
      */
     public SMSUtility(Context context) {
         this.context = context;
-        this.sms = SmsManager.getDefault();
+        this.smsManager = SmsManager.getDefault();
     }
 
     public void sendSMS(String phoneNumber, String message, final Predicate<String> sendSMSCallback) throws Exception {
@@ -78,7 +78,12 @@ public class SMSUtility {
             }
         });
 
-        this.sms.sendTextMessage(phoneNumber, null, message, sentPI, null);
+        ArrayList<String> messageParts = this.smsManager.divideMessage(message);
+
+        ArrayList<PendingIntent> sentPIList = new ArrayList<>();
+        sentPIList.add(sentPI);
+
+        this.smsManager.sendMultipartTextMessage(phoneNumber, null, messageParts, sentPIList, null);
     }
 
 
@@ -157,7 +162,7 @@ public class SMSUtility {
 
     /**
      * This method check if outgoing SMS was sent after date.
-     * Because it performs normalization on phone number, note that it will query ALL sms messages since
+     * Because it performs normalization on phone number, note that it will query ALL smsManager messages since
      * given date, and then iterate through them in order to find fitting phoneNumber, so do not use this method for
      * date very far away from current
      */

@@ -65,14 +65,16 @@ public class SMSUtilityTest {
         Log.d(TAG, "This test will sent SMS to some number. Verify if recipient received it.");
 
 
-        String message = "Test message";
+        String message = "Test message which must be very long to correctly verify if phone is correctly sending" +
+                "multipart messages. For make sure that it exceed 160 limit: some more chars. I love motorcycles. " +
+                "Motorcycles are the best. Every day I am thinking about riding. Open throttle and escape away!";
 
         try {
             Log.d(TAG, "Sending SMS to number " + TEST_PHONE_NUMBER + ", message is '" + message + "'!");
             this.smsUtility.sendSMS(TEST_PHONE_NUMBER, message, new Predicate<String>() {
                 @Override
                 public boolean apply(String status) {
-                    Log.d(TAG, "SentSMS callback is called");
+                    Log.d(TAG, "SentSMS callback is called with status: " + status);
                     return false;
                 }
 

@@ -47,11 +47,11 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
         this.respondingSubject = subject;
 
         // wait some time before responding, to allow user manually
-//        try {
-//            Thread.sleep(this.settings.getDelayBeforeResponseMs());
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
+        try {
+            Thread.sleep(this.settings.getDelayBeforeResponseMs());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         // K. Orzechowski: I am not sure, but I read that I should check for this.
         if (this.isTerminated()) {
