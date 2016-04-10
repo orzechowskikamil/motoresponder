@@ -78,17 +78,16 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
             this.unnotifyAboutPendingAutoRespond();
         }
 
-        if (this.shouldShowNotification) {
-            this.showSummaryNotification(this.respondingSubject.getPhoneNumber(), shouldRespond);
+        if (this.shouldShowNotification && shouldRespond) {
+            this.showSummaryNotification(this.respondingSubject.getPhoneNumber());
         }
     }
 
-    private void showSummaryNotification(String phoneNumber, boolean shouldRespond) {
+    private void showSummaryNotification(String phoneNumber) {
         // todo #Issue #69 move strings into resources
-        String summary = (shouldRespond) ? "Answered " + phoneNumber : "Not answered " + phoneNumber;
+        String summary = "Answered " + phoneNumber;
 
-        String bigText = "You received call/message from '" + phoneNumber + "'" +
-                ((shouldRespond) ? " and because you ride this number received auto response." : " and because you was not riding, no response was sent.");
+        String bigText = "You received call/message from '" + phoneNumber + "' and because you ride this number received auto response.";
 
         String title = "MotoResponder";
         this.notificationUtility.showBigTextNotification(title, summary, bigText);

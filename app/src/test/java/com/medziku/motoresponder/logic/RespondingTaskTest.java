@@ -7,6 +7,7 @@ import com.medziku.motoresponder.utils.SharedPreferencesUtility;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.mockito.internal.verification.Calls;
 
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
@@ -56,13 +57,24 @@ public class RespondingTaskTest {
     @Test
     public void testOfNotifications() {
         when(this.settings.isShowingPendingNotificationEnabled()).thenReturn(true);
+        when(this.respondingDecision.shouldRespond(anyString())).thenReturn(false);
+        this.respondingTask.shouldShowNotification = false;
+
+        this.respondingTask.callLogic(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
+        verify(this.notificationUtility, times(0)).showBigTextNotification(anyString(), anyString(), anyString());
+
         this.respondingTask.shouldShowNotification = true;
 
         this.respondingTask.callLogic(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
+        verify(this.notificationUtility, times(0)).showBigTextNotification(anyString(), anyString(), anyString());
 
-        verify(this.notificationUtility).showOngoingNotification(anyString(), anyString(), anyString());
-        verify(this.notificationUtility).showBigTextNotification(anyString(), anyString(), anyString());
-        verify(this.notificationUtility).hideNotification();
+        when(this.respondingDecision.shouldRespond(anyString())).thenReturn(true);
+
+        this.respondingTask.callLogic(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
+
+        verify(this.notificationUtility, times(3)).showOngoingNotification(anyString(), anyString(), anyString());
+        verify(this.notificationUtility, times(1)).showBigTextNotification(anyString(), anyString(), anyString());
+        verify(this.notificationUtility, times(3)).hideNotification();
     }
 
     @Test
