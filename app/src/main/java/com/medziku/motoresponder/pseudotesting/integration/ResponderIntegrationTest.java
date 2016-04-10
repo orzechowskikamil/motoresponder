@@ -1,9 +1,15 @@
 package com.medziku.motoresponder.pseudotesting.integration;
 
 import android.content.Context;
+import android.location.Location;
+import android.location.LocationManager;
 import android.util.Log;
+import com.google.common.util.concurrent.SettableFuture;
 import com.medziku.motoresponder.logic.Responder;
 import com.medziku.motoresponder.logic.RespondingDecision;
+import com.medziku.motoresponder.utils.LocationUtility;
+
+import java.util.concurrent.Future;
 
 /**
  * This class allow test Responder and it"s components integration, under controlled conditions - RespondingDecision is mocked,
@@ -53,6 +59,12 @@ class ExposedResponder extends Responder {
         this.mockedRespondingDecision = new MockedRespondingDecision();
         return this.mockedRespondingDecision;
     }
+
+    @Override
+    protected void createUtilities() {
+        super.createUtilities();
+        this.locationUtility = new ExposedLocationUtility(this.context);
+    }
 }
 
 class MockedRespondingDecision extends RespondingDecision {
@@ -64,5 +76,24 @@ class MockedRespondingDecision extends RespondingDecision {
 
     public boolean shouldRespond(String phoneNumber) {
         return this.result;
+    }
+}
+
+class ExposedLocationUtility extends LocationUtility {
+
+    public ExposedLocationUtility(Context context) {
+        super(context);
+    }
+
+    @Override
+    public Future<Location> getLastRequestedLocation() {
+        SettableFuture<Location> future = SettableFuture.create();
+        Location value = new Location(LocationManager.GPS_PROVIDER);
+
+        value.setLatitude(52.2472724);
+        value.setLongitude(21.0112426);
+
+        future.set(value);
+        return future;
     }
 }

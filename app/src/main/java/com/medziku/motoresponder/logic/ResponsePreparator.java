@@ -34,7 +34,7 @@ public class ResponsePreparator {
         Location location = this.getCurrentLocation();
 
 
-        String locationLink = "http://maps.google.com/?q=%latitude%,%longitude%";
+        String locationLink = "\"http://maps.google.com/maps?q=%latitude%,%longitude%\"";
 
         if (location != null) {
             locationLink = locationLink

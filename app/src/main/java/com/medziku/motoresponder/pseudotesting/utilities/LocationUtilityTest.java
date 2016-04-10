@@ -31,9 +31,18 @@ public class LocationUtilityTest {
 
         Location location = null;
 
+        Future<Location> future = this.locationUtility.getLastRequestedLocation();
+        Location lastKnownLocation = null;
+
+        if (future != null) {
+            Log.d(TAG, "ERROR! LastRequestedLocation future should be null on this stage!");
+        }
+
         try {
             Future<Location> accurateLocation = this.locationUtility.getAccurateLocation(-1, 20, 60 * 1000);
             location = accurateLocation.get();
+
+            lastKnownLocation = this.locationUtility.getLastRequestedLocation().get();
         } catch (Exception e) {
             Log.e(TAG, "Error happened during getting location");
         }
@@ -44,5 +53,13 @@ public class LocationUtilityTest {
         }
 
         Log.d(TAG, "Done! Location data: speed=" + location.getSpeed() + " and accuracy=" + location.getAccuracy() + ".");
+
+        if (lastKnownLocation != null) {
+            Log.d(TAG, "LastKnownLocation should be identical to locationdata, check, speed = "
+                    + lastKnownLocation.getSpeed() + " accuracy = " + lastKnownLocation.getAccuracy());
+        } else {
+            Log.d(TAG, "LastKnownLocation must be not null! ERROR!");
+        }
+
     }
 }
