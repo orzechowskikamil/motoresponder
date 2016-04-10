@@ -12,6 +12,7 @@ public class ResponsePreparator {
     private Settings settings;
     private LocationUtility locationUtility;
 
+
     public ResponsePreparator(Settings settings, LocationUtility locationUtility) {
         this.settings = settings;
         this.locationUtility = locationUtility;
@@ -25,7 +26,20 @@ public class ResponsePreparator {
     }
 
     private boolean shouldRespondWithGeolocation(RespondingSubject subject) {
-        return this.isRespondingWithGeolocationEnabled() && this.isCurrentRespondingSubjectGeolocationRequest(subject);
+        if (this.isRespondingWithGeolocationEnabled() == false) {
+            return false;
+        }
+
+        if (this.isRespondingWithGeolocationAlwaysEnabled()) {
+            return true;
+        }
+
+        if (this.isCurrentRespondingSubjectGeolocationRequest(subject)) {
+            return true;
+        }
+
+        return false;
+
     }
 
     private String getAutoResponseMessageWithGeolocation() {
@@ -93,6 +107,10 @@ public class ResponsePreparator {
 
     private boolean isRespondingWithGeolocationEnabled() {
         return this.settings.isRespondingWithGeolocationEnabled();
+    }
+
+    private boolean isRespondingWithGeolocationAlwaysEnabled() {
+        return this.settings.isRespondingWithGeolocationAlwaysEnabled();
     }
 
 }

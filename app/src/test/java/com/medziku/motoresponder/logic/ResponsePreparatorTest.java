@@ -16,7 +16,7 @@ public class ResponsePreparatorTest {
     public static final String RESPONSE_TEXT = "AAA";
     public static final String RESPONSE_TEXT_LOCATION_KEYWORD = "LOCATIONRESPONSE";
     public static final String RESPONSE_TEXT_LOCATION = RESPONSE_TEXT_LOCATION_KEYWORD + " %location%";
-    public static final String MAPS_URL = "maps.google.com/?q=";
+    public static final String MAPS_URL = "maps.google.com/maps?q=";
     public static final double LATITUDE = 50.03030303;
     public static final double LONGITUDE = 30.303030;
     public static final String GEOLOCATION_REQUEST_INCOMING_MESSAGE = "Hey bert, where are you?";
@@ -36,6 +36,7 @@ public class ResponsePreparatorTest {
         when(this.settings.getAutoResponseToSmsTemplate()).thenReturn(RESPONSE_TEXT);
         when(this.settings.getGeolocationRequestPatterns()).thenReturn(new String[]{"Where are you"});
         when(this.settings.isRespondingWithGeolocationEnabled()).thenReturn(true);
+        when(this.settings.isRespondingWithGeolocationAlwaysEnabled()).thenReturn(false);
 
         SettableFuture<Location> future = SettableFuture.create();
         Location location = mock(Location.class);
@@ -68,6 +69,22 @@ public class ResponsePreparatorTest {
     public void testPrepareResponseForCall() {
         String result = this.responsePreparator.prepareResponse(new CallRespondingSubject(FAKE_PHONE_NUMBER));
         assertTrue(result.equals(RESPONSE_TEXT));
+    }
+
+    @Test
+    public void testAlwaysGeolocation() {
+        when(this.settings.isRespondingWithGeolocationAlwaysEnabled()).thenReturn(true);
+        when(this.settings.isRespondingWithGeolocationEnabled()).thenReturn(false);
+
+        String result = this.responsePreparator.prepareResponse(new SMSRespondingSubject(FAKE_PHONE_NUMBER, GEOLOCATION_REQUEST_INCOMING_MESSAGE));
+
+        assertTrue(result.indexOf(MAPS_URL) == -1);
+
+        when(this.settings.isRespondingWithGeolocationEnabled()).thenReturn(true);
+        String enabledResult = this.responsePreparator.prepareResponse(new SMSRespondingSubject(FAKE_PHONE_NUMBER, GEOLOCATION_REQUEST_INCOMING_MESSAGE));
+
+        assertTrue(enabledResult.indexOf(MAPS_URL) != -1);
+
     }
 
     @Test

@@ -61,6 +61,11 @@ public class Settings extends SettingsBase {
         return responsePatterns;
     }
 
+
+    /**
+     * If true, responding with geolocation will be possible.
+     * @return
+     */
     public boolean isRespondingWithGeolocationEnabled() {
         return this.getBooleanValue("responding_with_geolocation_enabled");
     }
@@ -76,6 +81,14 @@ public class Settings extends SettingsBase {
     }
 
 
+    /**
+     * if true, app will always respond with geolocation no matter if someone ask for it.
+     * Otherwise only if certain pattern found in message.
+     */
+    public boolean isRespondingWithGeolocationAlwaysEnabled() {
+        // TODO K. Orzechowski: change constant settings to real configurable values #67
+        return true;
+    }
 }
 
 class SettingsBase {
