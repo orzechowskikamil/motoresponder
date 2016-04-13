@@ -33,6 +33,7 @@ public class RespondingTaskTest {
         this.smsUtility = Mockito.mock(SMSUtility.class);
         this.responsePreparator = Mockito.mock(ResponsePreparator.class);
         this.returnCallback = Mockito.mock(Predicate.class);
+        DecisionLog log = Mockito.mock(DecisionLog.class);
 
 
         this.respondingTask = new ExposedRespondingTask(
@@ -41,6 +42,7 @@ public class RespondingTaskTest {
                 this.notificationUtility,
                 this.smsUtility,
                 this.responsePreparator,
+                log,
                 this.returnCallback);
     }
 
@@ -59,9 +61,11 @@ public class RespondingTaskTest {
         when(this.settings.isShowingPendingNotificationEnabled()).thenReturn(true);
         when(this.respondingDecision.shouldRespond(anyString())).thenReturn(false);
         this.respondingTask.shouldShowNotification = false;
+        this.respondingTask.shouldShowDebugNotification = false;
 
         this.respondingTask.callLogic(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
         verify(this.notificationUtility, times(0)).showBigTextNotification(anyString(), anyString(), anyString());
+
 
         this.respondingTask.shouldShowNotification = true;
 
@@ -96,8 +100,9 @@ class ExposedRespondingTask extends RespondingTask {
                                  NotificationUtility notificationUtility,
                                  SMSUtility smsUtility,
                                  ResponsePreparator responsePreparator,
+                                 DecisionLog log,
                                  Predicate<Boolean> resultCallback) {
-        super(respondingDecision, sharedPreferencesUtility, notificationUtility, smsUtility, responsePreparator, resultCallback);
+        super(respondingDecision, sharedPreferencesUtility, notificationUtility, smsUtility, responsePreparator, log, resultCallback);
     }
 
 

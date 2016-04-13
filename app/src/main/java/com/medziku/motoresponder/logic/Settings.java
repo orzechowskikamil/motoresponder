@@ -87,7 +87,7 @@ public class Settings extends SettingsBase {
      */
     public boolean isRespondingWithGeolocationAlwaysEnabled() {
         // TODO K. Orzechowski: change constant settings to real configurable values #67
-        return true;
+        return false;
     }
 }
 

@@ -27,7 +27,8 @@ public class RespondingDecisionTest {
         this.userRide = Mockito.mock(UserRide.class);
         this.numberRules = Mockito.mock(NumberRules.class);
         this.deviceUnlocked = Mockito.mock(DeviceUnlocked.class);
-        this.respondingDecision = new RespondingDecision(this.userRide, this.numberRules, this.alreadyResponded, this.deviceUnlocked);
+        DecisionLog log = Mockito.mock(DecisionLog.class);
+        this.respondingDecision = new RespondingDecision(this.userRide, this.numberRules, this.alreadyResponded, this.deviceUnlocked, log);
 
 
         this.setDeviceUnlockedIsNotRidingReturnValue(false);

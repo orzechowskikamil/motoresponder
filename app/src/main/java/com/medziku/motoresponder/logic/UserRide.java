@@ -6,6 +6,7 @@ import com.medziku.motoresponder.utils.LocationUtility;
 import com.medziku.motoresponder.utils.MotionUtility;
 import com.medziku.motoresponder.utils.SensorsUtility;
 
+import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
 
@@ -14,6 +15,7 @@ import java.util.concurrent.ExecutionException;
  */
 public class UserRide {
 
+    private DecisionLog log;
     private LocationUtility locationUtility;
     private SensorsUtility sensorsUtility;
     private MotionUtility motionUtility;
@@ -67,10 +69,11 @@ public class UserRide {
      * @param sensorsUtility
      * @param motionUtility
      */
-    public UserRide(LocationUtility locationUtility, SensorsUtility sensorsUtility, MotionUtility motionUtility) {
+    public UserRide(LocationUtility locationUtility, SensorsUtility sensorsUtility, MotionUtility motionUtility, DecisionLog log) {
         this.locationUtility = locationUtility;
         this.sensorsUtility = sensorsUtility;
         this.motionUtility = motionUtility;
+        this.log = log;
     }
 
 
@@ -79,8 +82,8 @@ public class UserRide {
         // disable this option).
         // in pocket is proxime (to leg or chest)... If there is no proximity, he is not riding.
         if (this.includeProximityCheck && !this.isProxime()) {
+            this.log.add("Device is not proxime.");
             return false;
-
         }
 
         // TODO k.orzechowsk: If you know way of making promise, why not make promisable light check and
@@ -89,6 +92,7 @@ public class UserRide {
         // if phone doesn't report any movement we can also assume that user is not riding motorcycle
         try {
             if (this.includeDeviceMotionCheck && !this.motionSensorReportsMovement()) {
+                this.log.add("Device's accelerometer doesn't report movement.");
                 return false;
             }
         } catch (AccelerometerNotAvailableException e) {
@@ -103,6 +107,8 @@ public class UserRide {
         // TODO k.orzechowsk add option to disable GPS, maybe someone don't want to use it, only gyro? Issue #10
 
 
+        this.log.add("Starting quick check of GPS speed.");
+
         Float quickCheckSpeedKmh = this.getQuickCheckCurrentSpeedKmh();
 
         if (this.isLocationTimeouted(quickCheckSpeedKmh)) {
@@ -110,19 +116,26 @@ public class UserRide {
             return false;
         }
 
+
         if (!this.isSpeedForSureRiding(quickCheckSpeedKmh)) {
+            this.log.add("After first check app isn't sure that user is riding.");
+
             // if quick check returned speed below sure riding speed, but no timeout, it means that user is outside but 
             // he is not moving with motorcycle speed. We need to verify if it is not staying at traffic lights,
             // so we need to perform long GPS check for 3-4 minutes and wait for minimumSureRidingSpeedKmh speed from GPS.
+
             Float longCheckSpeedKmh = this.getLongCheckCurrentSpeedKmh();
+
 
             if (this.isLocationTimeouted(longCheckSpeedKmh)) {
                 // but if again timeouted, then no mercy...
+                this.log.add("Second check of location timeouted - user is in building, or not moving fast enough to assume ride.");
                 return false;
             }
 
             if (!this.isSpeedForSureRiding(longCheckSpeedKmh)) {
                 // if he don't reach minimumSureRidingSpeedKmh in time of long check, then he for sure is not riding.
+                this.log.add("After second check app isn't sure that user is riding - assuming that he is not riding.");
                 return false;
             }
         }
@@ -164,7 +177,8 @@ public class UserRide {
      * @return
      */
     protected Float getQuickCheckCurrentSpeedKmh() {
-        return this.getCurrentSpeedKmh(this.maximumStayingStillSpeedKmh, this.requiredAccuracyMeters, this.quickCheckTimeoutMs);
+        Float currentSpeedKmh = this.getCurrentSpeedKmh(this.maximumStayingStillSpeedKmh, this.requiredAccuracyMeters, this.quickCheckTimeoutMs);
+        return currentSpeedKmh;
     }
 
 
@@ -183,6 +197,8 @@ public class UserRide {
      * @return Speed in km/h or -1 if location request timeouted.
      */
     protected Float getCurrentSpeedKmh(float minimumSpeedKmh, float maximumAccuracyMeters, long timeoutMs) {
+        long startDateTimestamp = new Date().getTime();
+
         Location location = null;
         float minimumSpeedMs = this.kmhToMs(minimumSpeedKmh) - 1; // to avoid rounding error problems during comparations.
         try {
@@ -191,13 +207,21 @@ public class UserRide {
             e.printStackTrace();
         }
 
+        long endDateTimestamp = new Date().getTime();
+
+        int checkDurationSeconds = Math.round((endDateTimestamp - startDateTimestamp) / 1000);
+
         if (location == null) {
+            this.log.add("GPS check took " + checkDurationSeconds + " and it was timeouted.");
             return null;
         }
 
         float speedMs = location.getSpeed();
+        float speedKmh = this.msToKmh(speedMs);
 
-        return this.msToKmh(speedMs);
+        this.log.add("GPS check took " + checkDurationSeconds + " and determined speed was " + speedKmh + " km/h.");
+
+        return speedKmh;
     }
 
 

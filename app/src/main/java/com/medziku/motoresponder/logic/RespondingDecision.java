@@ -11,17 +11,24 @@ public class RespondingDecision {
     private AlreadyResponded alreadyResponded;
     private NumberRules numberRules;
     private UserRide userRide;
+    private DecisionLog log;
 
 
-    public RespondingDecision(UserRide userRide, NumberRules numberRules, AlreadyResponded alreadyResponded, DeviceUnlocked deviceUnlocked) {
+    public RespondingDecision(UserRide userRide,
+                              NumberRules numberRules,
+                              AlreadyResponded alreadyResponded,
+                              DeviceUnlocked deviceUnlocked,
+                              DecisionLog log) {
         this.userRide = userRide;
         this.numberRules = numberRules;
         this.alreadyResponded = alreadyResponded;
         this.deviceUnlocked = deviceUnlocked;
+        this.log = log;
     }
 
     public boolean shouldRespond(String phoneNumber) {
         if (this.deviceUnlocked.isNotRidingBecausePhoneUnlocked()) {
+            this.log.add("Phone is unlocked.");
             return false;
         }
 
@@ -30,6 +37,7 @@ public class RespondingDecision {
         // do not answer numbers which user doesnt want to autorespond
         // this check is relatively cheap compared to measuring if user is riding
         if (!this.numberRules.numberRulesAllowResponding(phoneNumber)) {
+            this.log.add("Number rules do not allow responding.");
             return false;
         }
 
@@ -37,12 +45,14 @@ public class RespondingDecision {
         // we don't respond automatically. App can have some delay between receiving message and starting responding process
         // to allow user respond manually, so this check checks if it happened
         if (this.alreadyResponded.isUserRespondedSince(dateOfReceiving, phoneNumber)) {
+            this.log.add("User responded since receiving input, no need of autoresponse.");
             return false;
         }
 
         // we shouldn't sent auto responses over and over, so sent only if last response was call / sms to given number,
         // not the auto response.
         if (this.alreadyResponded.isAutomaticalResponseLast(phoneNumber)) {
+            this.log.add("Most recent output to this number was autoresponse, can't send one more.");
             return false;
         }
 
@@ -54,11 +64,13 @@ public class RespondingDecision {
         // this check is more expensive in terms of power and battery
         // so it's performed later.
         if (!this.userRide.isUserRiding()) {
+            this.log.add("User is not riding.");
             return false;
         }
 
         // and now because isUserRiding can took several seconds, we check again if user not unlocked phone during this time.
         if (this.deviceUnlocked.isNotRidingBecausePhoneUnlocked()) {
+            this.log.add("Phone unlocked during determining if user is riding.");
             return false;
         }
 
@@ -66,6 +78,7 @@ public class RespondingDecision {
         // (there is possibility that user responded quickly, turning on screen doesn't affect logic, and user
         // quickly responded and hide phone before ride/not ride state was known)
         if (this.alreadyResponded.isUserRespondedSince(dateOfReceiving, phoneNumber)) {
+            this.log.add("User responded between receiving input and determining if user is riding.");
             return false;
         }
 

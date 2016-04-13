@@ -1,6 +1,7 @@
 package com.medziku.motoresponder.logic;
 
 import com.google.common.base.Predicate;
+import com.medziku.motoresponder.pseudotesting.integration.RespondingDecisionIntegrationTest;
 import com.medziku.motoresponder.utils.NotificationUtility;
 import com.medziku.motoresponder.utils.SMSUtility;
 
@@ -14,18 +15,21 @@ public class RespondingTasksQueue {
     private NotificationUtility notificationUtility;
     private SMSUtility smsUtility;
     private ResponsePreparator responsePreparator;
+    private DecisionLog log;
 
     public RespondingTasksQueue(NotificationUtility notificationUtility,
                                 SMSUtility smsUtility,
                                 Settings settings,
                                 RespondingDecision respondingDecision,
-                                ResponsePreparator responsePreparator) {
+                                ResponsePreparator responsePreparator,
+                                DecisionLog log) {
         this.pendingRespondingTasks = new ArrayList<>();
         this.notificationUtility = notificationUtility;
         this.smsUtility = smsUtility;
         this.settings = settings;
         this.respondingDecision = respondingDecision;
         this.responsePreparator = responsePreparator;
+        this.log = log;
     }
 
 
@@ -36,6 +40,7 @@ public class RespondingTasksQueue {
                 this.notificationUtility,
                 this.smsUtility,
                 this.responsePreparator,
+                this.log,
                 resultCallback);
     }
 

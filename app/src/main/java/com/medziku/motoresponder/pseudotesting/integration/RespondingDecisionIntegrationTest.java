@@ -21,6 +21,8 @@ public class RespondingDecisionIntegrationTest {
     }
 
     private void setUp() {
+        DecisionLog log = new DecisionLog();
+
         LocationUtility locationUtility = new LocationUtility(this.context);
         SensorsUtility sensorsUtility = new SensorsUtility(this.context);
         MotionUtility motionUtility = new MotionUtility(this.context);
@@ -32,11 +34,11 @@ public class RespondingDecisionIntegrationTest {
         Settings settings = new Settings(sharedPreferencesUtility);
 
         DeviceUnlocked deviceUnlocked = this.createLoggingDeviceUnlocked(lockStateUtility, settings);
-        UserRide userRide = this.createLoggingUserRide(locationUtility, sensorsUtility, motionUtility);
+        UserRide userRide = this.createLoggingUserRide(locationUtility, sensorsUtility, motionUtility, log);
         NumberRules numberRules = this.createLoggingUserRules(contactsUtility);
         AlreadyResponded alreadyResponded = this.createLoggingAlreadyResponded(callsUtility, smsUtility);
 
-        this.respondingDecision = this.createLoggingRespondingDecision(deviceUnlocked, userRide, numberRules, alreadyResponded);
+        this.respondingDecision = this.createLoggingRespondingDecision(deviceUnlocked, userRide, numberRules, alreadyResponded, log);
 
         sensorsUtility.registerSensors();
     }
@@ -65,8 +67,8 @@ public class RespondingDecisionIntegrationTest {
 
     // region extending classes to make them loggable
 
-    private RespondingDecision createLoggingRespondingDecision(final DeviceUnlocked deviceUnlocked, final UserRide userRide, final NumberRules numberRules, final AlreadyResponded alreadyResponded) {
-        return new RespondingDecision(userRide, numberRules, alreadyResponded, deviceUnlocked) {
+    private RespondingDecision createLoggingRespondingDecision(final DeviceUnlocked deviceUnlocked, final UserRide userRide, final NumberRules numberRules, final AlreadyResponded alreadyResponded, DecisionLog log) {
+        return new RespondingDecision(userRide, numberRules, alreadyResponded, deviceUnlocked, log) {
             public boolean shouldRespond(String phoneNumber) {
                 boolean result = super.shouldRespond(phoneNumber);
                 log("shouldRespond()=" + result);
@@ -113,8 +115,8 @@ public class RespondingDecisionIntegrationTest {
         };
     }
 
-    private UserRide createLoggingUserRide(final LocationUtility locationUtility, final SensorsUtility sensorsUtility, final MotionUtility motionUtility) {
-        return new UserRide(locationUtility, sensorsUtility, motionUtility) {
+    private UserRide createLoggingUserRide(final LocationUtility locationUtility, final SensorsUtility sensorsUtility, final MotionUtility motionUtility, DecisionLog log) {
+        return new UserRide(locationUtility, sensorsUtility, motionUtility, log) {
             public boolean isUserRiding() {
                 boolean result = super.isUserRiding();
                 log("isUserRiding()=" + result);

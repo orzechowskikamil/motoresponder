@@ -37,7 +37,8 @@ public class UserRideTest {
         this.locationUtility = Mockito.mock(LocationUtility.class);
         this.sensorsUtility = Mockito.mock(SensorsUtility.class);
         this.motionUtility = Mockito.mock(MotionUtility.class);
-        this.userRide = new UserRide(this.locationUtility, this.sensorsUtility, this.motionUtility);
+        DecisionLog log = new DecisionLog();
+        this.userRide = new UserRide(this.locationUtility, this.sensorsUtility, this.motionUtility,log);
 
         this.setIncludeProximityCheck(true);
         this.setSensorsUtilityIsProximeValue(true);

@@ -1,7 +1,6 @@
 package com.medziku.motoresponder.logic;
 
 import android.os.AsyncTask;
-import android.util.Log;
 import com.google.common.base.Predicate;
 import com.medziku.motoresponder.utils.NotificationUtility;
 import com.medziku.motoresponder.utils.SMSUtility;
@@ -9,6 +8,7 @@ import com.medziku.motoresponder.utils.SMSUtility;
 
 public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolean> {
 
+    private DecisionLog log;
     private SMSUtility smsUtility;
     private NotificationUtility notificationUtility;
     private Settings settings;
@@ -19,12 +19,14 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
 
     // TODO K. Orzechowski: Change this to real configurable #67
     public boolean shouldShowNotification = true;
+    public boolean shouldShowDebugNotification = true;
 
     public RespondingTask(RespondingDecision respondingDecision,
                           Settings settings,
                           NotificationUtility notificationUtility,
                           SMSUtility smsUtility,
                           ResponsePreparator responsePreparator,
+                          DecisionLog log,
                           Predicate<Boolean> resultCallback) {
         this.respondingDecision = respondingDecision;
         this.resultCallback = resultCallback;
@@ -32,6 +34,7 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
         this.notificationUtility = notificationUtility;
         this.smsUtility = smsUtility;
         this.responsePreparator = responsePreparator;
+        this.log = log;
     }
 
     /**
@@ -55,6 +58,7 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
 
         // K. Orzechowski: I am not sure, but I read that I should check for this.
         if (this.isTerminated()) {
+            this.log.add("Not responded because phone unlocked in meantime.");
             return;
         }
 
@@ -69,9 +73,14 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
         if (shouldRespond) {
             // this check can took long time so before responding we can check again for cancellation.
             if (this.isTerminated()) {
+                this.log.add("Not responded because phone unlocked after determining responding decision.");
                 return;
             }
+
+            this.log.add("Decision = RESPOND. Sending SMS.");
             this.respondWithSMS();
+        } else {
+            this.log.add("Decision = NOT respond.");
         }
 
         if (this.settings.isShowingPendingNotificationEnabled()) {
@@ -81,6 +90,15 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
         if (this.shouldShowNotification && shouldRespond) {
             this.showSummaryNotification(this.respondingSubject.getPhoneNumber());
         }
+
+        if (this.shouldShowDebugNotification) {
+            this.showDebugNotification();
+        }
+    }
+
+    private void showDebugNotification() {
+        String debugText = this.log.getLogStr();
+        this.notificationUtility.showBigTextNotification("MotoResponder debug", "Close other notifications to see full content", debugText);
     }
 
     private void showSummaryNotification(String phoneNumber) {

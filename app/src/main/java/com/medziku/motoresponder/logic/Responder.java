@@ -6,6 +6,8 @@ import com.google.common.base.Predicate;
 import com.medziku.motoresponder.callbacks.SMSReceivedCallback;
 import com.medziku.motoresponder.utils.*;
 
+import java.util.Date;
+
 /**
  * It's like all responding logic entry point
  */
@@ -29,9 +31,12 @@ public class Responder {
     protected ResponsePreparator responsePreparator;
     protected SharedPreferencesUtility sharedPreferencesUtility;
     protected boolean isRespondingNow;
+    private DecisionLog log;
 
     public Responder(Context context) {
         this.context = context;
+
+        this.log = new DecisionLog();
 
         this.createUtilities();
 
@@ -109,6 +114,8 @@ public class Responder {
      * this list.
      */
     protected void handleIncoming(RespondingSubject subject) {
+        this.log.clear();
+        this.log.add("Received input from " + subject.getPhoneNumber() + " at " + new Date().toString());
         this.respondingTasksQueue.createAndExecuteRespondingTask(subject);
     }
 
@@ -194,7 +201,7 @@ public class Responder {
 
 
     protected UserRide createUserRide() {
-        return new UserRide(this.locationUtility, this.sensorsUtility, this.motionUtility);
+        return new UserRide(this.locationUtility, this.sensorsUtility, this.motionUtility, this.log);
     }
 
 
@@ -217,13 +224,14 @@ public class Responder {
                 this.smsUtility,
                 this.settings,
                 this.respondingDecision,
-                this.responsePreparator
+                this.responsePreparator,
+                this.log
         );
     }
 
 
     protected RespondingDecision createRespondingDecision() {
-        return new RespondingDecision(this.userRide, this.numberRules, this.alreadyResponded, this.deviceUnlocked);
+        return new RespondingDecision(this.userRide, this.numberRules, this.alreadyResponded, this.deviceUnlocked, this.log);
     }
 
     // endregion
