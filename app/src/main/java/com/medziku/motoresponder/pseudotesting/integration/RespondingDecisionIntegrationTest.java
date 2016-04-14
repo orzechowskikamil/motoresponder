@@ -34,7 +34,7 @@ public class RespondingDecisionIntegrationTest {
         Settings settings = new Settings(sharedPreferencesUtility);
 
         DeviceUnlocked deviceUnlocked = this.createLoggingDeviceUnlocked(lockStateUtility, settings);
-        UserRide userRide = this.createLoggingUserRide(locationUtility, sensorsUtility, motionUtility, log);
+        UserRide userRide = this.createLoggingUserRide(settings, locationUtility, sensorsUtility, motionUtility, log);
         NumberRules numberRules = this.createLoggingUserRules(contactsUtility);
         AlreadyResponded alreadyResponded = this.createLoggingAlreadyResponded(callsUtility, smsUtility);
 
@@ -89,6 +89,9 @@ public class RespondingDecisionIntegrationTest {
             public boolean isAutomaticalResponseLast(String phoneNumber) {
                 boolean result = super.isAutomaticalResponseLast(phoneNumber);
                 log("isAutomaticalResponseLast()=" + result);
+                if (result == true) {
+                    log("CHECK IF AUTORESPONDER DON'T RESPOND CURRENT NUMBER - IF YES, WHOLE TEST WILL NOT WORK");
+                }
                 return result;
             }
         };
@@ -115,8 +118,8 @@ public class RespondingDecisionIntegrationTest {
         };
     }
 
-    private UserRide createLoggingUserRide(final LocationUtility locationUtility, final SensorsUtility sensorsUtility, final MotionUtility motionUtility, DecisionLog log) {
-        return new UserRide(locationUtility, sensorsUtility, motionUtility, log) {
+    private UserRide createLoggingUserRide(Settings settings, final LocationUtility locationUtility, final SensorsUtility sensorsUtility, final MotionUtility motionUtility, DecisionLog log) {
+        return new UserRide(settings, locationUtility, sensorsUtility, motionUtility, log) {
             public boolean isUserRiding() {
                 boolean result = super.isUserRiding();
                 log("isUserRiding()=" + result);

@@ -35,7 +35,7 @@ public class IntegrationRunner {
         (new AsyncTask<Boolean, Boolean, Boolean>() {
             @Override
             protected Boolean doInBackground(Boolean... params) {
-                // unfortunately I can"t show those errors in any different way that throwing exception
+                // unfortunately I can"t show those errors in any different way  that throwing exception
                 // and catching it here. Hope it will be enough to test.
                 Log.d(TAG, "IntegrationRunner... starting...");
                 IntegrationRunner.this.runTest();
@@ -47,7 +47,7 @@ public class IntegrationRunner {
     }
 
     private void runTest() {
-        switch (10) {
+        switch (21) {
             case 10:
                 // this is working at 10.04.2016 on Android 5.1 Motog
                 this.responderIntegrationTest.testRespondingProcessWithMockedTrueDecision();

@@ -1,44 +1,164 @@
 <resources>
-    <!-- labels -->
+    <!-- main screen -->
     <string name="app_name">Moto Responder</string>
     <string name="settings_activity_label">Ustawienia Moto Respondera</string>
-
 
     <string name="main_preferences_title">Podstawowe ustawienia</string>
     <string name="main_preferences_summary">Podstawowe ustawienia aplikacji.</string>
 
+    <string name="riding_preferences_title">Ustawienia wykrywania jazdy</string>
+    <string name="riding_preferences_summary">Tutaj można skonfigurować parametry na podstawie których zostanie podjęta
+        decyzja czy użytkownik jedzie właśnie na motocyklu czy nie.
+    </string>
+
+
+    <!-- general settings -->
     <string name="responder_enabled_title">Moto Responder włączony</string>
     <string name="responder_enabled_summary">Gdy to ustawienie jest włączone, w momencie gdy nie odczytasz wiadomości,
         lub gdy nie odbierzesz telefonu, Moto Responder spróbuje ustalić czy właśnie jedziesz na motocyklu, i jeśli tak
         - automatycznie odpowie nadawcy że nie możesz w tym momencie rozmawiać.
     </string>
-
-
-    <string name="auto_response_to_sms_template_title">Treść automatycznej odpowiedzi</string>
-    <string name="auto_response_to_sms_template_summary">Ten tekst będzie użyty jako automatyczna odpowiedź.</string>
-
-    <!-- keys -->
     <string name="responder_enabled_key">responder_enabled</string>
-    <string name="auto_response_to_sms_template_key">auto_response_to_sms_template</string>
-
-    <!-- default values -->
-
     <bool name="responder_enabled_default_value">true</bool>
-    <bool name="responding_with_geolocation_enabled_default_value">true</bool>
-    <bool name="phone_unlocked_interpreted_as_not_riding_default_value">true</bool>
-    <bool name="showing_pending_notification_enabled_default_value">false</bool>
-    <integer name="delay_before_response_ms_default_value">30000</integer>
+
+
+    <string name="auto_response_to_call_template_title">Odpowiedź na połączenie
+    </string>
+    <string name="auto_response_to_call_template_summary">Ten tekst będzie użyty jako automatyczna odpowiedź na
+        nieodebrane połączenie, gdy jedziesz na motocyklu.
+    </string>
+    <string name="auto_response_to_call_template_key">auto_response_to_call_template</string>
     <string name="auto_response_to_call_template_default_value">Cześć. Nie mogę oddzwonić, gdyż
         właśnie jadę motocyklem.
     </string>
+
+    <string name="auto_response_to_sms_template_title">Odpowiedź na SMS</string>
+    <string name="auto_response_to_sms_template_summary">Ten tekst będzie użyty jako automatyczna odpowiedź na SMSa, gdy
+        jedziesz na motocyklu.
+    </string>
+    <string name="auto_response_to_sms_template_key">auto_response_to_sms_template</string>
     <string name="auto_response_to_sms_template_default_value">Cześć. Nie mogę odpisać, gdyż
         właśnie jadę motocyklem.
+    </string>
+
+    <string name="geolocation_request_enabled_title">Pytanie o pozycję</string>
+    <string name="geolocation_request_enabled_summary_on">Aplikacja na pytanie o pozycję odpowie SMSem z linkiem do
+        mapki z zaznaczoną
+        twoją obecną pozycją.
+    </string>
+    <string name="geolocation_request_enabled_summary_off">Aplikacja pytanie o pozycję potraktuje jako zwykły SMS
+        przychodzący i nie
+        będzie wysyłać SMSów z mapką z twoją pozycją.
+    </string>
+    <string name="geolocation_request_enabled_key">geolocation_request_enabled</string>
+    <bool name="geolocation_request_enabled_default_value">true</bool>
+
+
+    <string name="auto_response_to_sms_with_geolocation_template_title">Treść odpowiedzi na pytanie o pozycję
+    </string>
+    <string name="auto_response_to_sms_with_geolocation_template_summary" formatted="false">Ten tekst będzie użyty jako
+        odpowiedź, gdy ktoś pyta gdzie jesteś, gdy jedziesz na motocyklu. Odpowiedź powinna zawierać w sobie tekst
+        "%location%", tam zostanie umieszczony link do mapy.
+    </string>
+    <string name="auto_response_to_sms_with_geolocation_template_key">auto_response_to_sms_with_geolocation_template
     </string>
     <string name="auto_response_to_sms_with_geolocation_template_default_value" formatted="false">Cześć. Aktualnie jadę
         motocyklem i znajduję sie w %location%.
     </string>
+
+
+    <bool name="responding_with_geolocation_enabled_default_value">true</bool>
+    <bool name="showing_pending_notification_enabled_default_value">false</bool>
+
+
     <string name="geolocation_request_pattern_1_default_value">Gdzie jestes</string>
     <string name="geolocation_request_pattern_2_default_value">Gdzie jesteś</string>
+
+
+    <!-- riding detection settings -->
+
+
+    <string name="assume_screen_unlocked_as_not_riding_title">Test blokady ekranu
+    </string>
+    <string name="assume_screen_unlocked_as_not_riding_summary_on">Aplikacja nie będzie odpowiadała automatycznie gdy
+        ekran urządzenia
+        jest odblokowany, gdyż to oznacza że robisz coś na telefonie, więc nie jedziesz w tym momencie.
+    </string>
+    <string name="assume_screen_unlocked_as_not_riding_summary_off">Aplikacja nie będzie brała pod uwagę tego czy ekran
+        jest zablokowany
+        czy nie, przy decyzji czy potrzebna jest automatyczna odpowiedź.
+    </string>
+    <string name="assume_screen_unlocked_as_not_riding_key">assume_screen_unlocked_as_not_riding</string>
+    <bool name="assume_screen_unlocked_as_not_riding_default_value">true</bool>
+
+    <string name="wait_before_response_title">Zwlekaj z odpowiedzią (s)</string>
+    <string name="wait_before_response_key">wait_before_response</string>
+    <string name="wait_before_response_summary">Aplikacja poczeka tyle sekund z próbami automatycznej odpowiedzi, dając
+        ci czas byś odpisał/oddzwonił samemu.
+    </string>
+    <integer name="wait_before_response_default_value">30</integer>
+
+
+    <string name="include_proximity_check_title">Test sensora zbliżeniowego</string>
+    <string name="include_proximity_check_summary_on">Aplikacja nie będzie odpowiadała automatycznie, jeśli sensor
+        zbliżeniowy raportuje
+        że ekran urządzenia nie dotyka niczego (więc urządzenie na pewno nie jest w twojej kieszeni, jak to się dzieje
+        podczas jazdy).
+    </string>
+    <string name="include_proximity_check_summary_off">Aplikacja nie będzie brała pod uwage wartości raportowanych przez
+        sensor zbliżeniowy.
+    </string>
+    <string name="include_proximity_check_key">include_proximity_check</string>
+    <bool name="include_proximity_check_default_value">true</bool>
+
+
+    <string name="sure_riding_speed_title">Min. prędkość jazdy (km/h)</string>
+    <string name="sure_riding_speed_key">sure_riding_speed</string>
+    <string name="sure_riding_speed_summary">Jeśli ta prędkość nie zostanie przekroczona podczas testu GPS, aplikacja
+        uzna że nie jedziesz
+        w tym momencie motocyklem.
+    </string>
+    <integer name="sure_riding_speed_default_value">40</integer>
+
+
+    <string name="staying_still_speed_title">Maks. prędkość postoju (km/h)</string>
+    <string name="staying_still_speed_key">staying_still_speed</string>
+    <string name="staying_still_speed_summary">Jeśli aktualna prędkość będzie mniejsza niż ta prędkość, aplikacja uzna
+        że stoisz w miejscu i
+        wykona dodatkowy test GPS (czasami gdy urządzenie się nie porusza, GPS raportuje prędkość typu 1.5 km/h, więc
+        wartością nie powinno być to 0 km/h).
+    </string>
+    <integer name="staying_still_speed_default_value">3</integer>
+
+
+    <string name="quick_speed_check_duration_title">Czas trwania krótkiego testu GPS (s)</string>
+    <string name="quick_speed_check_duration_key">quick_speed_check_duration</string>
+    <string name="quick_speed_check_duration_summary">Aplikacja będzie próbować przez tyle sekund ustalić twoją
+        lokalizację oraz prędkość za pomocą GPS. Jeśli się to nie uda w tym czasie, założy, że jesteś w domu bez zasięgu
+        GPS. Ta wartość powinna być tak dobrana by nie udawało się ustalić prędkości i lokalizacji gdy jesteś w budynku,
+        ale powinno się udawać gdy jesteś na zewnątrz.
+    </string>
+    <integer name="quick_speed_check_duration_default_value">30</integer>
+
+
+    <string name="long_speed_check_duration_title">Czas trwania długiego testu GPS (s)</string>
+    <string name="long_speed_check_duration_key">long_speed_check_duration</string>
+    <string name="long_speed_check_duration_summary">Jeśli pierwszy test prędkości ustali lokalizację i prędkość, lecz
+        będzie ona mniejsza niż minimalna prędkość motocykla, aplikacja wykona drugi dłuższy test GPS, by ustalić czy
+        właśnie nie
+        jedziesz na motocyklu, lecz przystanąłeś na minutę na światłach. Czas powinien być tak dobrany byś zawsze zdążył
+        ruszyć ze świateł.
+    </string>
+    <integer name="long_speed_check_duration_default_value">240</integer>
+
+
+    <string name="required_accuracy_title">Wymagana dokładność GPS (m)</string>
+    <string name="required_accuracy_key">required_accuracy</string>
+    <string name="required_accuracy_summary">Wynik z GPSu musi być równie lub bardziej dokładny niż ta wartość, aby
+        zakończyć krótki i długi test prędkości. Im mniejsza wartość, tym bardziej dokładnie. W zależności od czujnika
+        GPS, bardzo wysokie dokładności mogą być niemożliwe do uzyskania, i powodować timeouty.
+    </string>
+    <integer name="required_accuracy_default_value">30</integer>
 
 
 </resources>

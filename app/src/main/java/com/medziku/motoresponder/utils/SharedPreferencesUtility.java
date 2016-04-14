@@ -41,7 +41,10 @@ public class SharedPreferencesUtility {
 
 
     public int getIntValue(String key, int defValue) {
-        return this.sharedPreferences.getInt(key, defValue);
+        // no standard preference UI controls are capable of saving int into preferences, so we need to make a conversion from/to string.
+        String stringValue = this.sharedPreferences.getString(key, Integer.toString(defValue));
+        int integerValue = Integer.parseInt(stringValue);
+        return integerValue;
     }
 
 
@@ -61,7 +64,7 @@ public class SharedPreferencesUtility {
 
 
     public void setIntValue(String key, int value) {
-        boolean result = this.sharedPreferences.edit().putInt(key, value).commit();
+        boolean result = this.sharedPreferences.edit().putString(key, Integer.toString(value)).commit();
         if (result == false) {
             throw new RuntimeException("Failure during saving int value with key '" + key + "'");
         }
@@ -94,8 +97,9 @@ public class SharedPreferencesUtility {
         if (id == 0) {
             throw new RuntimeException("Integer '" + name + "' not found in resources.");
         }
-        return this.resources.getInteger(id);
+        return this.getIntegerFromRes(id);
     }
+
 
     public boolean getBooleanFromRes(String name) {
         String resourceName = "@bool/" + name;
@@ -103,8 +107,9 @@ public class SharedPreferencesUtility {
         if (id == 0) {
             throw new RuntimeException("Bool '" + name + "' not found in resources.");
         }
-        return this.resources.getBoolean(id);
+        return this.getBooleanFromRes(id);
     }
+
 
     public String getStringFromRes(String name) {
         String resourceName = "@string/" + name;
@@ -112,6 +117,18 @@ public class SharedPreferencesUtility {
         if (id == 0) {
             throw new RuntimeException("String '" + name + "' not found in resources.");
         }
+        return this.getStringFromRes(id);
+    }
+
+    public int getIntegerFromRes(int id) {
+        return this.resources.getInteger(id);
+    }
+
+    public boolean getBooleanFromRes(int id) {
+        return this.resources.getBoolean(id);
+    }
+
+    public String getStringFromRes(int id) {
         return this.resources.getString(id);
     }
 

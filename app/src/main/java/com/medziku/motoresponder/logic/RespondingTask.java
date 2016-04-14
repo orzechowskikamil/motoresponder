@@ -51,7 +51,7 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
 
         // wait some time before responding, to allow user manually
         try {
-            Thread.sleep(this.settings.getDelayBeforeResponseMs());
+            Thread.sleep(this.settings.getWaitBeforeResponseSeconds() * 1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

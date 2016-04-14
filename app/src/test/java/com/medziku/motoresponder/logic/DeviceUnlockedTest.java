@@ -21,14 +21,14 @@ public class DeviceUnlockedTest {
 
     @Test
     public void testDeviceUnlockShouldPreventResponding() throws Exception {
-        Mockito.when(this.settings.isPhoneUnlockedInterpretedAsNotRiding()).thenReturn(true);
+        Mockito.when(this.settings.isAssumingScreenUnlockedAsNotRidingEnabled()).thenReturn(true);
         Mockito.when(this.lockStateUtility.isPhoneUnlocked()).thenReturn(false);
         Assert.assertTrue(this.deviceUnlocked.isNotRidingBecausePhoneUnlocked() == false);
 
         Mockito.when(this.lockStateUtility.isPhoneUnlocked()).thenReturn(true);
         Assert.assertTrue(this.deviceUnlocked.isNotRidingBecausePhoneUnlocked() == true);
 
-        Mockito.when(this.settings.isPhoneUnlockedInterpretedAsNotRiding()).thenReturn(false);
+        Mockito.when(this.settings.isAssumingScreenUnlockedAsNotRidingEnabled()).thenReturn(false);
         Mockito.when(this.lockStateUtility.isPhoneUnlocked()).thenReturn(false);
         Assert.assertTrue(this.deviceUnlocked.isNotRidingBecausePhoneUnlocked() == false);
 

@@ -21,6 +21,7 @@ import java.util.List;
  */
 public class SettingsActivity extends PreferenceActivity {
     public static final String SETTINGS_PREFERENCE_FRAGMENT_NAME = "com.medziku.motoresponder.activity.SettingsPreferenceFragment";
+    public static final String RIDING_SETTINGS_PREFERENCE_FRAGMENT_NAME = "com.medziku.motoresponder.activity.RidingSettingsPreferenceFragment";
     private SharedPreferencesUtility sharedPreferencesUtility;
     private Settings settings;
 
@@ -141,8 +142,10 @@ public class SettingsActivity extends PreferenceActivity {
         if (fragmentName.equals(SETTINGS_PREFERENCE_FRAGMENT_NAME)) {
             return true;
         }
+        if (fragmentName.equals(RIDING_SETTINGS_PREFERENCE_FRAGMENT_NAME)) {
+            return true;
+        }
         return false;
     }
-
 
 }

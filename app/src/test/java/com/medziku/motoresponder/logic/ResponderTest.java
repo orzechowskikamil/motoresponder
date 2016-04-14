@@ -69,6 +69,7 @@ public class ResponderTest {
 
     @Test
     public void testOfCancelOnUnlock() {
+        when(this.responder.mockSettings.isAssumingScreenUnlockedAsNotRidingEnabled()).thenReturn(true);
         this.responder.startResponding();
         this.responder.currentLockStateCallback.apply(false);
 
@@ -83,7 +84,7 @@ public class ResponderTest {
 class ExposedResponder extends Responder {
     public Predicate<Boolean> currentLockStateCallback;
     public Predicate<String> currentCallCallback;
-    public  Predicate<SMSObject> currentSMSCallback;
+    public Predicate<SMSObject> currentSMSCallback;
     public RespondingTasksQueue respondingTasksQueueMock;
     public CallsUtility mockCallsUtility;
     public SMSUtility mockSMSUtility;
@@ -158,11 +159,11 @@ class ExposedResponder extends Responder {
 
     private SMSUtility createMockSMSUtility() {
         SMSUtility mock = mock(SMSUtility.class);
-        
+
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                Predicate<SMSObject> callback = (Predicate<SMSObject>)invocation.getArguments()[0];
+                Predicate<SMSObject> callback = (Predicate<SMSObject>) invocation.getArguments()[0];
                 ExposedResponder.this.currentSMSCallback = callback;
                 return null;
             }

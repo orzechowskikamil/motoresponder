@@ -15,16 +15,11 @@ import java.util.concurrent.ExecutionException;
  */
 public class UserRide {
 
+    private Settings settings;
     private DecisionLog log;
     private LocationUtility locationUtility;
     private SensorsUtility sensorsUtility;
     private MotionUtility motionUtility;
-
-    /**
-     * If true, it will assume not riding if phone proximity sensor read false value (no proximity - not in pocket).
-     * If false, it will ignore proximity check.
-     */
-    public boolean includeProximityCheck = true;
 
     /**
      * If true, if accelerometer will report staying still, app will assume that staying = not riding.
@@ -34,45 +29,17 @@ public class UserRide {
 
 
     /**
-     * This is speed in kilometers which for sure is speed achieveable only by riding on motorcycle, and
-     * for example, not walking or running. Speed higher or equal will be considered as riding
-     */
-    public float minimumSureRidingSpeedKmh = 40;
-
-    /**
-     * Speed lower or equal will be considered as staying still.
-     * Sometimes gps report speed higher than zero when staying still.
-     */
-    public float maximumStayingStillSpeedKmh = 3;
-
-    /**
-     * This accuracy is required for correct location always
-     */
-    public float requiredAccuracyMeters = 30;
-
-    /**
-     * This is how long will last quick check of location
-     */
-    public long quickCheckTimeoutMs = 30 * 1000;
-
-    /**
-     * This is how long will last long check of location (for example, when it's unsure if you are not staying at
-     * traffic lights)
-     */
-    public long longCheckTimeoutMs = 4 * 60 * 1000;
-
-
-    /**
      * For real usage
      *
      * @param locationUtility
      * @param sensorsUtility
      * @param motionUtility
      */
-    public UserRide(LocationUtility locationUtility, SensorsUtility sensorsUtility, MotionUtility motionUtility, DecisionLog log) {
+    public UserRide(Settings settings, LocationUtility locationUtility, SensorsUtility sensorsUtility, MotionUtility motionUtility, DecisionLog log) {
         this.locationUtility = locationUtility;
         this.sensorsUtility = sensorsUtility;
         this.motionUtility = motionUtility;
+        this.settings = settings;
         this.log = log;
     }
 
@@ -81,8 +48,8 @@ public class UserRide {
         // if rider rides, phone should be in pocket (ofc if somebody use phone during ride outside pocket, he should
         // disable this option).
         // in pocket is proxime (to leg or chest)... If there is no proximity, he is not riding.
-        if (this.includeProximityCheck && !this.isProxime()) {
-            this.log.add("Device is not proxime.");
+        if (this.settings.isProximityCheckEnabled() && !this.isProxime()) {
+            this.log.add("Device screen is not near something.");
             return false;
         }
 
@@ -144,7 +111,7 @@ public class UserRide {
     }
 
     protected boolean isSpeedForSureRiding(float speedKmh) {
-        return speedKmh >= this.minimumSureRidingSpeedKmh;
+        return speedKmh >= this.settings.getSureRidingSpeedKmh();
     }
 
     protected boolean isLocationTimeouted(Float speedKmh) {
@@ -176,8 +143,10 @@ public class UserRide {
      * @return
      */
     protected Float getQuickCheckCurrentSpeedKmh() {
-        Float currentSpeedKmh = this.getCurrentSpeedKmh(this.maximumStayingStillSpeedKmh, this.requiredAccuracyMeters, this.quickCheckTimeoutMs);
-        return currentSpeedKmh;
+        return this.getCurrentSpeedKmh(
+                this.settings.getMaximumStayingStillSpeedKmh(),
+                this.settings.getRequiredAccuracyMeters(),
+                this.settings.getQuickSpeedCheckDurationSeconds() * 1000);
     }
 
 
@@ -188,7 +157,10 @@ public class UserRide {
      * @return
      */
     protected Float getLongCheckCurrentSpeedKmh() {
-        return this.getCurrentSpeedKmh(this.minimumSureRidingSpeedKmh, this.requiredAccuracyMeters, this.longCheckTimeoutMs);
+        return this.getCurrentSpeedKmh(
+                this.settings.getSureRidingSpeedKmh(),
+                this.settings.getRequiredAccuracyMeters(),
+                this.settings.getLongSpeedCheckDurationSeconds() * 1000);
     }
 
 

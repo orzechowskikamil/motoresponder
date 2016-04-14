@@ -17,6 +17,7 @@ import java.util.concurrent.Future;
 
 import static org.mockito.Matchers.anyFloat;
 import static org.mockito.Matchers.anyLong;
+import static org.mockito.Mockito.when;
 
 
 public class UserRideTest {
@@ -27,18 +28,20 @@ public class UserRideTest {
     private SensorsUtility sensorsUtility;
     private MotionUtility motionUtility;
     private double msToKmh = 3.6;
-    private double FAKE_FOR_SURE_MOVING_SPEED = 70 / msToKmh;
+    private int FAKE_FOR_SURE_MOVING_SPEED = 70 ;
     private int FAKE_TIMEOUT_SPEED = -1;
     private double FAKE_UNSURE_MOVING_SPEED = 10 / msToKmh;
-    public static final int DELAY_BETWEEN_UNSURE_AND_SURE_SPEED_LOCATION = 10;
+
+    private Settings settings;
 
     @Before
     public void setUp() throws Exception {
         this.locationUtility = Mockito.mock(LocationUtility.class);
         this.sensorsUtility = Mockito.mock(SensorsUtility.class);
         this.motionUtility = Mockito.mock(MotionUtility.class);
+        this.settings = Mockito.mock(Settings.class);
         DecisionLog log = new DecisionLog();
-        this.userRide = new UserRide(this.locationUtility, this.sensorsUtility, this.motionUtility,log);
+        this.userRide = new UserRide(this.settings, this.locationUtility, this.sensorsUtility, this.motionUtility, log);
 
         this.setIncludeProximityCheck(true);
         this.setSensorsUtilityIsProximeValue(true);
@@ -47,6 +50,7 @@ public class UserRideTest {
         this.setDeviceInMotionValue(true);
 
         this.setLocationUtilityGetAccurateLocationSpeedResult(this.FAKE_FOR_SURE_MOVING_SPEED);
+        when(this.settings.getSureRidingSpeedKmh()).thenReturn(Math.round(this.FAKE_FOR_SURE_MOVING_SPEED));
     }
 
     @Test
@@ -138,7 +142,7 @@ public class UserRideTest {
 
     private void setSensorsUtilityIsProximeValue(boolean value) {
         try {
-            Mockito.when(this.sensorsUtility.isProxime()).thenReturn(value);
+            when(this.sensorsUtility.isProxime()).thenReturn(value);
         } catch (RuntimeException e) {
             e.printStackTrace();
         }
@@ -152,7 +156,7 @@ public class UserRideTest {
         SettableFuture<Boolean> result = SettableFuture.create();
         result.set(value);
         try {
-            Mockito.when(this.motionUtility.isDeviceInMotion()).thenReturn(result);
+            when(this.motionUtility.isDeviceInMotion()).thenReturn(result);
         } catch (AccelerometerNotAvailableException e) {
             e.printStackTrace();
         }
@@ -163,7 +167,7 @@ public class UserRideTest {
      */
     private void setDeviceInMotionToException() {
         try {
-            Mockito.when(this.motionUtility.isDeviceInMotion()).thenThrow(AccelerometerNotAvailableException.class);
+            when(this.motionUtility.isDeviceInMotion()).thenThrow(AccelerometerNotAvailableException.class);
         } catch (AccelerometerNotAvailableException e) {
             e.printStackTrace();
         }
@@ -174,7 +178,7 @@ public class UserRideTest {
     }
 
     private void setIncludeProximityCheck(boolean value) {
-        this.userRide.includeProximityCheck = value;
+        when(this.settings.isProximityCheckEnabled()).thenReturn(value);
     }
 
 
@@ -182,24 +186,24 @@ public class UserRideTest {
         SettableFuture<Location> result = SettableFuture.create();
 
         Location location = Mockito.mock(Location.class);
-        Mockito.when(location.getSpeed()).thenReturn((float) value);
+        when(location.getSpeed()).thenReturn((float) value);
 
         Location valueOfFuture = (value > this.FAKE_TIMEOUT_SPEED) ? location : null;
         result.set(valueOfFuture);
-        Mockito.when(this.locationUtility.getAccurateLocation(anyFloat(), anyFloat(), anyLong())).thenReturn(result);
+        when(this.locationUtility.getAccurateLocation(anyFloat(), anyFloat(), anyLong())).thenReturn(result);
     }
 
     private void setLocationUtilityGetAccurateLocationSpeedResult(final double firstValue, final double secondValue) {
         final boolean[] secondCall = {false};
 
-        Mockito.when(this.locationUtility.getAccurateLocation(anyFloat(), anyFloat(), anyLong())).thenAnswer(new Answer<Future<Location>>() {
+        when(this.locationUtility.getAccurateLocation(anyFloat(), anyFloat(), anyLong())).thenAnswer(new Answer<Future<Location>>() {
             @Override
             public Future answer(InvocationOnMock invocation) throws Throwable {
                 float value = (float) ((secondCall[0]) ? secondValue : firstValue);
 
                 final SettableFuture<Location> result = SettableFuture.create();
                 Location location = Mockito.mock(Location.class);
-                Mockito.when(location.getSpeed()).thenReturn(value);
+                when(location.getSpeed()).thenReturn(value);
 
                 Location valueOfFuture = (value > UserRideTest.this.FAKE_TIMEOUT_SPEED) ? location : null;
                 result.set(valueOfFuture);

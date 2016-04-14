@@ -4,13 +4,12 @@ import android.os.Bundle;
 import android.preference.*;
 import com.medziku.motoresponder.R;
 
-// TODO Rename to smth like "General settings" #Issue not needed
-public class SettingsPreferenceFragment extends PreferenceFragment {
+public class RidingSettingsPreferenceFragment extends PreferenceFragment {
 
-    @Override
+    @Override  
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.addPreferencesFromResource(R.xml.settings_preference_fragment);
+        this.addPreferencesFromResource(R.xml.riding_settings_preference_fragment);
     }
-
+ 
 }
