@@ -108,6 +108,11 @@ class ExposedRespondingTask extends RespondingTask {
 
     public void callLogic(RespondingSubject subject) {
         this.handleRespondingTask(subject);
+        this.onPostExecute(true,true);
+    }
+
+    protected void onPostExecute(Boolean... result) {
+        super.onPostExecute(result);
     }
 
     @Override

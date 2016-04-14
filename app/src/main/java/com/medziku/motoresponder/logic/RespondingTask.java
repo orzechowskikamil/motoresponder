@@ -64,9 +64,7 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
 
 
         // show notification to give user possibiity to cancel autorespond
-        if (this.settings.isShowingPendingNotificationEnabled()) {
-            this.notifyAboutPendingAutoRespond();
-        }
+       this.showPendingNotificationIfEnabled();
 
 
         boolean shouldRespond = this.respondingDecision.shouldRespond(this.respondingSubject.getPhoneNumber());
@@ -83,10 +81,7 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
             this.log.add("Decision = NOT respond.");
         }
 
-        if (this.settings.isShowingPendingNotificationEnabled()) {
-            this.unnotifyAboutPendingAutoRespond();
-        }
-
+ 
         if (this.shouldShowNotification && shouldRespond) {
             this.showSummaryNotification(this.respondingSubject.getPhoneNumber());
         }
@@ -94,6 +89,19 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
         if (this.shouldShowDebugNotification) {
             this.showDebugNotification();
         }
+    }
+    
+    private void showPendingNotificationIfEnabled(){
+     if (this.settings.isShowingPendingNotificationEnabled()) {
+            this.notifyAboutPendingAutoRespond();
+        }
+    }
+    
+    private void hidePendingNotificationIfEnabled(){
+           if (this.settings.isShowingPendingNotificationEnabled()) {
+            this.unnotifyAboutPendingAutoRespond();
+        }
+
     }
 
     private void showDebugNotification() {
@@ -147,6 +155,7 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
      * This is called when doInBackground() is finished
      */
     protected void onPostExecute(Boolean... result) {
+        this.hidePendingNotificationIfEnabled();
         this.resultCallback.apply(result[0]);
 
     }
