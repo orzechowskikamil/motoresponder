@@ -118,7 +118,7 @@ public class RespondingDecisionIntegrationTest {
         };
     }
 
-    private UserRide createLoggingUserRide(Settings settings, final LocationUtility locationUtility, final SensorsUtility sensorsUtility, final MotionUtility motionUtility, DecisionLog log) {
+    private UserRide createLoggingUserRide(final Settings settings, final LocationUtility locationUtility, final SensorsUtility sensorsUtility, final MotionUtility motionUtility, DecisionLog log) {
         return new UserRide(settings, locationUtility, sensorsUtility, motionUtility, log) {
             public boolean isUserRiding() {
                 boolean result = super.isUserRiding();

@@ -174,7 +174,7 @@ public class UserRideTest {
     }
 
     private void setIncludeDeviceMotionCheck(boolean value) {
-        this.userRide.includeDeviceMotionCheck = value;
+        when(this.settings.includeDeviceMotionCheck()).thenReturn(value);
     }
 
     private void setIncludeProximityCheck(boolean value) {

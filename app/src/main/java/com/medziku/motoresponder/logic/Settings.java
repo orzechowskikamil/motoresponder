@@ -80,6 +80,10 @@ public class Settings extends SettingsBase {
         String[] responsePatterns = {responsePattern1, responsePattern2};
         return responsePatterns;
     }
+    
+    public boolean includeDeviceMotionCheck(){
+        return true;
+    }
 
 
     /**

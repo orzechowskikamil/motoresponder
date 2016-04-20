@@ -22,11 +22,6 @@ public class UserRide {
     private MotionUtility motionUtility;
 
     /**
-     * If true, if accelerometer will report staying still, app will assume that staying = not riding.
-     * If false, it will ignore accelerometer reading
-     */
-    public boolean includeDeviceMotionCheck = true;
-
 
     /**
      * For real usage
@@ -58,7 +53,7 @@ public class UserRide {
 
         // if phone doesn't report any movement we can also assume that user is not riding motorcycle
         try {
-            if (this.includeDeviceMotionCheck && !this.motionSensorReportsMovement()) {
+            if (this.settings.includeDeviceMotionCheck() && !this.motionSensorReportsMovement()) {
                 this.log.add("Device's accelerometer doesn't report movement.");
                 return false;
             }

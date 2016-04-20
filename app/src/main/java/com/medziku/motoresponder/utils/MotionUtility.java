@@ -8,6 +8,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.PowerManager;
+import android.util.Log;
 import com.google.common.util.concurrent.SettableFuture;
 
 import java.util.Timer;
@@ -61,6 +62,19 @@ public class MotionUtility {
      * @throws AccelerometerNotAvailableException When device screen is off and utility can't properly measure movement
      */
     public Future<Boolean> isDeviceInMotion() throws AccelerometerNotAvailableException {
+        int TIME_FOR_TURNING_ON_SCREEN = 2000;
+
+        final PowerManager.WakeLock mWakeLock = this.powerManager.newWakeLock(
+                PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "TAG");
+
+        mWakeLock.acquire();
+
+        try {
+            Thread.sleep(TIME_FOR_TURNING_ON_SCREEN);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         if (this.isDeviceScreenTurnedOff()) {
             throw new AccelerometerNotAvailableException();
         }
@@ -100,6 +114,9 @@ public class MotionUtility {
 
                 if (eventCounter > MotionUtility.this.aboveTresholdEventsNeededToAssumeMovement) {
                     MotionUtility.this.sensorManager.unregisterListener(this);
+                    if (mWakeLock.isHeld()) {
+                        mWakeLock.release();
+                    }
                     result.set(true);
                 }
 
@@ -113,7 +130,11 @@ public class MotionUtility {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
+                // TODO K. Orzechowski: extract to one function, this 4 lines are copied. #issue not needed
                 MotionUtility.this.sensorManager.unregisterListener(listener);
+                if (mWakeLock.isHeld()) {
+                    mWakeLock.release();
+                }
                 result.set(false);
             }
         }, this.measuringMovementTimeout);
