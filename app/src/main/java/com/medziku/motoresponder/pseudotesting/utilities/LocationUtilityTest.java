@@ -5,6 +5,7 @@ import android.location.Location;
 import android.util.Log;
 import com.medziku.motoresponder.utils.LocationUtility;
 
+import java.util.TimerTask;
 import java.util.concurrent.Future;
 
 public class LocationUtilityTest {
@@ -61,5 +62,20 @@ public class LocationUtilityTest {
             Log.d(TAG, "LastKnownLocation must be not null! ERROR!");
         }
 
+    }
+
+    public void testOfBreakingAccurateLocationProcess() {
+        this.setUp();
+        Future<Location> future = this.locationUtility.getAccurateLocation(10000, 3, 10000);
+
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        this.locationUtility.cancelGPSCheck();
+        Log.d(TAG, "is done right now? = " + future.isDone());
+        Log.d(TAG, "Also check if location icon disappear after two seconds ");
     }
 }

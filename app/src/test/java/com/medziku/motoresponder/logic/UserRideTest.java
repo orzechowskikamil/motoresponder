@@ -17,6 +17,8 @@ import java.util.concurrent.Future;
 
 import static org.mockito.Matchers.anyFloat;
 import static org.mockito.Matchers.anyLong;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
@@ -135,6 +137,13 @@ public class UserRideTest {
         // all checks are by default true so we need to just check for true value.
         this.expectUserRideIsUserRidingToBe(true);
 
+    }
+
+    @Test
+    public void testOfCancellation() {
+        this.userRide.cancelUserRideCheck();
+
+        verify(this.locationUtility, times(1)).cancelGPSCheck();
     }
 
     // region helper methods

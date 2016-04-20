@@ -71,11 +71,16 @@ class MockedRespondingDecision extends RespondingDecision {
     public boolean result;
 
     public MockedRespondingDecision() {
-        super(null, null, null, null,null);
+        super(null, null, null, null, null);
     }
 
     public boolean shouldRespond(String phoneNumber) {
         return this.result;
+    }
+
+    @Override
+    public void cancelDecision() {
+        Log.d("TEST", "Decision cancelled!");
     }
 }
 

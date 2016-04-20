@@ -20,6 +20,7 @@ public class LocationUtility {
 
     private LocationManager locationManager;
     private SettableFuture<Location> locationFuture;
+    private GettingAccurateLocationProcess mostRecentLocationProcess;
 
 
     public LocationUtility(Context context) {
@@ -35,13 +36,20 @@ public class LocationUtility {
     public Future<Location> getAccurateLocation(float minimumExpectedSpeed, float expectedAccuracy, long timeoutMs) {
         // whole content of this method was moved to separate class GettingAccurateLocationProcess,
         // which represent process of getting location, but I didn't want to break api so this method is almost empty.
-        this.locationFuture = new GettingAccurateLocationProcess(this.locationManager, minimumExpectedSpeed, expectedAccuracy, timeoutMs)
-                .getLocation();
+        this.mostRecentLocationProcess = new GettingAccurateLocationProcess(this.locationManager, minimumExpectedSpeed, expectedAccuracy, timeoutMs);
+
+        this.locationFuture = this.mostRecentLocationProcess.getLocation();
         return this.locationFuture;
     }
 
     public Future<Location> getLastRequestedLocation() {
         return this.locationFuture;
+    }
+
+    public void cancelGPSCheck() {
+        if (this.mostRecentLocationProcess != null) {
+            this.mostRecentLocationProcess.cancelGPSCheck();
+        }
     }
 }
 
@@ -219,6 +227,10 @@ class GettingAccurateLocationProcess implements LocationListener {
 
     protected void quitLooper() {
         this.looperForListeningThread.quitSafely();
+    }
+
+    public void cancelGPSCheck() {
+        this.setEmptyResultAndStopListening();
     }
 
 

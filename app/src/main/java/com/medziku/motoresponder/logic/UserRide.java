@@ -105,6 +105,14 @@ public class UserRide {
         return true;
     }
 
+    public void cancelUserRideCheck(){
+       this.cancelGPSCheck(); 
+    }
+    
+    private void cancelGPSCheck(){
+        this.locationUtility.cancelGPSCheck();    
+    }
+    
     protected boolean isSpeedForSureRiding(float speedKmh) {
         return speedKmh >= this.settings.getSureRidingSpeedKmh();
     }

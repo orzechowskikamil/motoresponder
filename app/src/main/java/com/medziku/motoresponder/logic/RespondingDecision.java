@@ -87,4 +87,8 @@ public class RespondingDecision {
     }
 
 
+    public void cancelDecision(){
+        this.userRide.cancelUserRideCheck();
+    }
+
 }

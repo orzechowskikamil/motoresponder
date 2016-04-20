@@ -127,8 +127,8 @@ public class Responder {
      * Called when phone will be unlocked by user (screenlock passed)
      */
     public void onPhoneUnlocked() {
-        if (this.settings.isAssumingScreenUnlockedAsNotRidingEnabled()){
-        this.respondingTasksQueue.cancelAllHandling();
+        if (this.settings.isAssumingScreenUnlockedAsNotRidingEnabled()) {
+            this.respondingTasksQueue.cancelAllHandling();
         }
     }
 
@@ -243,7 +243,7 @@ public class Responder {
 
 
     protected UserRide createUserRide() {
-        return new UserRide(this.settings,this.locationUtility, this.sensorsUtility, this.motionUtility, this.log);
+        return new UserRide(this.settings, this.locationUtility, this.sensorsUtility, this.motionUtility, this.log);
     }
 
 

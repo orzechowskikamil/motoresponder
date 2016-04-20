@@ -81,6 +81,11 @@ public class UtilitiesRunner {
                         UtilitiesRunner.this.locationUtilityTest.testOfGettingAccurateLocation();
                         break;
 
+                    case 11:
+                        // this is working 10.04.2016 on Android 5.1
+                        UtilitiesRunner.this.locationUtilityTest.testOfBreakingAccurateLocationProcess();
+                        break;
+
                     case 2:
                         // this is working 07.03.2016 on Android 5.1
                         UtilitiesRunner.this.motionUtilityTest.testOfIsDeviceInMotion();

@@ -41,6 +41,8 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
      * Cancells responding, cleanup (notifications, handlers, etc) and kills task
      */
     public void cancelResponding() {
+        this.respondingDecision.cancelDecision();
+
         this.cancel(true);
         // remove notification if it was already shown.
         this.unnotifyAboutPendingAutoRespond();
@@ -64,7 +66,7 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
 
 
         // show notification to give user possibiity to cancel autorespond
-       this.showPendingNotificationIfEnabled();
+        this.showPendingNotificationIfEnabled();
 
 
         boolean shouldRespond = this.respondingDecision.shouldRespond(this.respondingSubject.getPhoneNumber());
@@ -81,7 +83,7 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
             this.log.add("Decision = NOT respond.");
         }
 
- 
+
         if (this.shouldShowNotification && shouldRespond) {
             this.showSummaryNotification(this.respondingSubject.getPhoneNumber());
         }
@@ -90,15 +92,15 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
             this.showDebugNotification();
         }
     }
-    
-    private void showPendingNotificationIfEnabled(){
-     if (this.settings.isShowingPendingNotificationEnabled()) {
+
+    private void showPendingNotificationIfEnabled() {
+        if (this.settings.isShowingPendingNotificationEnabled()) {
             this.notifyAboutPendingAutoRespond();
         }
     }
-    
-    private void hidePendingNotificationIfEnabled(){
-           if (this.settings.isShowingPendingNotificationEnabled()) {
+
+    private void hidePendingNotificationIfEnabled() {
+        if (this.settings.isShowingPendingNotificationEnabled()) {
             this.unnotifyAboutPendingAutoRespond();
         }
 
@@ -168,14 +170,15 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
         return true;
     }
 
+    @Override
+    protected void onPostExecute(Boolean result) {
+        this.hidePendingNotificationIfEnabled();
+        this.resultCallback.apply(result);
+    }
+
     /**
      * This is called when doInBackground() is finished
      */
-    protected void onPostExecute(Boolean... result) {
-        this.hidePendingNotificationIfEnabled();
-        this.resultCallback.apply(result[0]);
-
-    }
 
 
     protected boolean isTerminated() {

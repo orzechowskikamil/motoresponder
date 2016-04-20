@@ -74,7 +74,13 @@ public class RespondingDecisionIntegrationTest {
                 log("shouldRespond()=" + result);
                 return result;
             }
+
+            @Override
+            public void cancelDecision() {
+                Log.d(TAG, "RespondingDecision cancelled!");
+            }
         };
+
     }
 
 
