@@ -1,9 +1,7 @@
 package com.medziku.motoresponder.logic;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import com.google.common.base.Predicate;
-import com.medziku.motoresponder.callbacks.SMSReceivedCallback;
 import com.medziku.motoresponder.utils.*;
 
 import java.util.Date;
@@ -31,6 +29,11 @@ public class Responder {
     protected ResponsePreparator responsePreparator;
     protected SharedPreferencesUtility sharedPreferencesUtility;
     protected boolean isRespondingNow;
+
+
+    private boolean currentlyListeningForSMS = false;
+    private boolean currentlyListeningForCalls = false;
+
     private DecisionLog log;
 
     public Responder(Context context) {
@@ -66,10 +69,29 @@ public class Responder {
 
         this.isRespondingNow = true;
         // TODO K.Orzechowski throw out this smsreceivedcallback and replace it with predicate  #49
+        this.listenToIncomingAccordingToSettings();
+        this.settings.listenToChangeRespondToSmsOrCallSetting(new Predicate<Boolean>() {
+            @Override
+            public boolean apply(Boolean input) {
+                Responder.this.listenToIncomingAccordingToSettings();
+                return false;
+            }
+        });
         this.listenToProximityChanges();
-        this.listenForSMS();
-        this.listenForCalls();
         this.listenForLockStateChanges();
+    }
+
+    protected void listenToIncomingAccordingToSettings() {
+        if (this.settings.isRespondingForSMSEnabled() == true) {
+            this.listenForSMS();
+        } else {
+            this.stopListeningForSMS();
+        }
+        if (this.settings.isRespondingForCallsEnabled() == true) {
+            this.listenForCalls();
+        } else {
+            this.stopListeningForCalls();
+        }
     }
 
 
@@ -123,6 +145,10 @@ public class Responder {
 
 
     protected void listenForSMS() {
+        if (this.currentlyListeningForSMS == true) {
+            return;
+        }
+
         this.smsUtility.listenForSMS(new Predicate<SMSObject>() {
             @Override
             public boolean apply(SMSObject input) {
@@ -130,6 +156,7 @@ public class Responder {
                 return false;
             }
         });
+        this.currentlyListeningForSMS = true;
     }
 
     protected void listenForLockStateChanges() {
@@ -149,6 +176,10 @@ public class Responder {
     }
 
     protected void listenForCalls() {
+        if (this.currentlyListeningForCalls == true) {
+            return;
+        }
+
         this.callsUtility.listenForUnansweredCalls(new Predicate<String>() {
             @Override
             public boolean apply(String phoneNumber) {
@@ -156,6 +187,7 @@ public class Responder {
                 return true;
             }
         });
+        this.currentlyListeningForCalls = true;
     }
 
     protected void stopListeningForLockStateChanges() {
@@ -163,11 +195,19 @@ public class Responder {
     }
 
     protected void stopListeningForCalls() {
+        if (this.currentlyListeningForCalls == false) {
+            return;
+        }
         this.callsUtility.stopListeningForCalls();
+        this.currentlyListeningForCalls = false;
     }
 
     protected void stopListeningForSMS() {
+        if (this.currentlyListeningForSMS == false) {
+            return;
+        }
         this.smsUtility.stopListeningForSMS();
+        this.currentlyListeningForSMS = false;
     }
 
     protected void listenToProximityChanges() {

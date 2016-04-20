@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
@@ -26,6 +27,8 @@ public class ResponderTest {
         this.context = new MockContext();
         this.responder = new ExposedResponder(this.context);
         when(this.responder.mockSettings.isResponderEnabled()).thenReturn(true);
+        when(this.responder.mockSettings.isRespondingForSMSEnabled()).thenReturn(true);
+        when(this.responder.mockSettings.isRespondingForCallsEnabled()).thenReturn(true);
 
     }
 
@@ -33,7 +36,6 @@ public class ResponderTest {
     public void testReactionOnCall() {
         this.responder.startResponding();
         this.responder.currentCallCallback.apply(this.FAKE_PHONE_NUMBER);
-
 
         verify(this.responder.respondingTasksQueueMock, times(1)).createAndExecuteRespondingTask(any(CallRespondingSubject.class));
     }
@@ -43,8 +45,25 @@ public class ResponderTest {
         this.responder.startResponding();
         this.responder.currentSMSCallback.apply(new SMSObject(this.FAKE_PHONE_NUMBER, "mock message"));
 
-
         verify(this.responder.respondingTasksQueueMock, times(1)).createAndExecuteRespondingTask(any(SMSRespondingSubject.class));
+    }
+
+
+    @Test
+    public void testReactionOnSMSAndCallDisabled() {
+        when(this.responder.mockSettings.isRespondingForSMSEnabled()).thenReturn(false);
+        when(this.responder.mockSettings.isRespondingForCallsEnabled()).thenReturn(false);
+
+        verify(this.responder.respondingTasksQueueMock, times(0)).createAndExecuteRespondingTask(any(SMSRespondingSubject.class));
+        verify(this.responder.respondingTasksQueueMock, times(0)).createAndExecuteRespondingTask(any(CallRespondingSubject.class));
+    }
+
+    @Test
+    public void testReactionOnSMSAndCallCallback() {
+        this.responder.startResponding();
+        this.responder.changedSMSCallSettingCallback.apply(true);
+
+        assertTrue(this.responder.listenToIncomingAccordingToSettingsCalled);
     }
 
 
@@ -89,10 +108,17 @@ class ExposedResponder extends Responder {
     public CallsUtility mockCallsUtility;
     public SMSUtility mockSMSUtility;
     public Settings mockSettings;
-
+    public Predicate<Boolean> changedSMSCallSettingCallback;
+    public boolean listenToIncomingAccordingToSettingsCalled = false;
 
     public ExposedResponder(Context context) {
         super(context);
+    }
+
+    @Override
+    public void listenToIncomingAccordingToSettings() {
+        super.listenToIncomingAccordingToSettings();
+        this.listenToIncomingAccordingToSettingsCalled = true;
     }
 
     @Override
@@ -174,7 +200,21 @@ class ExposedResponder extends Responder {
     @Override
     protected Settings createSettings() {
         this.mockSettings = mock(Settings.class);
+
+        doAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+
+                Predicate callback = (Predicate<Boolean>) invocation.getArguments()[0];
+                ExposedResponder.this.changedSMSCallSettingCallback = callback;
+
+                return null;
+            }
+        }).when(this.mockSettings).listenToChangeRespondToSmsOrCallSetting(any(Predicate.class));
+
         return this.mockSettings;
     }
+
+
 }
 

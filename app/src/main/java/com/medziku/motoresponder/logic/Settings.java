@@ -9,6 +9,7 @@ public class Settings extends SettingsBase {
 
 
     private Predicate<Boolean> responderEnabledCallback;
+    private Predicate<Boolean> onChangeRespondingToSMSOrCallsCallback;
 
     public Settings(SharedPreferencesUtility sharedPreferencesUtility) {
         super(sharedPreferencesUtility);
@@ -103,6 +104,18 @@ public class Settings extends SettingsBase {
                 this.responderEnabledCallback.apply(true);
             }
         }
+    }
+    
+    public boolean isRespondingForSMSEnabled(){
+        return true;
+    }
+    
+    public boolean isRespondingForCallsEnabled(){
+        return true;
+    }
+    
+    public void listenToChangeRespondToSmsOrCallSetting(Predicate<Boolean> callback){
+        this.onChangeRespondingToSMSOrCallsCallback = callback;
     }
 
 
