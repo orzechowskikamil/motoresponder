@@ -8,6 +8,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.internal.verification.Calls;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
@@ -87,6 +89,31 @@ public class RespondingTaskTest {
         this.respondingTask.callLogic(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
 
         verify(this.smsUtility, times(0)).sendSMS(anyString(), anyString(), any(Predicate.class));
+    }
+
+    @Test
+    public void testOfRetryingSendingSms() {
+
+        final Predicate<String>[] sendSmsCallback = new Predicate[]{null};
+
+        doAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                sendSmsCallback[0] = (Predicate<String>) invocation.getArguments()[2];
+                return null;
+            }
+        }).when(this.smsUtility).sendSMS(anyString(), anyString(), any(Predicate.class));
+
+        this.respondingTask.sendSMSAndRetryOnFail(FAKE_PHONE_NUMBER, "test message", 2);
+        sendSmsCallback[0].apply("some error");
+        sendSmsCallback[0].apply(null);
+
+        verify(this.smsUtility, times(2)).sendSMS(anyString(), anyString(), any(Predicate.class));
+
+        this.respondingTask.sendSMSAndRetryOnFail(FAKE_PHONE_NUMBER, "test message", 2);
+        sendSmsCallback[0].apply(null);
+        // previously it was called two times and now should be called once so all = 3
+        verify(this.smsUtility, times(3)).sendSMS(anyString(), anyString(), any(Predicate.class));
     }
 
 }

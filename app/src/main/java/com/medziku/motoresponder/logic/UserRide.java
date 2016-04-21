@@ -106,26 +106,25 @@ public class UserRide {
 
         // TODO k.orzechowsk add option to disable GPS, maybe someone don't want to use it, only gyro? Issue #10
 
-
-        this.log.add("Starting quick check of GPS speed.");
+        this.log.add("Starting GPS speed check.");
 
         Float quickCheckSpeedKmh = this.getQuickCheckCurrentSpeedKmh();
 
         if (this.isLocationTimeouted(quickCheckSpeedKmh)) {
             // if quick check is timeouted, it means that user is in building with quick access to GPS signal, so he is not riding.
+            this.log.add("First check speed timeouted - user probably in building, not riding.");
             return false;
         }
 
 
         if (!this.isSpeedForSureRiding(quickCheckSpeedKmh)) {
-            this.log.add("After first check app isn't sure that user is riding.");
+            this.log.add("First check is speed less than sure riding speed, but not timeouted - checking again, using longer check.");
 
             // if quick check returned speed below sure riding speed, but no timeout, it means that user is outside but 
             // he is not moving with motorcycle speed. We need to verify if it is not staying at traffic lights,
             // so we need to perform long GPS check for 3-4 minutes and wait for minimumSureRidingSpeedKmh speed from GPS.
 
             Float longCheckSpeedKmh = this.getLongCheckCurrentSpeedKmh();
-
 
             if (this.isLocationTimeouted(longCheckSpeedKmh)) {
                 // but if again timeouted, then no mercy...
@@ -208,18 +207,17 @@ public class UserRide {
         }
 
         long endDateTimestamp = new Date().getTime();
-
         int checkDurationSeconds = Math.round((endDateTimestamp - startDateTimestamp) / 1000);
 
         if (location == null) {
-            this.log.add("GPS check took " + checkDurationSeconds + " and it was timeouted.");
+            this.log.add("GPS check took " + checkDurationSeconds + "s and it was timeouted.");
             return null;
         }
 
         float speedMs = location.getSpeed();
         float speedKmh = this.msToKmh(speedMs);
 
-        this.log.add("GPS check took " + checkDurationSeconds + " and determined speed was " + speedKmh + " km/h.");
+        this.log.add("GPS check took " + checkDurationSeconds + "s and determined speed was " + speedKmh + " km/h.");
 
         return speedKmh;
     }

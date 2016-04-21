@@ -8,7 +8,7 @@ import com.medziku.motoresponder.utils.SMSUtility;
 
 public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolean> {
 
-    private DecisionLog log;
+    protected DecisionLog log;
     private SMSUtility smsUtility;
     private NotificationUtility notificationUtility;
     private Settings settings;
@@ -122,10 +122,27 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
     private void respondWithSMS() {
         String message = this.responsePreparator.prepareResponse(this.respondingSubject);
         try {
-            this.smsUtility.sendSMS(this.respondingSubject.getPhoneNumber(), message, null);
+            int attemptsLeft = 3;
+            this.sendSMSAndRetryOnFail(this.respondingSubject.getPhoneNumber(), message, attemptsLeft);
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    protected void sendSMSAndRetryOnFail(final String phoneNumber, final String message, final int attemptsLeft) {
+        if (attemptsLeft <= 0) {
+            return;
+        }
+
+        this.smsUtility.sendSMS(phoneNumber, message, new Predicate<String>() {
+            public boolean apply(String error) {
+                if (error != null) {
+                    RespondingTask.this.log.add("Error during sending response SMS: '" + error + "'");
+                    RespondingTask.this.sendSMSAndRetryOnFail(phoneNumber, message, attemptsLeft - 1);
+                }
+                return true;
+            }
+        });
     }
 
 

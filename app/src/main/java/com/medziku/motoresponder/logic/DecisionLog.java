@@ -5,7 +5,7 @@ public class DecisionLog {
     private String logStr = "";
 
     public void add(String line) {
-        this.logStr += line + " | ";
+        this.logStr += line + " ";
     }
 
     public String getLogStr() {

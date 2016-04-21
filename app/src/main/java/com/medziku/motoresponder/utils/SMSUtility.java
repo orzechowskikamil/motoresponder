@@ -44,9 +44,9 @@ public class SMSUtility {
         this.smsManager = SmsManager.getDefault();
     }
 
-    public void sendSMS(String phoneNumber, String message, final Predicate<String> sendSMSCallback) throws Exception {
+    public void sendSMS(String phoneNumber, String message, final Predicate<String> sendSMSCallback) throws RuntimeException {
         if (phoneNumber == null || phoneNumber.length() == 0) {
-            throw new Exception("Phone number empty or zero length");
+            throw new RuntimeException("Phone number empty or zero length");
         }
 
         PendingIntent sentPI = this.createPendingIntent("SMS_SENT", new BroadcastReceiver() {
