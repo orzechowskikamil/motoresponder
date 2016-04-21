@@ -64,7 +64,7 @@ public class RespondingTaskTest {
 
     @Test
     public void testOfResponse() throws Exception {
-        when(this.respondingDecision.shouldRespond(anyString())).thenReturn(true);
+        when(this.respondingDecision.shouldRespond(any(RespondingSubject.class))).thenReturn(true);
         this.respondingTask.callLogic(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
 
         verify(this.smsUtility).sendSMS(anyString(), anyString(), any(Predicate.class));
@@ -74,7 +74,7 @@ public class RespondingTaskTest {
     @Test
     public void testOfNotifications() {
         when(this.settings.isShowingPendingNotificationEnabled()).thenReturn(true);
-        when(this.respondingDecision.shouldRespond(anyString())).thenReturn(false);
+        when(this.respondingDecision.shouldRespond(any(RespondingSubject.class))).thenReturn(false);
         when(this.settings.isShowingSummaryNotificationEnabled()).thenReturn(false);
         when(this.settings.isShowingDebugNotificationEnabled()).thenReturn(false);
 
@@ -87,7 +87,7 @@ public class RespondingTaskTest {
         this.respondingTask.callLogic(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
         verify(this.notificationUtility, times(0)).showBigTextNotification(anyString(), anyString(), anyString());
 
-        when(this.respondingDecision.shouldRespond(anyString())).thenReturn(true);
+        when(this.respondingDecision.shouldRespond(any(RespondingSubject.class))).thenReturn(true);
 
         this.respondingTask.callLogic(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
 
@@ -125,7 +125,7 @@ public class RespondingTaskTest {
             public Object answer(InvocationOnMock invocation) throws Throwable {
                 sendSmsCallback[0] = (Predicate<String>) invocation.getArguments()[2];
                 return null;
-            }
+}
         }).when(this.smsUtility).sendSMS(anyString(), anyString(), any(Predicate.class));
 
         this.respondingTask.sendSMSAndRetryOnFail(FAKE_PHONE_NUMBER, "test message", 2);

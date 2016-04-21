@@ -23,25 +23,30 @@ public class ResponsePreparator {
 
 
     public String prepareResponse(RespondingSubject subject) {
-        boolean addGeolocation = this.shouldRespondWithGeolocation(subject);
-        String result = addGeolocation ? this.getAutoResponseMessageWithGeolocation() : this.getAutoResponseMessage(subject);
-        return result;
+        if (subject instanceof SMSRespondingSubject) {
+            if (subject instanceof GeolocationRequestRespondingSubject && this.shouldRespondWithGeolocation()) {
+                return this.getAutoResponseMessageWithGeolocation();
+            }
+
+            return this.settings.getAutoResponseToSmsTemplate();
+        } else if (subject instanceof CallRespondingSubject) {
+            return this.settings.getAutoResponseToCallTemplate();
+        }
+
+        // should never happen
+        return null;
     }
 
-    private boolean shouldRespondWithGeolocation(RespondingSubject subject) {
-        if (this.isRespondingWithGeolocationEnabled() == false) {
+    public boolean shouldRespondWithGeolocation() {
+        if (this.settings.isRespondingWithGeolocationEnabled() == false) {
             return false;
         }
 
-        if (this.isRespondingWithGeolocationAlwaysEnabled()) {
+        if (this.settings.isRespondingWithGeolocationAlwaysEnabled()) {
             return true;
         }
 
-        if (this.isCurrentRespondingSubjectGeolocationRequest(subject)) {
-            return true;
-        }
-
-        return false;
+        return true;
 
     }
 
@@ -70,20 +75,6 @@ public class ResponsePreparator {
     }
 
 
-    private boolean isCurrentRespondingSubjectGeolocationRequest(RespondingSubject subject) {
-        if (subject instanceof SMSRespondingSubject) {
-            String message = ((SMSRespondingSubject) subject).getMessage().toLowerCase();
-
-            for (String pattern : this.settings.getGeolocationRequestPatterns()) {
-                if (message.indexOf(pattern.toLowerCase()) != -1) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-
     private Location getCurrentLocation() {
         try {
             Future<Location> lastRequestedLocation = this.locationUtility.getLastRequestedLocation();
@@ -98,22 +89,5 @@ public class ResponsePreparator {
         return null;
     }
 
-    private String getAutoResponseMessage(RespondingSubject subject) {
-        if (subject instanceof SMSRespondingSubject) {
-            return this.settings.getAutoResponseToSmsTemplate();
-        } else if (subject instanceof CallRespondingSubject) {
-            return this.settings.getAutoResponseToCallTemplate();
-        }
-
-        return null; // should never happen
-    }
-
-    private boolean isRespondingWithGeolocationEnabled() {
-        return this.settings.isRespondingWithGeolocationEnabled();
-    }
-
-    private boolean isRespondingWithGeolocationAlwaysEnabled() {
-        return this.settings.isRespondingWithGeolocationAlwaysEnabled();
-    }
 
 }

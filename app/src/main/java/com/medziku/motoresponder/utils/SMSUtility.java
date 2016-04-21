@@ -166,7 +166,7 @@ public class SMSUtility {
      * given date, and then iterate through them in order to find fitting phoneNumber, so do not use this method for
      * date very far away from current
      */
-    protected int howManyOutgoingSMSSentAfterDate(Date date, String phoneNumber, boolean shouldBeSentByOurApp) {
+    public int howManyOutgoingSMSSentAfterDate(Date date, String phoneNumber, boolean shouldBeSentByOurApp) {
         String creator = this.getApplicationPackageName();
 
         String[] whichColumns = {Sms.ADDRESS};

@@ -7,6 +7,7 @@ import android.util.Log;
 import com.google.common.util.concurrent.SettableFuture;
 import com.medziku.motoresponder.logic.Responder;
 import com.medziku.motoresponder.logic.RespondingDecision;
+import com.medziku.motoresponder.logic.RespondingSubject;
 import com.medziku.motoresponder.utils.LocationUtility;
 
 import java.util.concurrent.Future;
@@ -71,11 +72,12 @@ class MockedRespondingDecision extends RespondingDecision {
     public boolean result;
 
     public MockedRespondingDecision() {
-        super(null, null, null, null, null);
+        super(null, null, null, null, null, null);
     }
 
-    public boolean shouldRespond(String phoneNumber) {
-        return this.result;
+    @Override
+    public boolean shouldRespond(RespondingSubject subject) {
+        return true;
     }
 
     @Override

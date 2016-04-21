@@ -39,6 +39,17 @@ public class AlreadyResponded {
         return false;
     }
 
+    public int getAmountOfAutomaticalResponsesSinceUserResponded(String phoneNumber) {
+        boolean SENT_BY_USER = false;
+        boolean SENT_BY_APP = true;
+
+        Date dateOfLastSmsSentByUser = this.smsUtility.getDateOfLastSMSSent(phoneNumber, SENT_BY_USER);
+
+        int amountOfResponsesSentByApplication = this.smsUtility.howManyOutgoingSMSSentAfterDate(dateOfLastSmsSentByUser, phoneNumber, SENT_BY_APP);
+
+        return amountOfResponsesSentByApplication;
+    }
+
 
     /**
      * Check if user answered given number with SMS or call after application answered automatically

@@ -15,7 +15,6 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
     private Settings settings;
     private Predicate<Boolean> resultCallback;
     private RespondingDecision respondingDecision;
-    private RespondingSubject respondingSubject;
     private ResponsePreparator responsePreparator;
 
     public RespondingTask(RespondingDecision respondingDecision,
@@ -88,13 +87,12 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
     }
 
     protected void handleRespondingTask(RespondingSubject subject) {
-        this.respondingSubject = subject;
 
         // wait some time before responding, to allow user manually
         try {
             Thread.sleep(this.settings.getWaitBeforeResponseSeconds() * 1000);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            // normal situation - unlocked phone.
         }
 
         // K. Orzechowski: I am not sure, but I read that I should check for this.
@@ -105,10 +103,10 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
 
 
         // show notification to give user possibiity to cancel autorespond
-        this.showPendingNotificationIfEnabled();
+       this.showPendingNotificationIfEnabled();
 
 
-        boolean shouldRespond = this.respondingDecision.shouldRespond(this.respondingSubject.getPhoneNumber());
+        boolean shouldRespond = this.respondingDecision.shouldRespond(subject);
         if (shouldRespond) {
             // this check can took long time so before responding we can check again for cancellation.
             if (this.isTerminated()) {
@@ -117,25 +115,25 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
             }
 
             this.log.add("Decision = RESPOND. Sending SMS.");
-            this.respondWithSMS();
+            this.respondWithSMS(subject);
         } else {
             this.log.add("Decision = NOT respond.");
         }
 
-
+ 
         if (this.settings.isShowingSummaryNotificationEnabled() && shouldRespond) {
-            this.showSummaryNotification(this.respondingSubject.getPhoneNumber());
+            this.showSummaryNotification(subject.getPhoneNumber());
         }
-    }
-
-    private void showPendingNotificationIfEnabled() {
-        if (this.settings.isShowingPendingNotificationEnabled()) {
+        }
+    
+    private void showPendingNotificationIfEnabled(){
+     if (this.settings.isShowingPendingNotificationEnabled()) {
             this.notifyAboutPendingAutoRespond();
         }
     }
-
-    private void hidePendingNotificationIfEnabled() {
-        if (this.settings.isShowingPendingNotificationEnabled()) {
+    
+    private void hidePendingNotificationIfEnabled(){
+           if (this.settings.isShowingPendingNotificationEnabled()) {
             this.notificationUtility.hideNotification();
         }
 
@@ -157,11 +155,11 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
         this.notificationUtility.showBigTextNotification(title, shortText, bigText);
     }
 
-    private void respondWithSMS() {
-        String message = this.responsePreparator.prepareResponse(this.respondingSubject);
+    private void respondWithSMS(RespondingSubject subject) {
+        String message = this.responsePreparator.prepareResponse(subject);
         try {
             int attemptsLeft = 3;
-            this.sendSMSAndRetryOnFail(this.respondingSubject.getPhoneNumber(), message, attemptsLeft);
+            this.sendSMSAndRetryOnFail(subject.getPhoneNumber(), message, attemptsLeft);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -170,16 +168,16 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
     protected void sendSMSAndRetryOnFail(final String phoneNumber, final String message, final int attemptsLeft) {
         if (attemptsLeft <= 0) {
             return;
-        }
+    }
 
         this.smsUtility.sendSMS(phoneNumber, message, new Predicate<String>() {
             public boolean apply(String error) {
                 if (error != null) {
                     RespondingTask.this.log.add("Error during sending response SMS: '" + error + "'");
                     RespondingTask.this.sendSMSAndRetryOnFail(phoneNumber, message, attemptsLeft - 1);
-                }
-                return true;
-            }
+    }
+        return true;
+    }
         });
     }
 
@@ -194,7 +192,7 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
     private void showDebugNotificationIfEnabled() {
         if (this.settings.isShowingDebugNotificationEnabled()) {
             this.showDebugNotification();
-        }
+    }
     }
 
 

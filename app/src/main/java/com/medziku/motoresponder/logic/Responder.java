@@ -35,6 +35,7 @@ public class Responder {
     private boolean currentlyListeningForCalls = false;
 
     private DecisionLog log;
+    private GeolocationRequestRecognition geolocationRequestRecognition;
 
     public Responder(Context context) {
         this.context = context;
@@ -52,6 +53,7 @@ public class Responder {
         this.respondingDecision = this.createRespondingDecision();
         this.responsePreparator = this.createResponsePreparator();
         this.respondingTasksQueue = this.createRespondingTasksQueue();
+        this.geolocationRequestRecognition = this.createGeolocationRequestRecognition();
     }
 
 
@@ -113,7 +115,15 @@ public class Responder {
      * Called when user will receive sms
      */
     public void onSMSReceived(String phoneNumber, String message) {
-        this.handleIncoming(new SMSRespondingSubject(phoneNumber, message));
+        SMSRespondingSubject subject;
+
+        if (this.geolocationRequestRecognition.isGeolocationRequest(message)) {
+            subject = new GeolocationRequestRespondingSubject(phoneNumber, message);
+        } else {
+            subject = new SMSRespondingSubject(phoneNumber, message);
+        }
+
+        this.handleIncoming(subject);
     }
 
     /**
@@ -260,6 +270,10 @@ public class Responder {
     }
 
 
+    protected GeolocationRequestRecognition createGeolocationRequestRecognition() {
+        return new GeolocationRequestRecognition(this.settings);
+    }
+
     protected RespondingTasksQueue createRespondingTasksQueue() {
         return new RespondingTasksQueue(
                 this.notificationUtility,
@@ -273,7 +287,7 @@ public class Responder {
 
 
     protected RespondingDecision createRespondingDecision() {
-        return new RespondingDecision(this.userRide, this.numberRules, this.alreadyResponded, this.deviceUnlocked, this.log);
+        return new RespondingDecision(this.userRide, this.numberRules, this.alreadyResponded, this.deviceUnlocked,this.settings, this.log);
     }
 
     // endregion

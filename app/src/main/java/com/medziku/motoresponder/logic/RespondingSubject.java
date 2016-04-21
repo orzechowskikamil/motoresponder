@@ -12,4 +12,6 @@ abstract public class RespondingSubject {
     public String getPhoneNumber() {
         return this.phoneNumber;
     }
+
+
 }

@@ -58,7 +58,7 @@ public class ResponsePreparatorTest {
 
     @Test
     public void testPrepareGeolocationResponse() throws Exception {
-        String result = this.responsePreparator.prepareResponse(new SMSRespondingSubject(FAKE_PHONE_NUMBER, GEOLOCATION_REQUEST_INCOMING_MESSAGE));
+        String result = this.responsePreparator.prepareResponse(new GeolocationRequestRespondingSubject(FAKE_PHONE_NUMBER, GEOLOCATION_REQUEST_INCOMING_MESSAGE));
         assertTrue(result.indexOf(RESPONSE_TEXT_LOCATION_KEYWORD) != -1);
         assertTrue(result.indexOf(MAPS_URL) != -1);
         assertTrue(result.indexOf(Double.toString(LATITUDE)) != -1);
@@ -76,12 +76,12 @@ public class ResponsePreparatorTest {
         when(this.settings.isRespondingWithGeolocationAlwaysEnabled()).thenReturn(true);
         when(this.settings.isRespondingWithGeolocationEnabled()).thenReturn(false);
 
-        String result = this.responsePreparator.prepareResponse(new SMSRespondingSubject(FAKE_PHONE_NUMBER, GEOLOCATION_REQUEST_INCOMING_MESSAGE));
+        String result = this.responsePreparator.prepareResponse(new GeolocationRequestRespondingSubject(FAKE_PHONE_NUMBER, GEOLOCATION_REQUEST_INCOMING_MESSAGE));
 
         assertTrue(result.indexOf(MAPS_URL) == -1);
 
         when(this.settings.isRespondingWithGeolocationEnabled()).thenReturn(true);
-        String enabledResult = this.responsePreparator.prepareResponse(new SMSRespondingSubject(FAKE_PHONE_NUMBER, GEOLOCATION_REQUEST_INCOMING_MESSAGE));
+        String enabledResult = this.responsePreparator.prepareResponse(new GeolocationRequestRespondingSubject(FAKE_PHONE_NUMBER, GEOLOCATION_REQUEST_INCOMING_MESSAGE));
 
         assertTrue(enabledResult.indexOf(MAPS_URL) != -1);
 

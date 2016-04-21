@@ -64,7 +64,7 @@ public class Settings extends SettingsBase {
     public String getAutoResponseToSmsWithGeolocationTemplate() {
         return this.getStringValue(R.string.auto_response_to_sms_with_geolocation_template_key);
     }
-    
+
    public boolean isShowingSummaryNotificationEnabled(){
        return this.getBooleanValue(R.string.showing_summary_notification_enabled_key);
    }
@@ -90,10 +90,17 @@ public class Settings extends SettingsBase {
         return responsePatterns;
     }
     
+    public int getLimitOfGeolocationResponses(){
+        return 3;
+    }
     public boolean includeDeviceMotionCheck(){
         return this.getBooleanValue(R.string.include_accelerometer_check_key);
     }
-    
+
+    public int getLimitOfResponses() {
+        return 1;
+    }
+
     public double getAccelerationRequiredToMotion(){
         return Double.parseDouble(this.getStringValue(R.string.acceleration_required_for_motion_key));
     }
@@ -113,16 +120,16 @@ public class Settings extends SettingsBase {
         final String RESPONDER_ENABLED_KEY = this.getStringFromRes(R.string.responder_enabled_key);
 
         if (changedKey.equals(RESPONDER_ENABLED_KEY)) {
-            if (this.responderEnabledCallback != null) {
-                this.responderEnabledCallback.apply(true);
-            }
+                if (this.responderEnabledCallback != null) {
+                    this.responderEnabledCallback.apply(true);
+                }
         }
     }
-    
+
     public boolean isRespondingForSMSEnabled(){
         return this.getBooleanValue(R.string.auto_response_to_sms_enabled_key);
     }
-    
+
     public boolean isRespondingForCallsEnabled(){
         return this.getBooleanValue(R.string.auto_response_to_call_enabled_key);
     }
@@ -168,6 +175,7 @@ public class Settings extends SettingsBase {
         // TODO K. Orzechowski: change constant settings to real configurable values #67
         return false;
     }
+
 }
 
 

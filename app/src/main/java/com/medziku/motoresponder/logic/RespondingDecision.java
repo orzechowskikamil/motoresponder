@@ -7,6 +7,7 @@ import java.util.Date;
  */
 public class RespondingDecision {
 
+    private Settings settings;
     private DeviceUnlocked deviceUnlocked;
     private AlreadyResponded alreadyResponded;
     private NumberRules numberRules;
@@ -18,15 +19,17 @@ public class RespondingDecision {
                               NumberRules numberRules,
                               AlreadyResponded alreadyResponded,
                               DeviceUnlocked deviceUnlocked,
+                              Settings settings,
                               DecisionLog log) {
         this.userRide = userRide;
         this.numberRules = numberRules;
         this.alreadyResponded = alreadyResponded;
         this.deviceUnlocked = deviceUnlocked;
+        this.settings = settings;
         this.log = log;
     }
 
-    public boolean shouldRespond(String phoneNumber) {
+    public boolean shouldRespond(RespondingSubject subject) {
         if (this.deviceUnlocked.isNotRidingBecausePhoneUnlocked()) {
             this.log.add("Phone is unlocked.");
             return false;
@@ -36,7 +39,7 @@ public class RespondingDecision {
 
         // do not answer numbers which user doesnt want to autorespond
         // this check is relatively cheap compared to measuring if user is riding
-        if (!this.numberRules.numberRulesAllowResponding(phoneNumber)) {
+        if (!this.numberRules.numberRulesAllowResponding(subject.getPhoneNumber())) {
             this.log.add("Number rules do not allow responding.");
             return false;
         }
@@ -44,15 +47,15 @@ public class RespondingDecision {
         // this this will check if user or application already responded to this number. In case if he is already responded
         // we don't respond automatically. App can have some delay between receiving message and starting responding process
         // to allow user respond manually, so this check checks if it happened
-        if (this.alreadyResponded.isUserRespondedSince(dateOfReceiving, phoneNumber)) {
+        if (this.alreadyResponded.isUserRespondedSince(dateOfReceiving, subject.getPhoneNumber())) {
             this.log.add("User responded since receiving input, no need of autoresponse.");
             return false;
         }
 
-        // we shouldn't sent auto responses over and over, so sent only if last response was call / sms to given number,
-        // not the auto response.
-        if (this.alreadyResponded.isAutomaticalResponseLast(phoneNumber)) {
-            this.log.add("Most recent output to this number was autoresponse, can't send one more.");
+        // we shouldn't sent auto responses over and over so sent only if amount of responses sent to given number
+        // since last normal response not exceed the limit
+        if (this.alreadyResponded.getAmountOfAutomaticalResponsesSinceUserResponded(subject.getPhoneNumber()) > getLimitForAutoresponses(subject)) {
+            this.log.add("Cant sent more responses to this number.");
             return false;
         }
 
@@ -77,13 +80,17 @@ public class RespondingDecision {
         // and now finally we check if user doesn't respond in time of checking if device is riding.
         // (there is possibility that user responded quickly, turning on screen doesn't affect logic, and user
         // quickly responded and hide phone before ride/not ride state was known)
-        if (this.alreadyResponded.isUserRespondedSince(dateOfReceiving, phoneNumber)) {
+        if (this.alreadyResponded.isUserRespondedSince(dateOfReceiving, subject.getPhoneNumber())) {
             this.log.add("User responded between receiving input and determining if user is riding.");
             return false;
         }
 
         // all excluding conditions not met, we should respond.
         return true;
+    }
+
+    private int getLimitForAutoresponses(RespondingSubject subject) {
+        return (subject instanceof GeolocationRequestRespondingSubject) ? this.settings.getLimitOfGeolocationResponses() : this.settings.getLimitOfResponses();
     }
 
 

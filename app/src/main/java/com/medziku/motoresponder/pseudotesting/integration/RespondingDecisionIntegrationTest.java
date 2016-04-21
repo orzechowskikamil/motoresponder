@@ -38,7 +38,7 @@ public class RespondingDecisionIntegrationTest {
         NumberRules numberRules = this.createLoggingUserRules(contactsUtility);
         AlreadyResponded alreadyResponded = this.createLoggingAlreadyResponded(callsUtility, smsUtility);
 
-        this.respondingDecision = this.createLoggingRespondingDecision(deviceUnlocked, userRide, numberRules, alreadyResponded, log);
+        this.respondingDecision = this.createLoggingRespondingDecision(deviceUnlocked, userRide, numberRules, alreadyResponded,settings, log);
 
         sensorsUtility.registerSensors();
     }
@@ -54,7 +54,7 @@ public class RespondingDecisionIntegrationTest {
         }
 
         log("Starting isolated responding decision test. This test will make a responding decision from current state of the phone");
-        boolean result = this.respondingDecision.shouldRespond("791467855");
+        boolean result = this.respondingDecision.shouldRespond(new CallRespondingSubject("791467855"));
         log("Result of testRespondingDecisionInIsolation()=" + result);
     }
 
@@ -67,10 +67,10 @@ public class RespondingDecisionIntegrationTest {
 
     // region extending classes to make them loggable
 
-    private RespondingDecision createLoggingRespondingDecision(final DeviceUnlocked deviceUnlocked, final UserRide userRide, final NumberRules numberRules, final AlreadyResponded alreadyResponded, DecisionLog log) {
-        return new RespondingDecision(userRide, numberRules, alreadyResponded, deviceUnlocked, log) {
-            public boolean shouldRespond(String phoneNumber) {
-                boolean result = super.shouldRespond(phoneNumber);
+    private RespondingDecision createLoggingRespondingDecision(final DeviceUnlocked deviceUnlocked, final UserRide userRide, final NumberRules numberRules, final AlreadyResponded alreadyResponded, Settings settings, DecisionLog log) {
+        return new RespondingDecision(userRide, numberRules, alreadyResponded, deviceUnlocked,settings, log) {
+            public boolean shouldRespond(RespondingSubject subject) {
+                boolean result = super.shouldRespond(subject);
                 log("shouldRespond()=" + result);
                 return result;
             }

@@ -20,12 +20,14 @@ public class ResponderTest {
     private String FAKE_PHONE_NUMBER = "777777777";
     private ExposedResponder responder;
     private MockContext context;
+    private static final String GEOLOCATION_REQUEST_PATTERN = "Where are you";
 
 
     @Before
     public void setUp() throws Exception {
         this.context = new MockContext();
         this.responder = new ExposedResponder(this.context);
+        when(this.responder.mockSettings.getGeolocationRequestPatterns()).thenReturn(new String[]{GEOLOCATION_REQUEST_PATTERN});
         when(this.responder.mockSettings.isResponderEnabled()).thenReturn(true);
         when(this.responder.mockSettings.isRespondingForSMSEnabled()).thenReturn(true);
         when(this.responder.mockSettings.isRespondingForCallsEnabled()).thenReturn(true);
@@ -46,6 +48,15 @@ public class ResponderTest {
         this.responder.currentSMSCallback.apply(new SMSObject(this.FAKE_PHONE_NUMBER, "mock message"));
 
         verify(this.responder.respondingTasksQueueMock, times(1)).createAndExecuteRespondingTask(any(SMSRespondingSubject.class));
+    }
+
+    @Test
+    public void testReactionOnGeolocationRequest() {
+        this.responder.startResponding();
+        this.responder.currentSMSCallback.apply(new SMSObject(this.FAKE_PHONE_NUMBER, "Hey Bert, " + GEOLOCATION_REQUEST_PATTERN + " ? hahha"));
+
+
+        verify(this.responder.respondingTasksQueueMock, times(1)).createAndExecuteRespondingTask(any(GeolocationRequestRespondingSubject.class));
     }
 
 

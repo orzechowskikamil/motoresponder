@@ -10,6 +10,9 @@ import org.mockito.stubbing.Answer;
 
 import java.util.Date;
 
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.when;
+
 
 public class RespondingDecisionTest {
 
@@ -19,16 +22,22 @@ public class RespondingDecisionTest {
     private AlreadyResponded alreadyResponded;
     private DeviceUnlocked deviceUnlocked;
     private String FAKE_PHONE_NUMBER = "777777777";
+    private RespondingSubject fakeRespondingSubject;
+    private Settings settings;
 
 
     @Before
     public void runBeforeTests() {
+        this.fakeRespondingSubject = new CallRespondingSubject(this.FAKE_PHONE_NUMBER);
         this.alreadyResponded = Mockito.mock(AlreadyResponded.class);
         this.userRide = Mockito.mock(UserRide.class);
         this.numberRules = Mockito.mock(NumberRules.class);
         this.deviceUnlocked = Mockito.mock(DeviceUnlocked.class);
+        this.settings = Mockito.mock(Settings.class);
+        when(this.settings.getLimitOfGeolocationResponses()).thenReturn(2);
+        when(this.settings.getLimitOfResponses()).thenReturn(1);
         DecisionLog log = Mockito.mock(DecisionLog.class);
-        this.respondingDecision = new RespondingDecision(this.userRide, this.numberRules, this.alreadyResponded, this.deviceUnlocked, log);
+        this.respondingDecision = new RespondingDecision(this.userRide, this.numberRules, this.alreadyResponded, this.deviceUnlocked, this.settings, log);
 
 
         this.setDeviceUnlockedIsNotRidingReturnValue(false);
@@ -36,7 +45,9 @@ public class RespondingDecisionTest {
         this.setAlreadyRespondedIsAutomaticalResponseLastReturnValue(false);
         this.setAlreadyRespondedIsUserRespondedSinceReturnValue(false);
         this.setUserRideIsUserRidingReturnValue(true);
+        this.setAlreadyRespondedGetAmountOfAutomaticalResponsesSent(1);
     }
+
 
     @Test
     public void unlockedScreenMakesNegativeDecision() {
@@ -57,11 +68,6 @@ public class RespondingDecisionTest {
         this.expectRespondingDecisionShouldRespondToBe(false);
     }
 
-    @Test
-    public void automaticalResponseIsLastMakeNegativeDecision() {
-        this.setAlreadyRespondedIsAutomaticalResponseLastReturnValue(true);
-        this.expectRespondingDecisionShouldRespondToBe(false);
-    }
 
     @Test
     public void userNotRidingMakeNegativeDecision() {
@@ -76,12 +82,18 @@ public class RespondingDecisionTest {
     }
 
     @Test
+    public void tooMuchAutomaticalResponsesMakeNegativeDecision() {
+        this.setAlreadyRespondedGetAmountOfAutomaticalResponsesSent(5);
+        this.expectRespondingDecisionShouldRespondToBe(false);
+    }
+
+    @Test
     public void lateUnlockOfDeviceMakeNegativeDecision() {
-        Mockito.when(this.userRide.isUserRiding()).thenAnswer(new Answer<Boolean>() {
+        when(this.userRide.isUserRiding()).thenAnswer(new Answer<Boolean>() {
             @Override
             public Boolean answer(InvocationOnMock invocation) throws Throwable {
                 // simulate unlocking screen after determining location.
-                Mockito.when(RespondingDecisionTest.this.deviceUnlocked.isNotRidingBecausePhoneUnlocked()).thenReturn(true);
+                when(RespondingDecisionTest.this.deviceUnlocked.isNotRidingBecausePhoneUnlocked()).thenReturn(true);
                 return true;
             }
         });
@@ -92,11 +104,11 @@ public class RespondingDecisionTest {
 
     @Test
     public void lateResponseByUserMakeNegativeDecision() {
-        Mockito.when(this.userRide.isUserRiding()).thenAnswer(new Answer<Boolean>() {
+        when(this.userRide.isUserRiding()).thenAnswer(new Answer<Boolean>() {
             @Override
             public Boolean answer(InvocationOnMock invocation) throws Throwable {
                 // simulate user answered after determining location.
-                Mockito.when(
+                when(
                         RespondingDecisionTest.this.alreadyResponded.isUserRespondedSince(Matchers.any(Date.class), Matchers.anyString())
                 ).thenReturn(true);
                 return true;
@@ -110,30 +122,32 @@ public class RespondingDecisionTest {
     // region helper methods
 
     private void expectRespondingDecisionShouldRespondToBe(boolean expectedValue) {
-        Assert.assertTrue(this.respondingDecision.shouldRespond(this.FAKE_PHONE_NUMBER) == expectedValue);
+        Assert.assertTrue(this.respondingDecision.shouldRespond(this.fakeRespondingSubject) == expectedValue);
     }
 
     private void setNumberRulesAllowRespondingReturnValue(boolean returnValue) {
-        Mockito.when(this.numberRules.numberRulesAllowResponding(this.FAKE_PHONE_NUMBER)).thenReturn(returnValue);
+        when(this.numberRules.numberRulesAllowResponding(this.FAKE_PHONE_NUMBER)).thenReturn(returnValue);
     }
 
     private void setDeviceUnlockedIsNotRidingReturnValue(boolean returnValue) {
-        Mockito.when(this.deviceUnlocked.isNotRidingBecausePhoneUnlocked()).thenReturn(returnValue);
+        when(this.deviceUnlocked.isNotRidingBecausePhoneUnlocked()).thenReturn(returnValue);
     }
 
-
     private void setUserRideIsUserRidingReturnValue(boolean returnValue) {
-        Mockito.when(this.userRide.isUserRiding()).thenReturn(returnValue);
+        when(this.userRide.isUserRiding()).thenReturn(returnValue);
     }
 
     private void setAlreadyRespondedIsUserRespondedSinceReturnValue(boolean returnValue) {
-        Mockito.when(this.alreadyResponded.isUserRespondedSince(Matchers.any(Date.class), Matchers.anyString())).thenReturn(returnValue);
+        when(this.alreadyResponded.isUserRespondedSince(Matchers.any(Date.class), Matchers.anyString())).thenReturn(returnValue);
     }
 
     private void setAlreadyRespondedIsAutomaticalResponseLastReturnValue(boolean returnValue) {
-        Mockito.when(this.alreadyResponded.isAutomaticalResponseLast(this.FAKE_PHONE_NUMBER)).thenReturn(returnValue);
+        when(this.alreadyResponded.isAutomaticalResponseLast(this.FAKE_PHONE_NUMBER)).thenReturn(returnValue);
     }
 
+    private void setAlreadyRespondedGetAmountOfAutomaticalResponsesSent(int val) {
+        when(this.alreadyResponded.getAmountOfAutomaticalResponsesSinceUserResponded(anyString())).thenReturn(val);
+    }
     // endregion
 
 

@@ -19,7 +19,7 @@ public class IntegrationRunner {
      * This flag enables integration testing - it will be run instead of application.
      * Remember that UtilitiesRunner.ARE_PSEUDO_TESTS_ENABLED should be set to false
      */
-    public static final boolean ARE_INTEGRATION_TESTS_ENABLED = false;
+    public static final boolean ARE_INTEGRATION_TESTS_ENABLED = true;
     public final static String TAG = "IntegrationRunner";
 
     private ResponderIntegrationTest responderIntegrationTest;
@@ -47,7 +47,7 @@ public class IntegrationRunner {
     }
 
     private void runTest() {
-        switch (21) {
+        switch (10) {
             case 10:
                 // this is working at 10.04.2016 on Android 5.1 Motog
                 this.responderIntegrationTest.testRespondingProcessWithMockedTrueDecision();
