@@ -69,12 +69,17 @@
 
     <bool name="responding_with_geolocation_enabled_default_value">true</bool>
     <bool name="showing_pending_notification_enabled_default_value">false</bool>
+    
+        <string name="geolocation_request_pattern_1_title">Wzór #1 pytania o pozycję</string>
+    <string name="geolocation_request_pattern_1_summary" formatted="false">Jeśli ten wzór znajdzie się w wiadomości SMS, zostanie ona uznana za pytanie o pozycję.</string>
+    <string name="geolocation_request_pattern_1_key">geolocation_request_pattern_1</string>
+    <string name="geolocation_request_pattern_1_default_value" formatted="false">gdzie jesteś</string>
 
 
-    <string name="geolocation_request_pattern_1_default_value">Gdzie jestes</string>
-    <string name="geolocation_request_pattern_2_default_value">Gdzie jesteś</string>
-
-
+    <string name="geolocation_request_pattern_2_title">Wzór #2 pytania o pozycję</string>
+    <string name="geolocation_request_pattern_2_summary" formatted="false">Drugi możliwy wzór pytania o pozycję.   </string>
+    <string name="geolocation_request_pattern_2_key">geolocation_request_pattern_2</string>
+    <string name="geolocation_request_pattern_2_default_value" formatted="false">gdzie jestes</string>
     <!-- riding detection settings -->
 
 

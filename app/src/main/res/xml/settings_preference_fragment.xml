@@ -44,6 +44,24 @@
             android:defaultValue="@string/auto_response_to_sms_with_geolocation_template_default_value"
             android:title="@string/auto_response_to_sms_with_geolocation_template_title"
             android:dependency="@string/geolocation_request_enabled_key"/>
+            
+            
+            <EditTextPreference
+            android:dialogTitle="@string/geolocation_request_pattern_1_title"
+            android:key="@string/geolocation_request_pattern_1_key"
+            android:summary="@string/geolocation_request_pattern_1_summary"
+            android:defaultValue="@string/geolocation_request_pattern_1_default_value"
+            android:title="@string/geolocation_request_pattern_1_title"
+            android:dependency="@string/geolocation_request_enabled_key"/>
+            
+            
+   <EditTextPreference
+            android:dialogTitle="@string/geolocation_request_pattern_2_title"
+            android:key="@string/geolocation_request_pattern_2_key"
+            android:summary="@string/geolocation_request_pattern_2_summary"
+            android:defaultValue="@string/geolocation_request_pattern_2_default_value"
+            android:title="@string/geolocation_request_pattern_2_title"
+            android:dependency="@string/geolocation_request_enabled_key"/>
 
 
     <!--</PreferenceCategory>-->

@@ -30,7 +30,7 @@ public class UserRideTest {
     private SensorsUtility sensorsUtility;
     private MotionUtility motionUtility;
     private double msToKmh = 3.6;
-    private int FAKE_FOR_SURE_MOVING_SPEED = 70 ;
+    private int FAKE_FOR_SURE_MOVING_SPEED = 70;
     private int FAKE_TIMEOUT_SPEED = -1;
     private double FAKE_UNSURE_MOVING_SPEED = 10 / msToKmh;
 

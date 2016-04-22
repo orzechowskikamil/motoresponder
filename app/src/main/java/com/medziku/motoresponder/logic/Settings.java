@@ -76,8 +76,8 @@ public class Settings extends SettingsBase {
     }
 
     public String[] getGeolocationRequestPatterns() {
-        String responsePattern1 = this.getStringValue("geolocation_request_pattern_1");
-        String responsePattern2 = this.getStringValue("geolocation_request_pattern_2");
+        String responsePattern1 = this.getStringValue(R.string.geolocation_request_pattern_1_default_value);
+        String responsePattern2 = this.getStringValue(R.string.geolocation_request_pattern_2_default_value);
         String[] responsePatterns = {responsePattern1, responsePattern2};
         return responsePatterns;
     }
