@@ -91,7 +91,11 @@ public class Settings extends SettingsBase {
     }
     
     public boolean includeDeviceMotionCheck(){
-        return true;
+        return this.getBooleanValue(R.string.include_accelerometer_check_key);
+    }
+    
+    public double getAccelerationRequiredToMotion(){
+        return Double.parseDouble(this.getStringValue(R.string.acceleration_required_for_motion_key));
     }
 
 

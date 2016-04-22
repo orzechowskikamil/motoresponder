@@ -140,7 +140,7 @@
         że ekran urządzenia nie dotyka niczego (więc urządzenie na pewno nie jest w twojej kieszeni, jak to się dzieje
         podczas jazdy).
     </string>
-    <string name="include_proximity_check_summary_off">Aplikacja nie będzie brała pod uwage wartości raportowanych przez
+    <string name="include_proximity_check_summary_off">Aplikacja nie będzie brała pod uwagę wartości raportowanych przez
         sensor zbliżeniowy.
     </string>
     <string name="include_proximity_check_key">include_proximity_check</string>
@@ -194,6 +194,23 @@
         GPS, bardzo wysokie dokładności mogą być niemożliwe do uzyskania, i powodować timeouty.
     </string>
     <integer name="required_accuracy_default_value">30</integer>
+    
+  <string name="include_accelerometer_check_title">Test akcelerometru</string>
+    <string name="include_accelerometer_check_summary_on">Aplikacja nie będzie odpowiadała automatycznie, jeśli akcelerometr
+    zaraportuje przyśpieszenie sugerujące że aktualnie nie jedziesz na motocyklu.
+    </string>
+    <string name="include_accelerometer_check_summary_off">Aplikacja nie będzie brała pod uwagę wartości raportowanych przez
+    akcelerometr.
+    </string>
+    <string name="include_accelerometer_check_key">include_accelerometer_check</string>
+    <bool name="include_accelerometer_check_default_value">true</bool>
 
+
+   <string name="acceleration_required_for_motion_title">Przyśpieszenie na motocyklu</string>
+    <string name="acceleration_required_for_motion_key">acceleration_required_for_motion</string>
+    <string name="acceleration_required_for_motion_summary">Akcelerometr musi wyczuć przyśpieszenie wyższe od tej wartości, aby uznał 
+    że aktualnie jedziesz na motocyklu.
+    </string>
+    <string name="acceleration_required_for_motion_default_value">0.2</string>
 
 </resources>

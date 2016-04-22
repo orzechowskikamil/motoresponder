@@ -15,6 +15,7 @@ import org.mockito.stubbing.Answer;
 
 import java.util.concurrent.Future;
 
+import static org.mockito.Matchers.anyDouble;
 import static org.mockito.Matchers.anyFloat;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.times;
@@ -165,7 +166,7 @@ public class UserRideTest {
         SettableFuture<Boolean> result = SettableFuture.create();
         result.set(value);
         try {
-            when(this.motionUtility.isDeviceInMotion()).thenReturn(result);
+            when(this.motionUtility.isDeviceInMotion(anyDouble())).thenReturn(result);
         } catch (AccelerometerNotAvailableException e) {
             e.printStackTrace();
         }
@@ -176,7 +177,7 @@ public class UserRideTest {
      */
     private void setDeviceInMotionToException() {
         try {
-            when(this.motionUtility.isDeviceInMotion()).thenThrow(AccelerometerNotAvailableException.class);
+            when(this.motionUtility.isDeviceInMotion(anyDouble())).thenThrow(AccelerometerNotAvailableException.class);
         } catch (AccelerometerNotAvailableException e) {
             e.printStackTrace();
         }

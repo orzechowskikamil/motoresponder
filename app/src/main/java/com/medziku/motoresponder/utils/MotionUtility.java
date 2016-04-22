@@ -22,11 +22,6 @@ public class MotionUtility {
 
     private Sensor linearAccelerometer;
 
-    /**
-     * for TYPE_LINEAR_ACCELERATION linearAccelerometer, differences between accelerations of laying still
-     * phone shouldn't be bigger than 0.2
-     */
-    public double accelerationDeltaTresholdForMovement = 0.2;
 
     /**
      * Events with acceleration delta bigger than accelerationDeltaTresholdForMovement to assume that phone is moving,
@@ -61,7 +56,7 @@ public class MotionUtility {
      * @return
      * @throws AccelerometerNotAvailableException When device screen is off and utility can't properly measure movement
      */
-    public Future<Boolean> isDeviceInMotion() throws AccelerometerNotAvailableException {
+    public Future<Boolean> isDeviceInMotion(final double requiredAcceleration) throws AccelerometerNotAvailableException {
         int TIME_FOR_TURNING_ON_SCREEN = 2000;
 
         final PowerManager.WakeLock mWakeLock = this.powerManager.newWakeLock(
@@ -108,7 +103,7 @@ public class MotionUtility {
 
                 double delta = this.accelerationLast - accelerationCurrent;
 
-                if (delta > MotionUtility.this.accelerationDeltaTresholdForMovement) {
+                if (delta > requiredAcceleration) {
                     eventCounter++;
                 }
 

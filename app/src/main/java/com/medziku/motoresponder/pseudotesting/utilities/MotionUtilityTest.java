@@ -29,7 +29,7 @@ public class MotionUtilityTest {
 
         Future<Boolean> future = null;
         try {
-            future = this.motionUtility.isDeviceInMotion();
+            future = this.motionUtility.isDeviceInMotion(0.2);
         } catch (AccelerometerNotAvailableException e) {
             Log.d(TAG, "Device screen is turned off, no possibility to grab events.");
         }

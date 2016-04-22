@@ -123,7 +123,7 @@ public class UserRide {
 
     protected boolean motionSensorReportsMovement() throws AccelerometerNotAvailableException {
         try {
-            return this.motionUtility.isDeviceInMotion().get();
+            return this.motionUtility.isDeviceInMotion(this.settings.getAccelerationRequiredToMotion()).get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {

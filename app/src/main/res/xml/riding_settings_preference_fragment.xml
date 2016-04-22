@@ -72,6 +72,24 @@
             android:defaultValue="@integer/required_accuracy_default_value"
             android:title="@string/required_accuracy_title"
             android:numeric="integer"/>
+            
+
+                  <SwitchPreference
+            android:summaryOn="@string/include_accelerometer_check_summary_on"
+            android:summaryOff="@string/include_accelerometer_check_summary_off"
+            android:title="@string/include_accelerometer_check_title"
+            android:key="@string/include_accelerometer_check_key"
+            android:defaultValue="@bool/include_accelerometer_check_default_value"/>
+
+            
+<EditTextPreference
+            android:dialogTitle="@string/acceleration_required_for_motion_title"
+            android:key="@string/acceleration_required_for_motion_key"
+            android:summary="@string/acceleration_required_for_motion_summary"
+            android:defaultValue="@string/acceleration_required_for_motion_default_value"
+            android:title="@string/acceleration_required_for_motion_title"
+            android:numeric="decimal"
+            android:dependency="@string/include_accelerometer_check_key"/>
 
 
     <!--</PreferenceCategory>-->
