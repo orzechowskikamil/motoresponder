@@ -62,14 +62,14 @@ public class RespondingTaskTest {
     public void testOfNotifications() {
         when(this.settings.isShowingPendingNotificationEnabled()).thenReturn(true);
         when(this.respondingDecision.shouldRespond(anyString())).thenReturn(false);
-        this.respondingTask.shouldShowNotification = false;
-        this.respondingTask.shouldShowDebugNotification = false;
+        when(this.settings.isShowingSummaryNotificationEnabled()).thenReturn(false);
+        when(this.settings.isShowingDebugNotificationEnabled()).thenReturn(false);
+
 
         this.respondingTask.callLogic(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
         verify(this.notificationUtility, times(0)).showBigTextNotification(anyString(), anyString(), anyString());
 
-
-        this.respondingTask.shouldShowNotification = true;
+        when(this.settings.isShowingSummaryNotificationEnabled()).thenReturn(true);
 
         this.respondingTask.callLogic(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
         verify(this.notificationUtility, times(0)).showBigTextNotification(anyString(), anyString(), anyString());

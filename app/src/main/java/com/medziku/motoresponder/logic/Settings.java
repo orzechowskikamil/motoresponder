@@ -64,10 +64,18 @@ public class Settings extends SettingsBase {
     public String getAutoResponseToSmsWithGeolocationTemplate() {
         return this.getStringValue(R.string.auto_response_to_sms_with_geolocation_template_key);
     }
+    
+   public boolean isShowingSummaryNotificationEnabled(){
+       return this.getBooleanValue(R.string.showing_summary_notification_enabled_key);
+   }
+
+    public boolean  isShowingDebugNotificationEnabled(){
+          return this.getBooleanValue(R.string.showing_debug_notification_enabled_key);
+    }
 
 
     public boolean isShowingPendingNotificationEnabled() {
-        return this.getBooleanValue("showing_pending_notification_enabled");
+        return this.getBooleanValue(R.string.showing_pending_notification_enabled_key);
     }
 
 

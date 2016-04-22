@@ -16,11 +16,7 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
     private RespondingDecision respondingDecision;
     private RespondingSubject respondingSubject;
     private ResponsePreparator responsePreparator;
-
-    // TODO K. Orzechowski: Change this to real configurable #67
-    public boolean shouldShowNotification = true;
-    public boolean shouldShowDebugNotification = true;
-
+    
     public RespondingTask(RespondingDecision respondingDecision,
                           Settings settings,
                           NotificationUtility notificationUtility,
@@ -42,7 +38,7 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
      */
     public void cancelResponding() {
         this.respondingDecision.cancelDecision();
-
+        
         this.cancel(true);
         // remove notification if it was already shown.
         this.unnotifyAboutPendingAutoRespond();
@@ -66,7 +62,7 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
 
 
         // show notification to give user possibiity to cancel autorespond
-        this.showPendingNotificationIfEnabled();
+       this.showPendingNotificationIfEnabled();
 
 
         boolean shouldRespond = this.respondingDecision.shouldRespond(this.respondingSubject.getPhoneNumber());
@@ -83,24 +79,24 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
             this.log.add("Decision = NOT respond.");
         }
 
-
-        if (this.shouldShowNotification && shouldRespond) {
+ 
+        if (this.settings.isShowingSummaryNotificationEnabled() && shouldRespond) {
             this.showSummaryNotification(this.respondingSubject.getPhoneNumber());
         }
 
-        if (this.shouldShowDebugNotification) {
+        if (this.settings.isShowingDebugNotificationEnabled()) {
             this.showDebugNotification();
         }
     }
-
-    private void showPendingNotificationIfEnabled() {
-        if (this.settings.isShowingPendingNotificationEnabled()) {
+    
+    private void showPendingNotificationIfEnabled(){
+     if (this.settings.isShowingPendingNotificationEnabled()) {
             this.notifyAboutPendingAutoRespond();
         }
     }
-
-    private void hidePendingNotificationIfEnabled() {
-        if (this.settings.isShowingPendingNotificationEnabled()) {
+    
+    private void hidePendingNotificationIfEnabled(){
+           if (this.settings.isShowingPendingNotificationEnabled()) {
             this.unnotifyAboutPendingAutoRespond();
         }
 

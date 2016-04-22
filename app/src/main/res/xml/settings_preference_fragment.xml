@@ -45,7 +45,32 @@
             android:title="@string/auto_response_to_sms_with_geolocation_template_title"
             android:dependency="@string/geolocation_request_enabled_key"/>
             
+              <SwitchPreference
+            android:summaryOn="@string/showing_pending_notification_enabled_summary_on"
+            android:summaryOff="@string/showing_pending_notification_enabled_summary_on"
+            android:title="@string/showing_pending_notification_enabled_title"
+            android:key="@string/showing_pending_notification_enabled_key"
+            android:defaultValue="@bool/showing_pending_notification_enabled_default_value"
+            android:dependency="@string/responder_enabled_key"/>
             
+            
+     <SwitchPreference
+            android:summaryOn="@string/showing_summary_notification_enabled_summary_on"
+            android:summaryOff="@string/showing_summary_notification_enabled_summary_on"
+            android:title="@string/showing_summary_notification_enabled_title"
+            android:key="@string/showing_summary_notification_enabled_key"
+            android:defaultValue="@bool/showing_summary_notification_enabled_default_value"
+            android:dependency="@string/responder_enabled_key"/>
+
+   <SwitchPreference
+            android:summaryOn="@string/showing_debug_notification_enabled_summary_on"
+            android:summaryOff="@string/showing_debug_notification_enabled_summary_on"
+            android:title="@string/showing_debug_notification_enabled_title"
+            android:key="@string/showing_debug_notification_enabled_key"
+            android:defaultValue="@bool/showing_debug_notification_enabled_default_value"
+            android:dependency="@string/responder_enabled_key"/>
+
+
             <EditTextPreference
             android:dialogTitle="@string/geolocation_request_pattern_1_title"
             android:key="@string/geolocation_request_pattern_1_key"
