@@ -5,10 +5,21 @@
     <!--android:title="@string/main_preferences_title">-->
 
     <SwitchPreference
-            android:summary="@string/responder_enabled_summary"
+            android:summaryOn="@string/responder_enabled_summary_on"
+            android:summaryOff="@string/responder_enabled_summary_off"
             android:title="@string/responder_enabled_title"
             android:key="@string/responder_enabled_key"
             android:defaultValue="@bool/responder_enabled_default_value"/>
+            
+            
+                   
+                <SwitchPreference
+            android:summaryOn="@string/auto_response_to_sms_enabled_summary_on"
+            android:summaryOff="@string/auto_response_to_sms_enabled_summary_off"
+            android:title="@string/auto_response_to_sms_enabled_title"
+            android:key="@string/auto_response_to_sms_enabled_key"
+            android:defaultValue="@bool/auto_response_to_sms_enabled_default_value"
+            android:dependency="@string/responder_enabled_key"/>
 
     <EditTextPreference
             android:dialogTitle="@string/auto_response_to_sms_template_title"
@@ -18,6 +29,14 @@
             android:title="@string/auto_response_to_sms_template_title"
             android:dependency="@string/responder_enabled_key"
             />
+            
+                <SwitchPreference
+            android:summaryOn="@string/auto_response_to_call_enabled_summary_on"
+            android:summaryOff="@string/auto_response_to_call_enabled_summary_off"
+            android:title="@string/auto_response_to_call_enabled_title"
+            android:key="@string/auto_response_to_call_enabled_key"
+            android:defaultValue="@bool/auto_response_to_call_enabled_default_value"
+            android:dependency="@string/responder_enabled_key"/>
 
     <EditTextPreference
             android:dialogTitle="@string/auto_response_to_call_template_title"
@@ -25,16 +44,16 @@
             android:summary="@string/auto_response_to_call_template_summary"
             android:defaultValue="@string/auto_response_to_call_template_default_value"
             android:title="@string/auto_response_to_call_template_title"
-            android:dependency="@string/responder_enabled_key"
+            android:dependency="@string/auto_response_to_call_enabled_key"
             />
 
     <SwitchPreference
             android:summaryOn="@string/geolocation_request_enabled_summary_on"
-            android:summaryOff="@string/geolocation_request_enabled_summary_on"
+            android:summaryOff="@string/geolocation_request_enabled_summary_off"
             android:title="@string/geolocation_request_enabled_title"
             android:key="@string/geolocation_request_enabled_key"
             android:defaultValue="@bool/geolocation_request_enabled_default_value"
-            android:dependency="@string/responder_enabled_key"/>
+            android:dependency="@string/auto_response_to_sms_template_key"/>
 
 
     <EditTextPreference

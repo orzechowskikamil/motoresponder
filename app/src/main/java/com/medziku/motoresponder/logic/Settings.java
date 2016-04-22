@@ -84,8 +84,8 @@ public class Settings extends SettingsBase {
     }
 
     public String[] getGeolocationRequestPatterns() {
-        String responsePattern1 = this.getStringValue(R.string.geolocation_request_pattern_1_default_value);
-        String responsePattern2 = this.getStringValue(R.string.geolocation_request_pattern_2_default_value);
+        String responsePattern1 = this.getStringValue(R.string.geolocation_request_pattern_1_key);
+        String responsePattern2 = this.getStringValue(R.string.geolocation_request_pattern_2_key);
         String[] responsePatterns = {responsePattern1, responsePattern2};
         return responsePatterns;
     }
@@ -119,11 +119,11 @@ public class Settings extends SettingsBase {
     }
     
     public boolean isRespondingForSMSEnabled(){
-        return true;
+        return this.getBooleanValue(R.string.auto_response_to_sms_enabled_key);
     }
     
     public boolean isRespondingForCallsEnabled(){
-        return true;
+        return this.getBooleanValue(R.string.auto_response_to_call_enabled_key);
     }
     
     public void listenToChangeRespondToSmsOrCallSetting(Predicate<Boolean> callback){

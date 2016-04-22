@@ -14,30 +14,47 @@
 
     <!-- general settings -->
     <string name="responder_enabled_title">Moto Responder włączony</string>
-    <string name="responder_enabled_summary">Gdy to ustawienie jest włączone, w momencie gdy nie odczytasz wiadomości,
-        lub gdy nie odbierzesz telefonu, Moto Responder spróbuje ustalić czy właśnie jedziesz na motocyklu, i jeśli tak
-        - automatycznie odpowie nadawcy że nie możesz w tym momencie rozmawiać.
+    <string name="responder_enabled_summary_on">Gdy nie odczytasz wiadomości lub nie odbierzesz
+    połączenia, aplikacja spróbuje ustalić czy jedziesz właśnie motocyklem i jeśli tak to wyśle automatyczną odpowiedź.
+    </string>
+     <string name="responder_enabled_summary_off">Proces aplikacji nie będzie działał w tle, automatyczne odpowiedzi nie będą wysyłane.
     </string>
     <string name="responder_enabled_key">responder_enabled</string>
     <bool name="responder_enabled_default_value">true</bool>
 
+  <string name="auto_response_to_sms_enabled_title">Odpowiadaj na SMSy</string>
+    <string name="auto_response_to_sms_enabled_summary_on">Aplikacja będzie odpowiadać na nieprzeczytane SMSy gdy jedziesz.
+    </string>
+     <string name="auto_response_to_sms_enabled_summary_off">Aplikacja będzie ignorować nieprzeczytane SMSy. 
+    </string>
+    <string name="auto_response_to_sms_enabled_key">auto_response_to_sms_enabled</string>
+    <bool name="auto_response_to_sms_enabled_default_value">true</bool>
 
-    <string name="auto_response_to_call_template_title">Odpowiedź na połączenie
+    <string name="auto_response_to_sms_template_title">Tekst odpowiedzi na SMS</string>
+    <string name="auto_response_to_sms_template_summary">Ten tekst będzie użyty jako automatyczna odpowiedź na SMSa, gdy
+        jedziesz na motocyklu.
+    </string>
+    <string name="auto_response_to_sms_template_key">auto_response_to_sms_template</string>
+    <string name="auto_response_to_sms_template_default_value">Cześć. Nie mogę odpisać, gdyż
+        właśnie jadę motocyklem.
+    </string>
+    
+      <string name="auto_response_to_call_enabled_title">Odpowiadaj na połączenia </string>
+    <string name="auto_response_to_call_enabled_summary_on">Aplikacja będzie odpowiadać na nieodebrane połączenia gdy jedziesz.
+    </string>
+     <string name="auto_response_to_call_enabled_summary_off">Aplikacja będzie ignorować nieodebrane połączenia. 
+    </string>
+    <string name="auto_response_to_call_enabled_key">auto_response_to_call_enabled</string>
+    <bool name="auto_response_to_call_enabled_default_value">true</bool>
+    
+    
+        <string name="auto_response_to_call_template_title">Tekst odpowiedzi na połączenie
     </string>
     <string name="auto_response_to_call_template_summary">Ten tekst będzie użyty jako automatyczna odpowiedź na
         nieodebrane połączenie, gdy jedziesz na motocyklu.
     </string>
     <string name="auto_response_to_call_template_key">auto_response_to_call_template</string>
     <string name="auto_response_to_call_template_default_value">Cześć. Nie mogę oddzwonić, gdyż
-        właśnie jadę motocyklem.
-    </string>
-
-    <string name="auto_response_to_sms_template_title">Odpowiedź na SMS</string>
-    <string name="auto_response_to_sms_template_summary">Ten tekst będzie użyty jako automatyczna odpowiedź na SMSa, gdy
-        jedziesz na motocyklu.
-    </string>
-    <string name="auto_response_to_sms_template_key">auto_response_to_sms_template</string>
-    <string name="auto_response_to_sms_template_default_value">Cześć. Nie mogę odpisać, gdyż
         właśnie jadę motocyklem.
     </string>
 
@@ -54,7 +71,7 @@
     <bool name="geolocation_request_enabled_default_value">true</bool>
 
 
-    <string name="auto_response_to_sms_with_geolocation_template_title">Treść odpowiedzi na pytanie o pozycję
+    <string name="auto_response_to_sms_with_geolocation_template_title">Tekst odpowiedzi na pytanie o pozycję
     </string>
     <string name="auto_response_to_sms_with_geolocation_template_summary" formatted="false">Ten tekst będzie użyty jako
         odpowiedź, gdy ktoś pyta gdzie jesteś, gdy jedziesz na motocyklu. Odpowiedź powinna zawierać w sobie tekst
