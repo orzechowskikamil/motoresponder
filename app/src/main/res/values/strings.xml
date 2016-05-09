@@ -68,7 +68,7 @@
         będzie wysyłać SMSów z mapką z twoją pozycją.
     </string>
     <string name="geolocation_request_enabled_key">geolocation_request_enabled</string>
-    <bool name="geolocation_request_enabled_default_value">true</bool>
+    <bool name="geolocation_request_enabled_default_value">false</bool>
 
 
     <string name="auto_response_to_sms_with_geolocation_template_title">Tekst odpowiedzi na pytanie o pozycję

@@ -26,6 +26,7 @@ public class RespondingTaskTest {
     private String FAKE_PHONE_NUMBER = "777777777";
     private ResponsePreparator responsePreparator;
 
+
     @Before
     public void setUp() {
 
