@@ -17,6 +17,7 @@ import static org.mockito.Mockito.*;
 
 public class RespondingTaskTest {
 
+
     private ExposedRespondingTask respondingTask;
     private RespondingDecision respondingDecision;
     private Settings settings;

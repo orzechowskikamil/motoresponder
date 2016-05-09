@@ -61,7 +61,7 @@ public class LocationUtility {
 class GettingAccurateLocationProcess implements LocationListener {
 
 
-    public int minimumTimeBetweenUpdates = 0;
+    public int minimumTimeBetweenUpdates = 5000;
     public int minimumDistanceBetweenUpdates = 0;
 
     private long timeoutMs;
