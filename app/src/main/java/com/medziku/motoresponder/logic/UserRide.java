@@ -123,7 +123,14 @@ public class UserRide {
 
     protected boolean motionSensorReportsMovement() throws AccelerometerNotAvailableException {
         try {
-            return this.motionUtility.isDeviceInMotion(this.settings.getAccelerationRequiredToMotion()).get();
+            Boolean result =  this.motionUtility.isDeviceInMotion(this.settings.getAccelerationRequiredToMotion()).get();
+            
+            if (result == null){
+                // null means that something disturbed accelerometer during process, and it's equal to exception thrown situation.
+                throw new AccelerometerNotAvailableException();
+            }
+            
+            return result;
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {

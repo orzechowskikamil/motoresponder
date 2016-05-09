@@ -52,6 +52,9 @@ public class MotionUtility {
 
     /**
      * Reports if device is in motion or not.
+     * 
+     * When process is disturbed by, for example, not turned on screen, exception AccelerometerNotAvailableException is thrown,
+     * or null is set as promise value.
      *
      * @return
      * @throws AccelerometerNotAvailableException When device screen is off and utility can't properly measure movement
@@ -127,10 +130,19 @@ public class MotionUtility {
             public void run() {
                 // TODO K. Orzechowski: extract to one function, this 4 lines are copied. #issue not needed
                 MotionUtility.this.sensorManager.unregisterListener(listener);
+                
+                boolean screenTurnedOff = MotionUtility.this.isDeviceScreenTurnedOff();
+                
                 if (mWakeLock.isHeld()) {
                     mWakeLock.release();
                 }
+                // it's because if screen is turned off before measurement finished, it means result can be falsy negative
+                // because we can't throw exception, we set value to null to indicate that something break measurement process.
+                if (screenTurnedOff) {
+                    result.set(null);
+                }                else{
                 result.set(false);
+                }
             }
         }, this.measuringMovementTimeout);
 
@@ -140,7 +152,7 @@ public class MotionUtility {
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
-    private boolean isDeviceScreenTurnedOff() {
+    protected boolean isDeviceScreenTurnedOff() {
         return !this.powerManager.isInteractive();
     }
 
