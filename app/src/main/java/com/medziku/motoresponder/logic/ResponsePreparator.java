@@ -9,6 +9,9 @@ import java.util.concurrent.Future;
 public class ResponsePreparator {
 
     public static final String LOCATION_SUBSTITUTION_TAG = "%location%";
+    public static final String LATITUDE_SUBSTITUTION_TAG = "%latitude%";
+    public static final String LONGITUDE_SUBSTITUTION_TAG = "%longitude%";
+    public static final String LOCATION_LINK = "\"http://maps.google.com/maps?q="+LATITUDE_SUBSTITUTION_TAG+","+LONGITUDE_SUBSTITUTION_TAG+"\"";
     private Settings settings;
     private LocationUtility locationUtility;
 
@@ -48,7 +51,7 @@ public class ResponsePreparator {
         Location location = this.getCurrentLocation();
 
 
-        String locationLink = "\"http://maps.google.com/maps?q=%latitude%,%longitude%\"";
+        String locationLink = LOCATION_LINK;
 
         if (location != null) {
             locationLink = locationLink

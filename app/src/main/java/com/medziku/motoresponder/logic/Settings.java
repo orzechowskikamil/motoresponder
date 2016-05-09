@@ -97,6 +97,7 @@ public class Settings extends SettingsBase {
     public double getAccelerationRequiredToMotion(){
         return Double.parseDouble(this.getStringValue(R.string.acceleration_required_for_motion_key));
     }
+    
 
 
     /**
@@ -129,7 +130,35 @@ public class Settings extends SettingsBase {
     public void listenToChangeRespondToSmsOrCallSetting(Predicate<Boolean> callback){
         this.onChangeRespondingToSMSOrCallsCallback = callback;
     }
+ 
 
+    public String getDebugNotificationTitleText() {
+        return this.getStringFromRes(R.string.debug_notification_title_text);
+    }
+
+    public String getDebugNotificationShortText() {
+        return this.getStringFromRes(R.string.debug_notification_short_text);
+    }
+
+    public String getSummaryNotificationTitleText() {
+        return this.getStringFromRes(R.string.summary_notification_title_text);
+    }
+
+    public String getSummaryNotificationShortText() {
+        return this.getStringFromRes(R.string.summary_notification_short_text);
+    }
+
+    public String getSummaryNotificationBigText() {
+        return this.getStringFromRes(R.string.summary_notification_big_text);
+    }
+
+    public String getOngoingNotificationTitleText(){
+        return this.getStringFromRes(R.string.ongoing_notification_title_text);
+    }
+
+    public String getOngoingNotificationBigText(){
+        return this.getStringFromRes(R.string.ongoing_notification_big_text);
+    }
 
     /**
      * if true, app will always respond with geolocation no matter if someone ask for it.

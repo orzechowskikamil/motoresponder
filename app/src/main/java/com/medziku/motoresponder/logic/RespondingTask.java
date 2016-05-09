@@ -8,6 +8,7 @@ import com.medziku.motoresponder.utils.SMSUtility;
 
 public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolean> {
 
+    public static final String RECIPIENT_SUBSTITUTION_TAG = "%recipient%";
     protected DecisionLog log;
     private SMSUtility smsUtility;
     private NotificationUtility notificationUtility;
@@ -16,7 +17,7 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
     private RespondingDecision respondingDecision;
     private RespondingSubject respondingSubject;
     private ResponsePreparator responsePreparator;
-    
+
     public RespondingTask(RespondingDecision respondingDecision,
                           Settings settings,
                           NotificationUtility notificationUtility,
@@ -33,15 +34,57 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
         this.log = log;
     }
 
+
+    protected Boolean doInBackground(RespondingSubject... params) {
+        try {
+            // This must be wrapped into try.. catch... otherwise errors in 'doItBackground' method of async task will break application.
+            this.handleRespondingTask(params[0]);
+        } catch (Exception e) {
+            // best place for catching errors from respondingTask
+            e.printStackTrace();
+        }
+        return true;
+    }
+
+    @Override
+    protected void onPostExecute(Boolean result) {
+        this.finishTask();
+    }
+
+    protected void finishTask() {
+        this.hidePendingNotificationIfEnabled();
+
+        this.showDebugNotificationIfEnabled();
+
+        this.resultCallback.apply(true);
+    }
+
+    /**
+     * This is called when doInBackground() is finished
+     */
+
+
+    protected boolean isTerminated() {
+        return this.isCancelled();
+    }
+
+    /**
+     * This is called each time you call publishProgress()
+     */
+    protected void onProgressUpdate(Boolean... progress) {
+    }
+
     /**
      * Cancells responding, cleanup (notifications, handlers, etc) and kills task
      */
     public void cancelResponding() {
         this.respondingDecision.cancelDecision();
-        
+
+        this.log.add("Responding cancelled.");
+
         this.cancel(true);
-        // remove notification if it was already shown.
-        this.unnotifyAboutPendingAutoRespond();
+
+        this.finishTask();
     }
 
     protected void handleRespondingTask(RespondingSubject subject) {
@@ -62,7 +105,7 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
 
 
         // show notification to give user possibiity to cancel autorespond
-       this.showPendingNotificationIfEnabled();
+        this.showPendingNotificationIfEnabled();
 
 
         boolean shouldRespond = this.respondingDecision.shouldRespond(this.respondingSubject.getPhoneNumber());
@@ -79,42 +122,39 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
             this.log.add("Decision = NOT respond.");
         }
 
- 
+
         if (this.settings.isShowingSummaryNotificationEnabled() && shouldRespond) {
             this.showSummaryNotification(this.respondingSubject.getPhoneNumber());
         }
-
-        if (this.settings.isShowingDebugNotificationEnabled()) {
-            this.showDebugNotification();
-        }
     }
-    
-    private void showPendingNotificationIfEnabled(){
-     if (this.settings.isShowingPendingNotificationEnabled()) {
+
+    private void showPendingNotificationIfEnabled() {
+        if (this.settings.isShowingPendingNotificationEnabled()) {
             this.notifyAboutPendingAutoRespond();
         }
     }
-    
-    private void hidePendingNotificationIfEnabled(){
-           if (this.settings.isShowingPendingNotificationEnabled()) {
-            this.unnotifyAboutPendingAutoRespond();
+
+    private void hidePendingNotificationIfEnabled() {
+        if (this.settings.isShowingPendingNotificationEnabled()) {
+            this.notificationUtility.hideNotification();
         }
 
     }
 
     private void showDebugNotification() {
-        String debugText = this.log.getLogStr();
-        this.notificationUtility.showBigTextNotification("MotoResponder debug", "Close other notifications to see full content", debugText);
+        String debugTitle = this.settings.getDebugNotificationTitleText();
+        String debugBigText = this.log.getLogStr();
+        String debugShortText = this.settings.getDebugNotificationShortText();
+
+        this.notificationUtility.showBigTextNotification(debugTitle, debugShortText, debugBigText);
     }
 
     private void showSummaryNotification(String phoneNumber) {
-        // todo #Issue #69 move strings into resources
-        String summary = "Answered " + phoneNumber;
+        String title = this.settings.getSummaryNotificationTitleText();
+        String shortText = this.settings.getSummaryNotificationShortText().replace(RECIPIENT_SUBSTITUTION_TAG, phoneNumber);
+        String bigText = this.settings.getSummaryNotificationBigText().replace(RECIPIENT_SUBSTITUTION_TAG, phoneNumber);
 
-        String bigText = "You received call/message from '" + phoneNumber + "' and because you ride this number received auto response.";
-
-        String title = "MotoResponder";
-        this.notificationUtility.showBigTextNotification(title, summary, bigText);
+        this.notificationUtility.showBigTextNotification(title, shortText, bigText);
     }
 
     private void respondWithSMS() {
@@ -145,46 +185,16 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
 
 
     private void notifyAboutPendingAutoRespond() {
-        // TODO K. Orzechowski: move strings into resources #69
-        this.notificationUtility.showOngoingNotification("MotoResponder", "Moto responder is determining if it should automatically respond", "");
+        String title = this.settings.getOngoingNotificationTitleText();
+        String bigText = this.settings.getOngoingNotificationBigText();
+        this.notificationUtility.showOngoingNotification(title, bigText, "");
     }
 
 
-    private void unnotifyAboutPendingAutoRespond() {
-        this.notificationUtility.hideNotification();
-    }
-
-
-    protected Boolean doInBackground(RespondingSubject... params) {
-        try {
-            // This must be wrapped into try.. catch... otherwise errors in 'doItBackground' method of async task will break application.
-            this.handleRespondingTask(params[0]);
-        } catch (Exception e) {
-            // best place for catching errors from respondingTask
-            e.printStackTrace();
+    private void showDebugNotificationIfEnabled() {
+        if (this.settings.isShowingDebugNotificationEnabled()) {
+            this.showDebugNotification();
         }
-        return true;
-    }
-
-    @Override
-    protected void onPostExecute(Boolean result) {
-        this.hidePendingNotificationIfEnabled();
-        this.resultCallback.apply(result);
-    }
-
-    /**
-     * This is called when doInBackground() is finished
-     */
-
-
-    protected boolean isTerminated() {
-        return this.isCancelled();
-    }
-
-    /**
-     * This is called each time you call publishProgress()
-     */
-    protected void onProgressUpdate(Boolean... progress) {
     }
 
 

@@ -6,11 +6,13 @@ import com.medziku.motoresponder.utils.SMSUtility;
 import com.medziku.motoresponder.utils.SharedPreferencesUtility;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.mockito.internal.verification.Calls;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
 
@@ -48,6 +50,15 @@ public class RespondingTaskTest {
                 this.responsePreparator,
                 log,
                 this.returnCallback);
+
+        when(this.settings.getDebugNotificationTitleText()).thenReturn("debug");
+        when(this.settings.getDebugNotificationShortText()).thenReturn("debug");
+
+        when(this.settings.getSummaryNotificationTitleText()).thenReturn("summary");
+        when(this.settings.getSummaryNotificationShortText()).thenReturn("summary %recipient%.");
+        when(this.settings.getSummaryNotificationBigText()).thenReturn("summary %recipient%.");
+        when(this.settings.getOngoingNotificationTitleText()).thenReturn("ongoing");
+        when(this.settings.getOngoingNotificationBigText()).thenReturn("ongoing");
     }
 
 
@@ -80,9 +91,19 @@ public class RespondingTaskTest {
 
         this.respondingTask.callLogic(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
 
+        ArgumentCaptor<String> summaryNotificationSmallText = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> summaryNotificationBigText = ArgumentCaptor.forClass(String.class);
+
         verify(this.notificationUtility, times(3)).showOngoingNotification(anyString(), anyString(), anyString());
-        verify(this.notificationUtility, times(1)).showBigTextNotification(anyString(), anyString(), anyString());
+        verify(this.notificationUtility, times(1)).showBigTextNotification(
+                anyString(),
+                summaryNotificationSmallText.capture(),
+                summaryNotificationBigText.capture()
+        );
         verify(this.notificationUtility, times(3)).hideNotification();
+
+        assertTrue(summaryNotificationSmallText.getValue().indexOf(FAKE_PHONE_NUMBER) >= 0);
+        assertTrue(summaryNotificationBigText.getValue().indexOf(FAKE_PHONE_NUMBER) >= 0);
     }
 
     @Test
@@ -92,6 +113,7 @@ public class RespondingTaskTest {
 
         verify(this.smsUtility, times(0)).sendSMS(anyString(), anyString(), any(Predicate.class));
     }
+
 
     @Test
     public void testOfRetryingSendingSms() {
@@ -149,4 +171,6 @@ class ExposedRespondingTask extends RespondingTask {
 
         return this.terminated;
     }
+
+
 }

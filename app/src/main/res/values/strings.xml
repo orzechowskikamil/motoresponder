@@ -1,4 +1,15 @@
 <resources>
+    <!-- notifications -->
+    <string name="debug_notification_title_text">Debugowanie Motorespondera</string>
+    <string name="debug_notification_short_text">Zamknij inne notyfikacje aby zobaczyć treść.</string>
+    
+    <string name="summary_notification_title_text">Motoresponder</string>
+    <string name="summary_notification_short_text" formatted="false">Wysłano odpowiedź do %recipient%.</string>
+    <string name="summary_notification_big_text" formatted="false">Otrzymałeś SMS lub nie odebrałeś połączenia od %recipient%, i ponieważ jechałeś wtedy na motocyklu, Motoresponder odpowiedział za ciebie.</string>
+    
+    <string name="ongoing_notification_title_text">Motoresponder</string>
+    <string name="ongoing_notification_big_text">Motoresponder próbuje właśnie ustalić czy powinien odpowiadać na właśnie otrzymany SMS / nieodebrane połączenie.</string>
+    
     <!-- main screen -->
     <string name="app_name">Moto Responder</string>
     <string name="settings_activity_label">Ustawienia Moto Respondera</string>
