@@ -92,6 +92,7 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
         this.finishTask();
     }
 
+
     protected void handleRespondingTask(RespondingSubject subject) {
         if (this.isFinished == true) {
             return;
