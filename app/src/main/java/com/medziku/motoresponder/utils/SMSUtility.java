@@ -222,19 +222,23 @@ public class SMSUtility {
 
                 if (bundle != null) {
                     try {
+                        String phoneNumber=null;
+                        String multipartMessage = "";
+
                         Object[] pdus = (Object[]) bundle.get("pdus");
-                        SmsMessage[] smsMessages = null;
-                        smsMessages = new SmsMessage[pdus.length];
+                        SmsMessage[] smsMessages = new SmsMessage[pdus.length];
 
                         for (int i = 0; i < smsMessages.length; i++) {
                             smsMessages[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
 
-                            String phoneNumber = smsMessages[i].getOriginatingAddress();
+                            phoneNumber = smsMessages[i].getOriginatingAddress();
                             String message = smsMessages[i].getMessageBody();
 
-                            if (this.smsReceivedCallback != null) {
-                                this.smsReceivedCallback.apply(new SMSObject(phoneNumber, message));
-                            }
+                            multipartMessage += message;
+
+                        }
+                        if (this.smsReceivedCallback != null) {
+                            this.smsReceivedCallback.apply(new SMSObject(phoneNumber, multipartMessage));
                         }
                     } catch (Exception e) {
                         e.printStackTrace();

@@ -75,7 +75,7 @@ public class UtilitiesRunner {
             private void runTest() {
                 // choose the test which you are interested in
                 // after performing, leave short note with date here about result of test
-                switch (92) {
+                switch (91) {
                     case 1:
                         // this is working 10.04.2016 on Android 5.1
                         UtilitiesRunner.this.locationUtilityTest.testOfGettingAccurateLocation();
@@ -174,7 +174,7 @@ public class UtilitiesRunner {
                         UtilitiesRunner.this.smsUtilityTest.testGettingDateOfLastSMSSent();
                         break;
                     case 91:
-                        // This is working 10.04.2016 on android 5.1 motog
+                        // This is working 16.05.2016 on android 5.1 motog
                         UtilitiesRunner.this.smsUtilityTest.testListeningForSMS();
                         break;
                     case 92:
