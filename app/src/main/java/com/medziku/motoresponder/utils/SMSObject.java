@@ -8,4 +8,5 @@ public class SMSObject {
         this.message = message;
         this.phoneNumber = phoneNumber;
     }
+
 }

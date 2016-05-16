@@ -131,7 +131,7 @@
         notyfikacji.
     </string>
     <string name="showing_debug_notification_enabled_key">showing_debug_notification_enabled</string>
-    <bool name="showing_debug_notification_enabled_default_value">true</bool>
+    <bool name="showing_debug_notification_enabled_default_value">false</bool>
 
     <string name="geolocation_request_pattern_2_title">Wzór #2 pytania o pozycję</string>
     <string name="geolocation_request_pattern_2_summary" formatted="false">Drugi możliwy wzór pytania o pozycję.
@@ -159,7 +159,7 @@
     <string name="wait_before_response_summary">Aplikacja poczeka tyle sekund z próbami automatycznej odpowiedzi, dając
         ci czas byś odpisał/oddzwonił samemu.
     </string>
-    <integer name="wait_before_response_default_value">30</integer>
+    <integer name="wait_before_response_default_value">240</integer>
 
 
     <string name="include_proximity_check_title">Test sensora zbliżeniowego</string>
@@ -181,7 +181,7 @@
         uzna że nie jedziesz
         w tym momencie motocyklem.
     </string>
-    <integer name="sure_riding_speed_default_value">40</integer>
+    <integer name="sure_riding_speed_default_value">30</integer>
 
 
     <string name="staying_still_speed_title">Maks. prędkość postoju (km/h)</string>
@@ -225,7 +225,7 @@
     
   <string name="include_accelerometer_check_title">Test akcelerometru</string>
     <string name="include_accelerometer_check_summary_on">Aplikacja nie będzie odpowiadała automatycznie, jeśli akcelerometr
-    zaraportuje przyśpieszenie sugerujące że aktualnie nie jedziesz na motocyklu.
+    wyczuje przyśpieszenie sugerujące że aktualnie nie jedziesz na motocyklu.
     </string>
     <string name="include_accelerometer_check_summary_off">Aplikacja nie będzie brała pod uwagę wartości raportowanych przez
     akcelerometr.
