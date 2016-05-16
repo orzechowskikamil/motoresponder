@@ -7,12 +7,12 @@ import java.util.Date;
  */
 public class RespondingDecision {
 
-    private Settings settings;
     private DeviceUnlocked deviceUnlocked;
     private AlreadyResponded alreadyResponded;
     private NumberRules numberRules;
     private UserRide userRide;
     private DecisionLog log;
+    private Settings settings;
 
 
     public RespondingDecision(UserRide userRide,
@@ -23,6 +23,7 @@ public class RespondingDecision {
                               DecisionLog log) {
         this.userRide = userRide;
         this.numberRules = numberRules;
+        this.settings = settings;
         this.alreadyResponded = alreadyResponded;
         this.deviceUnlocked = deviceUnlocked;
         this.settings = settings;
@@ -66,9 +67,16 @@ public class RespondingDecision {
 
         // this check is more expensive in terms of power and battery
         // so it's performed later.
-        if (!this.userRide.isUserRiding()) {
-            this.log.add("User is not riding.");
-            return false;
+        if (this.settings.isSensorCheckEnabled()) {
+            if (!this.userRide.isUserRiding()) {
+                this.log.add("User is not riding.");
+                return false;
+            }
+        } else {
+            if (!this.settings.isRidingAssumed()) {
+                this.log.add("User set app to not riding mode.");
+                return false;
+            }
         }
 
         // and now because isUserRiding can took several seconds, we check again if user not unlocked phone during this time.
@@ -94,7 +102,7 @@ public class RespondingDecision {
     }
 
 
-    public void cancelDecision(){
+    public void cancelDecision() {
         this.userRide.cancelUserRideCheck();
     }
 

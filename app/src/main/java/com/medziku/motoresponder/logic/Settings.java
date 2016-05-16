@@ -14,10 +14,28 @@ public class Settings extends SettingsBase {
     public Settings(SharedPreferencesUtility sharedPreferencesUtility) {
         super(sharedPreferencesUtility);
     }
-
-
+    
     public boolean isResponderEnabled() {
         return this.getBooleanValue(R.string.responder_enabled_key);
+    }
+    
+    /**
+     * if true, app will perform sensor checks to measure if you are riding.
+     * if false, app will check isRidingAssumed for decide if you are riding or not 
+     */
+    public boolean isSensorCheckEnabled(){
+       return this.getBooleanValue(R.string.sensor_check_enabled_key);
+    }
+    
+    // TODO k.orzechowsk #66 ADD UI
+    // TODO k.orzechowsk #66 ADD TESTS
+    // TODO k.orzechowsk #66 DISABLE PARTICULAR ELEMENTS OF UI ACCORDING TO TRUE/FALSE VALUE OF THIS.
+    
+    /**
+     * If true, app with disabled sensorChecks will assume that you are riding 
+     */
+    public boolean isRidingAssumed(){
+            return this.getBooleanValue(R.string.is_riding_assumed_key);
     }
 
     public int getSureRidingSpeedKmh() {

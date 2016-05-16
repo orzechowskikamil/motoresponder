@@ -150,6 +150,24 @@
     
     <!-- riding detection settings -->
 
+    <string name="sensor_check_enabled_title">Sprawdzanie sensorami czy jedziesz</string>
+    <string name="sensor_check_enabled_summary_on">Aplikacja użyje sensorów urządzenia, aby wykryć czy aktualnie jedziesz na motocyklu, czy nie.
+    </string>
+    <string name="sensor_check_enabled_summary_off">Aplikacja nie będzie używać sensorów, tylko postąpi zgodnie z ustawieniem "Aktualnie jadę".
+    </string>
+    <string name="sensor_check_enabled_key">sensor_check_enabled</string>
+    <bool name="sensor_check_enabled_default_value">true</bool>
+    
+    
+    <string name="is_riding_assumed_title">Aktualnie jadę</string>
+    <string name="is_riding_assumed_summary_on">Aplikacja za każdym razem odpowie, tak jakbyś jechał.
+    </string>
+    <string name="is_riding_assumed_summary_off">Aplikacja nie będzie odpowiadała nikomu, ponieważ ustawiłeś że nie jedziesz.
+    </string>
+    <string name="is_riding_assumed_key">is_riding_assumed</string>
+    <bool name="is_riding_assumed_default_value">true</bool>
+    
+
 
     <string name="assume_screen_unlocked_as_not_riding_title">Test blokady ekranu
     </string>

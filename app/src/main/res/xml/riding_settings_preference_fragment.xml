@@ -4,6 +4,23 @@
 
     <!--<PreferenceCategory-->
     <!--android:title="@string/riding_preferences_title">-->
+    
+        
+   <SwitchPreference
+            android:summaryOn="@string/sensor_check_enabled_summary_on"
+            android:summaryOff="@string/sensor_check_enabled_summary_off"
+            android:title="@string/sensor_check_enabled_title"
+            android:key="@string/sensor_check_enabled_key"
+            android:defaultValue="@bool/sensor_check_enabled_default_value"/>
+            
+                
+   <SwitchPreference
+            android:summaryOn="@string/is_riding_assumed_summary_on"
+            android:summaryOff="@string/is_riding_assumed_summary_off"
+            android:title="@string/is_riding_assumed_title"
+            android:key="@string/is_riding_assumed_key"
+            android:defaultValue="@bool/is_riding_assumed_default_value"/>
+    
 
     <SwitchPreference
             android:summaryOn="@string/assume_screen_unlocked_as_not_riding_summary_on"

@@ -10,6 +10,8 @@ import org.mockito.stubbing.Answer;
 
 import java.util.Date;
 
+import static junit.framework.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -45,6 +47,9 @@ public class RespondingDecisionTest {
         this.setAlreadyRespondedIsAutomaticalResponseLastReturnValue(false);
         this.setAlreadyRespondedIsUserRespondedSinceReturnValue(false);
         this.setUserRideIsUserRidingReturnValue(true);
+
+        this.setSensorCheckEnabled(true);
+        this.setIsRidingAssumed(false);
         this.setAlreadyRespondedGetAmountOfAutomaticalResponsesSent(1);
     }
 
@@ -78,8 +83,28 @@ public class RespondingDecisionTest {
     @Test
     public void allFullfilledConditionsMakePositiveDecision() {
         this.expectRespondingDecisionShouldRespondToBe(true);
-
     }
+
+    @Test
+    public void userManuallySetRidingMakesTrueDecision() {
+        this.setUserRideIsUserRidingReturnValue(false);
+
+        this.setSensorCheckEnabled(false);
+        this.setIsRidingAssumed(true);
+
+        this.expectRespondingDecisionShouldRespondToBe(true);
+    }
+
+    @Test
+    public void userManuallySetNotRidingMakesFalseDecision() {
+        this.setUserRideIsUserRidingReturnValue(true);
+
+        this.setSensorCheckEnabled(false);
+        this.setIsRidingAssumed(false);
+
+        this.expectRespondingDecisionShouldRespondToBe(false);
+    }
+
 
     @Test
     public void tooMuchAutomaticalResponsesMakeNegativeDecision() {
@@ -120,6 +145,13 @@ public class RespondingDecisionTest {
 
 
     // region helper methods
+    private void setIsRidingAssumed(boolean value) {
+        when(this.settings.isRidingAssumed()).thenReturn(value);
+    }
+
+    private void setSensorCheckEnabled(boolean val) {
+        when(this.settings.isSensorCheckEnabled()).thenReturn(val);
+    }
 
     private void expectRespondingDecisionShouldRespondToBe(boolean expectedValue) {
         Assert.assertTrue(this.respondingDecision.shouldRespond(this.fakeRespondingSubject) == expectedValue);
