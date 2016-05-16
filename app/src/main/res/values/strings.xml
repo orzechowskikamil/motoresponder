@@ -21,7 +21,7 @@
     <string name="riding_preferences_summary">Tutaj można skonfigurować parametry na podstawie których zostanie podjęta
         decyzja czy użytkownik jedzie właśnie na motocyklu czy nie.
     </string>
-    
+
     <string name="number_rules_preferences_title">Ustawienia filtrowania numerów tel.</string>
     <string name="number_rules_preferences_summary">Tutaj można skonfigurować, komu aplikacja ma odpowiadać automatycznie, a komu nie.
     </string>
@@ -89,7 +89,7 @@
     <string name="whitelist_group_name_summary">Jeśli podasz tutaj nazwę grupy kontaktów, będzie ona traktowana jako whitelista (żaden numer spoza niej nie dostanie automatycznej odpowiedzi).    </string>
     <string name="whitelist_group_name_key">whitelist_group_name</string>
     <string name="whitelist_group_name_default_value"></string>
-    
+
        
               <string name="blacklist_group_name_title">Nazwa grupy blacklisty</string>
     <string name="blacklist_group_name_summary">Jeśli podasz tutaj nazwę grupy kontaktów, będzie ona traktowana jako blacklista (żaden numer z tej grupy nie dostanie automatycznej odpowiedzi).</string>
@@ -157,6 +157,13 @@
     <string name="geolocation_request_pattern_2_default_value" formatted="false">gdzie jestes</string>
     
     
+      
+              <string name="geolocation_whitelist_group_name_title">Ogranicz geolokację do wybranej grupy</string>
+    <string name="geolocation_whitelist_group_name_summary">Wpisanie tutaj nazwy grupy kontaktów spowoduje ignorowanie zapytań o geolokację z numerów spoza tej grupy.</string>
+    <string name="geolocation_whitelist_group_name_key">geolocation_whitelist_group_name</string>
+    <string name="geolocation_whitelist_group_name_default_value" formatted="false"></string>
+    
+    
                     <string name="device_phone_number_title">Twój numer telefonu    </string>
     <string name="device_phone_number_summary">Niektóre telefony nie potrafią odczytać aktualnego numeru telefonu z niektórych kart SIM.
     Jeśli aplikacja odpowiada na wiadomości pochodzące z twojego numeru (np. gdy dzwoni do ciebie poczta głosowa) to możesz wpisać tu swój numer
@@ -174,7 +181,7 @@
     </string>
     <string name="sensor_check_enabled_key">sensor_check_enabled</string>
     <bool name="sensor_check_enabled_default_value">true</bool>
-    
+
     
     <string name="is_riding_assumed_title">Aktualnie jadę</string>
     <string name="is_riding_assumed_summary_on">Aplikacja za każdym razem odpowie, tak jakbyś jechał.

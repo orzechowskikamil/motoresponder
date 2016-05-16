@@ -132,7 +132,7 @@ public class RespondingTaskTest {
 
         when(this.settings.isShowingSummaryNotificationEnabled()).thenReturn(true);
         when(this.contactsUtility.getContactDisplayName(anyString())).thenReturn(TEST_CONTACT_NAME);
-        when(this.respondingDecision.shouldRespond(anyString())).thenReturn(true);
+        when(this.respondingDecision.shouldRespond(any(RespondingSubject.class))).thenReturn(true);
 
         this.respondingTask.callLogic(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
 

@@ -1,6 +1,7 @@
 package com.medziku.motoresponder.logic;
 
 import android.location.Location;
+import com.medziku.motoresponder.utils.ContactsUtility;
 import com.medziku.motoresponder.utils.LocationUtility;
 
 import java.util.concurrent.ExecutionException;
@@ -11,20 +12,24 @@ public class ResponsePreparator {
     public static final String LOCATION_SUBSTITUTION_TAG = "%location%";
     public static final String LATITUDE_SUBSTITUTION_TAG = "%latitude%";
     public static final String LONGITUDE_SUBSTITUTION_TAG = "%longitude%";
-    public static final String LOCATION_LINK = "\"http://maps.google.com/maps?q="+LATITUDE_SUBSTITUTION_TAG+","+LONGITUDE_SUBSTITUTION_TAG+"\"";
+    public static final String LOCATION_LINK = "\"http://maps.google.com/maps?q=" + LATITUDE_SUBSTITUTION_TAG + "," + LONGITUDE_SUBSTITUTION_TAG + "\"";
+
+    private ContactsUtility contactsUtility;
     private Settings settings;
     private LocationUtility locationUtility;
 
 
-    public ResponsePreparator(Settings settings, LocationUtility locationUtility) {
+    public ResponsePreparator(Settings settings, LocationUtility locationUtility, ContactsUtility contactsUtility) {
         this.settings = settings;
+        this.contactsUtility = contactsUtility;
         this.locationUtility = locationUtility;
     }
 
 
     public String prepareResponse(RespondingSubject subject) {
         if (subject instanceof SMSRespondingSubject) {
-            if (subject instanceof GeolocationRequestRespondingSubject && this.shouldRespondWithGeolocation()) {
+
+            if (this.shouldRespondWithGeolocation(subject)) {
                 return this.getAutoResponseMessageWithGeolocation();
             }
 
@@ -33,18 +38,35 @@ public class ResponsePreparator {
             return this.settings.getAutoResponseToCallTemplate();
         }
 
+
         // should never happen
         return null;
     }
 
-    public boolean shouldRespondWithGeolocation() {
-        if (this.settings.isRespondingWithGeolocationEnabled() == false) {
+
+    private boolean shouldRespondWithGeolocation(RespondingSubject subject) {
+        if (!this.settings.isRespondingWithGeolocationEnabled()) {
             return false;
         }
 
-        if (this.settings.isRespondingWithGeolocationAlwaysEnabled()) {
-            return true;
+        boolean isGeolocationRequest = subject instanceof GeolocationRequestRespondingSubject
+                || this.settings.isRespondingWithGeolocationAlwaysEnabled();
+
+        if (!isGeolocationRequest) {
+            return false;
         }
+
+        String geolocationWhitelistGroupName = this.settings.getGeolocationWhitelistGroupName();
+        if (geolocationWhitelistGroupName != null) {
+            try {
+                if (!this.contactsUtility.hasGroupNumberByGroupName(geolocationWhitelistGroupName, subject.getPhoneNumber())) {
+                    return false;
+                }
+            } catch (Exception e) {
+                return false;
+            }
+        }
+
 
         return true;
 

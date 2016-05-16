@@ -262,7 +262,7 @@ public class Responder {
     }
 
     protected ResponsePreparator createResponsePreparator() {
-        return new ResponsePreparator(this.settings, this.locationUtility);
+        return new ResponsePreparator(this.settings, this.locationUtility, this.contactsUtility);
     }
 
     protected Settings createSettings() {

@@ -2,6 +2,7 @@ package com.medziku.motoresponder.logic;
 
 import android.location.Location;
 import com.google.common.util.concurrent.SettableFuture;
+import com.medziku.motoresponder.utils.ContactsUtility;
 import com.medziku.motoresponder.utils.LocationUtility;
 import com.medziku.motoresponder.utils.SharedPreferencesUtility;
 import org.junit.Before;
@@ -25,11 +26,13 @@ public class ResponsePreparatorTest {
     private Settings settings;
     private LocationUtility locationUtility;
     private ResponsePreparator responsePreparator;
+    private ContactsUtility contactsUtility;
 
     @Before
     public void setUp() {
         this.settings = mock(Settings.class);
         this.locationUtility = mock(LocationUtility.class);
+        this.contactsUtility = mock(ContactsUtility.class);
 
         when(this.settings.getAutoResponseToCallTemplate()).thenReturn(RESPONSE_TEXT);
         when(this.settings.getAutoResponseToSmsWithGeolocationTemplate()).thenReturn(RESPONSE_TEXT_LOCATION);
@@ -46,7 +49,7 @@ public class ResponsePreparatorTest {
 
         when(this.locationUtility.getLastRequestedLocation()).thenReturn(future);
 
-        this.responsePreparator = new ResponsePreparator(this.settings, this.locationUtility);
+        this.responsePreparator = new ResponsePreparator(this.settings, this.locationUtility, this.contactsUtility);
     }
 
 
@@ -60,7 +63,7 @@ public class ResponsePreparatorTest {
     public void testPrepareGeolocationResponse() throws Exception {
         String result = this.responsePreparator.prepareResponse(new GeolocationRequestRespondingSubject(FAKE_PHONE_NUMBER, GEOLOCATION_REQUEST_INCOMING_MESSAGE));
         assertTrue(result.indexOf(RESPONSE_TEXT_LOCATION_KEYWORD) != -1);
-        assertTrue(result.indexOf(MAPS_URL) != -1);
+        assertTrue(isGeolocationResponse(result));
         assertTrue(result.indexOf(Double.toString(LATITUDE)) != -1);
         assertTrue(result.indexOf(Double.toString(LONGITUDE)) != -1);
     }
@@ -78,12 +81,12 @@ public class ResponsePreparatorTest {
 
         String result = this.responsePreparator.prepareResponse(new GeolocationRequestRespondingSubject(FAKE_PHONE_NUMBER, GEOLOCATION_REQUEST_INCOMING_MESSAGE));
 
-        assertTrue(result.indexOf(MAPS_URL) == -1);
+        assertFalse(isGeolocationResponse(result));
 
         when(this.settings.isRespondingWithGeolocationEnabled()).thenReturn(true);
         String enabledResult = this.responsePreparator.prepareResponse(new GeolocationRequestRespondingSubject(FAKE_PHONE_NUMBER, GEOLOCATION_REQUEST_INCOMING_MESSAGE));
 
-        assertTrue(enabledResult.indexOf(MAPS_URL) != -1);
+        assertTrue(isGeolocationResponse(enabledResult));
 
     }
 
@@ -92,5 +95,37 @@ public class ResponsePreparatorTest {
         when(this.settings.isRespondingWithGeolocationEnabled()).thenReturn(false);
         String result = this.responsePreparator.prepareResponse(new SMSRespondingSubject(FAKE_PHONE_NUMBER, GEOLOCATION_REQUEST_INCOMING_MESSAGE));
         assertTrue(result.equals(RESPONSE_TEXT));
+    }
+
+    @Test
+    public void testNumberInGeolocationGroup() throws Exception {
+        boolean isNumberInGroup = true;
+        boolean shouldRespondWithGeolocation = true;
+
+        this.testGeolocationGroup(isNumberInGroup, shouldRespondWithGeolocation);
+    }
+
+
+    @Test
+    public void testNumberOutsideGeolocationGroup() throws Exception {
+        boolean isNumberInGroup = false;
+        boolean shouldRespondWithGeolocation = false;
+
+        this.testGeolocationGroup(isNumberInGroup, shouldRespondWithGeolocation);
+    }
+
+    private void testGeolocationGroup(boolean hasGroupNumber, boolean expectedResult) throws Exception {
+        when(this.settings.getGeolocationWhitelistGroupName()).thenReturn("doesnt matter");
+        when(this.contactsUtility.hasGroupNumberByGroupName(anyString(), anyString())).thenReturn(hasGroupNumber);
+
+        String result = this.responsePreparator.prepareResponse(
+                new GeolocationRequestRespondingSubject(FAKE_PHONE_NUMBER, GEOLOCATION_REQUEST_INCOMING_MESSAGE)
+        );
+
+        assertTrue(isGeolocationResponse(result) == expectedResult);
+    }
+
+    private boolean isGeolocationResponse(String responseText) {
+        return responseText.indexOf(MAPS_URL) != -1;
     }
 }

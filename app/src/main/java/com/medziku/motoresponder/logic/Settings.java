@@ -84,6 +84,7 @@ public class Settings extends SettingsBase {
         return this.getStringValue(R.string.auto_response_to_sms_with_geolocation_template_key);
     }
 
+
     public boolean isShowingSummaryNotificationEnabled() {
         return this.getBooleanValue(R.string.showing_summary_notification_enabled_key);
     }
@@ -122,6 +123,15 @@ public class Settings extends SettingsBase {
 
     public double getAccelerationRequiredToMotion() {
         return Double.parseDouble(this.getStringValue(R.string.acceleration_required_for_motion_key));
+    }
+
+    public String getGeolocationWhitelistGroupName() {
+        String result = this.getStringValue(R.string.geolocation_whitelist_group_name_key);
+
+        if (result == null || result.trim().equals("")) {
+            return null;
+        }
+        return result;
     }
 
 
@@ -204,7 +214,7 @@ public class Settings extends SettingsBase {
         if (result == null || result.trim().equals("")) {
             return null;
 
-         }
+}
         return result;
     }
 
