@@ -1,6 +1,7 @@
 package com.medziku.motoresponder.logic;
 
 import com.google.common.base.Predicate;
+import com.medziku.motoresponder.utils.ContactsUtility;
 import com.medziku.motoresponder.utils.NotificationUtility;
 import com.medziku.motoresponder.utils.SMSUtility;
 import com.medziku.motoresponder.utils.SharedPreferencesUtility;
@@ -12,6 +13,7 @@ import org.mockito.internal.verification.Calls;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
@@ -28,6 +30,7 @@ public class RespondingTaskTest {
     private Predicate<Boolean> returnCallback;
     private String FAKE_PHONE_NUMBER = "777777777";
     private ResponsePreparator responsePreparator;
+    private ContactsUtility contactsUtility;
 
 
     @Before
@@ -39,6 +42,7 @@ public class RespondingTaskTest {
         this.smsUtility = Mockito.mock(SMSUtility.class);
         this.responsePreparator = Mockito.mock(ResponsePreparator.class);
         this.returnCallback = Mockito.mock(Predicate.class);
+        this.contactsUtility = Mockito.mock(ContactsUtility.class);
         DecisionLog log = Mockito.mock(DecisionLog.class);
 
 
@@ -47,6 +51,7 @@ public class RespondingTaskTest {
                 this.settings,
                 this.notificationUtility,
                 this.smsUtility,
+                this.contactsUtility,
                 this.responsePreparator,
                 log,
                 this.returnCallback);
@@ -119,6 +124,38 @@ public class RespondingTaskTest {
         assertTrue(summaryNotificationSmallText.getValue().indexOf(FAKE_PHONE_NUMBER) >= 0);
         assertTrue(summaryNotificationBigText.getValue().indexOf(FAKE_PHONE_NUMBER) >= 0);
     }
+
+
+    @Test
+    public void testOfDisplayingContactName() {
+        String TEST_CONTACT_NAME = "test contact";
+
+        when(this.settings.isShowingSummaryNotificationEnabled()).thenReturn(true);
+        when(this.contactsUtility.getContactDisplayName(anyString())).thenReturn(TEST_CONTACT_NAME);
+        when(this.respondingDecision.shouldRespond(anyString())).thenReturn(true);
+
+        this.respondingTask.callLogic(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
+
+        ArgumentCaptor<String> summaryNotificationSmallText = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> summaryNotificationBigText = ArgumentCaptor.forClass(String.class);
+
+        verify(this.notificationUtility, times(1)).showBigTextNotification(
+                anyString(),
+                summaryNotificationSmallText.capture(),
+                summaryNotificationBigText.capture()
+        );
+
+        String smallText = summaryNotificationSmallText.getValue();
+        String bigText = summaryNotificationBigText.getValue();
+
+        assertTrue(smallText.indexOf(TEST_CONTACT_NAME) >= 0);
+        assertFalse(smallText.indexOf(FAKE_PHONE_NUMBER) >= 0);
+
+        assertTrue(bigText.indexOf(TEST_CONTACT_NAME) >= 0);
+        assertFalse(bigText.indexOf(FAKE_PHONE_NUMBER) >= 0);
+
+    }
+
 
     @Test
     public void testOfEnabledSummaryNotificationsOnNotRespondingCase() {
@@ -194,10 +231,11 @@ class ExposedRespondingTask extends RespondingTask {
                                  Settings sharedPreferencesUtility,
                                  NotificationUtility notificationUtility,
                                  SMSUtility smsUtility,
+                                 ContactsUtility contactsUtility,
                                  ResponsePreparator responsePreparator,
                                  DecisionLog log,
                                  Predicate<Boolean> resultCallback) {
-        super(respondingDecision, sharedPreferencesUtility, notificationUtility, smsUtility, responsePreparator, log, resultCallback);
+        super(respondingDecision, sharedPreferencesUtility, notificationUtility, smsUtility, contactsUtility, responsePreparator, log, resultCallback);
     }
 
 

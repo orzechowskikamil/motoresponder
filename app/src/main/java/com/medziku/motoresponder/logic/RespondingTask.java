@@ -2,6 +2,7 @@ package com.medziku.motoresponder.logic;
 
 import android.os.AsyncTask;
 import com.google.common.base.Predicate;
+import com.medziku.motoresponder.utils.ContactsUtility;
 import com.medziku.motoresponder.utils.NotificationUtility;
 import com.medziku.motoresponder.utils.SMSUtility;
 
@@ -9,6 +10,7 @@ import com.medziku.motoresponder.utils.SMSUtility;
 public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolean> {
 
     public static final String RECIPIENT_SUBSTITUTION_TAG = "%recipient%";
+    private ContactsUtility contactsUtility;
     protected DecisionLog log;
     private SMSUtility smsUtility;
     private NotificationUtility notificationUtility;
@@ -22,6 +24,7 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
                           Settings settings,
                           NotificationUtility notificationUtility,
                           SMSUtility smsUtility,
+                          ContactsUtility contactsUtility,
                           ResponsePreparator responsePreparator,
                           DecisionLog log,
                           Predicate<Boolean> resultCallback) {
@@ -31,6 +34,7 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
         this.notificationUtility = notificationUtility;
         this.smsUtility = smsUtility;
         this.responsePreparator = responsePreparator;
+        this.contactsUtility = contactsUtility;
         this.log = log;
         this.isFinished = false;
     }
@@ -158,9 +162,13 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
     }
 
     private void showSummaryNotification(String phoneNumber) {
+        String contactDisplayName = this.contactsUtility.getContactDisplayName(phoneNumber);
+
+        String recipient = (contactDisplayName != null) ? contactDisplayName : phoneNumber;
+
         String title = this.settings.getSummaryNotificationTitleText();
-        String shortText = this.settings.getSummaryNotificationShortText().replace(RECIPIENT_SUBSTITUTION_TAG, phoneNumber);
-        String bigText = this.settings.getSummaryNotificationBigText().replace(RECIPIENT_SUBSTITUTION_TAG, phoneNumber);
+        String shortText = this.settings.getSummaryNotificationShortText().replace(RECIPIENT_SUBSTITUTION_TAG, recipient);
+        String bigText = this.settings.getSummaryNotificationBigText().replace(RECIPIENT_SUBSTITUTION_TAG, recipient);
 
         this.notificationUtility.showBigTextNotification(title, shortText, bigText);
     }

@@ -2,6 +2,7 @@ package com.medziku.motoresponder.logic;
 
 import com.google.common.base.Predicate;
 import com.medziku.motoresponder.pseudotesting.integration.RespondingDecisionIntegrationTest;
+import com.medziku.motoresponder.utils.ContactsUtility;
 import com.medziku.motoresponder.utils.NotificationUtility;
 import com.medziku.motoresponder.utils.SMSUtility;
 
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RespondingTasksQueue {
+    private ContactsUtility contactsUtility;
     protected List<RespondingTask> pendingRespondingTasks;
     private RespondingDecision respondingDecision;
     private Settings settings;
@@ -19,6 +21,7 @@ public class RespondingTasksQueue {
 
     public RespondingTasksQueue(NotificationUtility notificationUtility,
                                 SMSUtility smsUtility,
+                                ContactsUtility contactsUtility,
                                 Settings settings,
                                 RespondingDecision respondingDecision,
                                 ResponsePreparator responsePreparator,
@@ -30,6 +33,7 @@ public class RespondingTasksQueue {
         this.respondingDecision = respondingDecision;
         this.responsePreparator = responsePreparator;
         this.log = log;
+        this.contactsUtility = contactsUtility;
     }
 
 
@@ -39,6 +43,7 @@ public class RespondingTasksQueue {
                 this.settings,
                 this.notificationUtility,
                 this.smsUtility,
+                this.contactsUtility,
                 this.responsePreparator,
                 this.log,
                 resultCallback);

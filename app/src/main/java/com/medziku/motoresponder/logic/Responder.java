@@ -278,6 +278,7 @@ public class Responder {
         return new RespondingTasksQueue(
                 this.notificationUtility,
                 this.smsUtility,
+                this.contactsUtility,
                 this.settings,
                 this.respondingDecision,
                 this.responsePreparator,
