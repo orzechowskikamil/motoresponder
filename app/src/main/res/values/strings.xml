@@ -21,6 +21,10 @@
     <string name="riding_preferences_summary">Tutaj można skonfigurować parametry na podstawie których zostanie podjęta
         decyzja czy użytkownik jedzie właśnie na motocyklu czy nie.
     </string>
+    
+    <string name="number_rules_preferences_title">Ustawienia filtrowania numerów tel.</string>
+    <string name="number_rules_preferences_summary">Tutaj można skonfigurować, komu aplikacja ma odpowiadać automatycznie, a komu nie.
+    </string>
 
 
     <!-- general settings -->
