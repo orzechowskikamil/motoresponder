@@ -62,7 +62,13 @@ public class RespondingTasksQueue {
         task[0] = this.createRespondingTask(new Predicate<Boolean>() {
             @Override
             public boolean apply(Boolean input) {
-                RespondingTasksQueue.this.pendingRespondingTasks.remove(task[0]);
+                // removal from task queue can cause concurrentModificationException, because if someone unlock phone
+                // and pendingRespondingTasks will be iterated for cancelling any task, and cancelling task
+                // will call this callback which will try to remove task from queue, there will be concurrent modification
+                // exception. So better to leave task in queue with isFinished() == true state. it doesn't harm
+                // anything, and it will be eventually removed with next call of cancelAllHandling.
+                //
+                // RespondingTasksQueue.this.pendingRespondingTasks.remove(task[0]);
                 return true;
             }
         });

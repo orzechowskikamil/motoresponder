@@ -59,12 +59,19 @@ public class RespondingTaskTest {
         when(this.settings.getSummaryNotificationBigText()).thenReturn("summary %recipient%.");
         when(this.settings.getOngoingNotificationTitleText()).thenReturn("ongoing");
         when(this.settings.getOngoingNotificationBigText()).thenReturn("ongoing");
+
+        when(this.settings.isShowingPendingNotificationEnabled()).thenReturn(true);
+        when(this.respondingDecision.shouldRespond(any(RespondingSubject.class))).thenReturn(false);
+
+        when(this.settings.isShowingDebugNotificationEnabled()).thenReturn(false);
+
     }
 
 
     @Test
     public void testOfResponse() throws Exception {
         when(this.respondingDecision.shouldRespond(any(RespondingSubject.class))).thenReturn(true);
+
         this.respondingTask.callLogic(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
 
         verify(this.smsUtility).sendSMS(anyString(), anyString(), any(Predicate.class));
@@ -72,21 +79,28 @@ public class RespondingTaskTest {
     }
 
     @Test
-    public void testOfNotifications() {
-        when(this.settings.isShowingPendingNotificationEnabled()).thenReturn(true);
-        when(this.respondingDecision.shouldRespond(any(RespondingSubject.class))).thenReturn(false);
+    public void testOfDisabledSummaryNotificationsOnNotRespondingCase() {
         when(this.settings.isShowingSummaryNotificationEnabled()).thenReturn(false);
-        when(this.settings.isShowingDebugNotificationEnabled()).thenReturn(false);
-
 
         this.respondingTask.callLogic(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
-        verify(this.notificationUtility, times(0)).showBigTextNotification(anyString(), anyString(), anyString());
 
+        verify(this.notificationUtility, times(0)).showBigTextNotification(anyString(), anyString(), anyString());
+    }
+
+    @Test
+    public void testOfDisabledSummaryNotificationsOnRespondingCase() {
+        when(this.respondingDecision.shouldRespond(any(RespondingSubject.class))).thenReturn(true);
+
+        when(this.settings.isShowingSummaryNotificationEnabled()).thenReturn(false);
+
+        this.respondingTask.callLogic(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
+
+        verify(this.notificationUtility, times(0)).showBigTextNotification(anyString(), anyString(), anyString());
+    }
+
+    @Test
+    public void testOfEnabledSummaryNotificationOnRespondingCase() {
         when(this.settings.isShowingSummaryNotificationEnabled()).thenReturn(true);
-
-        this.respondingTask.callLogic(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
-        verify(this.notificationUtility, times(0)).showBigTextNotification(anyString(), anyString(), anyString());
-
         when(this.respondingDecision.shouldRespond(any(RespondingSubject.class))).thenReturn(true);
 
         this.respondingTask.callLogic(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
@@ -94,17 +108,47 @@ public class RespondingTaskTest {
         ArgumentCaptor<String> summaryNotificationSmallText = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<String> summaryNotificationBigText = ArgumentCaptor.forClass(String.class);
 
-        verify(this.notificationUtility, times(3)).showOngoingNotification(anyString(), anyString(), anyString());
+        verify(this.notificationUtility, times(1)).showOngoingNotification(anyString(), anyString(), anyString());
         verify(this.notificationUtility, times(1)).showBigTextNotification(
                 anyString(),
                 summaryNotificationSmallText.capture(),
                 summaryNotificationBigText.capture()
         );
-        verify(this.notificationUtility, times(3)).hideNotification();
+        verify(this.notificationUtility, times(1)).hideNotification();
 
         assertTrue(summaryNotificationSmallText.getValue().indexOf(FAKE_PHONE_NUMBER) >= 0);
         assertTrue(summaryNotificationBigText.getValue().indexOf(FAKE_PHONE_NUMBER) >= 0);
     }
+
+    @Test
+    public void testOfEnabledSummaryNotificationsOnNotRespondingCase() {
+        when(this.settings.isShowingSummaryNotificationEnabled()).thenReturn(true);
+
+        this.respondingTask.callLogic(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
+
+        verify(this.notificationUtility, times(0)).showBigTextNotification(anyString(), anyString(), anyString());
+    }
+
+
+    @Test
+    public void testOfEnabledDebugNotificationOnNotRespondingCase() {
+        when(this.settings.isShowingDebugNotificationEnabled()).thenReturn(true);
+
+        this.respondingTask.callLogic(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
+
+        verify(this.notificationUtility, times(1)).showBigTextNotification(anyString(), anyString(), anyString());
+    }
+
+    @Test
+    public void testOfEnabledDebugNotificationRespondingCase() {
+        when(this.respondingDecision.shouldRespond(any(RespondingSubject.class))).thenReturn(true);
+        when(this.settings.isShowingDebugNotificationEnabled()).thenReturn(true);
+
+        this.respondingTask.callLogic(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
+
+        verify(this.notificationUtility, times(1)).showBigTextNotification(anyString(), anyString(), anyString());
+    }
+
 
     @Test
     public void testOfTermination() throws Exception {
@@ -125,7 +169,7 @@ public class RespondingTaskTest {
             public Object answer(InvocationOnMock invocation) throws Throwable {
                 sendSmsCallback[0] = (Predicate<String>) invocation.getArguments()[2];
                 return null;
-}
+            }
         }).when(this.smsUtility).sendSMS(anyString(), anyString(), any(Predicate.class));
 
         this.respondingTask.sendSMSAndRetryOnFail(FAKE_PHONE_NUMBER, "test message", 2);

@@ -29,7 +29,7 @@ public class RespondingTasksQueueTest {
 
         this.exposedRespondingTasksQueue.lastResultCallback.apply(true);
 
-        assertEquals(0, this.exposedRespondingTasksQueue.getTasksList().size());
+        assertEquals(1, this.exposedRespondingTasksQueue.getTasksList().size());
 
         verify(lastTask, times(0)).cancelResponding();
         verify(lastTask, times(1)).execute(any(CallRespondingSubject.class));
@@ -51,7 +51,7 @@ public class RespondingTasksQueueTest {
         firstCallback.apply(true);
         secondCallback.apply(true);
 
-        assertEquals(0, this.exposedRespondingTasksQueue.getTasksList().size());
+        assertEquals(2, this.exposedRespondingTasksQueue.getTasksList().size());
         verify(lastTask, times(0)).cancelResponding();
         verify(lastTask, times(1)).execute(any(CallRespondingSubject.class));
     }

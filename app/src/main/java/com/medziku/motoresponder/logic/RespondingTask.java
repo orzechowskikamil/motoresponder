@@ -16,6 +16,7 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
     private Predicate<Boolean> resultCallback;
     private RespondingDecision respondingDecision;
     private ResponsePreparator responsePreparator;
+    private boolean isFinished;
 
     public RespondingTask(RespondingDecision respondingDecision,
                           Settings settings,
@@ -31,6 +32,7 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
         this.smsUtility = smsUtility;
         this.responsePreparator = responsePreparator;
         this.log = log;
+        this.isFinished = false;
     }
 
 
@@ -55,6 +57,7 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
 
         this.showDebugNotificationIfEnabled();
 
+        this.isFinished = true;
         this.resultCallback.apply(true);
     }
 
@@ -77,6 +80,9 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
      * Cancells responding, cleanup (notifications, handlers, etc) and kills task
      */
     public void cancelResponding() {
+        if (this.isFinished == true) {
+            return;
+        }
         this.respondingDecision.cancelDecision();
 
         this.log.add("Responding cancelled.");
@@ -87,6 +93,9 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
     }
 
     protected void handleRespondingTask(RespondingSubject subject) {
+        if (this.isFinished == true) {
+            return;
+        }
 
         // wait some time before responding, to allow user manually
         try {
@@ -103,7 +112,7 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
 
 
         // show notification to give user possibiity to cancel autorespond
-       this.showPendingNotificationIfEnabled();
+        this.showPendingNotificationIfEnabled();
 
 
         boolean shouldRespond = this.respondingDecision.shouldRespond(subject);
@@ -120,20 +129,20 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
             this.log.add("Decision = NOT respond.");
         }
 
- 
+
         if (this.settings.isShowingSummaryNotificationEnabled() && shouldRespond) {
             this.showSummaryNotification(subject.getPhoneNumber());
         }
-        }
-    
-    private void showPendingNotificationIfEnabled(){
-     if (this.settings.isShowingPendingNotificationEnabled()) {
+    }
+
+    private void showPendingNotificationIfEnabled() {
+        if (this.settings.isShowingPendingNotificationEnabled()) {
             this.notifyAboutPendingAutoRespond();
         }
     }
-    
-    private void hidePendingNotificationIfEnabled(){
-           if (this.settings.isShowingPendingNotificationEnabled()) {
+
+    private void hidePendingNotificationIfEnabled() {
+        if (this.settings.isShowingPendingNotificationEnabled()) {
             this.notificationUtility.hideNotification();
         }
 
@@ -168,16 +177,16 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
     protected void sendSMSAndRetryOnFail(final String phoneNumber, final String message, final int attemptsLeft) {
         if (attemptsLeft <= 0) {
             return;
-    }
+        }
 
         this.smsUtility.sendSMS(phoneNumber, message, new Predicate<String>() {
             public boolean apply(String error) {
                 if (error != null) {
                     RespondingTask.this.log.add("Error during sending response SMS: '" + error + "'");
                     RespondingTask.this.sendSMSAndRetryOnFail(phoneNumber, message, attemptsLeft - 1);
-    }
-        return true;
-    }
+                }
+                return true;
+            }
         });
     }
 
@@ -192,7 +201,7 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
     private void showDebugNotificationIfEnabled() {
         if (this.settings.isShowingDebugNotificationEnabled()) {
             this.showDebugNotification();
-    }
+        }
     }
 
 
