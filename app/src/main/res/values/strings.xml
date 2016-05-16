@@ -36,6 +36,17 @@
     </string>
     <string name="responder_enabled_key">responder_enabled</string>
     <bool name="responder_enabled_default_value">true</bool>
+    
+    
+      <string name="responding_restricted_to_contact_list_key_title">Odpowiadaj tylko numerom z kontaktów.</string>
+    <string name="responding_restricted_to_contact_list_key_summary_on">Aplikacja nie będzie odpowiadała numerom które nie są zapisane w kontaktach.
+    </string>
+     <string name="responding_restricted_to_contact_list_key_summary_off">Aplikacja nie będzie brała pod uwagę przy odpowiadaniu, czy dany numer znajduje się w kontaktach czy nie.
+    </string>
+    <string name="responding_restricted_to_contact_list_key_key">responding_restricted_to_contact_list_key</string>
+    <bool name="responding_restricted_to_contact_list_key_default_value">true</bool>
+    
+    
 
   <string name="auto_response_to_sms_enabled_title">Odpowiadaj na SMSy</string>
     <string name="auto_response_to_sms_enabled_summary_on">Aplikacja będzie odpowiadać na nieprzeczytane SMSy gdy jedziesz.

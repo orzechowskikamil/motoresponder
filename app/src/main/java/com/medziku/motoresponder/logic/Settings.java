@@ -71,6 +71,10 @@ public class Settings extends SettingsBase {
         return this.getIntValue(R.string.long_speed_check_duration_key);
     }
 
+    public boolean isRespondingRestrictedToContactList() {
+        return this.getBooleanValue(R.string.responding_restricted_to_contact_list_key_key);
+    }
+
     public String getAutoResponseToSmsTemplate() {
         return this.getStringValue(R.string.auto_response_to_sms_template_key);
     }
@@ -204,9 +208,8 @@ public class Settings extends SettingsBase {
         return false;
     }
 
-    public boolean isRespondingRestrictedToContactList() {
-        return true;
-    }
+
+
 
     public String getBlackListGroupName() {
         String result = this.getStringValue(R.string.blacklist_group_name_key);
