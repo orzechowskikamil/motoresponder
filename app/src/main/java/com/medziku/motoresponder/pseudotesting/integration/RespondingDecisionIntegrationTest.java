@@ -35,7 +35,7 @@ public class RespondingDecisionIntegrationTest {
 
         DeviceUnlocked deviceUnlocked = this.createLoggingDeviceUnlocked(lockStateUtility, settings);
         UserRide userRide = this.createLoggingUserRide(settings, locationUtility, sensorsUtility, motionUtility, log);
-        NumberRules numberRules = this.createLoggingUserRules(contactsUtility);
+        NumberRules numberRules = this.createLoggingUserRules(contactsUtility,settings);
         AlreadyResponded alreadyResponded = this.createLoggingAlreadyResponded(callsUtility, smsUtility);
 
         this.respondingDecision = this.createLoggingRespondingDecision(deviceUnlocked, userRide, numberRules, alreadyResponded,settings, log);
@@ -104,8 +104,8 @@ public class RespondingDecisionIntegrationTest {
     }
 
 
-    private NumberRules createLoggingUserRules(final ContactsUtility contactsUtility) {
-        return new NumberRules(contactsUtility) {
+    private NumberRules createLoggingUserRules(ContactsUtility contactsUtility,Settings settings) {
+        return new NumberRules(contactsUtility,settings) {
             public boolean numberRulesAllowResponding(String phoneNumber) {
                 boolean result = super.numberRulesAllowResponding(phoneNumber);
                 log("numberRulesAllowResponding()=" + result);

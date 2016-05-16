@@ -258,7 +258,7 @@ public class Responder {
 
 
     protected NumberRules createNumberRules() {
-        return new NumberRules(this.contactsUtility);
+        return new NumberRules(this.contactsUtility,this.settings);
     }
 
     protected ResponsePreparator createResponsePreparator() {

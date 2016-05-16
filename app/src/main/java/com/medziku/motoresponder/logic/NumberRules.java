@@ -12,6 +12,7 @@ public class NumberRules {
 
 
     private ContactsUtility contactsUtility;
+    private Settings settings;
     // TODO K. Orzechowski: not needed for 1.00, issue #50
 //    private PhoneNumberVerifier numberVerifier;
 
@@ -20,8 +21,9 @@ public class NumberRules {
      *
      * @param contactsUtility
      */
-    public NumberRules(ContactsUtility contactsUtility) {
+    public NumberRules(ContactsUtility contactsUtility, Settings settings) {
         this.contactsUtility = contactsUtility;
+        this.settings = settings;
         // TODO K. Orzechowski: not needed for 1.00, issue #50
 //        this.numberVerifier = new PhoneNumberVerifier();
 //        this.whiteListGroupNames = new List<String>();
@@ -55,6 +57,8 @@ public class NumberRules {
 
     public static final int RESPONDING_BLACKLIST_DISABLED = 0;
     public static final int RESPONDING_BLACKLIST_ENABLED = 1;
+
+
 
 
     // TODO K. Orzechowski: not needed for now, issue #50
@@ -108,12 +112,12 @@ public class NumberRules {
 
 
     private boolean isCurrentDevicePhoneNumber(String phoneNumber) {
-        // todo it should be kept in storage since readCurrentDevicePhoneNumber can return null Issue #71
+        // todo #71 add some prompt if device is not able to read phone number, OR disable field 
+        // 
         try {
             return phoneNumber.equals(this.contactsUtility.readCurrentDevicePhoneNumber());
         } catch (Exception e) {
-            // TODO K. Orzechowski: return it from storage issue #71
-            return false;
+            return phoneNumber.equals(this.settings.getStoredDevicePhoneNumber());
         }
     }
 

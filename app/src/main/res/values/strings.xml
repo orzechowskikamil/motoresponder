@@ -138,6 +138,16 @@
     </string>
     <string name="geolocation_request_pattern_2_key">geolocation_request_pattern_2</string>
     <string name="geolocation_request_pattern_2_default_value" formatted="false">gdzie jestes</string>
+    
+    
+                    <string name="device_phone_number_title">Twój numer telefonu    </string>
+    <string name="device_phone_number_summary">Niektóre telefony nie potrafią odczytać aktualnego numeru telefonu z niektórych kart SIM.
+    Jeśli aplikacja odpowiada na wiadomości pochodzące z twojego numeru (np. gdy dzwoni do ciebie poczta głosowa) to możesz wpisać tu swój numer
+    telefonu aby temu zapobiec.    </string>
+    <string name="device_phone_number_key">device_phone_number    </string>
+    <string name="device_phone_number_default_value"></string>
+    
+    
     <!-- riding detection settings -->
 
 
