@@ -41,14 +41,9 @@ public class CallsUtility {
      */
     public void listenForUnansweredCalls(Predicate<String> callCallback) {
         if (this.callCallback != null) {
-            throw new IllegalStateException("Utility is already listening for calls");
-        }
-
-        if (this.isCurrentlyListening == true) {
             return;
         }
 
-        this.isCurrentlyListening = true;
         this.callCallback = callCallback;
 
 
@@ -100,9 +95,11 @@ public class CallsUtility {
     }
 
     public void stopListeningForCalls() {
-        if (this.isCurrentlyListening == false) {
+        if (this.callCallback == null) {
             return;
         }
+        this.callCallback = null;
+
         this.telephonyManager.listen(this.phoneStateListener, PhoneStateListener.LISTEN_NONE);
         this.quitLooper();
     }

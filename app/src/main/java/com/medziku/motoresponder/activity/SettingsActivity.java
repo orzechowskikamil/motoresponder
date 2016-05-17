@@ -19,7 +19,7 @@ import java.util.List;
  * This activity is UI of this application.
  * Main functionality of application doesn't have UI, so only UI of the app is settings panel of application.
  */
-public class SettingsActivity extends PreferenceActivity {
+public class SettingsActivity extends SettingsActivityDefinition {
     public static final String SETTINGS_PREFERENCE_FRAGMENT_NAME = "com.medziku.motoresponder.activity.SettingsPreferenceFragment";
     public static final String RIDING_SETTINGS_PREFERENCE_FRAGMENT_NAME = "com.medziku.motoresponder.activity.RidingSettingsPreferenceFragment";
     public static final String NUMBER_RULES_PREFERENCE_FRAGMENT_NAME = "com.medziku.motoresponder.activity.NumberRulesPreferenceFragment";
@@ -51,6 +51,7 @@ public class SettingsActivity extends PreferenceActivity {
         this.runBackgroundProcessOrPseudotests();
     }
 
+    // TODO K. Orzechowski: divide it to app launcher and activity.
 
     private void runBackgroundProcessOrPseudotests() {
         if (this.arePseudoTestsEnabled()) {
@@ -75,9 +76,17 @@ public class SettingsActivity extends PreferenceActivity {
             @Override
             public boolean apply(Boolean input) {
                 SettingsActivity.this.toggleBackgroundServiceAccordingToSettings();
+                SettingsActivity.this.toggleDisabledMenuOptions();
                 return false;
             }
         });
+    }
+
+    protected void toggleDisabledMenuOptions() {
+
+        if (this.settings.isResponderEnabled()) {
+
+        }
     }
 
     protected void onStop() {
@@ -144,5 +153,9 @@ public class SettingsActivity extends PreferenceActivity {
                 || fragmentName.equals(RIDING_SETTINGS_PREFERENCE_FRAGMENT_NAME)
                 || fragmentName.equals(NUMBER_RULES_PREFERENCE_FRAGMENT_NAME));
     }
+
+}
+
+class SettingsActivityDefinition extends PreferenceActivity {
 
 }

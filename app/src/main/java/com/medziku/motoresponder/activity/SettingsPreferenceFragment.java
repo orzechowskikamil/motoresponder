@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.preference.*;
 import com.medziku.motoresponder.R;
 
-// TODO Rename to smth like "General settings" #Issue not needed
 public class SettingsPreferenceFragment extends PreferenceFragment {
 
     @Override

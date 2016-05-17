@@ -10,7 +10,8 @@ public class Settings extends SettingsBase {
 
     private Predicate<Boolean> responderEnabledCallback;
     private Predicate<Boolean> onChangeRespondingToSMSOrCallsCallback;
-    private boolean blackListEnabled;
+    private Predicate<Boolean> onChangeSensorCheckEnabledCallback;
+    private Predicate<Boolean> onChangeRespondingWithGeolocationEnabled;
 
     public Settings(SharedPreferencesUtility sharedPreferencesUtility) {
         super(sharedPreferencesUtility);
@@ -27,10 +28,6 @@ public class Settings extends SettingsBase {
     public boolean isSensorCheckEnabled() {
         return this.getBooleanValue(R.string.sensor_check_enabled_key);
     }
-
-    // TODO k.orzechowsk #66 ADD UI
-    // TODO k.orzechowsk #66 ADD TESTS
-    // TODO k.orzechowsk #66 DISABLE PARTICULAR ELEMENTS OF UI ACCORDING TO TRUE/FALSE VALUE OF THIS.
 
     /**
      * If true, app with disabled sensorChecks will assume that you are riding
@@ -102,6 +99,14 @@ public class Settings extends SettingsBase {
         return this.getBooleanValue(R.string.showing_pending_notification_enabled_key);
     }
 
+    public void listenToSensorCheckEnabledChange(Predicate<Boolean> callback) {
+        this.onChangeSensorCheckEnabledCallback = callback;
+    }
+
+
+    public void listenToRespondingWithGeolocationEnabledChange(Predicate<Boolean> callback) {
+        this.onChangeRespondingWithGeolocationEnabled = callback;
+    }
 
     public void listenToResponderEnabledChange(Predicate<Boolean> callback) {
         this.responderEnabledCallback = callback;
@@ -150,11 +155,33 @@ public class Settings extends SettingsBase {
     }
 
     protected void onSharedPreferenceChanged(String changedKey) {
-        final String RESPONDER_ENABLED_KEY = this.getStringFromRes(R.string.responder_enabled_key);
+        String RESPONDER_ENABLED_KEY = this.getStringFromRes(R.string.responder_enabled_key);
+        String AUTO_RESPONSE_TO_CALL_ENABLED_KEY = this.getStringFromRes(R.string.auto_response_to_call_enabled_key);
+        String AUTO_RESPONSE_TO_SMS_ENABLED_KEY = this.getStringFromRes(R.string.auto_response_to_sms_enabled_key);
+        String SENSOR_CHECK_ENABLED_KEY = this.getStringFromRes(R.string.sensor_check_enabled_key);
+        String GEOLOCATION_REQUEST_ENABLED = this.getStringFromRes(R.string.geolocation_request_enabled_key);
 
         if (changedKey.equals(RESPONDER_ENABLED_KEY)) {
             if (this.responderEnabledCallback != null) {
                 this.responderEnabledCallback.apply(true);
+            }
+        }
+
+        if (changedKey.equals(AUTO_RESPONSE_TO_CALL_ENABLED_KEY) || changedKey.equals(AUTO_RESPONSE_TO_SMS_ENABLED_KEY)) {
+            if (this.onChangeRespondingToSMSOrCallsCallback != null) {
+                this.onChangeRespondingToSMSOrCallsCallback.apply(true);
+            }
+        }
+
+        if (changedKey.equals(SENSOR_CHECK_ENABLED_KEY)) {
+            if (this.onChangeSensorCheckEnabledCallback != null) {
+                this.onChangeSensorCheckEnabledCallback.apply(true);
+            }
+        }
+
+        if (changedKey.equals(GEOLOCATION_REQUEST_ENABLED)) {
+            if (this.onChangeRespondingWithGeolocationEnabled != null) {
+                this.onChangeRespondingWithGeolocationEnabled.apply(true);
             }
         }
     }
@@ -250,7 +277,7 @@ public class Settings extends SettingsBase {
 }
 
 
-class SettingsBase {
+abstract class SettingsBase {
 
     private SharedPreferencesUtility sharedPreferencesUtility;
 

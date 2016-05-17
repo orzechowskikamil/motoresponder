@@ -70,7 +70,6 @@ public class Responder {
         }
 
         this.isRespondingNow = true;
-        // TODO K.Orzechowski throw out this smsreceivedcallback and replace it with predicate  #49
         this.listenToIncomingAccordingToSettings();
         this.settings.listenToChangeRespondToSmsOrCallSetting(new Predicate<Boolean>() {
             @Override

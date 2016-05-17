@@ -109,6 +109,8 @@ public class SMSUtility {
             return;
         }
 
+        this.isCurrentlyListening = false;
+
         this.context.unregisterReceiver(this.incomingSMSReceiver);
     }
 
@@ -222,7 +224,7 @@ public class SMSUtility {
 
                 if (bundle != null) {
                     try {
-                        String phoneNumber=null;
+                        String phoneNumber = null;
                         String multipartMessage = "";
 
                         Object[] pdus = (Object[]) bundle.get("pdus");

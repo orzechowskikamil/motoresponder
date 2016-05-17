@@ -2,6 +2,14 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
                   android:key="riding_settings_preference_fragment">
 
+    <EditTextPreference
+            android:dialogTitle="@string/wait_before_response_title"
+            android:key="@string/wait_before_response_key"
+            android:summary="@string/wait_before_response_summary"
+            android:defaultValue="@integer/wait_before_response_default_value"
+            android:title="@string/wait_before_response_title"
+            android:numeric="integer"/>
+
 
     <SwitchPreference
             android:summaryOn="@string/sensor_check_enabled_summary_on"
@@ -24,16 +32,8 @@
             android:summaryOff="@string/assume_screen_unlocked_as_not_riding_summary_off"
             android:title="@string/assume_screen_unlocked_as_not_riding_title"
             android:key="@string/assume_screen_unlocked_as_not_riding_key"
-            android:defaultValue="@bool/assume_screen_unlocked_as_not_riding_default_value"/>
-
-
-    <EditTextPreference
-            android:dialogTitle="@string/wait_before_response_title"
-            android:key="@string/wait_before_response_key"
-            android:summary="@string/wait_before_response_summary"
-            android:defaultValue="@integer/wait_before_response_default_value"
-            android:title="@string/wait_before_response_title"
-            android:numeric="integer"/>
+            android:defaultValue="@bool/assume_screen_unlocked_as_not_riding_default_value"
+            android:dependency="@string/sensor_check_enabled_key"/>
 
 
     <SwitchPreference
@@ -41,60 +41,16 @@
             android:summaryOff="@string/include_proximity_check_summary_off"
             android:title="@string/include_proximity_check_title"
             android:key="@string/include_proximity_check_key"
-            android:defaultValue="@bool/include_proximity_check_default_value"/>
-
-
-    <EditTextPreference
-            android:dialogTitle="@string/sure_riding_speed_title"
-            android:key="@string/sure_riding_speed_key"
-            android:summary="@string/sure_riding_speed_summary"
-            android:defaultValue="@integer/sure_riding_speed_default_value"
-            android:title="@string/sure_riding_speed_title"
-            android:numeric="integer"/>
-
-    <EditTextPreference
-            android:dialogTitle="@string/staying_still_speed_title"
-            android:key="@string/staying_still_speed_key"
-            android:summary="@string/staying_still_speed_summary"
-            android:defaultValue="@integer/staying_still_speed_default_value"
-            android:title="@string/staying_still_speed_title"
-            android:numeric="integer"/>
-
-
-    <EditTextPreference
-            android:dialogTitle="@string/quick_speed_check_duration_title"
-            android:key="@string/quick_speed_check_duration_key"
-            android:summary="@string/quick_speed_check_duration_summary"
-            android:defaultValue="@integer/quick_speed_check_duration_default_value"
-            android:title="@string/quick_speed_check_duration_title"
-            android:numeric="integer"/>
-
-
-    <EditTextPreference
-            android:dialogTitle="@string/long_speed_check_duration_title"
-            android:key="@string/long_speed_check_duration_key"
-            android:summary="@string/long_speed_check_duration_summary"
-            android:defaultValue="@integer/long_speed_check_duration_default_value"
-            android:title="@string/long_speed_check_duration_title"
-            android:numeric="integer"/>
-
-
-    <EditTextPreference
-            android:dialogTitle="@string/required_accuracy_title"
-            android:key="@string/required_accuracy_key"
-            android:summary="@string/required_accuracy_summary"
-            android:defaultValue="@integer/required_accuracy_default_value"
-            android:title="@string/required_accuracy_title"
-            android:numeric="integer"/>
-
+            android:defaultValue="@bool/include_proximity_check_default_value"
+            android:dependency="@string/sensor_check_enabled_key"/>
 
     <SwitchPreference
             android:summaryOn="@string/include_accelerometer_check_summary_on"
             android:summaryOff="@string/include_accelerometer_check_summary_off"
             android:title="@string/include_accelerometer_check_title"
             android:key="@string/include_accelerometer_check_key"
-            android:defaultValue="@bool/include_accelerometer_check_default_value"/>
-
+            android:defaultValue="@bool/include_accelerometer_check_default_value"
+            android:dependency="@string/sensor_check_enabled_key"/>
 
     <EditTextPreference
             android:dialogTitle="@string/acceleration_required_for_motion_title"
@@ -104,6 +60,55 @@
             android:title="@string/acceleration_required_for_motion_title"
             android:numeric="decimal"
             android:dependency="@string/include_accelerometer_check_key"/>
+
+
+    <EditTextPreference
+            android:dialogTitle="@string/sure_riding_speed_title"
+            android:key="@string/sure_riding_speed_key"
+            android:summary="@string/sure_riding_speed_summary"
+            android:defaultValue="@integer/sure_riding_speed_default_value"
+            android:title="@string/sure_riding_speed_title"
+            android:numeric="integer"
+            android:dependency="@string/sensor_check_enabled_key"/>
+
+    <EditTextPreference
+            android:dialogTitle="@string/staying_still_speed_title"
+            android:key="@string/staying_still_speed_key"
+            android:summary="@string/staying_still_speed_summary"
+            android:defaultValue="@integer/staying_still_speed_default_value"
+            android:title="@string/staying_still_speed_title"
+            android:numeric="integer"
+            android:dependency="@string/sensor_check_enabled_key"/>
+
+
+    <EditTextPreference
+            android:dialogTitle="@string/quick_speed_check_duration_title"
+            android:key="@string/quick_speed_check_duration_key"
+            android:summary="@string/quick_speed_check_duration_summary"
+            android:defaultValue="@integer/quick_speed_check_duration_default_value"
+            android:title="@string/quick_speed_check_duration_title"
+            android:numeric="integer"
+            android:dependency="@string/sensor_check_enabled_key"/>
+
+
+    <EditTextPreference
+            android:dialogTitle="@string/long_speed_check_duration_title"
+            android:key="@string/long_speed_check_duration_key"
+            android:summary="@string/long_speed_check_duration_summary"
+            android:defaultValue="@integer/long_speed_check_duration_default_value"
+            android:title="@string/long_speed_check_duration_title"
+            android:numeric="integer"
+            android:dependency="@string/sensor_check_enabled_key"/>
+
+
+    <EditTextPreference
+            android:dialogTitle="@string/required_accuracy_title"
+            android:key="@string/required_accuracy_key"
+            android:summary="@string/required_accuracy_summary"
+            android:defaultValue="@integer/required_accuracy_default_value"
+            android:title="@string/required_accuracy_title"
+            android:numeric="integer"
+            android:dependency="@string/sensor_check_enabled_key"/>
 
 
 </PreferenceScreen>
