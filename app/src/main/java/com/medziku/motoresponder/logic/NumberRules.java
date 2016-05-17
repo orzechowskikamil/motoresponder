@@ -2,14 +2,11 @@ package com.medziku.motoresponder.logic;
 
 import com.medziku.motoresponder.utils.ContactsUtility;
 
-import java.util.List;
-
 
 /**
  * This class is responsible for filtering numbers which shouldn't be answered.
  */
 public class NumberRules {
-
 
     private ContactsUtility contactsUtility;
     private Settings settings;
@@ -96,10 +93,10 @@ public class NumberRules {
 // TODO k.orzechowsk commented until 1.01, issue #50
 // if (this.respondingSettings == RESPONDING_SETTINGS_RESPOND_EVERY_NORMAL_NUMBER && this.isNormalNumber(phoneNumber)==false){
 // return false;
+
 // }
 
-        if (this.respondingSettings == RESPONDING_SETTINGS_RESPOND_ONLY_CONTACT_BOOK
-                && this.isInContactBook(phoneNumber) == false) {
+        if (this.settings.isRespondingRestrictedToContactList() && this.isInContactBook(phoneNumber) == false) {
             return false;
         }
 
@@ -133,7 +130,7 @@ public class NumberRules {
 //
 //    private boolean isNumberOnWhiteList(String phoneNumber) {
 //        for (String whiteListGroupName : this.whiteListGroupNames) {
-//            if (this.contactsUtility.isGroupContainingContact(whiteListGroupName, phoneNumber) == true) {
+//            if (this.contactsUtility.hasGroupNumber(whiteListGroupName, phoneNumber) == true) {
 //                return true;
 //            }
 //        }
@@ -142,7 +139,7 @@ public class NumberRules {
 //
 //    private boolean isNumberOnBlacklist(String phoneNumber) {
 //        for (String blackListGroupName : this.blackListGroupNames) {
-//            if (this.contactsUtility.isGroupContainingContact(blackListGroupName, phoneNumber) == true) {
+//            if (this.contactsUtility.hasGroupNumber(blackListGroupName, phoneNumber) == true) {
 //                return true;
 //            }
 //        }
@@ -177,7 +174,7 @@ public class NumberRules {
 //    }
 
     private boolean isInContactBook(String phoneNumber) {
-        return this.contactsUtility.contactBookContainsContact(phoneNumber);
+        return this.contactsUtility.contactBookContainsNumber(phoneNumber);
     }
 
 }

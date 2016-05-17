@@ -1,7 +1,5 @@
 package com.medziku.motoresponder.logic;
 
-import java.util.regex.Pattern;
-
 /**
  * Compares phone numbers in intelligent way, as their notations can differ.
  */
@@ -13,19 +11,19 @@ public class PhoneNumbersComparator {
     private static int minimalLenghtOfNormalNumber = 9;
 
     public static boolean areNumbersEqual(String firstPhoneNumber, String secondPhoneNumber) {
-        String trimmed1stNumber = firstPhoneNumber.trim().replaceAll("[^0-9]", "");
-        String trimmed2ndNumber = secondPhoneNumber.trim().replaceAll("[^0-9]", "");
+        String normalized1stNumber = normalizeNumber(firstPhoneNumber);
+        String normalized2ndNumber = normalizeNumber(secondPhoneNumber);
 
         String longerNumber;
         String shorterNumber;
 
-        if (trimmed1stNumber.length() > trimmed2ndNumber.length()) {
-            longerNumber = trimmed1stNumber;
-            shorterNumber = trimmed2ndNumber;
+        if (normalized1stNumber.length() > normalized2ndNumber.length()) {
+            longerNumber = normalized1stNumber;
+            shorterNumber = normalized2ndNumber;
 
         } else {
-            longerNumber = trimmed2ndNumber;
-            shorterNumber = trimmed1stNumber;
+            longerNumber = normalized2ndNumber;
+            shorterNumber = normalized1stNumber;
         }
 
         String cutLongerNumber;
@@ -37,5 +35,17 @@ public class PhoneNumbersComparator {
 
         boolean result = cutLongerNumber.equals(shorterNumber);
         return result;
+    }
+
+    public static String normalizeNumber(String phoneNumber) {
+        phoneNumber = phoneNumber.trim().replaceAll("[^0-9\\+]", "");
+
+        if (phoneNumber.substring(0, 2).equals("00")) {
+            phoneNumber = "+" + phoneNumber.substring(2);
+        } else if (phoneNumber.substring(0, 1).equals("0")) {
+            phoneNumber = phoneNumber.substring(1);
+        }
+
+        return phoneNumber;
     }
 }

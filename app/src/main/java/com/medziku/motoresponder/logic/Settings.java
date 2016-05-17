@@ -14,11 +14,11 @@ public class Settings extends SettingsBase {
     public Settings(SharedPreferencesUtility sharedPreferencesUtility) {
         super(sharedPreferencesUtility);
     }
-    
+
     public boolean isResponderEnabled() {
         return this.getBooleanValue(R.string.responder_enabled_key);
     }
-    
+
     /**
      * if true, app will perform sensor checks to measure if you are riding.
      * if false, app will check isRidingAssumed for decide if you are riding or not 
@@ -193,7 +193,11 @@ public class Settings extends SettingsBase {
         // TODO K. Orzechowski: change constant settings to real configurable values #67
         return false;
     }
-    
+
+    public boolean isRespondingRestrictedToContactList() {
+        return true;
+    }
+
     public String getStoredDevicePhoneNumber(){
          return this.getStringValue(R.string.device_phone_number_key);
     }

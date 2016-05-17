@@ -26,7 +26,7 @@ public class NumberRulesTest {
         this.contactsUtility = Mockito.mock(ContactsUtility.class);
         this.settings = Mockito.mock(Settings.class);
         this.numberRules = new NumberRules(contactsUtility, settings);
-
+        when(this.settings.isRespondingRestrictedToContactList()).thenReturn(true);
 
         when(this.contactsUtility.readCurrentDevicePhoneNumber()).thenReturn(this.FAKE_CURRENT_DEVICE_PHONE_NUMBER);
     }
@@ -41,6 +41,13 @@ public class NumberRulesTest {
     public void numberRulesPreventRespondingIfNotInContactBook() {
         this.setContactBookContainsContactReturnValue(false);
         this.expectNumberRulesAllowRespondingToBe(this.FAKE_INCOMING_PHONE_NUMBER, false);
+    }
+
+    @Test
+    public void numberRulesNotPreventRespondingIfNotInContactBook() {
+        this.setContactBookContainsContactReturnValue(false);
+        when(this.settings.isRespondingRestrictedToContactList()).thenReturn(false);
+        this.expectNumberRulesAllowRespondingToBe(this.FAKE_INCOMING_PHONE_NUMBER, true);
     }
 
     @Test
@@ -68,7 +75,7 @@ public class NumberRulesTest {
     // region helper methods
 
     private void setContactBookContainsContactReturnValue(boolean returnValue) {
-        when(this.contactsUtility.contactBookContainsContact(Matchers.anyString())).thenReturn(returnValue);
+        when(this.contactsUtility.contactBookContainsNumber(Matchers.anyString())).thenReturn(returnValue);
     }
 
     private void expectNumberRulesAllowRespondingToBe(String phoneNumber, boolean expectedResult) {

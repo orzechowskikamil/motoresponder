@@ -75,7 +75,7 @@ public class UtilitiesRunner {
             private void runTest() {
                 // choose the test which you are interested in
                 // after performing, leave short note with date here about result of test
-                switch (91) {
+                switch (75) {
                     case 1:
                         // this is working 10.04.2016 on Android 5.1
                         UtilitiesRunner.this.locationUtilityTest.testOfGettingAccurateLocation();
@@ -151,6 +151,27 @@ public class UtilitiesRunner {
                         // SIM card which doesn't allow reading current phone number.
                         UtilitiesRunner.this.contactsUtilityTest.testReadCurrentDevicePhoneNumber();
                         break;
+                    case 72:
+                        // this is working 17 05 2016 on android 5.1 motog
+                        UtilitiesRunner.this.contactsUtilityTest.testReadAllContactBookGroupNames();
+                        break;
+                    case 73:
+                        // this is working 17.05.2016 on android 5.1 motog
+                        UtilitiesRunner.this.contactsUtilityTest.testGetContactID();
+                        break;
+                    case 74:
+                        // this is working 17.05.2016 on android 5.1 motog
+                        UtilitiesRunner.this.contactsUtilityTest.testGetContactName();
+                        break;
+                    case 75:
+                        // this is working 17 05 2016 on android motog 5.1
+                        UtilitiesRunner.this.contactsUtilityTest.testHasGroupNumber();
+                        break;
+                    case 76:
+                        // this is working 17 05 2016 on motog
+                        UtilitiesRunner.this.contactsUtilityTest.testReadGroupID();
+                        break;
+
 
                     case 80:
                         // This is working 29.03.2016 on android 5.1 motog
