@@ -25,6 +25,9 @@ public class SharedPreferencesUtility {
      */
     public SharedPreferencesUtility(Context context) {
         this.context = context;
+        if (context == null) {
+            throw new RuntimeException("Context can't be null");
+        }
         this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.context);
         this.resources = this.context.getResources();
     }

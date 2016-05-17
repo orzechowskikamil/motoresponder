@@ -11,31 +11,27 @@
             android:defaultValue="@bool/responding_restricted_to_contact_list_key_default_value"/>
 
 
-    <EditTextPreference
-            android:dialogTitle="@string/whitelist_group_name_title"
-            android:key="@string/whitelist_group_name_key"
-            android:summary="@string/whitelist_group_name_summary"
-            android:defaultValue="@string/whitelist_group_name_default_value"
+    <ListPreference
             android:title="@string/whitelist_group_name_title"
-            android:dependency="@string/geolocation_request_enabled_key"/>
+            android:summary="@string/whitelist_group_name_summary"
+            android:key="@string/whitelist_group_name_key"
+            android:defaultValue="@string/whitelist_group_name_default_value"
+            />
 
-
-    <EditTextPreference
-            android:dialogTitle="@string/blacklist_group_name_title"
-            android:key="@string/blacklist_group_name_key"
-            android:summary="@string/blacklist_group_name_summary"
-            android:defaultValue="@string/blacklist_group_name_default_value"
+    <ListPreference
             android:title="@string/blacklist_group_name_title"
-            android:dependency="@string/geolocation_request_enabled_key"/>
+            android:summary="@string/blacklist_group_name_summary"
+            android:key="@string/blacklist_group_name_key"
+            android:defaultValue="@string/blacklist_group_name_default_value"
+            />
 
-    <EditTextPreference
-            android:dialogTitle="@string/geolocation_whitelist_group_name_title"
-            android:key="@string/geolocation_whitelist_group_name_key"
-            android:summary="@string/geolocation_whitelist_group_name_summary"
-            android:defaultValue="@string/geolocation_whitelist_group_name_default_value"
+
+    <ListPreference
             android:title="@string/geolocation_whitelist_group_name_title"
-            android:dependency="@string/geolocation_request_enabled_key"/>
-
+            android:summary="@string/geolocation_whitelist_group_name_summary"
+            android:key="@string/geolocation_whitelist_group_name_key"
+            android:defaultValue="@string/geolocation_whitelist_group_name_default_value"
+            />
 
     <EditTextPreference
             android:dialogTitle="@string/device_phone_number_title"
@@ -43,7 +39,7 @@
             android:summary="@string/device_phone_number_summary"
             android:defaultValue="@string/device_phone_number_default_value"
             android:title="@string/device_phone_number_title"
-            android:dependency="@string/geolocation_request_enabled_key"/>
+            />
 
 
 </PreferenceScreen>

@@ -22,21 +22,21 @@ public class Settings extends SettingsBase {
 
     /**
      * if true, app will perform sensor checks to measure if you are riding.
-     * if false, app will check isRidingAssumed for decide if you are riding or not 
+     * if false, app will check isRidingAssumed for decide if you are riding or not
      */
-    public boolean isSensorCheckEnabled(){
-       return this.getBooleanValue(R.string.sensor_check_enabled_key);
+    public boolean isSensorCheckEnabled() {
+        return this.getBooleanValue(R.string.sensor_check_enabled_key);
     }
-    
+
     // TODO k.orzechowsk #66 ADD UI
     // TODO k.orzechowsk #66 ADD TESTS
     // TODO k.orzechowsk #66 DISABLE PARTICULAR ELEMENTS OF UI ACCORDING TO TRUE/FALSE VALUE OF THIS.
-    
+
     /**
-     * If true, app with disabled sensorChecks will assume that you are riding 
+     * If true, app with disabled sensorChecks will assume that you are riding
      */
-    public boolean isRidingAssumed(){
-            return this.getBooleanValue(R.string.is_riding_assumed_key);
+    public boolean isRidingAssumed() {
+        return this.getBooleanValue(R.string.is_riding_assumed_key);
     }
 
     public int getSureRidingSpeedKmh() {
@@ -114,9 +114,10 @@ public class Settings extends SettingsBase {
         return responsePatterns;
     }
 
-    public int getLimitOfGeolocationResponses(){
+    public int getLimitOfGeolocationResponses() {
         return 3;
     }
+
     public boolean includeDeviceMotionCheck() {
         return this.getBooleanValue(R.string.include_accelerometer_check_key);
     }
@@ -199,6 +200,18 @@ public class Settings extends SettingsBase {
         return this.getStringFromRes(R.string.ongoing_notification_big_text);
     }
 
+    public String getDontUseWhitelistText() {
+        return this.getStringFromRes(R.string.dont_use_whitelist_text);
+    }
+
+    public String getDontUseBlacklistText() {
+        return this.getStringFromRes(R.string.dont_use_blacklist_text);
+    }
+
+    public String getDontUseGeolocationWhitelistText() {
+        return this.getStringFromRes(R.string.dont_use_geolocation_whitelist_text);
+    }
+
     /**
      * if true, app will always respond with geolocation no matter if someone ask for it.
      * Otherwise only if certain pattern found in message.
@@ -209,21 +222,19 @@ public class Settings extends SettingsBase {
     }
 
 
-
-
     public String getBlackListGroupName() {
         String result = this.getStringValue(R.string.blacklist_group_name_key);
 
         if (result == null || result.trim().equals("")) {
             return null;
 
-}
+        }
         return result;
     }
 
- public String getStoredDevicePhoneNumber(){
-         return this.getStringValue(R.string.device_phone_number_key);
-}
+    public String getStoredDevicePhoneNumber() {
+        return this.getStringValue(R.string.device_phone_number_key);
+    }
 
 
     public String getWhiteListGroupName() {
@@ -234,6 +245,8 @@ public class Settings extends SettingsBase {
         }
         return result;
     }
+
+
 }
 
 

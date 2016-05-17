@@ -9,21 +9,27 @@
     </string>
 
 
-    <string name="whitelist_group_name_title">Nazwa grupy whitelisty</string>
-    <string name="whitelist_group_name_summary">Jeśli podasz tutaj nazwę grupy kontaktów, będzie ona traktowana jako
-        whitelista (żaden numer spoza niej nie dostanie automatycznej odpowiedzi).
+    <string name="dont_use_whitelist_text">Nie używaj whitelisty</string>
+
+    <string name="whitelist_group_name_title">Whitelista</string>
+    <string name="whitelist_group_name_summary">Jeśli wybierzesz którąś z grup kontaktów, będzie ona whitelistą (żaden
+        numer spoza tej grupy nie dostanie automatycznej odpowiedzi).
+    </string>
+
+    <string name="dont_use_blacklist_text">Nie używaj blacklisty</string>
+
+
+    <string name="blacklist_group_name_title">Blacklista</string>
+    <string name="blacklist_group_name_summary">Jeśli wybierzesz którąś z grup kontaktów, będzie ona blacklistą (każdy
+        numer z tej grupy nie dostanie automatycznej odpowiedzi).
     </string>
 
 
-    <string name="blacklist_group_name_title">Nazwa grupy blacklisty</string>
-    <string name="blacklist_group_name_summary">Jeśli podasz tutaj nazwę grupy kontaktów, będzie ona traktowana jako
-        blacklista (żaden numer z tej grupy nie dostanie automatycznej odpowiedzi).
-    </string>
+    <string name="dont_use_geolocation_whitelist_text">Nie ograniczaj geolokacji</string>
 
-
-    <string name="geolocation_whitelist_group_name_title">Ogranicz geolokację do wybranej grupy</string>
-    <string name="geolocation_whitelist_group_name_summary">Wpisanie tutaj nazwy grupy kontaktów spowoduje ignorowanie
-        zapytań o geolokację z numerów spoza tej grupy.
+    <string name="geolocation_whitelist_group_name_title">Whitelista geolokacji</string>
+    <string name="geolocation_whitelist_group_name_summary">Wybranie tutaj grupy kontaktów spowoduje że żaden numer nie
+        będący w tej grupie nie dostanie informacji o twojej lokalizacji, gdy o nią zapyta.
     </string>
 
 
