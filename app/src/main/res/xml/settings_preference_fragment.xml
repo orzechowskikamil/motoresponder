@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" android:key="settings_preference_fragment">
 
-    <!--<PreferenceCategory-->
-    <!--android:title="@string/main_preferences_title">-->
 
     <SwitchPreference
             android:summaryOn="@string/responder_enabled_summary_on"
@@ -10,16 +8,9 @@
             android:title="@string/responder_enabled_title"
             android:key="@string/responder_enabled_key"
             android:defaultValue="@bool/responder_enabled_default_value"/>
-            
-             <SwitchPreference
-            android:summaryOn="@string/responding_restricted_to_contact_list_key_summary_on"
-            android:summaryOff="@string/responding_restricted_to_contact_list_key_summary_off"
-            android:title="@string/responding_restricted_to_contact_list_key_title"
-            android:key="@string/responding_restricted_to_contact_list_key_key"
-            android:defaultValue="@bool/responding_restricted_to_contact_list_key_default_value"/>
-            
-                   
-                <SwitchPreference
+
+
+    <SwitchPreference
             android:summaryOn="@string/auto_response_to_sms_enabled_summary_on"
             android:summaryOff="@string/auto_response_to_sms_enabled_summary_off"
             android:title="@string/auto_response_to_sms_enabled_title"
@@ -35,8 +26,8 @@
             android:title="@string/auto_response_to_sms_template_title"
             android:dependency="@string/responder_enabled_key"
             />
-            
-                <SwitchPreference
+
+    <SwitchPreference
             android:summaryOn="@string/auto_response_to_call_enabled_summary_on"
             android:summaryOff="@string/auto_response_to_call_enabled_summary_off"
             android:title="@string/auto_response_to_call_enabled_title"
@@ -63,41 +54,23 @@
 
 
     <EditTextPreference
-            android:dialogTitle="@string/whitelist_group_name_title"
-            android:key="@string/whitelist_group_name_key"
-            android:summary="@string/whitelist_group_name_summary"
-            android:defaultValue="@string/whitelist_group_name_default_value"
-            android:title="@string/whitelist_group_name_title"
-            android:dependency="@string/geolocation_request_enabled_key"/>
-
-
-    
-  <EditTextPreference
-            android:dialogTitle="@string/blacklist_group_name_title"
-            android:key="@string/blacklist_group_name_key"
-            android:summary="@string/blacklist_group_name_summary"
-            android:defaultValue="@string/blacklist_group_name_default_value"
-            android:title="@string/blacklist_group_name_title"
-            android:dependency="@string/geolocation_request_enabled_key"/>
-
-    <EditTextPreference
             android:dialogTitle="@string/auto_response_to_sms_with_geolocation_template_title"
             android:key="@string/auto_response_to_sms_with_geolocation_template_key"
             android:summary="@string/auto_response_to_sms_with_geolocation_template_summary"
             android:defaultValue="@string/auto_response_to_sms_with_geolocation_template_default_value"
             android:title="@string/auto_response_to_sms_with_geolocation_template_title"
             android:dependency="@string/geolocation_request_enabled_key"/>
-            
-              <SwitchPreference
+
+    <SwitchPreference
             android:summaryOn="@string/showing_pending_notification_enabled_summary_on"
             android:summaryOff="@string/showing_pending_notification_enabled_summary_on"
             android:title="@string/showing_pending_notification_enabled_title"
             android:key="@string/showing_pending_notification_enabled_key"
             android:defaultValue="@bool/showing_pending_notification_enabled_default_value"
             android:dependency="@string/responder_enabled_key"/>
-            
-            
-     <SwitchPreference
+
+
+    <SwitchPreference
             android:summaryOn="@string/showing_summary_notification_enabled_summary_on"
             android:summaryOff="@string/showing_summary_notification_enabled_summary_on"
             android:title="@string/showing_summary_notification_enabled_title"
@@ -105,7 +78,7 @@
             android:defaultValue="@bool/showing_summary_notification_enabled_default_value"
             android:dependency="@string/responder_enabled_key"/>
 
-   <SwitchPreference
+    <SwitchPreference
             android:summaryOn="@string/showing_debug_notification_enabled_summary_on"
             android:summaryOff="@string/showing_debug_notification_enabled_summary_on"
             android:title="@string/showing_debug_notification_enabled_title"
@@ -114,67 +87,22 @@
             android:dependency="@string/responder_enabled_key"/>
 
 
-            <EditTextPreference
+    <EditTextPreference
             android:dialogTitle="@string/geolocation_request_pattern_1_title"
             android:key="@string/geolocation_request_pattern_1_key"
             android:summary="@string/geolocation_request_pattern_1_summary"
             android:defaultValue="@string/geolocation_request_pattern_1_default_value"
             android:title="@string/geolocation_request_pattern_1_title"
             android:dependency="@string/geolocation_request_enabled_key"/>
-            
-            
-   <EditTextPreference
+
+
+    <EditTextPreference
             android:dialogTitle="@string/geolocation_request_pattern_2_title"
             android:key="@string/geolocation_request_pattern_2_key"
             android:summary="@string/geolocation_request_pattern_2_summary"
             android:defaultValue="@string/geolocation_request_pattern_2_default_value"
             android:title="@string/geolocation_request_pattern_2_title"
             android:dependency="@string/geolocation_request_enabled_key"/>
-            
-              <EditTextPreference
-            android:dialogTitle="@string/geolocation_whitelist_group_name_title"
-            android:key="@string/geolocation_whitelist_group_name_key"
-            android:summary="@string/geolocation_whitelist_group_name_summary"
-            android:defaultValue="@string/geolocation_whitelist_group_name_default_value"
-            android:title="@string/geolocation_whitelist_group_name_title"
-            android:dependency="@string/geolocation_request_enabled_key"/>
 
-                            <EditTextPreference
-            android:dialogTitle="@string/device_phone_number_title"
-            android:key="@string/device_phone_number_key"
-            android:summary="@string/device_phone_number_summary"
-            android:defaultValue="@string/device_phone_number_default_value"
-            android:title="@string/device_phone_number_title"
-            android:dependency="@string/geolocation_request_enabled_key"/>
-            
-
-
-    <!--</PreferenceCategory>-->
-
-    <!--<EditTextPreference-->
-    <!--android:dialogTitle="@string/response_delay_title"-->
-    <!--android:key="@string/response_delay"-->
-    <!--android:summary="@string/response_delay_summary"-->
-    <!--android:numeric="integer"-->
-    <!--android:title="@string/response_delay_title"/>-->
-
-    <!--<SwitchPreference-->
-    <!--android:key="attach_location_info"-->
-    <!--android:summary="Your position coordinates will be sent to recipient"-->
-    <!--android:title="Attach location info"/>-->
-
-    <!--<CheckBoxPreference-->
-    <!--android:key="answer_calls"-->
-    <!--android:summary="The response will be sent in answer to phone call"-->
-    <!--android:title="Respond to calls"/>-->
-
-    <!--<CheckBoxPreference-->
-    <!--android:key="answer_sms"-->
-    <!--android:summary="The response will be sent in answer to SMS"-->
-    <!--android:title="Respond to messages"/>-->
-    <!--<CheckBoxPreference-->
-    <!--android:key="answer_contacts_only"-->
-    <!--android:summary="The response will be sent only if initializer was someone from Your contac's list"-->
-    <!--android:title="Respond to saved contacts only"/>-->
 
 </PreferenceScreen>

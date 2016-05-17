@@ -2,25 +2,22 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
                   android:key="riding_settings_preference_fragment">
 
-    <!--<PreferenceCategory-->
-    <!--android:title="@string/riding_preferences_title">-->
-    
-        
-   <SwitchPreference
+
+    <SwitchPreference
             android:summaryOn="@string/sensor_check_enabled_summary_on"
             android:summaryOff="@string/sensor_check_enabled_summary_off"
             android:title="@string/sensor_check_enabled_title"
             android:key="@string/sensor_check_enabled_key"
             android:defaultValue="@bool/sensor_check_enabled_default_value"/>
-            
-                
-   <SwitchPreference
+
+
+    <SwitchPreference
             android:summaryOn="@string/is_riding_assumed_summary_on"
             android:summaryOff="@string/is_riding_assumed_summary_off"
             android:title="@string/is_riding_assumed_title"
             android:key="@string/is_riding_assumed_key"
             android:defaultValue="@bool/is_riding_assumed_default_value"/>
-    
+
 
     <SwitchPreference
             android:summaryOn="@string/assume_screen_unlocked_as_not_riding_summary_on"
@@ -89,17 +86,17 @@
             android:defaultValue="@integer/required_accuracy_default_value"
             android:title="@string/required_accuracy_title"
             android:numeric="integer"/>
-            
 
-                  <SwitchPreference
+
+    <SwitchPreference
             android:summaryOn="@string/include_accelerometer_check_summary_on"
             android:summaryOff="@string/include_accelerometer_check_summary_off"
             android:title="@string/include_accelerometer_check_title"
             android:key="@string/include_accelerometer_check_key"
             android:defaultValue="@bool/include_accelerometer_check_default_value"/>
 
-            
-<EditTextPreference
+
+    <EditTextPreference
             android:dialogTitle="@string/acceleration_required_for_motion_title"
             android:key="@string/acceleration_required_for_motion_key"
             android:summary="@string/acceleration_required_for_motion_summary"
@@ -108,40 +105,5 @@
             android:numeric="decimal"
             android:dependency="@string/include_accelerometer_check_key"/>
 
-
-    <!--</PreferenceCategory>-->
-
-    <!--     <SwitchPreference
-                android:summary="@string/responder_enabled_summary"
-                android:title="@string/responder_enabled_title"
-                android:key="@string/responder_enabled_key"
-                android:defaultValue="@bool/responder_enabled_default_value"/>
--->
-
-    <!--<EditTextPreference-->
-    <!--android:dialogTitle="@string/response_delay_title"-->
-    <!--android:key="@string/response_delay"-->
-    <!--android:summary="@string/response_delay_summary"-->
-    <!--android:numeric="integer"-->
-    <!--android:title="@string/response_delay_title"/>-->
-
-    <!--<SwitchPreference-->
-    <!--android:key="attach_location_info"-->
-    <!--android:summary="Your position coordinates will be sent to recipient"-->
-    <!--android:title="Attach location info"/>-->
-
-    <!--<CheckBoxPreference-->
-    <!--android:key="answer_calls"-->
-    <!--android:summary="The response will be sent in answer to phone call"-->
-    <!--android:title="Respond to calls"/>-->
-
-    <!--<CheckBoxPreference-->
-    <!--android:key="answer_sms"-->
-    <!--android:summary="The response will be sent in answer to SMS"-->
-    <!--android:title="Respond to messages"/>-->
-    <!--<CheckBoxPreference-->
-    <!--android:key="answer_contacts_only"-->
-    <!--android:summary="The response will be sent only if initializer was someone from Your contac's list"-->
-    <!--android:title="Respond to saved contacts only"/>-->
 
 </PreferenceScreen>

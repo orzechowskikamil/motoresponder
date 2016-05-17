@@ -1,0 +1,104 @@
+<resources>
+
+    <string name="sensor_check_enabled_title">Sprawdzanie sensorami czy jedziesz</string>
+    <string name="sensor_check_enabled_summary_on">Aplikacja użyje sensorów urządzenia, aby wykryć czy aktualnie
+        jedziesz na motocyklu, czy nie.
+    </string>
+    <string name="sensor_check_enabled_summary_off">Aplikacja nie będzie używać sensorów, tylko postąpi zgodnie z
+        ustawieniem "Aktualnie jadę".
+    </string>
+
+
+    <string name="is_riding_assumed_title">Aktualnie jadę</string>
+    <string name="is_riding_assumed_summary_on">Aplikacja za każdym razem odpowie, tak jakbyś jechał.
+    </string>
+    <string name="is_riding_assumed_summary_off">Aplikacja nie będzie odpowiadała nikomu, ponieważ ustawiłeś że nie
+        jedziesz.
+    </string>
+
+
+    <string name="assume_screen_unlocked_as_not_riding_title">Test blokady ekranu
+    </string>
+    <string name="assume_screen_unlocked_as_not_riding_summary_on">Aplikacja nie będzie odpowiadała automatycznie gdy
+        ekran urządzenia
+        jest odblokowany, gdyż to oznacza że robisz coś na telefonie, więc nie jedziesz w tym momencie.
+    </string>
+    <string name="assume_screen_unlocked_as_not_riding_summary_off">Aplikacja nie będzie brała pod uwagę tego czy ekran
+        jest zablokowany
+        czy nie, przy decyzji czy potrzebna jest automatyczna odpowiedź.
+    </string>
+
+    <string name="wait_before_response_title">Zwlekaj z odpowiedzią (s)</string>
+    <string name="wait_before_response_summary">Aplikacja poczeka tyle sekund z próbami automatycznej odpowiedzi, dając
+        ci czas byś odpisał/oddzwonił samemu.
+    </string>
+
+
+    <string name="include_proximity_check_title">Test sensora zbliżeniowego</string>
+    <string name="include_proximity_check_summary_on">Aplikacja nie będzie odpowiadała automatycznie, jeśli sensor
+        zbliżeniowy raportuje
+        że ekran urządzenia nie dotyka niczego (więc urządzenie na pewno nie jest w twojej kieszeni, jak to się dzieje
+        podczas jazdy).
+    </string>
+    <string name="include_proximity_check_summary_off">Aplikacja nie będzie brała pod uwagę wartości raportowanych przez
+        sensor zbliżeniowy.
+    </string>
+
+
+    <string name="sure_riding_speed_title">Min. prędkość jazdy (km/h)</string>
+    <string name="sure_riding_speed_summary">Jeśli ta prędkość nie zostanie przekroczona podczas testu GPS, aplikacja
+        uzna że nie jedziesz
+        w tym momencie motocyklem.
+    </string>
+
+
+    <string name="staying_still_speed_title">Maks. prędkość postoju (km/h)</string>
+    <string name="staying_still_speed_summary">Jeśli aktualna prędkość będzie mniejsza niż ta prędkość, aplikacja uzna
+        że stoisz w miejscu i
+        wykona dodatkowy test GPS (czasami gdy urządzenie się nie porusza, GPS raportuje prędkość typu 1.5 km/h, więc
+        wartością nie powinno być to 0 km/h).
+    </string>
+
+
+    <string name="quick_speed_check_duration_title">Czas trwania krótkiego testu GPS (s)</string>
+    <string name="quick_speed_check_duration_summary">Aplikacja będzie próbować przez tyle sekund ustalić twoją
+        lokalizację oraz prędkość za pomocą GPS. Jeśli się to nie uda w tym czasie, założy, że jesteś w domu bez zasięgu
+        GPS. Ta wartość powinna być tak dobrana by nie udawało się ustalić prędkości i lokalizacji gdy jesteś w budynku,
+        ale powinno się udawać gdy jesteś na zewnątrz.
+    </string>
+
+
+    <string name="long_speed_check_duration_title">Czas trwania długiego testu GPS (s)</string>
+    <string name="long_speed_check_duration_summary">Jeśli pierwszy test prędkości ustali lokalizację i prędkość, lecz
+        będzie ona mniejsza niż minimalna prędkość motocykla, aplikacja wykona drugi dłuższy test GPS, by ustalić czy
+        właśnie nie
+        jedziesz na motocyklu, lecz przystanąłeś na minutę na światłach. Czas powinien być tak dobrany byś zawsze zdążył
+        ruszyć ze świateł.
+    </string>
+
+
+    <string name="required_accuracy_title">Wymagana dokładność GPS (m)</string>
+    <string name="required_accuracy_summary">Wynik z GPSu musi być równie lub bardziej dokładny niż ta wartość, aby
+        zakończyć krótki i długi test prędkości. Im mniejsza wartość, tym bardziej dokładnie. W zależności od czujnika
+        GPS, bardzo wysokie dokładności mogą być niemożliwe do uzyskania, i powodować timeouty.
+    </string>
+
+    <string name="include_accelerometer_check_title">Test akcelerometru</string>
+    <string name="include_accelerometer_check_summary_on">Aplikacja nie będzie odpowiadała automatycznie, jeśli
+        akcelerometr
+        zaraportuje przyśpieszenie sugerujące że aktualnie nie jedziesz na motocyklu.
+    </string>
+    <string name="include_accelerometer_check_summary_off">Aplikacja nie będzie brała pod uwagę wartości raportowanych
+        przez
+        akcelerometr.
+    </string>
+
+
+    <string name="acceleration_required_for_motion_title">Przyśpieszenie na motocyklu</string>
+    <string name="acceleration_required_for_motion_summary">Akcelerometr musi wyczuć przyśpieszenie wyższe od tej
+        wartości, aby uznał
+        że aktualnie jedziesz na motocyklu.
+    </string>
+
+
+</resources>

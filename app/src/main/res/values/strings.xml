@@ -2,15 +2,19 @@
     <!-- notifications -->
     <string name="debug_notification_title_text">Debugowanie Motorespondera</string>
     <string name="debug_notification_short_text">Zamknij inne notyfikacje aby zobaczyć treść.</string>
-    
+
     <string name="summary_notification_title_text">Motoresponder</string>
     <string name="summary_notification_short_text" formatted="false">Wysłano odpowiedź do %recipient%.</string>
-    <string name="summary_notification_big_text" formatted="false">Otrzymałeś SMS lub nie odebrałeś połączenia od %recipient%, i ponieważ jechałeś wtedy na motocyklu, Motoresponder odpowiedział za ciebie.</string>
-    
+    <string name="summary_notification_big_text" formatted="false">Otrzymałeś SMS lub nie odebrałeś połączenia od
+        %recipient%, i ponieważ jechałeś wtedy na motocyklu, Motoresponder odpowiedział za ciebie.
+    </string>
+
     <string name="ongoing_notification_title_text">Motoresponder</string>
-    <string name="ongoing_notification_big_text">Motoresponder próbuje właśnie ustalić czy powinien odpowiadać na właśnie otrzymany SMS / nieodebrane połączenie.</string>
-    
-    <!-- main screen -->
+    <string name="ongoing_notification_big_text">Motoresponder próbuje właśnie ustalić czy powinien odpowiadać na
+        właśnie otrzymany SMS / nieodebrane połączenie.
+    </string>
+
+
     <string name="app_name">Moto Responder</string>
     <string name="settings_activity_label">Ustawienia Moto Respondera</string>
 
@@ -23,285 +27,11 @@
     </string>
 
     <string name="number_rules_preferences_title">Ustawienia filtrowania numerów tel.</string>
-    <string name="number_rules_preferences_summary">Tutaj można skonfigurować, komu aplikacja ma odpowiadać automatycznie, a komu nie.
+    <string name="number_rules_preferences_summary">Tutaj można skonfigurować, komu aplikacja ma odpowiadać
+        automatycznie, a komu nie.
     </string>
 
 
-    <!-- general settings -->
-    <string name="responder_enabled_title">Moto Responder włączony</string>
-    <string name="responder_enabled_summary_on">Gdy nie odczytasz wiadomości lub nie odbierzesz
-    połączenia, aplikacja spróbuje ustalić czy jedziesz właśnie motocyklem i jeśli tak to wyśle automatyczną odpowiedź.
-    </string>
-     <string name="responder_enabled_summary_off">Proces aplikacji nie będzie działał w tle, automatyczne odpowiedzi nie będą wysyłane.
-    </string>
-    <string name="responder_enabled_key">responder_enabled</string>
-    <bool name="responder_enabled_default_value">true</bool>
-    
-    
-      <string name="responding_restricted_to_contact_list_key_title">Odpowiadaj tylko numerom z kontaktów.</string>
-    <string name="responding_restricted_to_contact_list_key_summary_on">Aplikacja nie będzie odpowiadała numerom które nie są zapisane w kontaktach.
-    </string>
-     <string name="responding_restricted_to_contact_list_key_summary_off">Aplikacja nie będzie brała pod uwagę przy odpowiadaniu, czy dany numer znajduje się w kontaktach czy nie.
-    </string>
-    <string name="responding_restricted_to_contact_list_key_key">responding_restricted_to_contact_list_key</string>
-    <bool name="responding_restricted_to_contact_list_key_default_value">true</bool>
-    
-    
 
-  <string name="auto_response_to_sms_enabled_title">Odpowiadaj na SMSy</string>
-    <string name="auto_response_to_sms_enabled_summary_on">Aplikacja będzie odpowiadać na nieprzeczytane SMSy gdy jedziesz.
-    </string>
-     <string name="auto_response_to_sms_enabled_summary_off">Aplikacja będzie ignorować nieprzeczytane SMSy. 
-    </string>
-    <string name="auto_response_to_sms_enabled_key">auto_response_to_sms_enabled</string>
-    <bool name="auto_response_to_sms_enabled_default_value">true</bool>
-
-    <string name="auto_response_to_sms_template_title">Tekst odpowiedzi na SMS</string>
-    <string name="auto_response_to_sms_template_summary">Ten tekst będzie użyty jako automatyczna odpowiedź na SMSa, gdy
-        jedziesz na motocyklu.
-    </string>
-    <string name="auto_response_to_sms_template_key">auto_response_to_sms_template</string>
-    <string name="auto_response_to_sms_template_default_value">Cześć. Nie mogę odpisać, gdyż
-        właśnie jadę motocyklem.
-    </string>
-    
-      <string name="auto_response_to_call_enabled_title">Odpowiadaj na połączenia </string>
-    <string name="auto_response_to_call_enabled_summary_on">Aplikacja będzie odpowiadać na nieodebrane połączenia gdy jedziesz.
-    </string>
-     <string name="auto_response_to_call_enabled_summary_off">Aplikacja będzie ignorować nieodebrane połączenia. 
-    </string>
-    <string name="auto_response_to_call_enabled_key">auto_response_to_call_enabled</string>
-    <bool name="auto_response_to_call_enabled_default_value">true</bool>
-    
-    
-        <string name="auto_response_to_call_template_title">Tekst odpowiedzi na połączenie
-    </string>
-    <string name="auto_response_to_call_template_summary">Ten tekst będzie użyty jako automatyczna odpowiedź na
-        nieodebrane połączenie, gdy jedziesz na motocyklu.
-    </string>
-    <string name="auto_response_to_call_template_key">auto_response_to_call_template</string>
-    <string name="auto_response_to_call_template_default_value">Cześć. Nie mogę oddzwonić, gdyż
-        właśnie jadę motocyklem.
-    </string>
-
-    <string name="geolocation_request_enabled_title">Pytanie o pozycję</string>
-    <string name="geolocation_request_enabled_summary_on">Aplikacja na pytanie o pozycję odpowie SMSem z linkiem do
-        mapki z zaznaczoną
-        twoją obecną pozycją.
-    </string>
-    <string name="geolocation_request_enabled_summary_off">Aplikacja pytanie o pozycję potraktuje jako zwykły SMS
-        przychodzący i nie
-        będzie wysyłać SMSów z mapką z twoją pozycją.
-    </string>
-    <string name="geolocation_request_enabled_key">geolocation_request_enabled</string>
-    <bool name="geolocation_request_enabled_default_value">false</bool>
-
- <string name="whitelist_group_name_title">Nazwa grupy whitelisty</string>
-    <string name="whitelist_group_name_summary">Jeśli podasz tutaj nazwę grupy kontaktów, będzie ona traktowana jako whitelista (żaden numer spoza niej nie dostanie automatycznej odpowiedzi).    </string>
-    <string name="whitelist_group_name_key">whitelist_group_name</string>
-    <string name="whitelist_group_name_default_value"></string>
-
-       
-              <string name="blacklist_group_name_title">Nazwa grupy blacklisty</string>
-    <string name="blacklist_group_name_summary">Jeśli podasz tutaj nazwę grupy kontaktów, będzie ona traktowana jako blacklista (żaden numer z tej grupy nie dostanie automatycznej odpowiedzi).</string>
-    <string name="blacklist_group_name_key">blacklist_group_name</string>
-    <string name="blacklist_group_name_default_value"></string>
-    
-
-
-
-    <string name="auto_response_to_sms_with_geolocation_template_title">Tekst odpowiedzi na pytanie o pozycję
-    </string>
-    <string name="auto_response_to_sms_with_geolocation_template_summary" formatted="false">Ten tekst będzie użyty jako
-        odpowiedź, gdy ktoś pyta gdzie jesteś, gdy jedziesz na motocyklu. Odpowiedź powinna zawierać w sobie tekst
-        "%location%", tam zostanie umieszczony link do mapy.
-    </string>
-    <string name="auto_response_to_sms_with_geolocation_template_key">auto_response_to_sms_with_geolocation_template
-    </string>
-    <string name="auto_response_to_sms_with_geolocation_template_default_value" formatted="false">Cześć. Aktualnie jadę
-        motocyklem i znajduję sie w %location%.
-    </string>
-
-    <string name="showing_pending_notification_enabled_title">Notyfikacja o procesie</string>
-    <string name="showing_pending_notification_enabled_summary_on">Aplikacja będzie pokazywać notyfikację zawsze gdy
-        będzie ustalać
-        czy jedziesz, i będzie ją chować gdy ustali.
-    </string>
-    <string name="showing_pending_notification_enabled_summary_off">Aplikacja nie będzie informować o ustalaniu czy
-        jedziesz.
-    </string>
-    <string name="showing_pending_notification_enabled_key">showing_pending_notification_enabled</string>
-    <bool name="showing_pending_notification_enabled_default_value">true</bool>
-
-    <string name="showing_summary_notification_enabled_title">Notyfikacja o auto odpowiedzi</string>
-    <string name="showing_summary_notification_enabled_summary_on">Aplikacja pokaże notyfikację informującą o
-        automatycznie wysłanej odpowiedzi.
-    </string>
-    <string name="showing_summary_notification_enabled_summary_off">Aplikacja nie będzie pokazywać notyfikacji
-        informującej o automatycznie wysłanej odpowiedzi.
-    </string>
-    <string name="showing_summary_notification_enabled_key">showing_summary_notification_enabled</string>
-    <bool name="showing_summary_notification_enabled_default_value">true</bool>
-
-    <string name="geolocation_request_pattern_1_title">Wzór #1 pytania o pozycję</string>
-    <string name="geolocation_request_pattern_1_summary" formatted="false">Jeśli ten wzór znajdzie się w wiadomości SMS,
-        zostanie ona uznana za pytanie o pozycję.
-    </string>
-    <string name="geolocation_request_pattern_1_key">geolocation_request_pattern_1</string>
-    <string name="geolocation_request_pattern_1_default_value" formatted="false">gdzie jesteś</string>
-
-    <string name="showing_debug_notification_enabled_title">Notyfikacja debugowania</string>
-    <string name="showing_debug_notification_enabled_summary_on">Aplikacja pokaże szczegółową notyfikację podsumowującą
-        wszystkie czynniki które wpłynęły
-        na decyzję o automatycznej odpowiedzi lub jej braku.
-    </string>
-    <string name="showing_debug_notification_enabled_summary_off">Aplikacja nie będzie pokazywać szczegółowej
-        notyfikacji.
-    </string>
-    <string name="showing_debug_notification_enabled_key">showing_debug_notification_enabled</string>
-    <bool name="showing_debug_notification_enabled_default_value">false</bool>
-
-    <string name="geolocation_request_pattern_2_title">Wzór #2 pytania o pozycję</string>
-    <string name="geolocation_request_pattern_2_summary" formatted="false">Drugi możliwy wzór pytania o pozycję.
-    </string>
-    <string name="geolocation_request_pattern_2_key">geolocation_request_pattern_2</string>
-    <string name="geolocation_request_pattern_2_default_value" formatted="false">gdzie jestes</string>
-    
-    
-      
-              <string name="geolocation_whitelist_group_name_title">Ogranicz geolokację do wybranej grupy</string>
-    <string name="geolocation_whitelist_group_name_summary">Wpisanie tutaj nazwy grupy kontaktów spowoduje ignorowanie zapytań o geolokację z numerów spoza tej grupy.</string>
-    <string name="geolocation_whitelist_group_name_key">geolocation_whitelist_group_name</string>
-    <string name="geolocation_whitelist_group_name_default_value" formatted="false"></string>
-    
-    
-                    <string name="device_phone_number_title">Twój numer telefonu    </string>
-    <string name="device_phone_number_summary">Niektóre telefony nie potrafią odczytać aktualnego numeru telefonu z niektórych kart SIM.
-    Jeśli aplikacja odpowiada na wiadomości pochodzące z twojego numeru (np. gdy dzwoni do ciebie poczta głosowa) to możesz wpisać tu swój numer
-    telefonu aby temu zapobiec.    </string>
-    <string name="device_phone_number_key">device_phone_number    </string>
-    <string name="device_phone_number_default_value"></string>
-    
-    
-    <!-- riding detection settings -->
-
-    <string name="sensor_check_enabled_title">Sprawdzanie sensorami czy jedziesz</string>
-    <string name="sensor_check_enabled_summary_on">Aplikacja użyje sensorów urządzenia, aby wykryć czy aktualnie jedziesz na motocyklu, czy nie.
-    </string>
-    <string name="sensor_check_enabled_summary_off">Aplikacja nie będzie używać sensorów, tylko postąpi zgodnie z ustawieniem "Aktualnie jadę".
-    </string>
-    <string name="sensor_check_enabled_key">sensor_check_enabled</string>
-    <bool name="sensor_check_enabled_default_value">true</bool>
-
-    
-    <string name="is_riding_assumed_title">Aktualnie jadę</string>
-    <string name="is_riding_assumed_summary_on">Aplikacja za każdym razem odpowie, tak jakbyś jechał.
-    </string>
-    <string name="is_riding_assumed_summary_off">Aplikacja nie będzie odpowiadała nikomu, ponieważ ustawiłeś że nie jedziesz.
-    </string>
-    <string name="is_riding_assumed_key">is_riding_assumed</string>
-    <bool name="is_riding_assumed_default_value">true</bool>
-    
-
-
-    <string name="assume_screen_unlocked_as_not_riding_title">Test blokady ekranu
-    </string>
-    <string name="assume_screen_unlocked_as_not_riding_summary_on">Aplikacja nie będzie odpowiadała automatycznie gdy
-        ekran urządzenia
-        jest odblokowany, gdyż to oznacza że robisz coś na telefonie, więc nie jedziesz w tym momencie.
-    </string>
-    <string name="assume_screen_unlocked_as_not_riding_summary_off">Aplikacja nie będzie brała pod uwagę tego czy ekran
-        jest zablokowany
-        czy nie, przy decyzji czy potrzebna jest automatyczna odpowiedź.
-    </string>
-    <string name="assume_screen_unlocked_as_not_riding_key">assume_screen_unlocked_as_not_riding</string>
-    <bool name="assume_screen_unlocked_as_not_riding_default_value">true</bool>
-
-    <string name="wait_before_response_title">Zwlekaj z odpowiedzią (s)</string>
-    <string name="wait_before_response_key">wait_before_response</string>
-    <string name="wait_before_response_summary">Aplikacja poczeka tyle sekund z próbami automatycznej odpowiedzi, dając
-        ci czas byś odpisał/oddzwonił samemu.
-    </string>
-    <integer name="wait_before_response_default_value">240</integer>
-
-
-    <string name="include_proximity_check_title">Test sensora zbliżeniowego</string>
-    <string name="include_proximity_check_summary_on">Aplikacja nie będzie odpowiadała automatycznie, jeśli sensor
-        zbliżeniowy raportuje
-        że ekran urządzenia nie dotyka niczego (więc urządzenie na pewno nie jest w twojej kieszeni, jak to się dzieje
-        podczas jazdy).
-    </string>
-    <string name="include_proximity_check_summary_off">Aplikacja nie będzie brała pod uwagę wartości raportowanych przez
-        sensor zbliżeniowy.
-    </string>
-    <string name="include_proximity_check_key">include_proximity_check</string>
-    <bool name="include_proximity_check_default_value">true</bool>
-
-
-    <string name="sure_riding_speed_title">Min. prędkość jazdy (km/h)</string>
-    <string name="sure_riding_speed_key">sure_riding_speed</string>
-    <string name="sure_riding_speed_summary">Jeśli ta prędkość nie zostanie przekroczona podczas testu GPS, aplikacja
-        uzna że nie jedziesz
-        w tym momencie motocyklem.
-    </string>
-    <integer name="sure_riding_speed_default_value">30</integer>
-
-
-    <string name="staying_still_speed_title">Maks. prędkość postoju (km/h)</string>
-    <string name="staying_still_speed_key">staying_still_speed</string>
-    <string name="staying_still_speed_summary">Jeśli aktualna prędkość będzie mniejsza niż ta prędkość, aplikacja uzna
-        że stoisz w miejscu i
-        wykona dodatkowy test GPS (czasami gdy urządzenie się nie porusza, GPS raportuje prędkość typu 1.5 km/h, więc
-        wartością nie powinno być to 0 km/h).
-    </string>
-    <integer name="staying_still_speed_default_value">3</integer>
-
-
-    <string name="quick_speed_check_duration_title">Czas trwania krótkiego testu GPS (s)</string>
-    <string name="quick_speed_check_duration_key">quick_speed_check_duration</string>
-    <string name="quick_speed_check_duration_summary">Aplikacja będzie próbować przez tyle sekund ustalić twoją
-        lokalizację oraz prędkość za pomocą GPS. Jeśli się to nie uda w tym czasie, założy, że jesteś w domu bez zasięgu
-        GPS. Ta wartość powinna być tak dobrana by nie udawało się ustalić prędkości i lokalizacji gdy jesteś w budynku,
-        ale powinno się udawać gdy jesteś na zewnątrz.
-    </string>
-    <integer name="quick_speed_check_duration_default_value">30</integer>
-
-
-    <string name="long_speed_check_duration_title">Czas trwania długiego testu GPS (s)</string>
-    <string name="long_speed_check_duration_key">long_speed_check_duration</string>
-    <string name="long_speed_check_duration_summary">Jeśli pierwszy test prędkości ustali lokalizację i prędkość, lecz
-        będzie ona mniejsza niż minimalna prędkość motocykla, aplikacja wykona drugi dłuższy test GPS, by ustalić czy
-        właśnie nie
-        jedziesz na motocyklu, lecz przystanąłeś na minutę na światłach. Czas powinien być tak dobrany byś zawsze zdążył
-        ruszyć ze świateł.
-    </string>
-    <integer name="long_speed_check_duration_default_value">240</integer>
-
-
-    <string name="required_accuracy_title">Wymagana dokładność GPS (m)</string>
-    <string name="required_accuracy_key">required_accuracy</string>
-    <string name="required_accuracy_summary">Wynik z GPSu musi być równie lub bardziej dokładny niż ta wartość, aby
-        zakończyć krótki i długi test prędkości. Im mniejsza wartość, tym bardziej dokładnie. W zależności od czujnika
-        GPS, bardzo wysokie dokładności mogą być niemożliwe do uzyskania, i powodować timeouty.
-    </string>
-    <integer name="required_accuracy_default_value">30</integer>
-    
-  <string name="include_accelerometer_check_title">Test akcelerometru</string>
-    <string name="include_accelerometer_check_summary_on">Aplikacja nie będzie odpowiadała automatycznie, jeśli akcelerometr
-    wyczuje przyśpieszenie sugerujące że aktualnie nie jedziesz na motocyklu.
-    </string>
-    <string name="include_accelerometer_check_summary_off">Aplikacja nie będzie brała pod uwagę wartości raportowanych przez
-    akcelerometr.
-    </string>
-    <string name="include_accelerometer_check_key">include_accelerometer_check</string>
-    <bool name="include_accelerometer_check_default_value">true</bool>
-
-
-   <string name="acceleration_required_for_motion_title">Przyśpieszenie na motocyklu</string>
-    <string name="acceleration_required_for_motion_key">acceleration_required_for_motion</string>
-    <string name="acceleration_required_for_motion_summary">Akcelerometr musi wyczuć przyśpieszenie wyższe od tej wartości, aby uznał 
-    że aktualnie jedziesz na motocyklu.
-    </string>
-    <string name="acceleration_required_for_motion_default_value">0.2</string>
 
 </resources>

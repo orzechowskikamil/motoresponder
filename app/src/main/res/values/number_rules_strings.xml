@@ -1,0 +1,37 @@
+<resources>
+
+    <string name="responding_restricted_to_contact_list_key_title">Odpowiadaj tylko numerom z kontaktów.</string>
+    <string name="responding_restricted_to_contact_list_key_summary_on">Aplikacja nie będzie odpowiadała numerom które
+        nie są zapisane w kontaktach.
+    </string>
+    <string name="responding_restricted_to_contact_list_key_summary_off">Aplikacja nie będzie brała pod uwagę przy
+        odpowiadaniu, czy dany numer znajduje się w kontaktach czy nie.
+    </string>
+
+
+    <string name="whitelist_group_name_title">Nazwa grupy whitelisty</string>
+    <string name="whitelist_group_name_summary">Jeśli podasz tutaj nazwę grupy kontaktów, będzie ona traktowana jako
+        whitelista (żaden numer spoza niej nie dostanie automatycznej odpowiedzi).
+    </string>
+
+
+    <string name="blacklist_group_name_title">Nazwa grupy blacklisty</string>
+    <string name="blacklist_group_name_summary">Jeśli podasz tutaj nazwę grupy kontaktów, będzie ona traktowana jako
+        blacklista (żaden numer z tej grupy nie dostanie automatycznej odpowiedzi).
+    </string>
+
+
+    <string name="geolocation_whitelist_group_name_title">Ogranicz geolokację do wybranej grupy</string>
+    <string name="geolocation_whitelist_group_name_summary">Wpisanie tutaj nazwy grupy kontaktów spowoduje ignorowanie
+        zapytań o geolokację z numerów spoza tej grupy.
+    </string>
+
+
+    <string name="device_phone_number_title">Twój numer telefonu</string>
+    <string name="device_phone_number_summary">Niektóre telefony nie potrafią odczytać aktualnego numeru telefonu z
+        niektórych kart SIM. Jeśli aplikacja odpowiada na wiadomości pochodzące z twojego numeru (np. gdy dzwoni do
+        ciebie poczta głosowa) to możesz wpisać tu swój numer telefonu aby temu zapobiec.
+    </string>
+
+
+</resources>

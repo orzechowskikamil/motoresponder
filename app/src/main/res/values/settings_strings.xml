@@ -1,0 +1,95 @@
+<resources>
+
+    <string name="responder_enabled_title">Moto Responder włączony</string>
+    <string name="responder_enabled_summary_on">
+        Gdy nie odczytasz wiadomości lub nie odbierzesz połączenia, aplikacja spróbuje ustalić czy jedziesz właśnie
+        motocyklem i jeśli tak to wyśle automatyczną odpowiedź.
+    </string>
+    <string name="responder_enabled_summary_off">
+        Proces aplikacji nie będzie działał w tle, automatyczne odpowiedzi nie będą wysyłane.
+    </string>
+
+
+    <string name="auto_response_to_sms_enabled_title">Odpowiadaj na SMSy</string>
+    <string name="auto_response_to_sms_enabled_summary_on">
+        Aplikacja będzie odpowiadać na nieprzeczytane SMSy gdy jedziesz.
+    </string>
+    <string name="auto_response_to_sms_enabled_summary_off">
+        Aplikacja będzie ignorować nieprzeczytane SMSy.
+    </string>
+
+    <string name="auto_response_to_sms_template_title">Tekst odpowiedzi na SMS</string>
+    <string name="auto_response_to_sms_template_summary">
+        Ten tekst będzie użyty jako automatyczna odpowiedź na SMSa, gdy jedziesz na motocyklu.
+    </string>
+
+    <string name="auto_response_to_call_enabled_title">Odpowiadaj na połączenia</string>
+    <string name="auto_response_to_call_enabled_summary_on">
+        Aplikacja będzie odpowiadać na nieodebrane połączenia gdy jedziesz.
+    </string>
+    <string name="auto_response_to_call_enabled_summary_off">
+        Aplikacja będzie ignorować nieodebrane połączenia.
+    </string>
+
+
+    <string name="auto_response_to_call_template_title">Tekst odpowiedzi na połączenie</string>
+    <string name="auto_response_to_call_template_summary">
+        Ten tekst będzie użyty jako automatyczna odpowiedź na nieodebrane połączenie, gdy jedziesz na motocyklu.
+    </string>
+
+    <string name="geolocation_request_enabled_title">Pytanie o pozycję</string>
+    <string name="geolocation_request_enabled_summary_on">
+        Aplikacja na pytanie o pozycję odpowie SMSem z linkiem do mapki z zaznaczoną twoją obecną pozycją.
+    </string>
+    <string name="geolocation_request_enabled_summary_off">
+        Aplikacja pytanie o pozycję potraktuje jako zwykły SMS przychodzący i nie będzie wysyłać SMSów z mapką z twoją
+        pozycją.
+    </string>
+
+
+    <string name="auto_response_to_sms_with_geolocation_template_title">
+        Tekst odpowiedzi na pytanie o pozycję
+    </string>
+    <string name="auto_response_to_sms_with_geolocation_template_summary" formatted="false">
+        Ten tekst będzie użyty jako odpowiedź, gdy ktoś pyta gdzie jesteś, gdy jedziesz na motocyklu. Odpowiedź powinna
+        zawierać w sobie tekst "%location%", tam zostanie umieszczony link do mapy.
+    </string>
+
+
+    <string name="showing_pending_notification_enabled_title">Notyfikacja o procesie</string>
+    <string name="showing_pending_notification_enabled_summary_on">
+        Aplikacja będzie pokazywać notyfikację zawsze gdy będzie ustalać czy jedziesz, i będzie ją chować gdy ustali.
+    </string>
+    <string name="showing_pending_notification_enabled_summary_off">
+        Aplikacja nie będzie informować o procesie ustalania czy jedziesz.
+    </string>
+
+    <string name="showing_summary_notification_enabled_title">Notyfikacja o auto odpowiedzi</string>
+    <string name="showing_summary_notification_enabled_summary_on">
+        Aplikacja pokaże notyfikację informującą o automatycznie wysłanej odpowiedzi.
+    </string>
+    <string name="showing_summary_notification_enabled_summary_off">
+        Aplikacja nie będzie pokazywać notyfikacji informującej o automatycznie wysłanej odpowiedzi.
+    </string>
+
+    <string name="geolocation_request_pattern_1_title">Wzór #1 pytania o pozycję</string>
+    <string name="geolocation_request_pattern_1_summary" formatted="false">
+        Jeśli ten wzór znajdzie się w wiadomości SMS, zostanie ona uznana za pytanie o pozycję.
+    </string>
+
+    <string name="showing_debug_notification_enabled_title">Notyfikacja debugowania</string>
+    <string name="showing_debug_notification_enabled_summary_on">
+        Aplikacja pokaże szczegółową notyfikację podsumowującą wszystkie czynniki które wpłynęły na decyzję o
+        automatycznej odpowiedzi lub jej braku.
+    </string>
+    <string name="showing_debug_notification_enabled_summary_off">
+        Aplikacja nie będzie pokazywać szczegółowej notyfikacji.
+    </string>
+
+    <string name="geolocation_request_pattern_2_title">Wzór #2 pytania o pozycję</string>
+    <string name="geolocation_request_pattern_2_summary" formatted="false">
+        Drugi możliwy wzór pytania o pozycję.
+    </string>
+
+
+</resources>

@@ -10,7 +10,7 @@
             android:icon="@drawable/ic_settings_applications"
             android:title="@string/riding_preferences_title"
             android:summary="@string/riding_preferences_summary"/>
-            
+
     <header android:fragment="com.medziku.motoresponder.activity.NumberRulesPreferenceFragment"
             android:icon="@drawable/ic_settings_applications"
             android:title="@string/number_rules_preferences_title"
