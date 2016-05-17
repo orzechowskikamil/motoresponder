@@ -150,7 +150,7 @@ public class ContactsUtilityTest {
         boolean has = false;
 
         try {
-            has = this.contactsUtility.hasGroupNumber(groupName, phoneNumber);
+            has = this.contactsUtility.hasGroupNumberByGroupName(groupName, phoneNumber);
         } catch (Exception e) {
             Log.d(TAG, "Group with given name '" + groupName + "' not found!");
         }

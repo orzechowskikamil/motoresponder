@@ -54,7 +54,25 @@
             android:key="@string/geolocation_request_enabled_key"
             android:defaultValue="@bool/geolocation_request_enabled_default_value"
             android:dependency="@string/auto_response_to_sms_template_key"/>
+            
+            
+              <EditTextPreference
+            android:dialogTitle="@string/whitelist_group_name_title"
+            android:key="@string/whitelist_group_name_key"
+            android:summary="@string/whitelist_group_name_summary"
+            android:defaultValue="@string/whitelist_group_name_default_value"
+            android:title="@string/whitelist_group_name_title"
+            android:dependency="@string/geolocation_request_enabled_key"/>
 
+
+    
+  <EditTextPreference
+            android:dialogTitle="@string/blacklist_group_name_title"
+            android:key="@string/blacklist_group_name_key"
+            android:summary="@string/blacklist_group_name_summary"
+            android:defaultValue="@string/blacklist_group_name_default_value"
+            android:title="@string/blacklist_group_name_title"
+            android:dependency="@string/geolocation_request_enabled_key"/>
 
     <EditTextPreference
             android:dialogTitle="@string/auto_response_to_sms_with_geolocation_template_title"

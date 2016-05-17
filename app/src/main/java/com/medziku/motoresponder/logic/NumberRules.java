@@ -68,15 +68,14 @@ public class NumberRules {
 //        boolean respondingConstraintsMeet = false;
 //        boolean countryRespondingConstraintsMeet = false;
 
-        // TODO k.orzechowsk commented until 1.01, issue #50
-        // if (this.respondingWhitelist === NumberRules.RESPONDING_WHITELIST_ENABLED && this.isNumberOnWhitelist(phoneNumber)==false){
-        //     return false;
-        // }
+        if (this.isWhiteListEnabled() && !this.isNumberOnWhitelist(phoneNumber)) {
+            return false;
+        }
 
-        // TODO k.orzechowsk commented until 1.01 , issue #50
-        // if (this.respondingBlacklist === NumberRules.RESPONDING_BLACKLIST_ENABLED && this.isNumberOnBlacklist(phoneNumber)==true){
-        //         return false;
-        //     }
+        if (this.isBlackListEnabled() && this.isNumberOnBlacklist(phoneNumber)) {
+            return false;
+
+        }
 
         // TODO k.orzechowsk commented until 1.01 , issue #50
         // if (this.respondingCountrySettings == NumberRules.COUNTRY_SETTINGS_CURRENT_COUNTRY_ONLY && this.isNumberFromCurrentCountry(phoneNumber)==false){
@@ -130,21 +129,35 @@ public class NumberRules {
 //
 //    private boolean isNumberOnWhiteList(String phoneNumber) {
 //        for (String whiteListGroupName : this.whiteListGroupNames) {
-//            if (this.contactsUtility.hasGroupNumber(whiteListGroupName, phoneNumber) == true) {
+//            if (this.contactsUtility.hasGroupNumberByGroupName(whiteListGroupName, phoneNumber) == true) {
 //                return true;
 //            }
 //        }
 //        return false;
 //    }
 //
-//    private boolean isNumberOnBlacklist(String phoneNumber) {
-//        for (String blackListGroupName : this.blackListGroupNames) {
-//            if (this.contactsUtility.hasGroupNumber(blackListGroupName, phoneNumber) == true) {
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
+    private boolean isNumberOnBlacklist(String phoneNumber) {
+        try {
+            if (this.contactsUtility.hasGroupNumberByGroupName(this.settings.getBlackListGroupName(), phoneNumber) == true) {
+                return true;
+            }
+        } catch (Exception e) {
+            return false;
+        }
+        return false;
+    }
+
+    private boolean isNumberOnWhitelist(String phoneNumber) {
+        try {
+            if (this.contactsUtility.hasGroupNumberByGroupName(this.settings.getWhiteListGroupName(), phoneNumber) == true) {
+                return true;
+            }
+        } catch (Exception e) {
+            return false;
+        }
+        return false;
+    }
+
 
 
     // TODO K. Orzechowski: not needed for 1.00, issue #50
@@ -177,4 +190,11 @@ public class NumberRules {
         return this.contactsUtility.contactBookContainsNumber(phoneNumber);
     }
 
+    public boolean isWhiteListEnabled() {
+        return this.settings.getWhiteListGroupName() != null;
+    }
+
+    public boolean isBlackListEnabled() {
+        return this.settings.getBlackListGroupName() != null;
+    }
 }

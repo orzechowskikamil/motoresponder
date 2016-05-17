@@ -85,6 +85,19 @@
     <string name="geolocation_request_enabled_key">geolocation_request_enabled</string>
     <bool name="geolocation_request_enabled_default_value">false</bool>
 
+ <string name="whitelist_group_name_title">Nazwa grupy whitelisty</string>
+    <string name="whitelist_group_name_summary">Jeśli podasz tutaj nazwę grupy kontaktów, będzie ona traktowana jako whitelista (żaden numer spoza niej nie dostanie automatycznej odpowiedzi).    </string>
+    <string name="whitelist_group_name_key">whitelist_group_name</string>
+    <string name="whitelist_group_name_default_value"></string>
+    
+       
+              <string name="blacklist_group_name_title">Nazwa grupy blacklisty</string>
+    <string name="blacklist_group_name_summary">Jeśli podasz tutaj nazwę grupy kontaktów, będzie ona traktowana jako blacklista (żaden numer z tej grupy nie dostanie automatycznej odpowiedzi).</string>
+    <string name="blacklist_group_name_key">blacklist_group_name</string>
+    <string name="blacklist_group_name_default_value"></string>
+    
+
+
 
     <string name="auto_response_to_sms_with_geolocation_template_title">Tekst odpowiedzi na pytanie o pozycję
     </string>

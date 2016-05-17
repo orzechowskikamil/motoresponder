@@ -130,20 +130,8 @@ public class ContactsUtility {
     }
 
 
-    /**
-     * @param groupName
-     * @param phoneNumber
-     * @return
-     * @throws Exception When there is no group with given name
-     */
-    public boolean hasGroupNumber(String groupName, String phoneNumber) throws Exception {
+    public boolean hasGroupNumberByGroupID(String groupID, String phoneNumber) {
         boolean contains = false;
-
-        String groupID = this.getGroupID(groupName);
-
-        if (groupID == null) {
-            throw new Exception("There is no group with given name");
-        }
 
         String contactID = this.getContactID(phoneNumber);
 
@@ -169,6 +157,21 @@ public class ContactsUtility {
         }
 
         return contains;
+    }
+
+    /**
+     * @param groupName
+     * @param phoneNumber
+     * @return
+     * @throws Exception When there is no group with given name
+     */
+    public boolean hasGroupNumberByGroupName(String groupName, String phoneNumber) throws Exception {
+        String groupID = this.getGroupID(groupName);
+
+        if (groupID == null) {
+            throw new Exception("There is no group with given name");
+        }
+        return this.hasGroupNumberByGroupID(groupID, phoneNumber);
     }
 
 

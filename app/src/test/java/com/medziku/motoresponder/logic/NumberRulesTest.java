@@ -9,6 +9,7 @@ import org.mockito.Mockito;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 
@@ -26,7 +27,9 @@ public class NumberRulesTest {
         this.contactsUtility = Mockito.mock(ContactsUtility.class);
         this.settings = Mockito.mock(Settings.class);
         this.numberRules = new NumberRules(contactsUtility, settings);
+
         when(this.settings.isRespondingRestrictedToContactList()).thenReturn(true);
+        this.setContactBookContainsContactReturnValue(true);
 
         when(this.contactsUtility.readCurrentDevicePhoneNumber()).thenReturn(this.FAKE_CURRENT_DEVICE_PHONE_NUMBER);
     }
@@ -54,6 +57,31 @@ public class NumberRulesTest {
     public void numberRulesPreventRespondingToOurOwnNumber() {
         this.setContactBookContainsContactReturnValue(true);
         this.expectNumberRulesAllowRespondingToBe(this.FAKE_CURRENT_DEVICE_PHONE_NUMBER, false);
+    }
+
+
+    @Test
+    public void whiteListCorrectlyFilterNumber() throws Exception {
+        when(this.settings.getWhiteListGroupName()).thenReturn("doesn't matter");
+
+        when(this.contactsUtility.hasGroupNumberByGroupName(anyString(), anyString())).thenReturn(false);
+        assertFalse(this.numberRules.numberRulesAllowResponding(FAKE_INCOMING_PHONE_NUMBER));
+
+        when(this.contactsUtility.hasGroupNumberByGroupName(anyString(), anyString())).thenReturn(true);
+        assertTrue(this.numberRules.numberRulesAllowResponding(FAKE_INCOMING_PHONE_NUMBER));
+
+    }
+
+
+    @Test
+    public void blackListCorrectlyFilterNumber() throws Exception {
+        when(this.settings.getBlackListGroupName()).thenReturn("doesn't matter");
+
+        when(this.contactsUtility.hasGroupNumberByGroupName(anyString(), anyString())).thenReturn(false);
+        assertTrue(this.numberRules.numberRulesAllowResponding(FAKE_INCOMING_PHONE_NUMBER));
+
+        when(this.contactsUtility.hasGroupNumberByGroupName(anyString(), anyString())).thenReturn(true);
+        assertFalse(this.numberRules.numberRulesAllowResponding(FAKE_INCOMING_PHONE_NUMBER));
     }
 
     @Test

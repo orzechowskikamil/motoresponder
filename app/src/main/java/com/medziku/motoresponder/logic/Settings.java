@@ -10,6 +10,7 @@ public class Settings extends SettingsBase {
 
     private Predicate<Boolean> responderEnabledCallback;
     private Predicate<Boolean> onChangeRespondingToSMSOrCallsCallback;
+    private boolean blackListEnabled;
 
     public Settings(SharedPreferencesUtility sharedPreferencesUtility) {
         super(sharedPreferencesUtility);
@@ -82,13 +83,13 @@ public class Settings extends SettingsBase {
     public String getAutoResponseToSmsWithGeolocationTemplate() {
         return this.getStringValue(R.string.auto_response_to_sms_with_geolocation_template_key);
     }
-    
-   public boolean isShowingSummaryNotificationEnabled(){
-       return this.getBooleanValue(R.string.showing_summary_notification_enabled_key);
-   }
 
-    public boolean  isShowingDebugNotificationEnabled(){
-          return this.getBooleanValue(R.string.showing_debug_notification_enabled_key);
+    public boolean isShowingSummaryNotificationEnabled() {
+        return this.getBooleanValue(R.string.showing_summary_notification_enabled_key);
+    }
+
+    public boolean isShowingDebugNotificationEnabled() {
+        return this.getBooleanValue(R.string.showing_debug_notification_enabled_key);
     }
 
 
@@ -107,22 +108,21 @@ public class Settings extends SettingsBase {
         String[] responsePatterns = {responsePattern1, responsePattern2};
         return responsePatterns;
     }
-    
+
     public int getLimitOfGeolocationResponses(){
         return 3;
     }
-    public boolean includeDeviceMotionCheck(){
+    public boolean includeDeviceMotionCheck() {
         return this.getBooleanValue(R.string.include_accelerometer_check_key);
     }
-    
+
     public int getLimitOfResponses() {
         return 1;
     }
 
-    public double getAccelerationRequiredToMotion(){
+    public double getAccelerationRequiredToMotion() {
         return Double.parseDouble(this.getStringValue(R.string.acceleration_required_for_motion_key));
     }
-    
 
 
     /**
@@ -143,19 +143,19 @@ public class Settings extends SettingsBase {
             }
         }
     }
-    
-    public boolean isRespondingForSMSEnabled(){
+
+    public boolean isRespondingForSMSEnabled() {
         return this.getBooleanValue(R.string.auto_response_to_sms_enabled_key);
     }
-    
-    public boolean isRespondingForCallsEnabled(){
+
+    public boolean isRespondingForCallsEnabled() {
         return this.getBooleanValue(R.string.auto_response_to_call_enabled_key);
     }
-    
-    public void listenToChangeRespondToSmsOrCallSetting(Predicate<Boolean> callback){
+
+    public void listenToChangeRespondToSmsOrCallSetting(Predicate<Boolean> callback) {
         this.onChangeRespondingToSMSOrCallsCallback = callback;
     }
- 
+
 
     public String getDebugNotificationTitleText() {
         return this.getStringFromRes(R.string.debug_notification_title_text);
@@ -177,11 +177,11 @@ public class Settings extends SettingsBase {
         return this.getStringFromRes(R.string.summary_notification_big_text);
     }
 
-    public String getOngoingNotificationTitleText(){
+    public String getOngoingNotificationTitleText() {
         return this.getStringFromRes(R.string.ongoing_notification_title_text);
     }
 
-    public String getOngoingNotificationBigText(){
+    public String getOngoingNotificationBigText() {
         return this.getStringFromRes(R.string.ongoing_notification_big_text);
     }
 
@@ -198,8 +198,28 @@ public class Settings extends SettingsBase {
         return true;
     }
 
-    public String getStoredDevicePhoneNumber(){
+    public String getBlackListGroupName() {
+        String result = this.getStringValue(R.string.blacklist_group_name_key);
+
+        if (result == null || result.trim().equals("")) {
+            return null;
+
+         }
+        return result;
+    }
+
+ public String getStoredDevicePhoneNumber(){
          return this.getStringValue(R.string.device_phone_number_key);
+}
+
+
+    public String getWhiteListGroupName() {
+        String result = this.getStringValue(R.string.whitelist_group_name_key);
+
+        if (result == null || result.trim().equals("")) {
+            return null;
+        }
+        return result;
     }
 }
 
