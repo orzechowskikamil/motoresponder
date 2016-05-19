@@ -2,17 +2,17 @@
 <preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
 
     <header android:fragment="com.medziku.motoresponder.activity.SettingsPreferenceFragment"
-            android:icon="@drawable/ic_settings_applications"
+            android:icon="@drawable/ic_settings_fragment"
             android:title="@string/main_preferences_title"
             android:summary="@string/main_preferences_summary"/>
 
     <header android:fragment="com.medziku.motoresponder.activity.RidingSettingsPreferenceFragment"
-            android:icon="@drawable/ic_settings_applications"
+            android:icon="@drawable/ic_riding_settings_fragment"
             android:title="@string/riding_preferences_title"
             android:summary="@string/riding_preferences_summary"/>
 
     <header android:fragment="com.medziku.motoresponder.activity.NumberRulesPreferenceFragment"
-            android:icon="@drawable/ic_settings_applications"
+            android:icon="@drawable/ic_number_rules_fragment"
             android:title="@string/number_rules_preferences_title"
             android:summary="@string/number_rules_preferences_summary"/>
 

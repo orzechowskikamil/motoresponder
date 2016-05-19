@@ -6,6 +6,8 @@ import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.widget.Toast;
 import com.medziku.motoresponder.R;
 import com.medziku.motoresponder.activity.SettingsActivity;
@@ -102,7 +104,8 @@ public class NotificationUtility {
 
         Notification.Builder notificationBuilder = new Notification.Builder(this.context.getApplicationContext());
 
-        notificationBuilder.setSmallIcon(R.mipmap.ic_launcher)
+        notificationBuilder.setSmallIcon(R.drawable.ic_notification)
+                .setLargeIcon(this.getLauncherIcon())
                 .setContentTitle(title)
                 .setContentText(content)
                 .setContentInfo(info)
@@ -112,12 +115,17 @@ public class NotificationUtility {
             notificationBuilder.setStyle(style);
         }
 
+
         Notification notification = notificationBuilder.build();
         if (isOngoing) {
             notification.flags = Notification.FLAG_ONGOING_EVENT;
         }
 
         notificationManager.notify(notificationID, notification);
+    }
+
+    private Bitmap getLauncherIcon() {
+        return BitmapFactory.decodeResource(this.context.getResources(), R.mipmap.ic_launcher);
     }
 
 
