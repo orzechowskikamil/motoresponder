@@ -55,7 +55,7 @@ public class RespondingDecision {
 
         // we shouldn't sent auto responses over and over so sent only if amount of responses sent to given number
         // since last normal response not exceed the limit
-        if (this.alreadyResponded.getAmountOfAutomaticalResponsesSinceUserResponded(subject.getPhoneNumber()) > getLimitForAutoresponses(subject)) {
+        if (this.alreadyResponded.getAmountOfAutomaticalResponsesSinceUserResponded(subject.getPhoneNumber()) > this.getLimitForAutoresponses(subject)) {
             this.log.add("Cant sent more responses to this number.");
             return false;
         }
@@ -89,12 +89,21 @@ public class RespondingDecision {
             return false;
         }
 
+        // Finally check if application doesn't respond in another thread when we were determining if user is riding
+        // it is possible if applicattion will receive two smses quickly.
+        if (this.alreadyResponded.getAmountOfAutomaticalResponsesSinceUserResponded(subject.getPhoneNumber()) > this.getLimitForAutoresponses(subject)) {
+            this.log.add("Application already sent response between receiving input and determining if user is riding.");
+            return false;
+        }
+
         // all excluding conditions not met, we should respond.
         return true;
     }
 
     private int getLimitForAutoresponses(RespondingSubject subject) {
-        return (subject instanceof GeolocationRequestRespondingSubject) ? this.settings.getLimitOfGeolocationResponses() : this.settings.getLimitOfResponses();
+        return (subject instanceof GeolocationRequestRespondingSubject) ?
+                this.settings.getLimitOfGeolocationResponses() :
+                this.settings.getLimitOfResponses();
     }
 
 

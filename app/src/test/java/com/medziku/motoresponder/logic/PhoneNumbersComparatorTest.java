@@ -54,7 +54,8 @@ public class PhoneNumbersComparatorTest {
         };
         String[] testcasesNegative = {
                 "7122",
-                "71727"
+                "71727",
+                "OPONY-HURT"
         };
 
 

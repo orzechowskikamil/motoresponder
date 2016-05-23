@@ -52,9 +52,10 @@ public class PhoneNumbersComparator {
     public static String normalizeNumber(String phoneNumber) {
         phoneNumber = phoneNumber.trim().replaceAll("[^0-9\\+]", "");
 
-        if (phoneNumber.substring(0, 2).equals("00")) {
+
+        if (phoneNumber.length() > 2 && phoneNumber.substring(0, 2).equals("00")) {
             phoneNumber = "+" + phoneNumber.substring(2);
-        } else if (phoneNumber.substring(0, 1).equals("0")) {
+        } else if (phoneNumber.length() > 1 && phoneNumber.substring(0, 1).equals("0")) {
             phoneNumber = phoneNumber.substring(1);
         }
 
