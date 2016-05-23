@@ -1,4 +1,6 @@
 <resources>
+    <bool name="terms_and_conditions_accepted_default_value">false</bool>
+
     <bool name="responder_enabled_default_value">true</bool>
 
     <bool name="responding_restricted_to_contact_list_default_value">true</bool>

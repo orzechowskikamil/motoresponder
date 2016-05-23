@@ -32,6 +32,37 @@
     </string>
 
 
+    <string name="disclaimer_title">Zaakceptuj warunki Motorespondera</string>
+    <string name="disclaimer_message">Autorzy Motorespondera dołożyli wszelkich starań, aby działał jak najlepiej (sami
+        go zresztą używają na co dzień).\n\n
+        Jednakże nie jest wykluczone że aplikacja może zawierać błędy. \n\n
+
+        Ponieważ aplikacja operuje na dość wrażliwym polu jakim jest automatyczne odpowiadanie na przychodzące
+        wiadomości oraz połączenia, zalecamy ostrożność w korzystaniu z niej w przypadku osób które mają drogie
+        wiadomości SMS, lub korzystają z abonamentu i nie mają darmowych SMS. \n\n
+
+        Aplikacja zawiera funkcję powiadamiania wybranych osób o twoim położeniu.
+        Jest ona domyślnie wyłączona. Nieostrożna konfiguracja tej funkcji może spowodować że niepowołane osoby będą
+        mogły poznać twoją lokalizację. Proszę o uważne dobieranie ustawień konfiguracyjnych. \n\n
+
+        Autorzy udostępniają aplikację \"tak jak jest\" i chociaż dołożyliśmy wszelkich starań by była ona jak
+        najlepsza, używasz jej na własne ryzyko. \n\n
+
+        W związku z tym, autorzy nie mogą być odpowiedzialni za ewentualne szkody wyrządzone przez aplikację. \n\n
+
+        Jeśli nie akceptujesz tego warunku to prosimy o usunięcie aplikacji, i nie korzystanie z niej.\n\n
+
+        Autorzy Motorespondera głęboko wierzą że nikt nie powinien nam przeszkadzać, gdy delektujemy się jazdą
+        motocyklem, a niektórym nie jeżdzącym ludziom (np większości matek motocyklistów) nie da się uświadomić że gdy
+        nie odpisujemy, to znaczy że jeździmy, a jazda na motocyklu nie daje nam możliwości odpowiadania w jakikolwiek
+        sposób. Wydzwaniają do nas po 15 razy żebyśmy im jakimś cudem odpowiedzieli. Ta aplikacja rozwiązuje ten
+        problem.
+        Miłego używania! \n\n
+
+        Credits: Orzech &amp; Medziku
+    </string>
+    <string name="disclaimer_accept">Akceptuję</string>
+    <string name="disclaimer_reject">Nie akceptuję</string>
 
 
 </resources>

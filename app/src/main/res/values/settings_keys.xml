@@ -1,5 +1,7 @@
 <resources>
 
+    <string name="terms_and_conditions_accepted_key">terms_and_conditions_accepted</string>
+
     <string name="responder_enabled_key">responder_enabled</string>
 
     <string name="auto_response_to_sms_enabled_key">auto_response_to_sms_enabled</string>

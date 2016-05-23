@@ -1,14 +1,17 @@
 package com.medziku.motoresponder.activity;
 
 
+import android.app.AlertDialog.Builder;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.*;
+import android.preference.PreferenceActivity;
 import com.google.common.base.Predicate;
+import com.medziku.motoresponder.R;
 import com.medziku.motoresponder.logic.Settings;
 import com.medziku.motoresponder.pseudotesting.IntegrationRunner;
 import com.medziku.motoresponder.pseudotesting.UtilitiesRunner;
-import com.medziku.motoresponder.R;
 import com.medziku.motoresponder.services.BackgroundService;
 import com.medziku.motoresponder.utils.SharedPreferencesUtility;
 
@@ -19,7 +22,7 @@ import java.util.List;
  * This activity is UI of this application.
  * Main functionality of application doesn't have UI, so only UI of the app is settings panel of application.
  */
-public class SettingsActivity extends SettingsActivityDefinition {
+public class SettingsActivity extends PreferenceActivity {
     public static final String SETTINGS_PREFERENCE_FRAGMENT_NAME = "com.medziku.motoresponder.activity.SettingsPreferenceFragment";
     public static final String RIDING_SETTINGS_PREFERENCE_FRAGMENT_NAME = "com.medziku.motoresponder.activity.RidingSettingsPreferenceFragment";
     public static final String NUMBER_RULES_PREFERENCE_FRAGMENT_NAME = "com.medziku.motoresponder.activity.NumberRulesPreferenceFragment";
@@ -51,6 +54,7 @@ public class SettingsActivity extends SettingsActivityDefinition {
         this.runBackgroundProcessOrPseudotests();
     }
 
+
     // TODO K. Orzechowski: divide it to app launcher and activity.
 
     private void runBackgroundProcessOrPseudotests() {
@@ -69,6 +73,10 @@ public class SettingsActivity extends SettingsActivityDefinition {
 
         this.toggleBackgroundServiceAccordingToSettings();
         this.toggleBackgroundServiceOnSettingChange();
+
+        if (!this.settings.isTermsAndConditionAccepted()) {
+            this.showPopupWithDisclaimer();
+        }
     }
 
     private void toggleBackgroundServiceOnSettingChange() {
@@ -83,7 +91,6 @@ public class SettingsActivity extends SettingsActivityDefinition {
     }
 
     protected void toggleDisabledMenuOptions() {
-
         if (this.settings.isResponderEnabled()) {
 
         }
@@ -154,8 +161,45 @@ public class SettingsActivity extends SettingsActivityDefinition {
                 || fragmentName.equals(NUMBER_RULES_PREFERENCE_FRAGMENT_NAME));
     }
 
-}
+    protected void acceptTermsAndConditions() {
+        this.settings.setTermsAndCondition(true);
+        this.settings.setResponderEnabled(true);
+    }
 
-class SettingsActivityDefinition extends PreferenceActivity {
+    protected void rejectTermsAndConditions() {
+        this.settings.setTermsAndCondition(false);
+        this.settings.setResponderEnabled(false);
+        this.killApplication();
+    }
+
+    private void killApplication() {
+        System.exit(0);
+    }
+
+    private void showPopupWithDisclaimer() {
+        Builder dialogBuilder = new Builder(this);
+
+        String disclaimerTitleText = this.sharedPreferencesUtility.getStringFromRes(R.string.disclaimer_title);
+        String disclaimerMessageText = this.sharedPreferencesUtility.getStringFromRes(R.string.disclaimer_message);
+        String acceptBtnText = this.sharedPreferencesUtility.getStringFromRes(R.string.disclaimer_accept);
+        String rejectBtnText = this.sharedPreferencesUtility.getStringFromRes(R.string.disclaimer_reject);
+
+        dialogBuilder.setTitle(disclaimerTitleText);
+        dialogBuilder.setMessage(disclaimerMessageText);
+        dialogBuilder.setPositiveButton(acceptBtnText, new OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                SettingsActivity.this.acceptTermsAndConditions();
+            }
+        });
+
+        dialogBuilder.setNegativeButton(rejectBtnText, new OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                SettingsActivity.this.rejectTermsAndConditions();
+            }
+        });
+        dialogBuilder.create().show();
+    }
 
 }

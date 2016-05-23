@@ -13,6 +13,7 @@ public class Settings extends SettingsBase {
     private Predicate<Boolean> onChangeSensorCheckEnabledCallback;
     private Predicate<Boolean> onChangeRespondingWithGeolocationEnabled;
     private boolean wiFiCheckEnabled;
+    private boolean responderEnabled;
 
     public Settings(SharedPreferencesUtility sharedPreferencesUtility) {
         super(sharedPreferencesUtility);
@@ -20,6 +21,10 @@ public class Settings extends SettingsBase {
 
     public boolean isResponderEnabled() {
         return this.getBooleanValue(R.string.responder_enabled_key);
+    }
+
+    public void setResponderEnabled(boolean responderEnabled) {
+        this.setBooleanValue(R.string.responder_enabled_key, responderEnabled);
     }
 
     /**
@@ -81,11 +86,9 @@ public class Settings extends SettingsBase {
         return this.getStringValue(R.string.auto_response_to_call_template_key);
     }
 
-
     public String getAutoResponseToSmsWithGeolocationTemplate() {
         return this.getStringValue(R.string.auto_response_to_sms_with_geolocation_template_key);
     }
-
 
     public boolean isShowingSummaryNotificationEnabled() {
         return this.getBooleanValue(R.string.showing_summary_notification_enabled_key);
@@ -95,7 +98,6 @@ public class Settings extends SettingsBase {
         return this.getBooleanValue(R.string.showing_debug_notification_enabled_key);
     }
 
-
     public boolean isShowingPendingNotificationEnabled() {
         return this.getBooleanValue(R.string.showing_pending_notification_enabled_key);
     }
@@ -103,7 +105,6 @@ public class Settings extends SettingsBase {
     public void listenToSensorCheckEnabledChange(Predicate<Boolean> callback) {
         this.onChangeSensorCheckEnabledCallback = callback;
     }
-
 
     public void listenToRespondingWithGeolocationEnabledChange(Predicate<Boolean> callback) {
         this.onChangeRespondingWithGeolocationEnabled = callback;
@@ -145,7 +146,6 @@ public class Settings extends SettingsBase {
         return result;
     }
 
-
     public String getWhiteListGroupName() {
         String result = this.getStringValue(R.string.whitelist_group_name_key);
 
@@ -155,11 +155,9 @@ public class Settings extends SettingsBase {
         return result;
     }
 
-
     public boolean isWiFiCheckEnabled() {
         return this.getBooleanValue(R.string.wifi_check_enabled_key);
     }
-
 
     /**
      * If true, responding with geolocation will be possible.
@@ -214,7 +212,6 @@ public class Settings extends SettingsBase {
         this.onChangeRespondingToSMSOrCallsCallback = callback;
     }
 
-
     public String getDebugNotificationTitleText() {
         return this.getStringFromRes(R.string.debug_notification_title_text);
     }
@@ -264,7 +261,6 @@ public class Settings extends SettingsBase {
         return false;
     }
 
-
     public String getBlackListGroupName() {
         String result = this.getStringValue(R.string.blacklist_group_name_key);
 
@@ -279,9 +275,16 @@ public class Settings extends SettingsBase {
         return this.getStringValue(R.string.device_phone_number_key);
     }
 
-
     public boolean isRespondingRestrictedToCurrentCountry() {
-            return this.getBooleanValue(R.string.responding_restricted_to_current_country_key);
+        return this.getBooleanValue(R.string.responding_restricted_to_current_country_key);
+    }
+
+    public boolean isTermsAndConditionAccepted() {
+        return this.getBooleanValue(R.string.terms_and_conditions_accepted_key);
+    }
+
+    public void setTermsAndCondition(boolean accepted) {
+        this.setBooleanValue(R.string.terms_and_conditions_accepted_key, accepted);
     }
 }
 
@@ -321,6 +324,10 @@ abstract class SettingsBase {
 
     protected boolean getBooleanValue(int resID) {
         return this.getBooleanValue(this.getStringFromRes(resID));
+    }
+
+    protected void setBooleanValue(int resID, boolean value) {
+        this.sharedPreferencesUtility.setBooleanValue(this.getStringFromRes(resID), value);
     }
 
     protected boolean getBooleanValue(String name) {
