@@ -12,6 +12,7 @@ public class Settings extends SettingsBase {
     private Predicate<Boolean> onChangeRespondingToSMSOrCallsCallback;
     private Predicate<Boolean> onChangeSensorCheckEnabledCallback;
     private Predicate<Boolean> onChangeRespondingWithGeolocationEnabled;
+    private boolean wiFiCheckEnabled;
 
     public Settings(SharedPreferencesUtility sharedPreferencesUtility) {
         super(sharedPreferencesUtility);
@@ -145,6 +146,21 @@ public class Settings extends SettingsBase {
     }
 
 
+    public String getWhiteListGroupName() {
+        String result = this.getStringValue(R.string.whitelist_group_name_key);
+
+        if (result == null || result.trim().equals("")) {
+            return null;
+        }
+        return result;
+    }
+
+
+    public boolean isWiFiCheckEnabled() {
+        return this.getBooleanValue(R.string.wifi_check_enabled_key);
+    }
+
+
     /**
      * If true, responding with geolocation will be possible.
      *
@@ -261,16 +277,6 @@ public class Settings extends SettingsBase {
 
     public String getStoredDevicePhoneNumber() {
         return this.getStringValue(R.string.device_phone_number_key);
-    }
-
-
-    public String getWhiteListGroupName() {
-        String result = this.getStringValue(R.string.whitelist_group_name_key);
-
-        if (result == null || result.trim().equals("")) {
-            return null;
-        }
-        return result;
     }
 
 

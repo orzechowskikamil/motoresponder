@@ -52,6 +52,8 @@
 
     <bool name="include_proximity_check_default_value">true</bool>
 
+    <bool name="wifi_check_enabled_default_value">true</bool>
+
     <integer name="sure_riding_speed_default_value">40</integer>
 
     <integer name="staying_still_speed_default_value">3</integer>

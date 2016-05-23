@@ -2,14 +2,12 @@ package com.medziku.motoresponder.logic;
 
 import android.location.Location;
 import com.google.common.util.concurrent.SettableFuture;
-import com.medziku.motoresponder.utils.AccelerometerNotAvailableException;
-import com.medziku.motoresponder.utils.LocationUtility;
-import com.medziku.motoresponder.utils.MotionUtility;
-import com.medziku.motoresponder.utils.SensorsUtility;
+import com.medziku.motoresponder.utils.*;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.mockito.internal.configuration.ClassPathLoader;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
@@ -30,21 +28,24 @@ public class UserRideTest {
     private LocationUtility locationUtility;
     private SensorsUtility sensorsUtility;
     private MotionUtility motionUtility;
+    private Settings settings;
+    private WiFiUtility wifiUtility;
+
+
     private double msToKmh = 3.6;
     private int FAKE_FOR_SURE_MOVING_SPEED = 70;
     private int FAKE_TIMEOUT_SPEED = -1;
     private double FAKE_UNSURE_MOVING_SPEED = 10 / msToKmh;
-
-    private Settings settings;
 
     @Before
     public void setUp() throws Exception {
         this.locationUtility = Mockito.mock(LocationUtility.class);
         this.sensorsUtility = Mockito.mock(SensorsUtility.class);
         this.motionUtility = Mockito.mock(MotionUtility.class);
+        this.wifiUtility = Mockito.mock(WiFiUtility.class);
         this.settings = Mockito.mock(Settings.class);
         DecisionLog log = new DecisionLog();
-        this.userRide = new UserRide(this.settings, this.locationUtility, this.sensorsUtility, this.motionUtility, log);
+        this.userRide = new UserRide(this.settings, this.locationUtility, this.sensorsUtility, this.motionUtility, this.wifiUtility, log);
 
         this.setIncludeProximityCheck(true);
         this.setSensorsUtilityIsProximeValue(true);
@@ -53,7 +54,10 @@ public class UserRideTest {
         this.setDeviceInMotionValue(true);
 
         this.setLocationUtilityGetAccurateLocationSpeedResult(this.FAKE_FOR_SURE_MOVING_SPEED);
+
         when(this.settings.getSureRidingSpeedKmh()).thenReturn(Math.round(this.FAKE_FOR_SURE_MOVING_SPEED));
+        when(this.settings.isWiFiCheckEnabled()).thenReturn(true);
+        when(this.wifiUtility.isWifiConnected()).thenReturn(false);
     }
 
     @Test
@@ -145,6 +149,17 @@ public class UserRideTest {
         this.userRide.cancelUserRideCheck();
 
         verify(this.locationUtility, times(1)).cancelGPSCheck();
+    }
+
+    @Test
+    public void testOfWifi() {
+        // not riding - when wifi connected.
+        when(this.wifiUtility.isWifiConnected()).thenReturn(true);
+        this.expectUserRideIsUserRidingToBe(false);
+
+        // when check disabled, it doesn't matter.
+        when(this.settings.isWiFiCheckEnabled()).thenReturn(false);
+        this.expectUserRideIsUserRidingToBe(true);
     }
 
     // region helper methods

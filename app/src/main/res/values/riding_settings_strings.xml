@@ -36,13 +36,18 @@
 
     <string name="include_proximity_check_title">Test sensora zbliżeniowego</string>
     <string name="include_proximity_check_summary_on">Aplikacja nie będzie odpowiadała automatycznie, jeśli sensor
-        zbliżeniowy raportuje
-        że ekran urządzenia nie dotyka niczego (więc urządzenie na pewno nie jest w twojej kieszeni, jak to się dzieje
-        podczas jazdy).
+        zbliżeniowy raportuje że ekran urządzenia nie dotyka niczego (więc urządzenie na pewno nie jest w twojej
+        kieszeni, jak to się dzieje podczas jazdy).
     </string>
     <string name="include_proximity_check_summary_off">Aplikacja nie będzie brała pod uwagę wartości raportowanych przez
         sensor zbliżeniowy.
     </string>
+
+    <string name="wifi_check_enabled_title">Test WiFi</string>
+    <string name="wifi_check_enabled_summary_on">Aplikacja nie będzie odpowiadała automatycznie jeśli jesteś podłączony
+        do sieci WiFi (prawdopodobnie jesteś wtedy w jakimś pomieszczeniu, więc nie jeździsz).
+    </string>
+    <string name="wifi_check_enabled_summary_off">Aplikacja nie będzie brała pod uwagę aktualnego stanu WiFi.</string>
 
 
     <string name="sure_riding_speed_title">Min. prędkość jazdy (km/h)</string>
@@ -99,6 +104,5 @@
         wartości, aby uznał
         że aktualnie jedziesz na motocyklu.
     </string>
-
 
 </resources>

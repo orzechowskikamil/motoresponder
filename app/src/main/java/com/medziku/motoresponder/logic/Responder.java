@@ -36,6 +36,7 @@ public class Responder {
 
     private DecisionLog log;
     private GeolocationRequestRecognition geolocationRequestRecognition;
+    private WiFiUtility wiFiUtility;
 
     public Responder(Context context) {
         this.context = context;
@@ -239,6 +240,7 @@ public class Responder {
         this.contactsUtility = new ContactsUtility(this.context);
         this.motionUtility = new MotionUtility(this.context);
         this.sensorsUtility = new SensorsUtility(this.context);
+        this.wiFiUtility = new WiFiUtility(this.context);
     }
 
     protected AlreadyResponded createAlreadyResponded() {
@@ -252,12 +254,12 @@ public class Responder {
 
 
     protected UserRide createUserRide() {
-        return new UserRide(this.settings, this.locationUtility, this.sensorsUtility, this.motionUtility, this.log);
+        return new UserRide(this.settings, this.locationUtility, this.sensorsUtility, this.motionUtility, this.wiFiUtility, this.log);
     }
 
 
     protected NumberRules createNumberRules() {
-        return new NumberRules(this.contactsUtility,this.settings);
+        return new NumberRules(this.contactsUtility, this.settings);
     }
 
     protected ResponsePreparator createResponsePreparator() {
@@ -287,7 +289,7 @@ public class Responder {
 
 
     protected RespondingDecision createRespondingDecision() {
-        return new RespondingDecision(this.userRide, this.numberRules, this.alreadyResponded, this.deviceUnlocked,this.settings, this.log);
+        return new RespondingDecision(this.userRide, this.numberRules, this.alreadyResponded, this.deviceUnlocked, this.settings, this.log);
     }
 
     // endregion

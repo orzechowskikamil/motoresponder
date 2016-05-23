@@ -44,6 +44,15 @@
             android:defaultValue="@bool/include_proximity_check_default_value"
             android:dependency="@string/sensor_check_enabled_key"/>
 
+
+    <SwitchPreference
+            android:summaryOn="@string/wifi_check_enabled_summary_on"
+            android:summaryOff="@string/wifi_check_enabled_summary_off"
+            android:title="@string/wifi_check_enabled_title"
+            android:key="@string/wifi_check_enabled_key"
+            android:defaultValue="@bool/wifi_check_enabled_default_value"
+            android:dependency="@string/sensor_check_enabled_key"/>
+
     <SwitchPreference
             android:summaryOn="@string/include_accelerometer_check_summary_on"
             android:summaryOff="@string/include_accelerometer_check_summary_off"

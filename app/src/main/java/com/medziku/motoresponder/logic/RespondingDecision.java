@@ -61,10 +61,6 @@ public class RespondingDecision {
         }
 
 
-        // TODO k.orzechowski: idea: check if you are not in public transportation by checking
-        // for available wifi, or many bluetooth devices around you. Issue #52
-
-
         // this check is more expensive in terms of power and battery
         // so it's performed later.
         if (this.settings.isSensorCheckEnabled()) {

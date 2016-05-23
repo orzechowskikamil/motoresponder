@@ -32,10 +32,11 @@ public class RespondingDecisionIntegrationTest {
         LockStateUtility lockStateUtility = new LockStateUtility(this.context);
         SharedPreferencesUtility sharedPreferencesUtility = new SharedPreferencesUtility(this.context);
         Settings settings = new Settings(sharedPreferencesUtility);
+        WiFiUtility wifiUtility = new WiFiUtility(this.context);
 
         DeviceUnlocked deviceUnlocked = this.createLoggingDeviceUnlocked(lockStateUtility, settings);
-        UserRide userRide = this.createLoggingUserRide(settings, locationUtility, sensorsUtility, motionUtility, log);
-        NumberRules numberRules = this.createLoggingUserRules(contactsUtility,settings);
+        UserRide userRide = this.createLoggingUserRide(settings, locationUtility, sensorsUtility, motionUtility, wifiUtility, log);
+        NumberRules numberRules = this.createLoggingUserRules(contactsUtility, settings);
         AlreadyResponded alreadyResponded = this.createLoggingAlreadyResponded(callsUtility, smsUtility);
 
         this.respondingDecision =
@@ -108,8 +109,8 @@ public class RespondingDecisionIntegrationTest {
     }
 
 
-    private NumberRules createLoggingUserRules(ContactsUtility contactsUtility,Settings settings) {
-        return new NumberRules(contactsUtility,settings) {
+    private NumberRules createLoggingUserRules(ContactsUtility contactsUtility, Settings settings) {
+        return new NumberRules(contactsUtility, settings) {
             public boolean numberRulesAllowResponding(String phoneNumber) {
                 boolean result = super.numberRulesAllowResponding(phoneNumber);
                 log("numberRulesAllowResponding()=" + result);
@@ -128,8 +129,8 @@ public class RespondingDecisionIntegrationTest {
         };
     }
 
-    private UserRide createLoggingUserRide(final Settings settings, final LocationUtility locationUtility, final SensorsUtility sensorsUtility, final MotionUtility motionUtility, DecisionLog log) {
-        return new UserRide(settings, locationUtility, sensorsUtility, motionUtility, log) {
+    private UserRide createLoggingUserRide(final Settings settings, final LocationUtility locationUtility, final SensorsUtility sensorsUtility, final MotionUtility motionUtility, WiFiUtility wifiUtility, DecisionLog log) {
+        return new UserRide(settings, locationUtility, sensorsUtility, motionUtility, wifiUtility, log) {
             public boolean isUserRiding() {
                 boolean result = super.isUserRiding();
                 log("isUserRiding()=" + result);
@@ -146,6 +147,12 @@ public class RespondingDecisionIntegrationTest {
             public boolean isSpeedForSureRiding(float speedKmh) {
                 boolean result = super.isSpeedForSureRiding(speedKmh);
                 log("isSpeedForSureRiding()=" + result);
+                return result;
+            }
+
+            protected boolean isWiFiConnected() {
+                boolean result = super.isWiFiConnected();
+                log("isWifiConnected()=" + result);
                 return result;
             }
 

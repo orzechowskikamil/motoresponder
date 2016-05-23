@@ -1,10 +1,7 @@
 package com.medziku.motoresponder.logic;
 
 import android.location.Location;
-import com.medziku.motoresponder.utils.AccelerometerNotAvailableException;
-import com.medziku.motoresponder.utils.LocationUtility;
-import com.medziku.motoresponder.utils.MotionUtility;
-import com.medziku.motoresponder.utils.SensorsUtility;
+import com.medziku.motoresponder.utils.*;
 
 import java.util.Date;
 import java.util.concurrent.ExecutionException;
@@ -15,6 +12,7 @@ import java.util.concurrent.ExecutionException;
  */
 public class UserRide {
 
+    private WiFiUtility wiFiUtility;
     private Settings settings;
     private DecisionLog log;
     private LocationUtility locationUtility;
@@ -22,18 +20,23 @@ public class UserRide {
     private MotionUtility motionUtility;
 
     /**
-
-    /**
+     * /**
      * For real usage
      *
      * @param locationUtility
      * @param sensorsUtility
      * @param motionUtility
      */
-    public UserRide(Settings settings, LocationUtility locationUtility, SensorsUtility sensorsUtility, MotionUtility motionUtility, DecisionLog log) {
+    public UserRide(Settings settings,
+                    LocationUtility locationUtility,
+                    SensorsUtility sensorsUtility,
+                    MotionUtility motionUtility,
+                    WiFiUtility wifiUtility,
+                    DecisionLog log) {
         this.locationUtility = locationUtility;
         this.sensorsUtility = sensorsUtility;
         this.motionUtility = motionUtility;
+        this.wiFiUtility = wifiUtility;
         this.settings = settings;
         this.log = log;
     }
@@ -48,8 +51,11 @@ public class UserRide {
             return false;
         }
 
-        // TODO k.orzechowsk: If you know way of making promise, why not make promisable light check and
-        // TODO k.orzechowsk: proximity check? It will save battery aswell... Issue #53
+        // if user ride, he shouldn't have wifi connected. wifi can be connected only in home, work or car or tram.
+        if (this.settings.isWiFiCheckEnabled() && this.isWiFiConnected()) {
+            this.log.add("Wifi connected - you are in home, not riding.");
+            return false;
+        }
 
         // if phone doesn't report any movement we can also assume that user is not riding motorcycle
         try {
@@ -60,13 +66,6 @@ public class UserRide {
         } catch (AccelerometerNotAvailableException e) {
             // do nothing - it's normal situation if accelerometer not available, continue.
         }
-
-
-        // TODO k.orzechowsk add Bluetooth Beacon option to identify that you sit on bike IN FUTURE Issue #54
-        // TODO k.orzechowsk add NFC tag in pocket option to identify that you sit on bike IN FUTURE Issue #55
-        // TODO k.orzechowsk identify of stolen bikes via beacon in very very future when app will be popular. Issue #56
-
-        // TODO k.orzechowsk add option to disable GPS, maybe someone don't want to use it, only gyro? Issue #10
 
         this.log.add("Starting GPS speed check.");
 
@@ -105,14 +104,18 @@ public class UserRide {
         return true;
     }
 
-    public void cancelUserRideCheck(){
-       this.cancelGPSCheck(); 
+    protected boolean isWiFiConnected() {
+        return this.wiFiUtility.isWifiConnected();
     }
-    
-    private void cancelGPSCheck(){
-        this.locationUtility.cancelGPSCheck();    
+
+    public void cancelUserRideCheck() {
+        this.cancelGPSCheck();
     }
-    
+
+    private void cancelGPSCheck() {
+        this.locationUtility.cancelGPSCheck();
+    }
+
     protected boolean isSpeedForSureRiding(float speedKmh) {
         return speedKmh >= this.settings.getSureRidingSpeedKmh();
     }
@@ -123,13 +126,13 @@ public class UserRide {
 
     protected boolean motionSensorReportsMovement() throws AccelerometerNotAvailableException {
         try {
-            Boolean result =  this.motionUtility.isDeviceInMotion(this.settings.getAccelerationRequiredToMotion()).get();
-            
-            if (result == null){
+            Boolean result = this.motionUtility.isDeviceInMotion(this.settings.getAccelerationRequiredToMotion()).get();
+
+            if (result == null) {
                 // null means that something disturbed accelerometer during process, and it's equal to exception thrown situation.
                 throw new AccelerometerNotAvailableException();
             }
-            
+
             return result;
         } catch (InterruptedException e) {
             e.printStackTrace();
