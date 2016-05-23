@@ -5,12 +5,16 @@ import com.medziku.motoresponder.utils.SMSUtility;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import java.util.Date;
+
+import static junit.framework.Assert.assertTrue;
+import static org.mockito.Mockito.*;
 
 
 public class AlreadyRespondedTest {
@@ -83,6 +87,18 @@ public class AlreadyRespondedTest {
     }
 
 
+    @Test
+    public void testAmountOfAutomaticalResponsesIfUserNeverResponded() {
+        boolean SENT_BY_USER = false;
+        when(this.smsUtility.getDateOfLastSMSSent(FAKE_INCOMING_PHONE_NUMBER, SENT_BY_USER)).thenReturn(null);
+
+        this.alreadyResponded.getAmountOfAutomaticalResponsesSinceUserResponded(FAKE_INCOMING_PHONE_NUMBER);
+        ArgumentCaptor<Date> dateOfLastUserResponse = ArgumentCaptor.forClass(Date.class);
+        verify(this.smsUtility, times(1)).howManyOutgoingSMSSentAfterDate(dateOfLastUserResponse.capture(), anyString(), eq(true));
+
+        assertTrue(dateOfLastUserResponse.getValue().getSeconds() == 0);
+    }
+
     // region test helpers
 
 
@@ -110,7 +126,7 @@ public class AlreadyRespondedTest {
 
 
     private void stubSMSUtility() {
-        Mockito.when(
+        when(
                 this.smsUtility.wasOutgoingSMSSentAfterDate(Matchers.any(Date.class), Matchers.anyString(), Matchers.anyBoolean())
         ).thenAnswer(new Answer<Boolean>() {
             @Override
@@ -132,7 +148,7 @@ public class AlreadyRespondedTest {
 
         });
 
-        Mockito.when(
+        when(
                 this.smsUtility.getDateOfLastSMSSent(Matchers.anyString(), Matchers.anyBoolean())
         ).thenAnswer(new Answer<Date>() {
             @Override
@@ -147,7 +163,7 @@ public class AlreadyRespondedTest {
     }
 
     private void stubCallsUtility() {
-        Mockito.when(
+        when(
                 this.callsUtility.wasOutgoingCallAfterDate(Matchers.any(Date.class), Matchers.anyString())
         ).thenAnswer(new Answer<Boolean>() {
             @Override

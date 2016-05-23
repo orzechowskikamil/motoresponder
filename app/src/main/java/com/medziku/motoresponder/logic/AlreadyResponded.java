@@ -45,6 +45,12 @@ public class AlreadyResponded {
 
         Date dateOfLastSmsSentByUser = this.smsUtility.getDateOfLastSMSSent(phoneNumber, SENT_BY_USER);
 
+        if (dateOfLastSmsSentByUser == null) {
+            // if dateOfLastSMSSentByUser is null, it means that no responses were sent.
+            // so we should check amountOfResponsesSentByApplication since beginning of the universe.
+            dateOfLastSmsSentByUser = new Date(0);
+        }
+
         int amountOfResponsesSentByApplication = this.smsUtility.howManyOutgoingSMSSentAfterDate(dateOfLastSmsSentByUser, phoneNumber, SENT_BY_APP);
 
         return amountOfResponsesSentByApplication;
@@ -71,7 +77,4 @@ public class AlreadyResponded {
         return this.smsUtility.getDateOfLastSMSSent(phoneNumber, true);
     }
 
-//    private Date getDateOfLastUserResponse(String phoneNumber) {
-//        return this.smsUtility.getDateOfLastSMSSent(phoneNumber, false);
-//    }
 }
