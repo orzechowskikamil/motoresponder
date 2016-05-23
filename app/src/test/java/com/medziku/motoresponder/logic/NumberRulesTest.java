@@ -76,7 +76,6 @@ public class NumberRulesTest {
     public void whiteListCorrectlyFilterNumber() throws Exception {
         when(this.settings.getWhiteListGroupName()).thenReturn("doesn't matter");
 
-
         when(this.contactsUtility.hasGroupNumberByGroupName(anyString(), anyString())).thenReturn(false);
         assertFalse(this.numberRules.numberRulesAllowResponding(FAKE_INCOMING_PHONE_NUMBER));
 

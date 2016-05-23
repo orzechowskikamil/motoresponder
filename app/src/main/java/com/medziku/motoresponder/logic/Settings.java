@@ -70,7 +70,7 @@ public class Settings extends SettingsBase {
     }
 
     public boolean isRespondingRestrictedToContactList() {
-        return this.getBooleanValue(R.string.responding_restricted_to_contact_list_key_key);
+        return this.getBooleanValue(R.string.responding_restricted_to_contact_list_key);
     }
 
     public String getAutoResponseToSmsTemplate() {
@@ -281,7 +281,7 @@ public class Settings extends SettingsBase {
 
 
     public boolean isRespondingRestrictedToCurrentCountry() {
-        throw new RuntimeException("Not implemented");
+            return this.getBooleanValue(R.string.responding_restricted_to_current_country_key);
     }
 }
 

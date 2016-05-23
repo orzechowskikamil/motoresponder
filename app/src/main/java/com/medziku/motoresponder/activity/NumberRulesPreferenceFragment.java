@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.preference.*;
 import com.google.common.base.Predicate;
 import com.medziku.motoresponder.R;
-import com.medziku.motoresponder.logic.NumberRules;
 import com.medziku.motoresponder.logic.Settings;
 import com.medziku.motoresponder.utils.ContactsUtility;
 import com.medziku.motoresponder.utils.SharedPreferencesUtility;
@@ -104,7 +103,7 @@ abstract class NumberRulesPreferenceFragmentsDefinition extends PreferenceFragme
     }
 
     public SwitchPreference getRespondingRestrictedToContactListPrerefence() {
-        return (SwitchPreference) this.findPreferenceByID(R.string.responding_restricted_to_contact_list_key_key);
+        return (SwitchPreference) this.findPreferenceByID(R.string.responding_restricted_to_contact_list_key);
     }
 
     public EditTextPreference getDevicePhoneNumberPreference() {

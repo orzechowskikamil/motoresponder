@@ -52,7 +52,9 @@
 
     <string name="acceleration_required_for_motion_key">acceleration_required_for_motion</string>
 
-    <string name="responding_restricted_to_contact_list_key_key">responding_restricted_to_contact_list_key</string>
+    <string name="responding_restricted_to_current_country_key">responding_restricted_to_current_country</string>
+
+    <string name="responding_restricted_to_contact_list_key">responding_restricted_to_contact_list_key</string>
 
     <string name="whitelist_group_name_key">whitelist_group_name</string>
 

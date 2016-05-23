@@ -1,7 +1,9 @@
 <resources>
     <bool name="responder_enabled_default_value">true</bool>
 
-    <bool name="responding_restricted_to_contact_list_key_default_value">true</bool>
+    <bool name="responding_restricted_to_contact_list_default_value">true</bool>
+
+    <bool name="responding_restricted_to_current_country_default_value">true</bool>
 
     <bool name="auto_response_to_sms_enabled_default_value">true</bool>
 

@@ -1,11 +1,19 @@
 <resources>
 
-    <string name="responding_restricted_to_contact_list_key_title">Odpowiadaj tylko numerom z kontaktów.</string>
-    <string name="responding_restricted_to_contact_list_key_summary_on">Aplikacja nie będzie odpowiadała numerom które
+    <string name="responding_restricted_to_contact_list_title">Odpowiadaj tylko numerom z kontaktów.</string>
+    <string name="responding_restricted_to_contact_list_summary_on">Aplikacja nie będzie odpowiadała numerom które
         nie są zapisane w kontaktach.
     </string>
-    <string name="responding_restricted_to_contact_list_key_summary_off">Aplikacja nie będzie brała pod uwagę przy
+    <string name="responding_restricted_to_contact_list_summary_off">Aplikacja nie będzie brała pod uwagę przy
         odpowiadaniu, czy dany numer znajduje się w kontaktach czy nie.
+    </string>
+
+    <string name="responding_restricted_to_current_country_title">Odpowiadaj tylko krajowym numerom.</string>
+    <string name="responding_restricted_to_current_country_summary_on">Aplikacja będzie odpowiadała tylko numerom
+        z tego samego kraju co ty, aby nie narażać cię na koszta.
+    </string>
+    <string name="responding_restricted_to_current_country_summary_off">Aplikacja nie będzie brała pod uwagę z jakiego
+        kraju numer pochodzi.
     </string>
 
 
