@@ -15,8 +15,8 @@
     </string>
 
 
-    <string name="app_name">Moto Responder</string>
-    <string name="settings_activity_label">Ustawienia Moto Respondera</string>
+    <string name="app_name">Motoresponder</string>
+    <string name="settings_activity_label">Ustawienia Motorespondera</string>
 
     <string name="main_preferences_title">Podstawowe ustawienia</string>
     <string name="main_preferences_summary">Podstawowe ustawienia aplikacji.</string>

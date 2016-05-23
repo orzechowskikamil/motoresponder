@@ -31,14 +31,13 @@
         Cześć. Aktualnie jadę motocyklem i znajduję sie w %location%.
     </string>
 
-
-    <bool name="showing_pending_notification_enabled_default_value">true</bool>
+    <bool name="showing_pending_notification_enabled_default_value">false</bool>
 
     <bool name="showing_summary_notification_enabled_default_value">true</bool>
 
-    <string name="geolocation_request_pattern_1_default_value" formatted="false">gdzie jesteś</string>
+    <bool name="showing_debug_notification_enabled_default_value">false</bool>
 
-    <bool name="showing_debug_notification_enabled_default_value">true</bool>
+    <string name="geolocation_request_pattern_1_default_value" formatted="false">gdzie jesteś</string>
 
     <string name="geolocation_request_pattern_2_default_value" formatted="false">gdzie jestes</string>
 
@@ -52,7 +51,7 @@
 
     <bool name="assume_screen_unlocked_as_not_riding_default_value">true</bool>
 
-    <integer name="wait_before_response_default_value">30</integer>
+    <integer name="wait_before_response_default_value">300</integer>
 
     <bool name="include_proximity_check_default_value">true</bool>
 

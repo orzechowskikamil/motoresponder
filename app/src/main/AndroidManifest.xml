@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.medziku.motoresponder">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.medziku.motoresponder">
 
     <uses-feature android:name="android.hardware.sensor.light"/>
     <uses-feature android:name="android.hardware.sensor.proximity"/>
-    <uses-feature
-            android:name="android.hardware.sensor.accelerometer"
-            android:required="true"/>
+    <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="true"/>
 
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS"/>
@@ -34,13 +31,13 @@
                 android:label="@string/settings_activity_label">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
 
 
         <service android:name=".services.BackgroundService"></service>
+
         <receiver android:name=".receivers.BootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
