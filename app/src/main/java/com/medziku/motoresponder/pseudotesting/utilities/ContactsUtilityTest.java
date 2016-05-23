@@ -7,9 +7,6 @@ import com.medziku.motoresponder.utils.ContactsUtility;
 
 import java.util.List;
 
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
-
 public class ContactsUtilityTest {
 
     private static final String TAG = "ContactsUtilityTest";
@@ -140,6 +137,15 @@ public class ContactsUtilityTest {
         this.hasGroupNumberSubtest(PHONE_NUMBER_IN_GROUP, GROUP_NAME);
         this.hasGroupNumberSubtest(PHONE_NUMBER_IN_GROUP, NON_EXISTING_GROUP);
         this.hasGroupNumberSubtest(PHONE_NUMBER_OUTSIDE_GROUP, GROUP_NAME);
+    }
+
+    public void testReadCurrentMobileCountryCode() {
+        this.setUp();
+
+        Log.d(TAG, "Starting test of readCurrentMobileCountryCode");
+        String mcc = this.contactsUtility.readCurrentMobileCountryCode();
+
+        Log.d(TAG, "Result is: " + String.valueOf(mcc));
     }
 
     private void hasGroupNumberSubtest(String phoneNumber, String groupName) {

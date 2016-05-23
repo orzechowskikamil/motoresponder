@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 import com.medziku.motoresponder.pseudotesting.utilities.*;
-import com.medziku.motoresponder.utils.WiFiUtility;
 
 /**
  * This class can be used to test real behavior of Utilities on some device or emulator, because it looks like
@@ -78,7 +77,7 @@ public class UtilitiesRunner {
             private void runTest() {
                 // choose the test which you are interested in
                 // after performing, leave short note with date here about result of test
-                switch (100) {
+                switch (77) {
                     case 1:
                         // this is working 10.04.2016 on Android 5.1
                         UtilitiesRunner.this.locationUtilityTest.testOfGettingAccurateLocation();
@@ -173,6 +172,10 @@ public class UtilitiesRunner {
                     case 76:
                         // this is working 17 05 2016 on motog
                         UtilitiesRunner.this.contactsUtilityTest.testReadGroupID();
+                        break;
+                    case 77:
+                        // this is working 23 05 2016 on motog
+                        UtilitiesRunner.this.contactsUtilityTest.testReadCurrentMobileCountryCode();
                         break;
 
 

@@ -187,12 +187,24 @@ public class ContactsUtility {
 
         String phoneNumber = telephonyManager.getLine1Number();
 
-        // TODO K. Orzechowski: Issue #71 - phone number sometimes can't be read from api, it must be stored then in app
         if (phoneNumber == null || phoneNumber.equals("")) {
             throw new UnsupportedOperationException("Not capable to read phone number from API on this device");
         }
 
         return phoneNumber;
+    }
+
+    /**
+     * It returns current mcc. Mcc is always unique. For example for Poland it's 260.
+     * @return
+     */
+    public String readCurrentMobileCountryCode() {
+        TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        String simOperator = telephonyManager.getSimOperator();
+        if (!simOperator.isEmpty()) {
+            return String.valueOf(context.getResources().getConfiguration().mcc);
+        }
+        return null;
     }
 
 }

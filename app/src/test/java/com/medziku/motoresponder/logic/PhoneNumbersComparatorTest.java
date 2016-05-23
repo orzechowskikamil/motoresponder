@@ -1,11 +1,11 @@
 package com.medziku.motoresponder.logic;
 
 import junit.framework.Assert;
-import junit.framework.TestCase;
+import org.junit.Test;
 
 
-public class PhoneNumbersComparatorTest extends TestCase {
-
+public class PhoneNumbersComparatorTest {
+    @Test
     public void testAreNumbersEqual() throws Exception {
 
         String[][] testcasesPositive = {
@@ -44,4 +44,53 @@ public class PhoneNumbersComparatorTest extends TestCase {
         }
 
     }
+
+    @Test
+    public void testIsNumberNormal() {
+        String[] testcasesPositive = {
+                "777888999",
+                "0048777888999",
+                "+48777888999"
+        };
+        String[] testcasesNegative = {
+                "7122",
+                "71727"
+        };
+
+
+        for (String phoneNumber : testcasesPositive) {
+            Assert.assertTrue(PhoneNumbersComparator.isNumberNormal(phoneNumber));
+        }
+
+        for (String phoneNumber : testcasesNegative) {
+            Assert.assertFalse(PhoneNumbersComparator.isNumberNormal(phoneNumber));
+        }
+    }
+
+    @Test
+    public void testIsNumberForeign() {
+        String COUNTRY_CODE = "48";
+
+        String[] testcasesPositive = {
+                "+44-667-668-669",
+                "+44-667-668-669-70",
+                "+356-2034-1505"
+
+        };
+
+        String[] testcasesNegative = {
+                "+48667668669",
+                "667668669"
+        };
+
+        for (String phoneNumber : testcasesPositive) {
+            Assert.assertTrue(PhoneNumbersComparator.isNumberForeign(phoneNumber, COUNTRY_CODE));
+        }
+
+        for (String phoneNumber : testcasesNegative) {
+            Assert.assertFalse(PhoneNumbersComparator.isNumberForeign(phoneNumber, COUNTRY_CODE));
+        }
+    }
+
+
 }

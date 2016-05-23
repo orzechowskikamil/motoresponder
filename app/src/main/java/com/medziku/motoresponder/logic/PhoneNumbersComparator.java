@@ -8,7 +8,7 @@ public class PhoneNumbersComparator {
     /**
      * We assume that 9 digits is a root for normal number
      */
-    private static int minimalLenghtOfNormalNumber = 9;
+    private static int MINIMAL_LENGTH_OF_NORMAL_NUMBER = 9;
 
     public static boolean areNumbersEqual(String firstPhoneNumber, String secondPhoneNumber) {
         String normalized1stNumber = normalizeNumber(firstPhoneNumber);
@@ -27,7 +27,7 @@ public class PhoneNumbersComparator {
         }
 
         String cutLongerNumber;
-        if (shorterNumber.length() >= minimalLenghtOfNormalNumber) {
+        if (isNumberNormal(shorterNumber)) {
             cutLongerNumber = longerNumber.substring(longerNumber.length() - shorterNumber.length());
         } else {
             cutLongerNumber = longerNumber;
@@ -37,6 +37,18 @@ public class PhoneNumbersComparator {
         return result;
     }
 
+    /**
+     * it will:
+     * cut all chars which aren't number or +
+     * so number like +48-663-664-665 will become +48663664665
+     * change 00 to +
+     * so number like 00 48 663 664 665 will become +48663664665
+     * cut first zero
+     * so number like 0663664665 will become 663664665
+     *
+     * @param phoneNumber
+     * @return
+     */
     public static String normalizeNumber(String phoneNumber) {
         phoneNumber = phoneNumber.trim().replaceAll("[^0-9\\+]", "");
 
@@ -47,5 +59,35 @@ public class PhoneNumbersComparator {
         }
 
         return phoneNumber;
+    }
+
+    /**
+     * This will check if number is "normal"
+     * "Normal" means normal abonent number, no premium SMS or something.
+     *
+     * @param phoneNumber
+     * @return
+     */
+    public static boolean isNumberNormal(String phoneNumber) {
+        String normalizedPhoneNumber = normalizeNumber(phoneNumber);
+        return normalizedPhoneNumber.length() >= MINIMAL_LENGTH_OF_NORMAL_NUMBER;
+    }
+
+    public static boolean isNumberForeign(String phoneNumber, String currentCountryCode) {
+        String normalizedNumber = normalizeNumber(phoneNumber);
+
+        boolean isGlobalNumber = normalizedNumber.indexOf("+") >= 0;
+
+        // number which is not in global format can't be number from outside country
+        if (!isGlobalNumber) {
+            return false;
+        }
+
+        // normalized number from current country should have currentCountryCode on first digit.
+        if (normalizedNumber.indexOf(currentCountryCode) == 1) {
+            return false;
+        }
+        // then it is from outside country
+        return true;
     }
 }

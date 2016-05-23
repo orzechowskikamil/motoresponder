@@ -2,8 +2,8 @@ package com.medziku.motoresponder.logic;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.medziku.motoresponder.utils.SharedPreferencesUtility;
 import com.medziku.motoresponder.R;
+import com.medziku.motoresponder.utils.SharedPreferencesUtility;
 
 public class Settings extends SettingsBase {
 
@@ -280,6 +280,9 @@ public class Settings extends SettingsBase {
     }
 
 
+    public boolean isRespondingRestrictedToCurrentCountry() {
+        throw new RuntimeException("Not implemented");
+    }
 }
 
 

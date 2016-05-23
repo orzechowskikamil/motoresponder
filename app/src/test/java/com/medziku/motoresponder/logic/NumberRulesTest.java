@@ -1,7 +1,6 @@
 package com.medziku.motoresponder.logic;
 
 import com.medziku.motoresponder.utils.ContactsUtility;
-import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Matchers;
@@ -20,6 +19,7 @@ public class NumberRulesTest {
     private ContactsUtility contactsUtility;
     private String FAKE_INCOMING_PHONE_NUMBER = "777777777";
     private String FAKE_CURRENT_DEVICE_PHONE_NUMBER = "123456789";
+    private String FAKE_FOREIGN_INCOMING_NUMBER = "+44-664-663-662";
     private Settings settings;
 
     @Before
@@ -32,6 +32,7 @@ public class NumberRulesTest {
         this.setContactBookContainsContactReturnValue(true);
 
         when(this.contactsUtility.readCurrentDevicePhoneNumber()).thenReturn(this.FAKE_CURRENT_DEVICE_PHONE_NUMBER);
+
     }
 
     @Test
@@ -61,8 +62,20 @@ public class NumberRulesTest {
 
 
     @Test
+    public void numberRulesPreventRespondingForeignNumber() {
+        when(this.settings.isRespondingRestrictedToCurrentCountry()).thenReturn(true);
+        this.expectNumberRulesAllowRespondingToBe(this.FAKE_INCOMING_PHONE_NUMBER, true);
+        this.expectNumberRulesAllowRespondingToBe(this.FAKE_FOREIGN_INCOMING_NUMBER, false);
+
+        when(this.settings.isRespondingRestrictedToCurrentCountry()).thenReturn(false);
+        this.expectNumberRulesAllowRespondingToBe(this.FAKE_INCOMING_PHONE_NUMBER, true);
+        this.expectNumberRulesAllowRespondingToBe(this.FAKE_FOREIGN_INCOMING_NUMBER, true);
+    }
+
+    @Test
     public void whiteListCorrectlyFilterNumber() throws Exception {
         when(this.settings.getWhiteListGroupName()).thenReturn("doesn't matter");
+
 
         when(this.contactsUtility.hasGroupNumberByGroupName(anyString(), anyString())).thenReturn(false);
         assertFalse(this.numberRules.numberRulesAllowResponding(FAKE_INCOMING_PHONE_NUMBER));

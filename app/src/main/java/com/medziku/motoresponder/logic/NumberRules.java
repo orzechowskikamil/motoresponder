@@ -10,63 +10,18 @@ public class NumberRules {
 
     private ContactsUtility contactsUtility;
     private Settings settings;
-    // TODO K. Orzechowski: not needed for 1.00, issue #50
-//    private PhoneNumberVerifier numberVerifier;
 
-    /**
-     * This is for real usage
-     *
-     * @param contactsUtility
-     */
     public NumberRules(ContactsUtility contactsUtility, Settings settings) {
         this.contactsUtility = contactsUtility;
         this.settings = settings;
-        // TODO K. Orzechowski: not needed for 1.00, issue #50
-//        this.numberVerifier = new PhoneNumberVerifier();
-//        this.whiteListGroupNames = new List<String>();
-//        this.blackListGrupNames = new List<String>();
+
     }
-
-    /**
-     * Responding current country or also abroad.
-     */
-    public int respondingCountrySettings = NumberRules.RESPONDING_COUNTRY_SETTINGS_ANY_COUNTRY;
-    /**
-     * Responding to everyone, every normal number (except for example sms premium), or only to contact book.
-     */
-    public int respondingSettings = NumberRules.RESPONDING_SETTINGS_RESPOND_ONLY_CONTACT_BOOK;
-
-    /**
-     * Responding only to whitelist? or disabling whitelist.
-     */
-    public int respondingWhitelist = NumberRules.RESPONDING_WHITELIST_DISABLED;
-    public int respondingBlacklist = NumberRules.RESPONDING_BLACKLIST_DISABLED;
-
-    public static final int RESPONDING_COUNTRY_SETTINGS_CURRENT_COUNTRY_ONLY = 0;
-    public static final int RESPONDING_COUNTRY_SETTINGS_ANY_COUNTRY = 1;
-
-    public static final int RESPONDING_SETTINGS_RESPOND_EVERYONE = 0;
-    public static final int RESPONDING_SETTINGS_RESPOND_EVERY_NORMAL_NUMBER = 1;
-    public static final int RESPONDING_SETTINGS_RESPOND_ONLY_CONTACT_BOOK = 2;
-
-    public static final int RESPONDING_WHITELIST_DISABLED = 0;
-    public static final int RESPONDING_WHITELIST_ENABLED = 1;
-
-    public static final int RESPONDING_BLACKLIST_DISABLED = 0;
-    public static final int RESPONDING_BLACKLIST_ENABLED = 1;
-
-
-
-
-    // TODO K. Orzechowski: not needed for now, issue #50
-//    public List<String> whiteListGroupNames;
-//    public List<String> blackListGroupNames;
 
 
     public boolean numberRulesAllowResponding(String phoneNumber) {
-        // TODO K. Orzechowski: issue #50, not needed right now
-//        boolean respondingConstraintsMeet = false;
-//        boolean countryRespondingConstraintsMeet = false;
+        if (!this.isNumberNormal(phoneNumber)) {
+            return false;
+        }
 
         if (this.isWhiteListEnabled() && !this.isNumberOnWhitelist(phoneNumber)) {
             return false;
@@ -74,28 +29,13 @@ public class NumberRules {
 
         if (this.isBlackListEnabled() && this.isNumberOnBlacklist(phoneNumber)) {
             return false;
-
         }
 
-        // TODO k.orzechowsk commented until 1.01 , issue #50
-        // if (this.respondingCountrySettings == NumberRules.COUNTRY_SETTINGS_CURRENT_COUNTRY_ONLY && this.isNumberFromCurrentCountry(phoneNumber)==false){
-        //     return false;
-        // }
-        
-        /* TODO k.orzechowski, issue #50
-           break method below into three sections
-           First is BLACKLISTING with options: none, blacklist (put in application), contact book group
-           Second is WHITELISTING with options: none, all contacts, whitelist (put in application), contact book group
-           Third is NORMAL/SHORT numbers with options: everyone / normal numbers / short numbers (like sms premium)
-        */
+        if (this.settings.isRespondingRestrictedToCurrentCountry() && this.isNumberForeign(phoneNumber)) {
+            return false;
+        }
 
-// TODO k.orzechowsk commented until 1.01, issue #50
-// if (this.respondingSettings == RESPONDING_SETTINGS_RESPOND_EVERY_NORMAL_NUMBER && this.isNormalNumber(phoneNumber)==false){
-// return false;
-
-// }
-
-        if (this.settings.isRespondingRestrictedToContactList() && this.isInContactBook(phoneNumber) == false) {
+        if (this.settings.isRespondingRestrictedToContactList() && !this.isInContactBook(phoneNumber)) {
             return false;
         }
 
@@ -106,36 +46,22 @@ public class NumberRules {
         return true;
     }
 
-
-    private boolean isCurrentDevicePhoneNumber(String phoneNumber) {
-        // todo #71 add some prompt if device is not able to read phone number, OR disable field 
-        // 
-        try {
-            return phoneNumber.equals(this.contactsUtility.readCurrentDevicePhoneNumber());
-        } catch (Exception e) {
-            return phoneNumber.equals(this.settings.getStoredDevicePhoneNumber());
-        }
+    private boolean isNumberNormal(String phoneNumber) {
+        return PhoneNumbersComparator.isNumberNormal(phoneNumber);
     }
 
-    // TODO K. Orzechowski: not needed for 1.00, issue #50
-//    private String getCurrentDeviceCountry() {
-//        return numberVerifier.getUserCountry();
-//    }
 
-    // TODO K. Orzechowski: not needed for 1.00, issue #50
-//    private String getCountryOfNumber(String phoneNumber) {
-//        return this.numberVerifier.getCountryByPhoneNumber(null, phoneNumber);
-//    }
-//
-//    private boolean isNumberOnWhiteList(String phoneNumber) {
-//        for (String whiteListGroupName : this.whiteListGroupNames) {
-//            if (this.contactsUtility.hasGroupNumberByGroupName(whiteListGroupName, phoneNumber) == true) {
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-//
+    private boolean isCurrentDevicePhoneNumber(String phoneNumber) {
+        String currentDevicePhoneNumber;
+        try {
+            currentDevicePhoneNumber = this.contactsUtility.readCurrentDevicePhoneNumber();
+        } catch (Exception e) {
+            currentDevicePhoneNumber = this.settings.getStoredDevicePhoneNumber();
+        }
+
+        return phoneNumber.equals(currentDevicePhoneNumber);
+    }
+
     private boolean isNumberOnBlacklist(String phoneNumber) {
         try {
             if (this.contactsUtility.hasGroupNumberByGroupName(this.settings.getBlackListGroupName(), phoneNumber) == true) {
@@ -159,32 +85,15 @@ public class NumberRules {
     }
 
 
+    private boolean isNumberForeign(String phoneNumber) {
+        return PhoneNumbersComparator.isNumberForeign(phoneNumber, this.getCurrentCountryCode());
+    }
 
-    // TODO K. Orzechowski: not needed for 1.00, issue #50
-//    private boolean isNormalNumber(String phoneNumber) {
-//        // todo add this to the project https://github.com/KingsMentor/PhoneNumberValidator , issue #50
-//
-//        // TODO K. Orzechowski: not needed for 1.00, issue #50
-////        if (this.numberVerifier.isNumberValid(this.getCountryOfNumber(phoneNumber), phoneNumber) == false) {
-////            return false;
-////        }
-//
-//        // if (!PhoneNumberUtils.isGlobalPhoneNumber("+912012185234")){
-//        // return false;
-//        // }
-//
-//
-//        // if (!android.util.Patterns.PHONE.matcher(phoneNumber).matches()){
-//        //     return false;
-//        // }
-//
-//        return true; // TODO K. Orzechowski:  return true if normal number - no sms premium or smth., issue #50
-//    }
-
-    // TODO K. Orzechowski: not needed for 1.00, issue #50
-//    private boolean isNumberFromCurrentCountry(String phoneNumber) {
-//        return this.numberVerifier.isNumberValid(this.getCurrentDeviceCountry(), phoneNumber);
-//    }
+    private String getCurrentCountryCode() {
+        // Hardcoded for Poland. Implement automatic checking based on mcc when releasing to whole world.
+        // Issue #169
+        return "48";
+    }
 
     private boolean isInContactBook(String phoneNumber) {
         return this.contactsUtility.contactBookContainsNumber(phoneNumber);
