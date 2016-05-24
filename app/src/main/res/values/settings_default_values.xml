@@ -10,13 +10,13 @@
     <bool name="auto_response_to_sms_enabled_default_value">true</bool>
 
     <string name="auto_response_to_sms_template_default_value">
-        Cześć. Nie mogę odpisać, gdyż właśnie jadę motocyklem.
+        (Automatyczna odpowiedź) Cześć. Nie mogę odpisać, gdyż właśnie jadę motocyklem.
     </string>
 
     <bool name="auto_response_to_call_enabled_default_value">true</bool>
 
     <string name="auto_response_to_call_template_default_value">
-        Cześć. Nie mogę odebrać, gdyż właśnie jadę motocyklem.
+        (Automatyczna odpowiedź) Cześć. Nie mogę odebrać, gdyż właśnie jadę motocyklem.
     </string>
 
     <bool name="geolocation_request_enabled_default_value">false</bool>
@@ -27,7 +27,7 @@
 
 
     <string name="auto_response_to_sms_with_geolocation_template_default_value" formatted="false">
-        Cześć. Aktualnie jadę motocyklem i znajduję sie w %location%.
+        (Automatyczna odpowiedź) Cześć. Aktualnie jadę motocyklem i znajduję sie w %location%.
     </string>
 
     <bool name="showing_pending_notification_enabled_default_value">false</bool>
