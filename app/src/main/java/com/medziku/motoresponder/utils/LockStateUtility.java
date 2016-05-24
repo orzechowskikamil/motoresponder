@@ -1,6 +1,5 @@
 package com.medziku.motoresponder.utils;
 
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.KeyguardManager;
 import android.content.BroadcastReceiver;
@@ -55,7 +54,7 @@ public class LockStateUtility {
             @Override
             public void onReceive(Context arg0, Intent intent) {
                 // phone unlocked
-                if (LockStateUtility.this.isCurrentlyLocked == true ||  LockStateUtility.this.isFirstEvent) {
+                if (LockStateUtility.this.isCurrentlyLocked == true || LockStateUtility.this.isFirstEvent) {
                     LockStateUtility.this.isCurrentlyLocked = false;
                     LockStateUtility.this.isFirstEvent = false;
                     lockStateChangedCallback.apply(LockStateUtility.this.isCurrentlyLocked);
@@ -84,20 +83,25 @@ public class LockStateUtility {
      * If true, phone is unlocked and turned screen on, if false - not
      * This method doesn't perform constant listening.
      */
-    @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
-    public boolean isPhoneUnlocked() {
 
+    public boolean isPhoneUnlocked() {
         KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
         boolean isPhoneLocked = keyguardManager.inKeyguardRestrictedInputMode();
 
+        boolean phoneIsUnlocked = this.isScreenAwake() && !isPhoneLocked;
+
+        return phoneIsUnlocked;
+    }
+
+    @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
+    public boolean isScreenAwake() {
         PowerManager powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+
         boolean isScreenAwake = (Build.VERSION.SDK_INT < 20
                 ? powerManager.isScreenOn()
                 : powerManager.isInteractive());
 
-        boolean phoneIsUnlocked = isScreenAwake && !isPhoneLocked;
-
-        return phoneIsUnlocked;
+        return isScreenAwake;
     }
 
 }

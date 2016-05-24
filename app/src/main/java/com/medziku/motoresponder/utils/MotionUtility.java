@@ -8,7 +8,6 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.PowerManager;
-import android.util.Log;
 import com.google.common.util.concurrent.SettableFuture;
 
 import java.util.Timer;
@@ -20,26 +19,21 @@ import java.util.concurrent.Future;
  */
 public class MotionUtility {
 
-    private Sensor linearAccelerometer;
-
-
     /**
      * Events with acceleration delta bigger than accelerationDeltaTresholdForMovement to assume that phone is moving,
      * user is riding.
      */
     public int aboveTresholdEventsNeededToAssumeMovement = 6;
-
     /**
      * App wait for this time (milliseconds) for aboveTresholdEventsNeededToAssumeMovement amounts of events before
      * it assume that there is no movement of device
      */
     public int measuringMovementTimeout = 10 * 1000;
-
     /**
      * It's in microseconds! 10^-6 of second!
      */
     public int accelerometerDelayUs = 300 * 1000;
-
+    private Sensor linearAccelerometer;
     private SensorManager sensorManager;
     private PowerManager powerManager;
 
@@ -52,7 +46,7 @@ public class MotionUtility {
 
     /**
      * Reports if device is in motion or not.
-     * 
+     * <p/>
      * When process is disturbed by, for example, not turned on screen, exception AccelerometerNotAvailableException is thrown,
      * or null is set as promise value.
      *
@@ -130,9 +124,9 @@ public class MotionUtility {
             public void run() {
                 // TODO K. Orzechowski: extract to one function, this 4 lines are copied. #issue not needed
                 MotionUtility.this.sensorManager.unregisterListener(listener);
-                
+
                 boolean screenTurnedOff = MotionUtility.this.isDeviceScreenTurnedOff();
-                
+
                 if (mWakeLock.isHeld()) {
                     mWakeLock.release();
                 }
@@ -140,8 +134,8 @@ public class MotionUtility {
                 // because we can't throw exception, we set value to null to indicate that something break measurement process.
                 if (screenTurnedOff) {
                     result.set(null);
-                }                else{
-                result.set(false);
+                } else {
+                    result.set(false);
                 }
             }
         }, this.measuringMovementTimeout);
@@ -151,9 +145,19 @@ public class MotionUtility {
         return result;
     }
 
-    @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
+
     protected boolean isDeviceScreenTurnedOff() {
-        return !this.powerManager.isInteractive();
+        return !this.isScreenAwake();
+    }
+
+    // TODO K. Orzechowski: copied from lock state utilty. Think about refactoring. Maybe another utility
+    @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
+    protected boolean isScreenAwake() {
+        boolean isScreenAwake = (Build.VERSION.SDK_INT < 20
+                ? this.powerManager.isScreenOn()
+                : this.powerManager.isInteractive());
+
+        return isScreenAwake;
     }
 
 }
