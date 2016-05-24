@@ -39,6 +39,7 @@ public class RidingSettingsPreferenceFragment extends RidingSettingsPreferenceFr
         this.getIsRidingAssumedPreference().setEnabled(!this.settings.isSensorCheckEnabled() && responderEnabled);
         this.getSensorCheckEnabledPreference().setEnabled(responderEnabled);
         this.getWaitBeforeResponsePreference().setEnabled(responderEnabled);
+        this.getAssumePhoneUnlockedAsNotRidingPreference().setEnabled(responderEnabled);
     }
 
 
@@ -78,6 +79,9 @@ abstract class RidingSettingsPreferenceFragmentDefinition extends PreferenceFrag
         return (EditTextPreference) this.findPreferenceByID(R.string.wait_before_response_key);
     }
 
+    protected SwitchPreference getAssumePhoneUnlockedAsNotRidingPreference() {
+        return (SwitchPreference) this.findPreferenceByID(R.string.assume_screen_unlocked_as_not_riding_key);
+    }
 }
 
 

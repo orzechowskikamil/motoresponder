@@ -106,6 +106,7 @@ abstract class NumberRulesPreferenceFragmentsDefinition extends PreferenceFragme
         return (SwitchPreference) this.findPreferenceByID(R.string.responding_restricted_to_contact_list_key);
     }
 
+
     public EditTextPreference getDevicePhoneNumberPreference() {
         return (EditTextPreference) this.findPreferenceByID(R.string.device_phone_number_key);
     }
