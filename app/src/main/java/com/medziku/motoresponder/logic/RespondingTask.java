@@ -10,8 +10,8 @@ import com.medziku.motoresponder.utils.SMSUtility;
 public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolean> {
 
     public static final String RECIPIENT_SUBSTITUTION_TAG = "%recipient%";
-    private ContactsUtility contactsUtility;
     protected DecisionLog log;
+    private ContactsUtility contactsUtility;
     private SMSUtility smsUtility;
     private NotificationUtility notificationUtility;
     private Settings settings;
@@ -41,13 +41,7 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
 
 
     protected Boolean doInBackground(RespondingSubject... params) {
-        try {
-            // This must be wrapped into try.. catch... otherwise errors in 'doItBackground' method of async task will break application.
-            this.handleRespondingTask(params[0]);
-        } catch (Exception e) {
-            // best place for catching errors from respondingTask
-            e.printStackTrace();
-        }
+        this.handleRespondingTask(params[0]);
         return true;
     }
 
