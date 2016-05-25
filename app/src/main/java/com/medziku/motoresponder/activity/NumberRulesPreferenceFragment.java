@@ -3,6 +3,7 @@ package com.medziku.motoresponder.activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.preference.*;
+import android.util.Log;
 import com.google.common.base.Predicate;
 import com.medziku.motoresponder.R;
 import com.medziku.motoresponder.logic.Settings;
@@ -45,7 +46,6 @@ public class NumberRulesPreferenceFragment extends NumberRulesPreferenceFragment
 
     private void setupList(ListPreference listPreference, String dontUseText) {
         List groupNames = contactsUtility.readAllContactBookGroupNames();
-
         List<String> entriesList = new ArrayList<>(groupNames);
         List<String> entryValuesList = new ArrayList<>(groupNames);
 

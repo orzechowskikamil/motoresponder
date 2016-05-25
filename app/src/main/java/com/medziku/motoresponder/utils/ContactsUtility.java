@@ -44,20 +44,28 @@ public class ContactsUtility {
     public List<String> readAllContactBookGroupNames() {
         List<String> names = new ArrayList<>();
 
-        String[] projection = new String[]{Groups._ID, Groups.TITLE};
+        // Looks like there is no reliable way of selecting all groups on all android devices, because some devices
+        // has second group with same title and with zero contacts. To overcome this, I select only groups which
+        // have at least one contacts.
+        String[] projection = new String[]{Groups._ID, Groups.TITLE, Groups.SUMMARY_COUNT};
 
-        Cursor cursor = this.context.getContentResolver().query(Groups.CONTENT_URI, projection, null, null, null);
+        Cursor cursor = this.context.getContentResolver().query(Groups.CONTENT_SUMMARY_URI, projection, null, null, null);
 
-
+        String debugRow = null;
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 do {
-                    String groupName = cursor.getString(cursor.getColumnIndex(Groups.TITLE));
-                    names.add(groupName);
+                    // querying SUMMARY_COUNT doesn't work, needs to be filtered in code.
+                    int contactsCount = Integer.parseInt(cursor.getString(cursor.getColumnIndex(Groups.SUMMARY_COUNT)));
+                    if (contactsCount > 0) {
+                        String groupName = cursor.getString(cursor.getColumnIndex(Groups.TITLE));
+                        names.add(groupName);
+                    }
                 } while (cursor.moveToNext());
             }
             cursor.close();
         }
+
         return names;
     }
 
@@ -66,10 +74,10 @@ public class ContactsUtility {
         String groupID = null;
 
         String[] projection = new String[]{Groups._ID};
-        String selection = Groups.TITLE + "=?";
+        String selection = Groups.TITLE + " = ? AND " + Groups.SUMMARY_COUNT + " > 0";
         String[] selectionArgs = {groupName};
 
-        Cursor cursor = this.context.getContentResolver().query(Groups.CONTENT_URI, projection, selection, selectionArgs, null);
+        Cursor cursor = this.context.getContentResolver().query(Groups.CONTENT_SUMMARY_URI, projection, selection, selectionArgs, null);
 
 
         if (cursor != null) {
@@ -196,6 +204,7 @@ public class ContactsUtility {
 
     /**
      * It returns current mcc. Mcc is always unique. For example for Poland it's 260.
+     *
      * @return
      */
     public String readCurrentMobileCountryCode() {
