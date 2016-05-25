@@ -55,7 +55,7 @@ public class RespondingDecision {
 
         // we shouldn't sent auto responses over and over so sent only if amount of responses sent to given number
         // since last normal response not exceed the limit
-        if (this.alreadyResponded.getAmountOfAutomaticalResponsesSinceUserResponded(subject.getPhoneNumber()) > this.getLimitForAutoresponses(subject)) {
+        if (this.exceededAmountOfAllowedAutomaticalResponsesSinceUserResponded(subject)) {
             this.log.add("Cant sent more responses to this number.");
             return false;
         }
@@ -91,13 +91,22 @@ public class RespondingDecision {
 
         // Finally check if application doesn't respond in another thread when we were determining if user is riding
         // it is possible if applicattion will receive two smses quickly.
-        if (this.alreadyResponded.getAmountOfAutomaticalResponsesSinceUserResponded(subject.getPhoneNumber()) > this.getLimitForAutoresponses(subject)) {
+        if (this.exceededAmountOfAllowedAutomaticalResponsesSinceUserResponded(subject)) {
             this.log.add("Application already sent response between receiving input and determining if user is riding.");
             return false;
         }
 
         // all excluding conditions not met, we should respond.
         return true;
+    }
+
+    private boolean exceededAmountOfAllowedAutomaticalResponsesSinceUserResponded(RespondingSubject subject) {
+        int limitOfAutoResponsesForRespondingSubject = this.getLimitForAutoresponses(subject);
+        int automaticalSMSSent = this.alreadyResponded.getAmountOfAutomaticalResponsesSinceUserResponded(subject.getPhoneNumber());
+
+        boolean limitExceeded = automaticalSMSSent >= limitOfAutoResponsesForRespondingSubject;
+
+        return limitExceeded;
     }
 
     private int getLimitForAutoresponses(RespondingSubject subject) {

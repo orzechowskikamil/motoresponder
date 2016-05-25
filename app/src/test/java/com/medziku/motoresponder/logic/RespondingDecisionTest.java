@@ -29,6 +29,8 @@ public class RespondingDecisionTest {
 
 
     @Before
+    // test is build in manner, that all values in setup make positive decision, and in each test I am testing
+    // if changing one parameter correctly makes decision negative.
     public void runBeforeTests() {
         this.fakeRespondingSubject = new CallRespondingSubject(this.FAKE_PHONE_NUMBER);
         this.alreadyResponded = Mockito.mock(AlreadyResponded.class);
@@ -50,7 +52,7 @@ public class RespondingDecisionTest {
 
         this.setSensorCheckEnabled(true);
         this.setIsRidingAssumed(false);
-        this.setAlreadyRespondedGetAmountOfAutomaticalResponsesSent(1);
+        this.setAlreadyRespondedGetAmountOfAutomaticalResponsesSent(0);
     }
 
 
@@ -109,6 +111,9 @@ public class RespondingDecisionTest {
     @Test
     public void tooMuchAutomaticalResponsesMakeNegativeDecision() {
         this.setAlreadyRespondedGetAmountOfAutomaticalResponsesSent(5);
+        this.expectRespondingDecisionShouldRespondToBe(false);
+
+        this.setAlreadyRespondedGetAmountOfAutomaticalResponsesSent(1);
         this.expectRespondingDecisionShouldRespondToBe(false);
     }
 
