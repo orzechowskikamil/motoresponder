@@ -20,12 +20,10 @@
     <string name="assume_screen_unlocked_as_not_riding_title">Test blokady ekranu
     </string>
     <string name="assume_screen_unlocked_as_not_riding_summary_on">Aplikacja nie będzie odpowiadała automatycznie gdy
-        ekran urządzenia
-        jest odblokowany, gdyż to oznacza że robisz coś na telefonie, więc nie jedziesz w tym momencie.
+        ekran urządzenia jest odblokowany, gdyż to oznacza że robisz coś na telefonie, więc nie jedziesz w tym momencie.
     </string>
     <string name="assume_screen_unlocked_as_not_riding_summary_off">Aplikacja nie będzie brała pod uwagę tego czy ekran
-        jest zablokowany
-        czy nie, przy decyzji czy potrzebna jest automatyczna odpowiedź.
+        jest zablokowany czy nie, przy decyzji czy potrzebna jest automatyczna odpowiedź.
     </string>
 
     <string name="wait_before_response_title">Zwlekaj z odpowiedzią (s)</string>
@@ -59,9 +57,8 @@
 
     <string name="staying_still_speed_title">Maks. prędkość postoju (km/h)</string>
     <string name="staying_still_speed_summary">Jeśli aktualna prędkość będzie mniejsza niż ta prędkość, aplikacja uzna
-        że stoisz w miejscu i
-        wykona dodatkowy test GPS (czasami gdy urządzenie się nie porusza, GPS raportuje prędkość typu 1.5 km/h, więc
-        wartością nie powinno być to 0 km/h).
+        że stoisz w miejscu i wykona dodatkowy test GPS (czasami gdy urządzenie się nie porusza, GPS raportuje prędkość
+        typu 1.5 km/h, więc wartością nie powinno być to 0 km/h).
     </string>
 
 

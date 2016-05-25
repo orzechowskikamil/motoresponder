@@ -8,8 +8,8 @@ android {
         applicationId "com.medziku.motoresponder"
         minSdkVersion 18
         targetSdkVersion 22
-        versionCode 3
-        versionName "1.02.2"
+        versionCode 4
+        versionName "1.02.3"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
