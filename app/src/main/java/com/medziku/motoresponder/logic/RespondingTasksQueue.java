@@ -1,8 +1,8 @@
 package com.medziku.motoresponder.logic;
 
 import com.google.common.base.Predicate;
-import com.medziku.motoresponder.pseudotesting.integration.RespondingDecisionIntegrationTest;
 import com.medziku.motoresponder.utils.ContactsUtility;
+import com.medziku.motoresponder.utils.LockStateUtility;
 import com.medziku.motoresponder.utils.NotificationUtility;
 import com.medziku.motoresponder.utils.SMSUtility;
 
@@ -10,18 +10,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RespondingTasksQueue {
-    private ContactsUtility contactsUtility;
     protected List<RespondingTask> pendingRespondingTasks;
+    private ContactsUtility contactsUtility;
     private RespondingDecision respondingDecision;
     private Settings settings;
     private NotificationUtility notificationUtility;
     private SMSUtility smsUtility;
     private ResponsePreparator responsePreparator;
     private DecisionLog log;
+    private LockStateUtility lockStateUtility;
 
     public RespondingTasksQueue(NotificationUtility notificationUtility,
                                 SMSUtility smsUtility,
                                 ContactsUtility contactsUtility,
+                                LockStateUtility lockStateUtility,
                                 Settings settings,
                                 RespondingDecision respondingDecision,
                                 ResponsePreparator responsePreparator,
@@ -33,6 +35,7 @@ public class RespondingTasksQueue {
         this.respondingDecision = respondingDecision;
         this.responsePreparator = responsePreparator;
         this.log = log;
+        this.lockStateUtility = lockStateUtility;
         this.contactsUtility = contactsUtility;
     }
 
@@ -44,6 +47,7 @@ public class RespondingTasksQueue {
                 this.notificationUtility,
                 this.smsUtility,
                 this.contactsUtility,
+                this.lockStateUtility,
                 this.responsePreparator,
                 this.log,
                 resultCallback);

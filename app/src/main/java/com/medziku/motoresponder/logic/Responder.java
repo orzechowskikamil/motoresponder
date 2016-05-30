@@ -238,7 +238,7 @@ public class Responder {
         this.notificationUtility = new NotificationUtility(this.context);
         this.locationUtility = new LocationUtility(this.context);
         this.contactsUtility = new ContactsUtility(this.context);
-        this.motionUtility = new MotionUtility(this.context);
+        this.motionUtility = new MotionUtility(this.context, this.lockStateUtility);
         this.sensorsUtility = new SensorsUtility(this.context);
         this.wiFiUtility = new WiFiUtility(this.context);
     }
@@ -280,6 +280,7 @@ public class Responder {
                 this.notificationUtility,
                 this.smsUtility,
                 this.contactsUtility,
+                this.lockStateUtility,
                 this.settings,
                 this.respondingDecision,
                 this.responsePreparator,

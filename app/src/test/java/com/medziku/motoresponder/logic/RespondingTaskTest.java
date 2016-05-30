@@ -1,21 +1,22 @@
 package com.medziku.motoresponder.logic;
 
+import android.os.PowerManager;
 import com.google.common.base.Predicate;
 import com.medziku.motoresponder.utils.ContactsUtility;
+import com.medziku.motoresponder.utils.LockStateUtility;
 import com.medziku.motoresponder.utils.NotificationUtility;
 import com.medziku.motoresponder.utils.SMSUtility;
-import com.medziku.motoresponder.utils.SharedPreferencesUtility;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
-import org.mockito.internal.verification.Calls;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
 
@@ -31,6 +32,7 @@ public class RespondingTaskTest {
     private String FAKE_PHONE_NUMBER = "777777777";
     private ResponsePreparator responsePreparator;
     private ContactsUtility contactsUtility;
+    private LockStateUtility lockStateUtility;
 
 
     @Before
@@ -43,6 +45,7 @@ public class RespondingTaskTest {
         this.responsePreparator = Mockito.mock(ResponsePreparator.class);
         this.returnCallback = Mockito.mock(Predicate.class);
         this.contactsUtility = Mockito.mock(ContactsUtility.class);
+        this.lockStateUtility = Mockito.mock(LockStateUtility.class);
         DecisionLog log = Mockito.mock(DecisionLog.class);
 
 
@@ -52,6 +55,7 @@ public class RespondingTaskTest {
                 this.notificationUtility,
                 this.smsUtility,
                 this.contactsUtility,
+                this.lockStateUtility,
                 this.responsePreparator,
                 log,
                 this.returnCallback);
@@ -195,6 +199,21 @@ public class RespondingTaskTest {
         verify(this.smsUtility, times(0)).sendSMS(anyString(), anyString(), any(Predicate.class));
     }
 
+    @Test
+    public void testOfWakelock() {
+        this.respondingTask.callLogic(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
+        verify(this.lockStateUtility, times(1)).acquirePartialWakeLock();
+        verify(this.lockStateUtility, times(1)).releaseWakeLock(any(PowerManager.WakeLock.class));
+    }
+
+    @Test
+    public void testOfWakelockOnTerminatedTask() {
+        this.respondingTask.terminated = true;
+        this.respondingTask.callLogic(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
+        verify(this.lockStateUtility, times(1)).acquirePartialWakeLock();
+        verify(this.lockStateUtility, atLeast(1)).releaseWakeLock(any(PowerManager.WakeLock.class));
+    }
+
 
     @Test
     public void testOfRetryingSendingSms() {
@@ -232,10 +251,11 @@ class ExposedRespondingTask extends RespondingTask {
                                  NotificationUtility notificationUtility,
                                  SMSUtility smsUtility,
                                  ContactsUtility contactsUtility,
+                                 LockStateUtility lockStateUtility,
                                  ResponsePreparator responsePreparator,
                                  DecisionLog log,
                                  Predicate<Boolean> resultCallback) {
-        super(respondingDecision, sharedPreferencesUtility, notificationUtility, smsUtility, contactsUtility, responsePreparator, log, resultCallback);
+        super(respondingDecision, sharedPreferencesUtility, notificationUtility, smsUtility, contactsUtility, lockStateUtility, responsePreparator, log, resultCallback);
     }
 
 
@@ -250,7 +270,6 @@ class ExposedRespondingTask extends RespondingTask {
 
     @Override
     protected boolean isTerminated() {
-
         return this.terminated;
     }
 

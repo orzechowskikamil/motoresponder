@@ -25,11 +25,11 @@ public class RespondingDecisionIntegrationTest {
 
         LocationUtility locationUtility = new LocationUtility(this.context);
         SensorsUtility sensorsUtility = new SensorsUtility(this.context);
-        MotionUtility motionUtility = new MotionUtility(this.context);
+        LockStateUtility lockStateUtility = new LockStateUtility(this.context);
+        MotionUtility motionUtility = new MotionUtility(this.context, lockStateUtility);
         ContactsUtility contactsUtility = new ContactsUtility(this.context);
         CallsUtility callsUtility = new CallsUtility(this.context);
         SMSUtility smsUtility = new SMSUtility(this.context);
-        LockStateUtility lockStateUtility = new LockStateUtility(this.context);
         SharedPreferencesUtility sharedPreferencesUtility = new SharedPreferencesUtility(this.context);
         Settings settings = new Settings(sharedPreferencesUtility);
         WiFiUtility wifiUtility = new WiFiUtility(this.context);

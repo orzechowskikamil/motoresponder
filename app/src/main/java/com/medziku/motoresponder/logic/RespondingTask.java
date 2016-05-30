@@ -1,8 +1,10 @@
 package com.medziku.motoresponder.logic;
 
 import android.os.AsyncTask;
+import android.os.PowerManager;
 import com.google.common.base.Predicate;
 import com.medziku.motoresponder.utils.ContactsUtility;
+import com.medziku.motoresponder.utils.LockStateUtility;
 import com.medziku.motoresponder.utils.NotificationUtility;
 import com.medziku.motoresponder.utils.SMSUtility;
 
@@ -18,13 +20,16 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
     private Predicate<Boolean> resultCallback;
     private RespondingDecision respondingDecision;
     private ResponsePreparator responsePreparator;
+    private LockStateUtility lockStateUtility;
     private boolean isFinished;
+    private PowerManager.WakeLock wakeLock;
 
     public RespondingTask(RespondingDecision respondingDecision,
                           Settings settings,
                           NotificationUtility notificationUtility,
                           SMSUtility smsUtility,
                           ContactsUtility contactsUtility,
+                          LockStateUtility lockStateUtility,
                           ResponsePreparator responsePreparator,
                           DecisionLog log,
                           Predicate<Boolean> resultCallback) {
@@ -34,6 +39,7 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
         this.notificationUtility = notificationUtility;
         this.smsUtility = smsUtility;
         this.responsePreparator = responsePreparator;
+        this.lockStateUtility = lockStateUtility;
         this.contactsUtility = contactsUtility;
         this.log = log;
         this.isFinished = false;
@@ -56,6 +62,7 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
         this.showDebugNotificationIfEnabled();
 
         this.isFinished = true;
+        this.stopPreventingPhoneFromSleep();
         this.resultCallback.apply(true);
     }
 
@@ -96,6 +103,8 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
             return;
         }
 
+        this.preventPhoneFromSleep();
+
         // wait some time before responding, to allow user manually respond
         try {
             Thread.sleep(this.settings.getWaitBeforeResponseSeconds() * 1000);
@@ -106,6 +115,7 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
         // K. Orzechowski: I am not sure, but I read that I should check for this.
         if (this.isTerminated()) {
             this.log.add("Not responded because phone unlocked in meantime.");
+            this.finishTask();
             return;
         }
 
@@ -119,6 +129,7 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
             // this check can took long time so before responding we can check again for cancellation.
             if (this.isTerminated()) {
                 this.log.add("Not responded because phone unlocked after determining responding decision.");
+                this.finishTask();
                 return;
             }
 
@@ -131,6 +142,16 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
 
         if (this.settings.isShowingSummaryNotificationEnabled() && shouldRespond) {
             this.showSummaryNotification(subject.getPhoneNumber());
+        }
+    }
+
+    private void preventPhoneFromSleep() {
+        this.wakeLock = this.lockStateUtility.acquirePartialWakeLock();
+    }
+
+    private void stopPreventingPhoneFromSleep() {
+        if (this.wakeLock != null) {
+            this.lockStateUtility.releaseWakeLock(this.wakeLock);
         }
     }
 
@@ -206,7 +227,6 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
             this.showDebugNotification();
         }
     }
-
 
 }
 

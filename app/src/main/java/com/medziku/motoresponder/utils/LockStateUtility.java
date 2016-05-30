@@ -21,9 +21,13 @@ public class LockStateUtility {
     private BroadcastReceiver currentScreenUnlockReceiver;
     private boolean isCurrentlyLocked = false;
     private boolean isFirstEvent = true;
+    private PowerManager powerManager;
+    private KeyguardManager keyguardManager;
 
     public LockStateUtility(Context context) {
         this.context = context;
+        this.powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+        this.keyguardManager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
     }
 
 
@@ -32,10 +36,9 @@ public class LockStateUtility {
      * Method return state by calling callback predicate. Value in callback is true if screen is locked, and false when it is unlocked.
      * For simplicity, only one observer can listen in one time.
      */
-    public void listenToLockStateChanges(final Predicate<Boolean> lockStateChangedCallback) throws Exception {
+    public void listenToLockStateChanges(final Predicate<Boolean> lockStateChangedCallback) throws IllegalArgumentException {
         if (this.isCallbackRegistered) {
-            // TODO K.Orzechowski maybe use better fitted exception. #Issue not needed
-            throw new Exception("Callback already registered");
+            throw new IllegalArgumentException("Callback already registered");
         }
         this.isCallbackRegistered = true;
 
@@ -85,8 +88,7 @@ public class LockStateUtility {
      */
 
     public boolean isPhoneUnlocked() {
-        KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
-        boolean isPhoneLocked = keyguardManager.inKeyguardRestrictedInputMode();
+        boolean isPhoneLocked = this.keyguardManager.inKeyguardRestrictedInputMode();
 
         boolean phoneIsUnlocked = this.isScreenAwake() && !isPhoneLocked;
 
@@ -95,13 +97,32 @@ public class LockStateUtility {
 
     @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
     public boolean isScreenAwake() {
-        PowerManager powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-
         boolean isScreenAwake = (Build.VERSION.SDK_INT < 20
-                ? powerManager.isScreenOn()
-                : powerManager.isInteractive());
+                ? this.powerManager.isScreenOn()
+                : this.powerManager.isInteractive());
 
         return isScreenAwake;
     }
 
+    public PowerManager.WakeLock acquirePartialWakeLock() {
+        return this.acquireWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Motoresponder partial wakelock");
+    }
+
+    public PowerManager.WakeLock acquireScreenAwakeWakeLock() {
+        return this.acquireWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "Motoresponder screen bright wakelock");
+    }
+
+    private PowerManager.WakeLock acquireWakeLock(int type, String tag) {
+        PowerManager.WakeLock wakeLock = this.powerManager.newWakeLock(type, tag);
+
+        wakeLock.acquire();
+
+        return wakeLock;
+    }
+
+    public void releaseWakeLock(PowerManager.WakeLock mWakeLock) {
+        if (mWakeLock.isHeld()) {
+            mWakeLock.release();
+        }
+    }
 }

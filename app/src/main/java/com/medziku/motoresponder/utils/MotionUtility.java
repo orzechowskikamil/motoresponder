@@ -1,12 +1,10 @@
 package com.medziku.motoresponder.utils;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.os.Build;
 import android.os.PowerManager;
 import com.google.common.util.concurrent.SettableFuture;
 
@@ -35,12 +33,13 @@ public class MotionUtility {
     public int accelerometerDelayUs = 300 * 1000;
     private Sensor linearAccelerometer;
     private SensorManager sensorManager;
-    private PowerManager powerManager;
+    private LockStateUtility lockStateUtility;
 
-    public MotionUtility(Context context) {
-        this.powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+    public MotionUtility(Context context, LockStateUtility lockStateUtility) {
+
         this.sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         this.linearAccelerometer = this.sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
+        this.lockStateUtility = lockStateUtility;
     }
 
 
@@ -56,10 +55,7 @@ public class MotionUtility {
     public Future<Boolean> isDeviceInMotion(final double requiredAcceleration) throws AccelerometerNotAvailableException {
         int TIME_FOR_TURNING_ON_SCREEN = 2000;
 
-        final PowerManager.WakeLock mWakeLock = this.powerManager.newWakeLock(
-                PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "TAG");
-
-        mWakeLock.acquire();
+        final PowerManager.WakeLock wakeLock = this.lockStateUtility.acquireScreenAwakeWakeLock();
 
         try {
             Thread.sleep(TIME_FOR_TURNING_ON_SCREEN);
@@ -106,9 +102,7 @@ public class MotionUtility {
 
                 if (eventCounter > MotionUtility.this.aboveTresholdEventsNeededToAssumeMovement) {
                     MotionUtility.this.sensorManager.unregisterListener(this);
-                    if (mWakeLock.isHeld()) {
-                        mWakeLock.release();
-                    }
+                    MotionUtility.this.lockStateUtility.releaseWakeLock(wakeLock);
                     result.set(true);
                 }
 
@@ -127,9 +121,8 @@ public class MotionUtility {
 
                 boolean screenTurnedOff = MotionUtility.this.isDeviceScreenTurnedOff();
 
-                if (mWakeLock.isHeld()) {
-                    mWakeLock.release();
-                }
+                MotionUtility.this.lockStateUtility.releaseWakeLock(wakeLock);
+
                 // it's because if screen is turned off before measurement finished, it means result can be falsy negative
                 // because we can't throw exception, we set value to null to indicate that something break measurement process.
                 if (screenTurnedOff) {
@@ -147,18 +140,9 @@ public class MotionUtility {
 
 
     protected boolean isDeviceScreenTurnedOff() {
-        return !this.isScreenAwake();
+        return !this.lockStateUtility.isScreenAwake();
     }
 
-    // TODO K. Orzechowski: copied from lock state utilty. Think about refactoring. Maybe another utility
-    @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
-    protected boolean isScreenAwake() {
-        boolean isScreenAwake = (Build.VERSION.SDK_INT < 20
-                ? this.powerManager.isScreenOn()
-                : this.powerManager.isInteractive());
-
-        return isScreenAwake;
-    }
 
 }
 

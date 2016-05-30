@@ -6,7 +6,8 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 public class RespondingTasksQueueTest {
@@ -86,7 +87,7 @@ class ExposedRespondingTasksQueue extends RespondingTasksQueue {
 
 
     public ExposedRespondingTasksQueue() {
-        super(null, null, null, null, null, null, null);
+        super(null, null, null, null, null, null, null, null);
     }
 
     @Override

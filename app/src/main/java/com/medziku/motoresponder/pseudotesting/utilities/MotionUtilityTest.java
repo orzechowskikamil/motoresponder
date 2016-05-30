@@ -3,6 +3,7 @@ package com.medziku.motoresponder.pseudotesting.utilities;
 import android.content.Context;
 import android.util.Log;
 import com.medziku.motoresponder.utils.AccelerometerNotAvailableException;
+import com.medziku.motoresponder.utils.LockStateUtility;
 import com.medziku.motoresponder.utils.MotionUtility;
 
 import java.util.concurrent.Future;
@@ -13,6 +14,7 @@ public class MotionUtilityTest {
 
     private MotionUtility motionUtility;
     private Context context;
+    private LockStateUtility lockStateUtility;
 
     public MotionUtilityTest(Context context) {
         this.context = context;
@@ -20,7 +22,8 @@ public class MotionUtilityTest {
 
 
     private void setUp() {
-        this.motionUtility = new MotionUtility(this.context);
+        this.lockStateUtility = new LockStateUtility(this.context);
+        this.motionUtility = new MotionUtility(this.context, this.lockStateUtility);
     }
 
 
