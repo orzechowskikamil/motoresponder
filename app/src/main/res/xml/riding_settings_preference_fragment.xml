@@ -2,14 +2,15 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
                   android:key="riding_settings_preference_fragment">
 
-    <EditTextPreference
-            android:dialogTitle="@string/wait_before_response_title"
-            android:key="@string/wait_before_response_key"
-            android:summary="@string/wait_before_response_summary"
-            android:defaultValue="@integer/wait_before_response_default_value"
+    <ListPreference
             android:title="@string/wait_before_response_title"
-            android:numeric="integer"/>
-
+            android:summary="@string/wait_before_response_summary"
+            android:key="@string/wait_before_response_key"
+            android:defaultValue="@integer/wait_before_response_default_value"
+            android:entries="@array/wait_before_response_entries"
+            android:entryValues="@array/wait_before_response_entry_values"
+            android:dialogTitle="@string/wait_before_response_dialog_title"
+            />
 
     <SwitchPreference
             android:summaryOn="@string/assume_screen_unlocked_as_not_riding_summary_on"

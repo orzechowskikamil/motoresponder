@@ -26,10 +26,10 @@
         jest zablokowany czy nie, przy decyzji czy potrzebna jest automatyczna odpowiedź.
     </string>
 
-    <string name="wait_before_response_title">Zwlekaj z odpowiedzią (s)</string>
-    <string name="wait_before_response_summary">Aplikacja poczeka tyle sekund z próbami automatycznej odpowiedzi, dając
-        ci czas byś odpisał/oddzwonił samemu.
+    <string name="wait_before_response_title">Zwlekaj z odpowiedzią</string>
+    <string name="wait_before_response_summary">Aplikacja poczeka tyle sekund z odpowiedzią, dając ci czas byś odpowiedział samemu.
     </string>
+    <string name="wait_before_response_dialog_title">Aplikacja odpowie...</string>
 
 
     <string name="include_proximity_check_title">Test sensora zbliżeniowego</string>

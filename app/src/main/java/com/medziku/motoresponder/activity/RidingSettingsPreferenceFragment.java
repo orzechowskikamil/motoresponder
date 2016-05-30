@@ -75,8 +75,8 @@ abstract class RidingSettingsPreferenceFragmentDefinition extends PreferenceFrag
         return (SwitchPreference) this.findPreferenceByID(R.string.sensor_check_enabled_key);
     }
 
-    protected EditTextPreference getWaitBeforeResponsePreference() {
-        return (EditTextPreference) this.findPreferenceByID(R.string.wait_before_response_key);
+    protected ListPreference getWaitBeforeResponsePreference() {
+        return (ListPreference) this.findPreferenceByID(R.string.wait_before_response_key);
     }
 
     protected SwitchPreference getAssumePhoneUnlockedAsNotRidingPreference() {
