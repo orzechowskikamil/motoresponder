@@ -35,9 +35,9 @@
     </string>
 
 
-    <string name="dont_use_geolocation_whitelist_text">Nie ograniczaj geolokacji</string>
+    <string name="dont_use_geolocation_whitelist_text">Nie używaj whitelisty</string>
 
-    <string name="geolocation_whitelist_group_name_title">Whitelista geolokacji</string>
+    <string name="geolocation_whitelist_group_name_title">Whitelista pytań o lokalizację</string>
     <string name="geolocation_whitelist_group_name_summary">Wybranie tutaj grupy kontaktów spowoduje że żaden numer nie
         będący w tej grupie nie dostanie informacji o twojej lokalizacji, gdy o nią zapyta. Do wyboru dostępne są tylko
         grupy zawierające jakieś kontakty.

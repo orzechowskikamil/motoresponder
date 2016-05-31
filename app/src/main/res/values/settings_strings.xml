@@ -37,18 +37,18 @@
         Ten tekst będzie użyty jako automatyczna odpowiedź na nieodebrane połączenie, gdy jedziesz na motocyklu.
     </string>
 
-    <string name="geolocation_request_enabled_title">Pytanie o pozycję</string>
+    <string name="geolocation_request_enabled_title">Pytanie o lokalizację</string>
     <string name="geolocation_request_enabled_summary_on">
-        Aplikacja na pytanie o pozycję odpowie SMSem z linkiem do mapki z zaznaczoną twoją obecną pozycją.
+        Aplikacja na pytanie o lokalizację odpowie SMSem z linkiem do mapki z zaznaczoną twoją obecną pozycją.
     </string>
     <string name="geolocation_request_enabled_summary_off">
-        Aplikacja pytanie o pozycję potraktuje jako zwykły SMS przychodzący i nie będzie wysyłać SMSów z mapką z twoją
+        Aplikacja pytanie o lokalizację potraktuje jako zwykły SMS przychodzący i nie będzie wysyłać SMSów z mapką z twoją
         pozycją.
     </string>
 
 
     <string name="auto_response_to_sms_with_geolocation_template_title">
-        Tekst odpowiedzi na pytanie o pozycję
+        Tekst odpowiedzi na pytanie o lokalizację.
     </string>
     <string name="auto_response_to_sms_with_geolocation_template_summary" formatted="false">
         Ten tekst będzie użyty jako odpowiedź, gdy ktoś pyta gdzie jesteś, gdy jedziesz na motocyklu. Odpowiedź powinna
