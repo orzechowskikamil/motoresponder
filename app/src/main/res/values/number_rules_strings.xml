@@ -1,53 +1,57 @@
 <resources>
 
-    <string name="responding_restricted_to_contact_list_title">Odpowiadaj tylko numerom z kontaktów.</string>
-    <string name="responding_restricted_to_contact_list_summary_on">Aplikacja nie będzie odpowiadała numerom które
-        nie są zapisane w kontaktach.
+    <string name="responding_restricted_to_contact_list_title">Respond only to your contacts</string>
+    <string name="responding_restricted_to_contact_list_summary_on">Application will respond only if number is in your
+        contacts list.
     </string>
-    <string name="responding_restricted_to_contact_list_summary_off">Aplikacja nie będzie brała pod uwagę przy
-        odpowiadaniu, czy dany numer znajduje się w kontaktach czy nie.
-    </string>
-
-    <string name="responding_restricted_to_current_country_title">Odpowiadaj tylko krajowym numerom.</string>
-    <string name="responding_restricted_to_current_country_summary_on">Aplikacja będzie odpowiadała tylko numerom
-        z tego samego kraju co ty, aby nie narażać cię na koszta.
-    </string>
-    <string name="responding_restricted_to_current_country_summary_off">Aplikacja nie będzie brała pod uwagę z jakiego
-        kraju numer pochodzi.
+    <string name="responding_restricted_to_contact_list_summary_off">Application will not care if number is in your
+        contacts list or not.
     </string>
 
-
-    <string name="dont_use_whitelist_text">Nie używaj whitelisty</string>
-
-    <string name="whitelist_group_name_title">Whitelista</string>
-    <string name="whitelist_group_name_summary">Jeśli wybierzesz którąś z grup kontaktów, będzie ona whitelistą (żaden
-        numer spoza tej grupy nie dostanie automatycznej odpowiedzi). Do wyboru dostępne są tylko grupy zawierające
-        jakieś kontakty.
+    <string name="responding_restricted_to_current_country_title">Don\'t respond to foreign numbers</string>
+    <string name="responding_restricted_to_current_country_summary_on">Application will respond only if number is coming
+        from your country.
     </string>
-
-    <string name="dont_use_blacklist_text">Nie używaj blacklisty</string>
-
-
-    <string name="blacklist_group_name_title">Blacklista</string>
-    <string name="blacklist_group_name_summary">Jeśli wybierzesz którąś z grup kontaktów, będzie ona blacklistą (każdy
-        numer z tej grupy nie dostanie automatycznej odpowiedzi). Do wyboru dostępne są tylko grupy zawierające
-        jakieś kontakty.
+    <string name="responding_restricted_to_current_country_summary_off">Application will not care if number is foreign
+        or not.
     </string>
 
 
-    <string name="dont_use_geolocation_whitelist_text">Nie używaj whitelisty</string>
+    <string name="dont_use_whitelist_text">Don\'t use whitelist</string>
 
-    <string name="geolocation_whitelist_group_name_title">Whitelista pytań o lokalizację</string>
-    <string name="geolocation_whitelist_group_name_summary">Wybranie tutaj grupy kontaktów spowoduje że żaden numer nie
-        będący w tej grupie nie dostanie informacji o twojej lokalizacji, gdy o nią zapyta. Do wyboru dostępne są tylko
-        grupy zawierające jakieś kontakty.
+    <string name="whitelist_group_name_title">Whitelist</string>
+    <string name="whitelist_group_name_summary">
+        If you will choose any of listed contacts groups, this list will become whitelist (all numbers which aren\'t in
+        that group will not receive any automatical response). You can only choose groups which contains at least one
+        contact.
+    </string>
+
+    <string name="dont_use_blacklist_text">Don\'t use blacklist</string>
+
+
+    <string name="blacklist_group_name_title">Blacklist</string>
+    <string name="blacklist_group_name_summary">
+        If you will choose any of listed contact groups, this list will become blacklist (all numbers which are in this
+        group will not receive any automatical response). You can only choose groups which contains at least one
+        contact.
     </string>
 
 
-    <string name="device_phone_number_title">Twój numer telefonu</string>
-    <string name="device_phone_number_summary">Twój telefon nie pozwala odczytać aktualnego numeru telefonu z karty SIM.
-        Podaj tutaj swój numer telefonu, aby zapobiec wysyłaniu odpowiedzi przez aplikację na twój numer telefonu (np
-        jeśli dzwoni do ciebie poczta głosowa).
+    <string name="dont_use_geolocation_whitelist_text">Don\'t use whitelist</string>
+
+    <string name="geolocation_whitelist_group_name_title">Location request whitelist</string>
+    <string name="geolocation_whitelist_group_name_summary">
+        If you will choose any of listed contact groups, this list will become whitelist (all numbers which aren\'t in
+        that group will not receive any automatical response). You can only choose groups which contains at least one
+        contact.
+    </string>
+
+
+    <string name="device_phone_number_title">Your phone number</string>
+    <string name="device_phone_number_summary">
+        Your mobile device can\'t read your actual number from SIM card.
+        For preventing responding to your own number (for example, when voice mail call you), please put here your phone
+        number.
     </string>
 
 

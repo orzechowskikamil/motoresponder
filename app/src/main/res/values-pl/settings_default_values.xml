@@ -1,0 +1,19 @@
+<resources>
+
+    <string name="auto_response_to_sms_template_default_value">
+        (Automatyczna odpowiedź) Cześć. Nie mogę odpisać, gdyż właśnie jadę motocyklem.
+    </string>
+
+    <string name="auto_response_to_call_template_default_value">
+        (Automatyczna odpowiedź) Cześć. Nie mogę odebrać, gdyż właśnie jadę motocyklem.
+    </string>
+
+    <string name="auto_response_to_sms_with_geolocation_template_default_value" formatted="false">
+        (Automatyczna odpowiedź) Cześć. Aktualnie jadę motocyklem i znajduję sie w %location%.
+    </string>
+
+    <string name="geolocation_request_pattern_1_default_value" formatted="false">gdzie jesteś</string>
+
+    <string name="geolocation_request_pattern_2_default_value" formatted="false">gdzie jestes</string>
+
+</resources>

@@ -2,11 +2,11 @@
 <resources>
 
     <string-array name="wait_before_response_entries">
-        <item>Immediately</item>
-        <item>Very quickly (30 sec)</item>
-        <item>Quickly (1 sec)</item>
-        <item>Normal (5 min)</item>
-        <item>After big delay (15 min)</item>
+        <item>Natychmiast</item>
+        <item>Szybciutko (30 sek)</item>
+        <item>Szybko (1 min)</item>
+        <item>Normalnie (5 min)</item>
+        <item>Z dużym opóźnieniem (15 min)</item>
     </string-array>
 
     <string-array name="wait_before_response_entry_values">

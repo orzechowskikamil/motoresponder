@@ -10,13 +10,13 @@
     <bool name="auto_response_to_sms_enabled_default_value">true</bool>
 
     <string name="auto_response_to_sms_template_default_value">
-        (Automatyczna odpowiedź) Cześć. Nie mogę odpisać, gdyż właśnie jadę motocyklem.
+        (Automatical response) Hello. I can\'t answer your message, because I am riding motorcycle now.
     </string>
 
     <bool name="auto_response_to_call_enabled_default_value">true</bool>
 
     <string name="auto_response_to_call_template_default_value">
-        (Automatyczna odpowiedź) Cześć. Nie mogę odebrać, gdyż właśnie jadę motocyklem.
+        (Automatical response) Hello. I can\'t answer your call, because I am riding motorcycle now.
     </string>
 
     <bool name="geolocation_request_enabled_default_value">false</bool>
@@ -25,9 +25,8 @@
 
     <string name="blacklist_group_name_default_value"></string>
 
-
     <string name="auto_response_to_sms_with_geolocation_template_default_value" formatted="false">
-        (Automatyczna odpowiedź) Cześć. Aktualnie jadę motocyklem i znajduję sie w %location%.
+        (Automatical response) Hello. I am actually riding motorcycle and my location is: %location%
     </string>
 
     <bool name="showing_pending_notification_enabled_default_value">false</bool>
@@ -36,9 +35,9 @@
 
     <bool name="showing_debug_notification_enabled_default_value">false</bool>
 
-    <string name="geolocation_request_pattern_1_default_value" formatted="false">gdzie jesteś</string>
+    <string name="geolocation_request_pattern_1_default_value" formatted="false">where are you</string>
 
-    <string name="geolocation_request_pattern_2_default_value" formatted="false">gdzie jestes</string>
+    <string name="geolocation_request_pattern_2_default_value" formatted="false">location</string>
 
     <string name="geolocation_whitelist_group_name_default_value" formatted="false"></string>
 
