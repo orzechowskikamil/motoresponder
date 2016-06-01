@@ -57,6 +57,9 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
     }
 
     protected void finishTask() {
+        if (this.isFinished == true) {
+            return;
+        }
         this.hidePendingNotificationIfEnabled();
 
         this.showDebugNotificationIfEnabled();
