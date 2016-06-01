@@ -3,9 +3,10 @@ package com.medziku.motoresponder.activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.preference.*;
-import android.util.Log;
 import com.google.common.base.Predicate;
 import com.medziku.motoresponder.R;
+import com.medziku.motoresponder.logic.CountryPrefix;
+import com.medziku.motoresponder.logic.NumberRules;
 import com.medziku.motoresponder.logic.Settings;
 import com.medziku.motoresponder.utils.ContactsUtility;
 import com.medziku.motoresponder.utils.SharedPreferencesUtility;
@@ -19,6 +20,8 @@ public class NumberRulesPreferenceFragment extends NumberRulesPreferenceFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        this.hideRespondingRestrictedToCurrentCountryIfDeviceNotAbleToFilter();
 
         this.setupList(this.getWhiteListGroupNamePreference(), this.settings.getDontUseWhitelistText());
         this.setupList(this.getBlackListGroupNamePreference(), this.settings.getDontUseBlacklistText());
@@ -43,6 +46,12 @@ public class NumberRulesPreferenceFragment extends NumberRulesPreferenceFragment
         this.manageDisabledState();
     }
 
+    private void hideRespondingRestrictedToCurrentCountryIfDeviceNotAbleToFilter() {
+        if (!this.numberRules.isAbleToFilterForeignNumbers()) {
+            this.getPreferenceScreen().removePreference(this.getRespondingRestrictedToCountryPreference());
+        }
+    }
+
 
     private void setupList(ListPreference listPreference, String dontUseText) {
         List groupNames = contactsUtility.readAllContactBookGroupNames();
@@ -61,6 +70,10 @@ public class NumberRulesPreferenceFragment extends NumberRulesPreferenceFragment
         boolean responderEnabled = this.settings.isResponderEnabled();
         boolean geolocationEnabled = this.settings.isRespondingWithGeolocationEnabled();
 
+        SwitchPreference respondingRestrictedToCountryPreference = this.getRespondingRestrictedToCountryPreference();
+        if (respondingRestrictedToCountryPreference != null) {
+            respondingRestrictedToCountryPreference.setEnabled(responderEnabled);
+        }
         this.getRespondingRestrictedToContactListPrerefence().setEnabled(responderEnabled);
         this.getWhiteListGroupNamePreference().setEnabled(responderEnabled);
         this.getBlackListGroupNamePreference().setEnabled(responderEnabled);
@@ -72,10 +85,12 @@ public class NumberRulesPreferenceFragment extends NumberRulesPreferenceFragment
 
 abstract class NumberRulesPreferenceFragmentsDefinition extends PreferenceFragment {
 
+    public NumberRules numberRules;
     protected Settings settings;
     protected ContactsUtility contactsUtility;
     protected Context context;
     protected SharedPreferencesUtility sharedPreferencesUtility;
+    protected CountryPrefix countryPrefix;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,6 +101,8 @@ abstract class NumberRulesPreferenceFragmentsDefinition extends PreferenceFragme
         this.contactsUtility = new ContactsUtility(this.context);
         this.sharedPreferencesUtility = new SharedPreferencesUtility(this.context);
         this.settings = new Settings(this.sharedPreferencesUtility);
+        this.countryPrefix = new CountryPrefix(this.contactsUtility);
+        this.numberRules = new NumberRules(this.contactsUtility, this.countryPrefix, this.settings);
 
     }
 
@@ -97,7 +114,6 @@ abstract class NumberRulesPreferenceFragmentsDefinition extends PreferenceFragme
         return (ListPreference) this.findPreferenceByID(R.string.blacklist_group_name_key);
     }
 
-
     public ListPreference getGeolocationWhiteListGroupNamePreference() {
         return (ListPreference) this.findPreferenceByID(R.string.geolocation_whitelist_group_name_key);
     }
@@ -106,6 +122,9 @@ abstract class NumberRulesPreferenceFragmentsDefinition extends PreferenceFragme
         return (SwitchPreference) this.findPreferenceByID(R.string.responding_restricted_to_contact_list_key);
     }
 
+    public SwitchPreference getRespondingRestrictedToCountryPreference() {
+        return (SwitchPreference) this.findPreferenceByID(R.string.responding_restricted_to_current_country_key);
+    }
 
     public EditTextPreference getDevicePhoneNumberPreference() {
         return (EditTextPreference) this.findPreferenceByID(R.string.device_phone_number_key);
