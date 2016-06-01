@@ -6,9 +6,9 @@ package com.medziku.motoresponder.logic;
 public class PhoneNumbersComparator {
 
     /**
-     * We assume that 8 digits is a root for normal number
+     * We assume that at least 7 digits is a root for normal number
      */
-    private static int MINIMAL_LENGTH_OF_NORMAL_NUMBER = 8;
+    private static int MINIMAL_LENGTH_OF_NORMAL_NUMBER = 7;
 
     public static boolean areNumbersEqual(String firstPhoneNumber, String secondPhoneNumber) {
         String normalized1stNumber = normalizeNumber(firstPhoneNumber);
