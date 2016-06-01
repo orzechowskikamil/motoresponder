@@ -202,6 +202,15 @@ public class ContactsUtility {
         return phoneNumber;
     }
 
+    public boolean isAbleToReadCurrentDeviceNumber() {
+        try {
+            this.readCurrentDevicePhoneNumber();
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
     /**
      * It returns current mcc. Mcc is always unique. For example for Poland it's 260.
      *

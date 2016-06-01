@@ -21,6 +21,8 @@ public class NumberRulesPreferenceFragment extends NumberRulesPreferenceFragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        this.setVisibilityOfPhoneNumberField();
+
         this.hideRespondingRestrictedToCurrentCountryIfDeviceNotAbleToFilter();
 
         this.setupList(this.getWhiteListGroupNamePreference(), this.settings.getDontUseWhitelistText());
@@ -43,14 +45,25 @@ public class NumberRulesPreferenceFragment extends NumberRulesPreferenceFragment
             }
         });
 
+
         this.manageDisabledState();
     }
 
+    private void setVisibilityOfPhoneNumberField() {
+        if (this.deviceIsAbleToReadCurrentPhoneNumber()) {
+            this.getPreferenceScreen().removePreference(this.getDevicePhoneNumberPreference());
+        }
+    }
     private void hideRespondingRestrictedToCurrentCountryIfDeviceNotAbleToFilter() {
         if (!this.numberRules.isAbleToFilterForeignNumbers()) {
             this.getPreferenceScreen().removePreference(this.getRespondingRestrictedToCountryPreference());
         }
     }
+
+    private boolean deviceIsAbleToReadCurrentPhoneNumber() {
+        return this.contactsUtility.isAbleToReadCurrentDeviceNumber();
+    }
+
 
 
     private void setupList(ListPreference listPreference, String dontUseText) {
@@ -78,7 +91,11 @@ public class NumberRulesPreferenceFragment extends NumberRulesPreferenceFragment
         this.getWhiteListGroupNamePreference().setEnabled(responderEnabled);
         this.getBlackListGroupNamePreference().setEnabled(responderEnabled);
         this.getGeolocationWhiteListGroupNamePreference().setEnabled(responderEnabled && geolocationEnabled);
-        this.getDevicePhoneNumberPreference().setEnabled(responderEnabled);
+
+        EditTextPreference devicePhoneNumberPreference = this.getDevicePhoneNumberPreference();
+        if (devicePhoneNumberPreference != null) {
+            devicePhoneNumberPreference.setEnabled(responderEnabled);
+        }
     }
 
 }

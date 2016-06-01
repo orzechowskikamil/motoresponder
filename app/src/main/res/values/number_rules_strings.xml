@@ -45,9 +45,9 @@
 
 
     <string name="device_phone_number_title">Twój numer telefonu</string>
-    <string name="device_phone_number_summary">Niektóre telefony nie potrafią odczytać aktualnego numeru telefonu z
-        niektórych kart SIM. Jeśli aplikacja odpowiada na wiadomości pochodzące z twojego numeru (np. gdy dzwoni do
-        ciebie poczta głosowa) to możesz wpisać tu swój numer telefonu aby temu zapobiec.
+    <string name="device_phone_number_summary">Twój telefon nie pozwala odczytać aktualnego numeru telefonu z karty SIM.
+        Podaj tutaj swój numer telefonu, aby zapobiec wysyłaniu odpowiedzi przez aplikację na twój numer telefonu (np
+        jeśli dzwoni do ciebie poczta głosowa).
     </string>
 
 
