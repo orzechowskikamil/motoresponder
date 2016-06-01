@@ -20,17 +20,21 @@ public class NumberRulesTest {
     private String FAKE_INCOMING_PHONE_NUMBER = "777777777";
     private String FAKE_CURRENT_DEVICE_PHONE_NUMBER = "123456789";
     private String FAKE_FOREIGN_INCOMING_NUMBER = "+44-664-663-662";
+    private String FAKE_LOCAL_INCOMING_NUMBER = "+48-664-663-662";
     private Settings settings;
+    private CountryPrefix countryPrefix;
 
     @Before
     public void setUp() throws Exception {
         this.contactsUtility = Mockito.mock(ContactsUtility.class);
         this.settings = Mockito.mock(Settings.class);
-        this.numberRules = new NumberRules(contactsUtility, settings);
+        this.countryPrefix = Mockito.mock(CountryPrefix.class);
+        this.numberRules = new NumberRules(contactsUtility, countryPrefix, settings);
 
         when(this.settings.isRespondingRestrictedToContactList()).thenReturn(true);
         this.setContactBookContainsContactReturnValue(true);
 
+        when(this.countryPrefix.getCountryPrefix()).thenReturn("48");
         when(this.contactsUtility.readCurrentDevicePhoneNumber()).thenReturn(this.FAKE_CURRENT_DEVICE_PHONE_NUMBER);
 
     }
@@ -65,11 +69,38 @@ public class NumberRulesTest {
     public void numberRulesPreventRespondingForeignNumber() {
         when(this.settings.isRespondingRestrictedToCurrentCountry()).thenReturn(true);
         this.expectNumberRulesAllowRespondingToBe(this.FAKE_INCOMING_PHONE_NUMBER, true);
+        this.expectNumberRulesAllowRespondingToBe(this.FAKE_LOCAL_INCOMING_NUMBER, true);
         this.expectNumberRulesAllowRespondingToBe(this.FAKE_FOREIGN_INCOMING_NUMBER, false);
 
         when(this.settings.isRespondingRestrictedToCurrentCountry()).thenReturn(false);
         this.expectNumberRulesAllowRespondingToBe(this.FAKE_INCOMING_PHONE_NUMBER, true);
         this.expectNumberRulesAllowRespondingToBe(this.FAKE_FOREIGN_INCOMING_NUMBER, true);
+    }
+
+    @Test
+    public void numberRulesWorkCorrectlyWithWeirdDigitsPrefixCountry() {
+        when(this.settings.isRespondingRestrictedToCurrentCountry()).thenReturn(true);
+
+        when(this.countryPrefix.getCountryPrefix()).thenReturn("1"); // US
+        this.expectNumberRulesAllowRespondingToBe("+1-800-892-5234", true); // microsoft number
+        this.expectNumberRulesAllowRespondingToBe("800-892-5234", true); // microsoft number
+        this.expectNumberRulesAllowRespondingToBe(this.FAKE_LOCAL_INCOMING_NUMBER, false); // Polish number
+
+        when(this.countryPrefix.getCountryPrefix()).thenReturn("974");   // Qatar
+        this.expectNumberRulesAllowRespondingToBe("+974 4 411 9420", true); // Qatar microsoft support number
+        this.expectNumberRulesAllowRespondingToBe("4 411 9420", true); // Qatar microsoft support number
+        this.expectNumberRulesAllowRespondingToBe(this.FAKE_LOCAL_INCOMING_NUMBER, false); // Polish number
+
+    }
+
+    @Test
+    public void numberRulesDoesntPreventRespondingWhenCountryIsUnknown() {
+        when(this.settings.isRespondingRestrictedToCurrentCountry()).thenReturn(true);
+        when(this.countryPrefix.getCountryPrefix()).thenReturn(null);
+
+        this.expectNumberRulesAllowRespondingToBe("+974 4 411 9420", true); // Qatar microsoft support number
+        this.expectNumberRulesAllowRespondingToBe("4 411 9420", true); // Qatar microsoft support number
+        this.expectNumberRulesAllowRespondingToBe(this.FAKE_LOCAL_INCOMING_NUMBER, true); // Polish number
     }
 
     @Test

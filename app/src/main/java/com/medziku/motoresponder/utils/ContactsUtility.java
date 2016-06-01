@@ -207,13 +207,14 @@ public class ContactsUtility {
      *
      * @return
      */
-    public String readCurrentMobileCountryCode() {
+    public Integer readCurrentMobileCountryCode() {
         TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         String simOperator = telephonyManager.getSimOperator();
         if (!simOperator.isEmpty()) {
-            return String.valueOf(context.getResources().getConfiguration().mcc);
+            return context.getResources().getConfiguration().mcc;
         }
         return null;
     }
+
 
 }

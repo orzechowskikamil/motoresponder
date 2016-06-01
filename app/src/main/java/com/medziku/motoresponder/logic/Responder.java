@@ -37,6 +37,7 @@ public class Responder {
     private DecisionLog log;
     private GeolocationRequestRecognition geolocationRequestRecognition;
     private WiFiUtility wiFiUtility;
+    private CountryPrefix countryPrefix;
 
     public Responder(Context context) {
         this.context = context;
@@ -55,6 +56,11 @@ public class Responder {
         this.responsePreparator = this.createResponsePreparator();
         this.respondingTasksQueue = this.createRespondingTasksQueue();
         this.geolocationRequestRecognition = this.createGeolocationRequestRecognition();
+        this.countryPrefix = this.createCountryPrefix();
+    }
+
+    protected CountryPrefix createCountryPrefix() {
+        return new CountryPrefix(this.contactsUtility);
     }
 
 
@@ -259,7 +265,7 @@ public class Responder {
 
 
     protected NumberRules createNumberRules() {
-        return new NumberRules(this.contactsUtility, this.settings);
+        return new NumberRules(this.contactsUtility, this.countryPrefix, this.settings);
     }
 
     protected ResponsePreparator createResponsePreparator() {

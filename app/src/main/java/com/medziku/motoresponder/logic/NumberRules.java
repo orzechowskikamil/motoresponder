@@ -10,9 +10,11 @@ public class NumberRules {
 
     private ContactsUtility contactsUtility;
     private Settings settings;
+    private CountryPrefix countryPrefix;
 
-    public NumberRules(ContactsUtility contactsUtility, Settings settings) {
+    public NumberRules(ContactsUtility contactsUtility, CountryPrefix countryPrefix, Settings settings) {
         this.contactsUtility = contactsUtility;
+        this.countryPrefix = countryPrefix;
         this.settings = settings;
 
     }
@@ -31,8 +33,15 @@ public class NumberRules {
             return false;
         }
 
-        if (this.settings.isRespondingRestrictedToCurrentCountry() && this.isNumberForeign(phoneNumber)) {
-            return false;
+        if (this.settings.isRespondingRestrictedToCurrentCountry()) {
+            boolean numberForeign = false;
+            try {
+                numberForeign = this.isNumberForeign(phoneNumber);
+            } catch (Exception e) {
+            }
+            if (numberForeign) {
+                return false;
+            }
         }
 
         if (this.settings.isRespondingRestrictedToContactList() && !this.isInContactBook(phoneNumber)) {
@@ -84,15 +93,27 @@ public class NumberRules {
         return false;
     }
 
+    public boolean isAbleToFilterForeignNumbers() {
+        try {
+            this.isNumberForeign("");
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
 
-    private boolean isNumberForeign(String phoneNumber) {
-        return PhoneNumbersComparator.isNumberForeign(phoneNumber, this.getCurrentCountryCode());
+    private boolean isNumberForeign(String phoneNumber) throws Exception {
+        String currentCountryCode = this.getCurrentCountryCode();
+
+        if (currentCountryCode == null) {
+            throw new Exception("Not able to check if number is foreign");
+        }
+
+        return PhoneNumbersComparator.isNumberForeign(phoneNumber, currentCountryCode);
     }
 
     private String getCurrentCountryCode() {
-        // Hardcoded for Poland. Implement automatic checking based on mcc when releasing to whole world.
-        // Issue #169
-        return "48";
+        return countryPrefix.getCountryPrefix();
     }
 
     private boolean isInContactBook(String phoneNumber) {

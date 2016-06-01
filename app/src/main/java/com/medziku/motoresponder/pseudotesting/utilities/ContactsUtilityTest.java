@@ -143,7 +143,7 @@ public class ContactsUtilityTest {
         this.setUp();
 
         Log.d(TAG, "Starting test of readCurrentMobileCountryCode");
-        String mcc = this.contactsUtility.readCurrentMobileCountryCode();
+        Integer mcc = this.contactsUtility.readCurrentMobileCountryCode();
 
         Log.d(TAG, "Result is: " + String.valueOf(mcc));
     }
