@@ -73,7 +73,7 @@ public class RespondingTaskTest {
         when(this.respondingDecision.shouldRespond(any(RespondingSubject.class))).thenReturn(false);
 
         when(this.settings.isShowingDebugNotificationEnabled()).thenReturn(false);
-
+        when(this.lockStateUtility.acquirePartialWakeLock()).thenReturn(Mockito.mock(PowerManager.WakeLock.class));
     }
 
 
@@ -211,7 +211,7 @@ public class RespondingTaskTest {
         this.respondingTask.terminated = true;
         this.respondingTask.callLogic(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
         verify(this.lockStateUtility, times(1)).acquirePartialWakeLock();
-        verify(this.lockStateUtility, atLeast(1)).releaseWakeLock(any(PowerManager.WakeLock.class));
+        verify(this.lockStateUtility, times(1)).releaseWakeLock(any(PowerManager.WakeLock.class));
     }
 
 
