@@ -16,4 +16,9 @@
             android:title="@string/number_rules_preferences_title"
             android:summary="@string/number_rules_preferences_summary"/>
 
+    <header android:fragment="com.medziku.motoresponder.activity.HowItWorksPreferenceFragment"
+            android:icon="@drawable/ic_number_rules_fragment"
+            android:title="@string/how_it_works_preferences_title"
+            android:summary="@string/how_it_works_preferences_summary"/>
+
 </preference-headers>

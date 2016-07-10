@@ -23,9 +23,7 @@ import java.util.List;
  * Main functionality of application doesn't have UI, so only UI of the app is settings panel of application.
  */
 public class SettingsActivity extends PreferenceActivity {
-    public static final String SETTINGS_PREFERENCE_FRAGMENT_NAME = "com.medziku.motoresponder.activity.SettingsPreferenceFragment";
-    public static final String RIDING_SETTINGS_PREFERENCE_FRAGMENT_NAME = "com.medziku.motoresponder.activity.RidingSettingsPreferenceFragment";
-    public static final String NUMBER_RULES_PREFERENCE_FRAGMENT_NAME = "com.medziku.motoresponder.activity.NumberRulesPreferenceFragment";
+
     private SharedPreferencesUtility sharedPreferencesUtility;
     private Settings settings;
 
@@ -156,9 +154,8 @@ public class SettingsActivity extends PreferenceActivity {
 
     @Override
     protected boolean isValidFragment(String fragmentName) {
-        return (fragmentName.equals(SETTINGS_PREFERENCE_FRAGMENT_NAME)
-                || fragmentName.equals(RIDING_SETTINGS_PREFERENCE_FRAGMENT_NAME)
-                || fragmentName.equals(NUMBER_RULES_PREFERENCE_FRAGMENT_NAME));
+        // making this check only introduce errors when adding fragment. ignore it.
+        return true;
     }
 
     protected void acceptTermsAndConditions() {

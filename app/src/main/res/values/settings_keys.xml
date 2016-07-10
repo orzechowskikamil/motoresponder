@@ -66,5 +66,8 @@
 
     <string name="device_phone_number_key">device_phone_number</string>
 
+    <!-- it's not real setting, but it's stored in  -->
+    <string name="custom_log_key">custom_log</string>
+
 
 </resources>

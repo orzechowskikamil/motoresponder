@@ -78,13 +78,15 @@
             android:defaultValue="@bool/showing_summary_notification_enabled_default_value"
             android:dependency="@string/responder_enabled_key"/>
 
-    <SwitchPreference
-            android:summaryOn="@string/showing_debug_notification_enabled_summary_on"
-            android:summaryOff="@string/showing_debug_notification_enabled_summary_on"
-            android:title="@string/showing_debug_notification_enabled_title"
-            android:key="@string/showing_debug_notification_enabled_key"
-            android:defaultValue="@bool/showing_debug_notification_enabled_default_value"
-            android:dependency="@string/responder_enabled_key"/>
+
+    <!-- it's commented out because I introduced feature of viewing debug log. Remove it in future -->
+    <!--<SwitchPreference-->
+    <!--android:summaryOn="@string/showing_debug_notification_enabled_summary_on"-->
+    <!--android:summaryOff="@string/showing_debug_notification_enabled_summary_on"-->
+    <!--android:title="@string/showing_debug_notification_enabled_title"-->
+    <!--android:key="@string/showing_debug_notification_enabled_key"-->
+    <!--android:defaultValue="@bool/showing_debug_notification_enabled_default_value"-->
+    <!--android:dependency="@string/responder_enabled_key"/>-->
 
 
     <EditTextPreference

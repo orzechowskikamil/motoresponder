@@ -34,7 +34,7 @@ public class Responder {
     private boolean currentlyListeningForSMS = false;
     private boolean currentlyListeningForCalls = false;
 
-    private DecisionLog log;
+    private CustomLog log;
     private GeolocationRequestRecognition geolocationRequestRecognition;
     private WiFiUtility wiFiUtility;
     private CountryPrefix countryPrefix;
@@ -42,11 +42,12 @@ public class Responder {
     public Responder(Context context) {
         this.context = context;
 
-        this.log = new DecisionLog();
 
         this.createUtilities();
 
         this.settings = this.createSettings();
+
+        this.log = new CustomLog(this.settings);
 
         this.alreadyResponded = this.createAlreadyResponded();
         this.deviceUnlocked = this.createDeviceUnlocked();
@@ -154,8 +155,7 @@ public class Responder {
      * this list.
      */
     protected void handleIncoming(RespondingSubject subject) {
-        this.log.clear();
-        this.log.add("Received input from " + subject.getPhoneNumber() + " at " + new Date().toString());
+        this.log.add("Received sms/call from " + subject.getPhoneNumber());
         this.respondingTasksQueue.createAndExecuteRespondingTask(subject);
     }
 

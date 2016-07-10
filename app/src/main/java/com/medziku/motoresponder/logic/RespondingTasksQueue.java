@@ -17,7 +17,7 @@ public class RespondingTasksQueue {
     private NotificationUtility notificationUtility;
     private SMSUtility smsUtility;
     private ResponsePreparator responsePreparator;
-    private DecisionLog log;
+    private CustomLog log;
     private LockStateUtility lockStateUtility;
 
     public RespondingTasksQueue(NotificationUtility notificationUtility,
@@ -27,7 +27,7 @@ public class RespondingTasksQueue {
                                 Settings settings,
                                 RespondingDecision respondingDecision,
                                 ResponsePreparator responsePreparator,
-                                DecisionLog log) {
+                                CustomLog log) {
         this.pendingRespondingTasks = new ArrayList<>();
         this.notificationUtility = notificationUtility;
         this.smsUtility = smsUtility;

@@ -14,7 +14,7 @@ public class UserRide {
 
     private WiFiUtility wiFiUtility;
     private Settings settings;
-    private DecisionLog log;
+    private CustomLog log;
     private LocationUtility locationUtility;
     private SensorsUtility sensorsUtility;
     private MotionUtility motionUtility;
@@ -32,7 +32,7 @@ public class UserRide {
                     SensorsUtility sensorsUtility,
                     MotionUtility motionUtility,
                     WiFiUtility wifiUtility,
-                    DecisionLog log) {
+                    CustomLog log) {
         this.locationUtility = locationUtility;
         this.sensorsUtility = sensorsUtility;
         this.motionUtility = motionUtility;

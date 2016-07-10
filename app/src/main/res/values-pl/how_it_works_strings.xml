@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="log_viewer_title">Zobacz log</string>
+    <string name="log_viewer_summary">Możesz prześledzić tutaj decyzje, podjęte przez aplikację.</string>
+    <string name="log_viewer_dialog_title">Log</string>
+    <string name="custom_log_empty_message">Log jest pusty!</string>
+
+</resources>

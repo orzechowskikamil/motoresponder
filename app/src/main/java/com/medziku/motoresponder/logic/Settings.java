@@ -12,8 +12,6 @@ public class Settings extends SettingsBase {
     private Predicate<Boolean> onChangeRespondingToSMSOrCallsCallback;
     private Predicate<Boolean> onChangeSensorCheckEnabledCallback;
     private Predicate<Boolean> onChangeRespondingWithGeolocationEnabled;
-    private boolean wiFiCheckEnabled;
-    private boolean responderEnabled;
 
     public Settings(SharedPreferencesUtility sharedPreferencesUtility) {
         super(sharedPreferencesUtility);
@@ -286,6 +284,7 @@ public class Settings extends SettingsBase {
     public void setTermsAndCondition(boolean accepted) {
         this.setBooleanValue(R.string.terms_and_conditions_accepted_key, accepted);
     }
+
 }
 
 
@@ -314,24 +313,28 @@ abstract class SettingsBase {
         return this.getStringValue(this.getStringFromRes(resID));
     }
 
-    protected String getStringFromRes(int resID) {
-        return this.sharedPreferencesUtility.getStringFromRes(resID);
-    }
-
     protected String getStringValue(String name) {
         return this.sharedPreferencesUtility.getStringValue(name, this.getDefaultStringValue(name));
+    }
+
+    protected void setStringValue(int resID, String value) {
+        this.sharedPreferencesUtility.setStringValue(this.getStringFromRes(resID), value);
+    }
+
+    protected String getStringFromRes(int resID) {
+        return this.sharedPreferencesUtility.getStringFromRes(resID);
     }
 
     protected boolean getBooleanValue(int resID) {
         return this.getBooleanValue(this.getStringFromRes(resID));
     }
 
-    protected void setBooleanValue(int resID, boolean value) {
-        this.sharedPreferencesUtility.setBooleanValue(this.getStringFromRes(resID), value);
-    }
-
     protected boolean getBooleanValue(String name) {
         return this.sharedPreferencesUtility.getBooleanValue(name, this.getDefaultBooleanValue(name));
+    }
+
+    protected void setBooleanValue(int resID, boolean value) {
+        this.sharedPreferencesUtility.setBooleanValue(this.getStringFromRes(resID), value);
     }
 
     protected int getIntValue(int resID) {

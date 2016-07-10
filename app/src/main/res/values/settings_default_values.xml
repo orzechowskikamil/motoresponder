@@ -69,4 +69,7 @@
 
     <string name="acceleration_required_for_motion_default_value">0.2</string>
 
+    <!-- it's not real setting but since it's value in shared preferences, empty string is required here to not have an error -->
+    <string name="custom_log_default_value"></string>
+
 </resources>

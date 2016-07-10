@@ -30,6 +30,11 @@
         can automatically respond.
     </string>
 
+    <string name="how_it_works_preferences_title">How it works?</string>
+    <string name="how_it_works_preferences_summary">Here you can see how application works, or view log, or read
+        information about author.
+    </string>
+
 
     <string name="disclaimer_title">Accept Motoresponder disclaimer</string>
     <string name="disclaimer_message">

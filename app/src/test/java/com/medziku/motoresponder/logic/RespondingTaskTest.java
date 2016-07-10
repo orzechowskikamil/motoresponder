@@ -46,7 +46,7 @@ public class RespondingTaskTest {
         this.returnCallback = Mockito.mock(Predicate.class);
         this.contactsUtility = Mockito.mock(ContactsUtility.class);
         this.lockStateUtility = Mockito.mock(LockStateUtility.class);
-        DecisionLog log = Mockito.mock(DecisionLog.class);
+        CustomLog log = Mockito.mock(CustomLog.class);
 
 
         this.respondingTask = new ExposedRespondingTask(
@@ -253,7 +253,7 @@ class ExposedRespondingTask extends RespondingTask {
                                  ContactsUtility contactsUtility,
                                  LockStateUtility lockStateUtility,
                                  ResponsePreparator responsePreparator,
-                                 DecisionLog log,
+                                 CustomLog log,
                                  Predicate<Boolean> resultCallback) {
         super(respondingDecision, sharedPreferencesUtility, notificationUtility, smsUtility, contactsUtility, lockStateUtility, responsePreparator, log, resultCallback);
     }

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:key="how_it_works_preference_fragment">
+
+
+    <com.medziku.motoresponder.preferences.LogViewerPreference
+            android:title="@string/log_viewer_title"
+            android:summary="@string/log_viewer_summary"
+            android:dialogTitle="@string/log_viewer_dialog_title"/>
+
+</PreferenceScreen>

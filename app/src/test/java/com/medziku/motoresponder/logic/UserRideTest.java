@@ -7,7 +7,6 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.mockito.internal.configuration.ClassPathLoader;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
@@ -44,7 +43,7 @@ public class UserRideTest {
         this.motionUtility = Mockito.mock(MotionUtility.class);
         this.wifiUtility = Mockito.mock(WiFiUtility.class);
         this.settings = Mockito.mock(Settings.class);
-        DecisionLog log = new DecisionLog();
+        CustomLog log = new CustomLog(this.settings);
         this.userRide = new UserRide(this.settings, this.locationUtility, this.sensorsUtility, this.motionUtility, this.wifiUtility, log);
 
         this.setIncludeProximityCheck(true);

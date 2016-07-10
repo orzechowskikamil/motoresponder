@@ -31,6 +31,11 @@
         automatycznie, a komu nie.
     </string>
 
+    <string name="how_it_works_preferences_title">Jak to działa?</string>
+    <string name="how_it_works_preferences_summary">Tutaj dowiesz się, na jakiej zasadzie działa aplikacja.
+    </string>
+
+
 
     <string name="disclaimer_title">Zaakceptuj warunki Motorespondera</string>
     <string name="disclaimer_message">Autorzy Motorespondera dołożyli wszelkich starań, aby działał jak najlepiej (sami

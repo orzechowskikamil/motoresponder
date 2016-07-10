@@ -11,7 +11,7 @@ public class RespondingDecision {
     private AlreadyResponded alreadyResponded;
     private NumberRules numberRules;
     private UserRide userRide;
-    private DecisionLog log;
+    private CustomLog log;
     private Settings settings;
 
 
@@ -20,7 +20,7 @@ public class RespondingDecision {
                               AlreadyResponded alreadyResponded,
                               DeviceUnlocked deviceUnlocked,
                               Settings settings,
-                              DecisionLog log) {
+                              CustomLog log) {
         this.userRide = userRide;
         this.numberRules = numberRules;
         this.settings = settings;

@@ -21,7 +21,10 @@ public class RespondingDecisionIntegrationTest {
     }
 
     private void setUp() {
-        DecisionLog log = new DecisionLog();
+        SharedPreferencesUtility sharedPreferencesUtility = new SharedPreferencesUtility(this.context);
+        Settings settings = new Settings(sharedPreferencesUtility);
+
+        CustomLog log = new CustomLog(settings);
 
         LocationUtility locationUtility = new LocationUtility(this.context);
         SensorsUtility sensorsUtility = new SensorsUtility(this.context);
@@ -30,8 +33,6 @@ public class RespondingDecisionIntegrationTest {
         ContactsUtility contactsUtility = new ContactsUtility(this.context);
         CallsUtility callsUtility = new CallsUtility(this.context);
         SMSUtility smsUtility = new SMSUtility(this.context);
-        SharedPreferencesUtility sharedPreferencesUtility = new SharedPreferencesUtility(this.context);
-        Settings settings = new Settings(sharedPreferencesUtility);
         WiFiUtility wifiUtility = new WiFiUtility(this.context);
         CountryPrefix countryPrefix = new CountryPrefix(contactsUtility);
 
@@ -72,7 +73,7 @@ public class RespondingDecisionIntegrationTest {
 
     private RespondingDecision createLoggingRespondingDecision(
             DeviceUnlocked deviceUnlocked, UserRide userRide, NumberRules numberRules,
-            AlreadyResponded alreadyResponded, Settings settings, DecisionLog log
+            AlreadyResponded alreadyResponded, Settings settings, CustomLog log
     ) {
         return new RespondingDecision(userRide, numberRules, alreadyResponded, deviceUnlocked, settings, log) {
             public boolean shouldRespond(RespondingSubject subject) {
@@ -130,7 +131,7 @@ public class RespondingDecisionIntegrationTest {
         };
     }
 
-    private UserRide createLoggingUserRide(final Settings settings, final LocationUtility locationUtility, final SensorsUtility sensorsUtility, final MotionUtility motionUtility, WiFiUtility wifiUtility, DecisionLog log) {
+    private UserRide createLoggingUserRide(final Settings settings, final LocationUtility locationUtility, final SensorsUtility sensorsUtility, final MotionUtility motionUtility, WiFiUtility wifiUtility, CustomLog log) {
         return new UserRide(settings, locationUtility, sensorsUtility, motionUtility, wifiUtility, log) {
             public boolean isUserRiding() {
                 boolean result = super.isUserRiding();

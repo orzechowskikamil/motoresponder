@@ -12,7 +12,7 @@ import com.medziku.motoresponder.utils.SMSUtility;
 public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolean> {
 
     public static final String RECIPIENT_SUBSTITUTION_TAG = "%recipient%";
-    protected DecisionLog log;
+    protected CustomLog log;
     private ContactsUtility contactsUtility;
     private SMSUtility smsUtility;
     private NotificationUtility notificationUtility;
@@ -31,7 +31,7 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
                           ContactsUtility contactsUtility,
                           LockStateUtility lockStateUtility,
                           ResponsePreparator responsePreparator,
-                          DecisionLog log,
+                          CustomLog log,
                           Predicate<Boolean> resultCallback) {
         this.respondingDecision = respondingDecision;
         this.resultCallback = resultCallback;

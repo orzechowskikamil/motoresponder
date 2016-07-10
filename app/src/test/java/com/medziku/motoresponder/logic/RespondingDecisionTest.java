@@ -13,7 +13,6 @@ import java.util.Date;
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.when;
 
 
 public class RespondingDecisionTest {
@@ -40,7 +39,7 @@ public class RespondingDecisionTest {
         this.settings = Mockito.mock(Settings.class);
         when(this.settings.getLimitOfGeolocationResponses()).thenReturn(2);
         when(this.settings.getLimitOfResponses()).thenReturn(1);
-        DecisionLog log = Mockito.mock(DecisionLog.class);
+        CustomLog log = Mockito.mock(CustomLog.class);
         this.respondingDecision = new RespondingDecision(this.userRide, this.numberRules, this.alreadyResponded, this.deviceUnlocked, this.settings, log);
 
 
