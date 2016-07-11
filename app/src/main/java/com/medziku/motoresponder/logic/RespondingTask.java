@@ -108,12 +108,7 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
 
         this.preventPhoneFromSleep();
 
-        // wait some time before responding, to allow user manually respond
-        try {
-            Thread.sleep(this.settings.getWaitBeforeResponseSeconds() * 1000);
-        } catch (InterruptedException e) {
-            // normal situation - unlocked phone.
-        }
+        this.waitBeforeResponse();
 
         // K. Orzechowski: I am not sure, but I read that I should check for this.
         if (this.isTerminated()) {
@@ -121,12 +116,13 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
             this.finishTask();
             return;
         }
-
-
+        
         // show notification to give user possibiity to cancel autorespond
         this.showPendingNotificationIfEnabled();
 
 
+        this.log.add("Started measuring if application should respond or not.");
+        
         boolean shouldRespond = this.respondingDecision.shouldRespond(subject);
         if (shouldRespond) {
             // this check can took long time so before responding we can check again for cancellation.
@@ -144,16 +140,34 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
 
 
         if (this.settings.isShowingSummaryNotificationEnabled() && shouldRespond) {
+            this.log.add("Showing summary notification because application responded and notification is enabled.");
             this.showSummaryNotification(subject.getPhoneNumber());
+        }
+    }
+    
+    private void waitBeforeResponse(){
+        // wait some time before responding, to allow user manually respond
+        try {
+            int waitBeforeResponseSeconds = this.settings.getWaitBeforeResponseSeconds();
+            
+            this.log.add("Started waiting "+waitBeforeResponseSeconds+" sec to let user respond himself.");
+            
+            Thread.sleep(waitBeforeResponseSeconds * 1000);
+            
+            this.log.add("Waiting ended.");
+        } catch (InterruptedException e) {
+            this.log.add("User unlocked phone.");
         }
     }
 
     private void preventPhoneFromSleep() {
+        this.log.add("Acquiring wake lock, preventing phone from sleep during measurement.");
         this.wakeLock = this.lockStateUtility.acquirePartialWakeLock();
     }
 
     private void stopPreventingPhoneFromSleep() {
         if (this.wakeLock != null) {
+            this.log.add("Releasing wake lock, now phone can sleep again.");
             this.lockStateUtility.releaseWakeLock(this.wakeLock);
         }
     }
@@ -205,13 +219,15 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
         if (attemptsLeft <= 0) {
             return;
         }
-
+        
+        RespondingTask.this.log.add("Trying to send autoresponse SMS...");
         this.smsUtility.sendSMS(phoneNumber, message, new Predicate<String>() {
             public boolean apply(String error) {
                 if (error != null) {
                     RespondingTask.this.log.add("Error during sending response SMS: '" + error + "'");
                     RespondingTask.this.sendSMSAndRetryOnFail(phoneNumber, message, attemptsLeft - 1);
                 }
+                RespondingTask.this.log.add("Autoresponse SMS correctly sent.");
                 return true;
             }
         });

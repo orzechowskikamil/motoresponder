@@ -3,18 +3,18 @@ package com.medziku.motoresponder.pseudotesting.utilities;
 import android.content.Context;
 import android.location.Location;
 import android.util.Log;
+import com.medziku.motoresponder.logic.CustomLog;
+import com.medziku.motoresponder.logic.Settings;
 import com.medziku.motoresponder.utils.LocationUtility;
+import com.medziku.motoresponder.utils.SharedPreferencesUtility;
 
-import java.util.TimerTask;
 import java.util.concurrent.Future;
 
 public class LocationUtilityTest {
 
     public static final String TAG = "LocationUtilityTest";
-
-    private LocationUtility locationUtility;
-
     private final Context context;
+    private LocationUtility locationUtility;
 
     public LocationUtilityTest(Context context) {
         this.context = context;

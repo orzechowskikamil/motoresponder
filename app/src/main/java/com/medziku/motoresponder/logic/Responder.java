@@ -4,8 +4,6 @@ import android.content.Context;
 import com.google.common.base.Predicate;
 import com.medziku.motoresponder.utils.*;
 
-import java.util.Date;
-
 /**
  * It's like all responding logic entry point
  */
@@ -77,6 +75,8 @@ public class Responder {
             return;
         }
 
+        this.log.add("Responder started responding. It's listening to unanswered calls, and SMSes.");
+
         this.isRespondingNow = true;
         this.listenToIncomingAccordingToSettings();
         this.settings.listenToChangeRespondToSmsOrCallSetting(new Predicate<Boolean>() {
@@ -111,6 +111,8 @@ public class Responder {
         this.isRespondingNow = false;
         this.respondingTasksQueue.cancelAllHandling();
 
+        this.log.add("Responder stopped responding (it was disabled).");
+
         this.stopListeningForProximityChanges();
         this.stopListeningForSMS();
         this.stopListeningForCalls();
@@ -124,8 +126,11 @@ public class Responder {
     public void onSMSReceived(String phoneNumber, String message) {
         SMSRespondingSubject subject;
 
+        this.log.add("Received sms from " + phoneNumber+" \r\n\r\n");
+
         if (this.geolocationRequestRecognition.isGeolocationRequest(message)) {
             subject = new GeolocationRequestRespondingSubject(phoneNumber, message);
+            this.log.add("This SMS was recognized as location request (contains some patterns).");
         } else {
             subject = new SMSRespondingSubject(phoneNumber, message);
         }
@@ -137,6 +142,7 @@ public class Responder {
      * Called when user will not pick a ringing call
      */
     public void onUnAnsweredCallReceived(String phoneNumber) {
+        this.log.add("Unanswered call from " + phoneNumber + " happened. \r\n\r\n");
         this.handleIncoming(new CallRespondingSubject(phoneNumber));
     }
 
@@ -145,6 +151,7 @@ public class Responder {
      */
     public void onPhoneUnlocked() {
         if (this.settings.isAssumingScreenUnlockedAsNotRidingEnabled()) {
+            this.log.add("Phone unlocked, cancelling all autoresponding processes.");
             this.respondingTasksQueue.cancelAllHandling();
         }
     }
@@ -155,7 +162,6 @@ public class Responder {
      * this list.
      */
     protected void handleIncoming(RespondingSubject subject) {
-        this.log.add("Received sms/call from " + subject.getPhoneNumber());
         this.respondingTasksQueue.createAndExecuteRespondingTask(subject);
     }
 
@@ -265,7 +271,7 @@ public class Responder {
 
 
     protected NumberRules createNumberRules() {
-        return new NumberRules(this.contactsUtility, this.countryPrefix, this.settings);
+        return new NumberRules(this.contactsUtility, this.countryPrefix, this.settings, this.log);
     }
 
     protected ResponsePreparator createResponsePreparator() {

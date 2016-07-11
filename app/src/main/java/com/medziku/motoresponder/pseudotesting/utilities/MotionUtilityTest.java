@@ -2,9 +2,12 @@ package com.medziku.motoresponder.pseudotesting.utilities;
 
 import android.content.Context;
 import android.util.Log;
+import com.medziku.motoresponder.logic.CustomLog;
+import com.medziku.motoresponder.logic.Settings;
 import com.medziku.motoresponder.utils.AccelerometerNotAvailableException;
 import com.medziku.motoresponder.utils.LockStateUtility;
 import com.medziku.motoresponder.utils.MotionUtility;
+import com.medziku.motoresponder.utils.SharedPreferencesUtility;
 
 import java.util.concurrent.Future;
 

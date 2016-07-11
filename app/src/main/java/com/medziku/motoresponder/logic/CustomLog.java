@@ -6,7 +6,7 @@ import java.util.Date;
 
 public class CustomLog {
 
-    private int MAX_LOG_LENGTH = 5000;
+    private int MAX_LOG_LENGTH = 20000;
 
     private Settings settings;
 
@@ -33,7 +33,7 @@ public class CustomLog {
 
         Date currentDate = new Date();
 
-        logStr = currentDate.toString()+ ": " + line + " \r\n \r\n" + logStr;
+        logStr = currentDate.toString()+ ": " + line + " \r\n" + logStr;
 
         if (logStr.length() > MAX_LOG_LENGTH) {
             logStr = logStr.substring(0, MAX_LOG_LENGTH);

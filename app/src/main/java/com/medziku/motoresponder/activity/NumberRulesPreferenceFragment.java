@@ -6,6 +6,7 @@ import android.preference.*;
 import com.google.common.base.Predicate;
 import com.medziku.motoresponder.R;
 import com.medziku.motoresponder.logic.CountryPrefix;
+import com.medziku.motoresponder.logic.CustomLog;
 import com.medziku.motoresponder.logic.NumberRules;
 import com.medziku.motoresponder.logic.Settings;
 import com.medziku.motoresponder.utils.ContactsUtility;
@@ -119,7 +120,9 @@ abstract class NumberRulesPreferenceFragmentsDefinition extends PreferenceFragme
         this.sharedPreferencesUtility = new SharedPreferencesUtility(this.context);
         this.settings = new Settings(this.sharedPreferencesUtility);
         this.countryPrefix = new CountryPrefix(this.contactsUtility);
-        this.numberRules = new NumberRules(this.contactsUtility, this.countryPrefix, this.settings);
+        CustomLog log = new CustomLog(this.settings);
+
+        this.numberRules = new NumberRules(this.contactsUtility, this.countryPrefix, this.settings, log);
 
     }
 

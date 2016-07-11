@@ -2,11 +2,12 @@ package com.medziku.motoresponder.utils;
 
 
 import android.content.Context;
-import android.location.*;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.location.LocationProvider;
 import android.os.Bundle;
 import android.os.Looper;
-
-import android.util.Log;
 import com.google.common.util.concurrent.SettableFuture;
 
 import java.util.Timer;
@@ -27,6 +28,18 @@ public class LocationUtility {
         this.locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
     }
 
+
+    public String getInternalLog() {
+        if (this.mostRecentLocationProcess == null) {
+            return null;
+        }
+
+
+        String logMsg = this.mostRecentLocationProcess.logMsg;
+        this.mostRecentLocationProcess.logMsg = "";
+
+        return logMsg;
+    }
 
     /**
      * Listens for location update
@@ -61,16 +74,18 @@ public class LocationUtility {
 class GettingAccurateLocationProcess implements LocationListener {
 
 
+    private final SettableFuture<Location> result;
     public int minimumTimeBetweenUpdates = 5000;
     public int minimumDistanceBetweenUpdates = 0;
-
+    /**
+     * It's way to expose information about how this class performed, to any other class without knowing about it.
+     */
+    public String logMsg;
     private long timeoutMs;
     private float expectedSpeed;
     private float expectedAccuracy;
-    private final SettableFuture<Location> result;
     private LocationManager locationManager;
     private Looper looperForListeningThread;
-
 
     /**
      * Use one class instance per one location.
@@ -83,6 +98,7 @@ class GettingAccurateLocationProcess implements LocationListener {
         this.expectedAccuracy = expectedAccuracyMeters;
         this.timeoutMs = timeoutMs;
         this.result = SettableFuture.create();
+        this.logMsg = "GPS check: ";
     }
 
 
@@ -128,6 +144,7 @@ class GettingAccurateLocationProcess implements LocationListener {
                 this.minimumDistanceBetweenUpdates,
                 this
         );
+        this.logMsg += " Starting listening to GPS. ";
 
         // this will prevent exiting from separate thread.
         this.loopLooper();
@@ -138,6 +155,7 @@ class GettingAccurateLocationProcess implements LocationListener {
      * This is also running in separate thread
      */
     public void onTimeout() {
+        this.logMsg += " Timeout happened to GPS check, we were waiting too long, and event with expected speed and accuracy not happened. ";
         this.setEmptyResultAndStopListening();
     }
 
@@ -148,9 +166,13 @@ class GettingAccurateLocationProcess implements LocationListener {
     public void onLocationChanged(Location location) {
         float accuracy = location.getAccuracy();
         float speed = location.getSpeed();
+        this.logMsg += "speed: " + speed + "m/s, accuracy: " + accuracy + "; ";
 
         if (accuracy <= this.expectedAccuracy && speed >= this.expectedSpeed) {
+            this.logMsg += "Last event was with expected accuracy and speed. ";
             this.setResultAndStopListening(location);
+        } else {
+            this.logMsg += "Not enough speed or accuracy. ";
         }
     }
 
@@ -166,6 +188,7 @@ class GettingAccurateLocationProcess implements LocationListener {
             case LocationProvider.TEMPORARILY_UNAVAILABLE:
                 break;
             case LocationProvider.OUT_OF_SERVICE:
+                this.logMsg += " GPS is out of service.";
                 this.setEmptyResultAndStopListening();
                 break;
         }

@@ -17,6 +17,7 @@ import java.util.concurrent.Future;
  */
 public class MotionUtility {
 
+
     /**
      * Events with acceleration delta bigger than accelerationDeltaTresholdForMovement to assume that phone is moving,
      * user is riding.
@@ -31,15 +32,22 @@ public class MotionUtility {
      * It's in microseconds! 10^-6 of second!
      */
     public int accelerometerDelayUs = 300 * 1000;
+    protected String logStr;
     private Sensor linearAccelerometer;
     private SensorManager sensorManager;
     private LockStateUtility lockStateUtility;
 
     public MotionUtility(Context context, LockStateUtility lockStateUtility) {
-
         this.sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         this.linearAccelerometer = this.sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
         this.lockStateUtility = lockStateUtility;
+        this.logStr = "";
+    }
+
+    public String getInternalLog() {
+        String logStr = this.logStr;
+        this.logStr = "";
+        return logStr;
     }
 
 
@@ -53,7 +61,10 @@ public class MotionUtility {
      * @throws AccelerometerNotAvailableException When device screen is off and utility can't properly measure movement
      */
     public Future<Boolean> isDeviceInMotion(final double requiredAcceleration) throws AccelerometerNotAvailableException {
+        this.logStr = "";
+
         int TIME_FOR_TURNING_ON_SCREEN = 2000;
+        final String[] logMsg = {""};
 
         final PowerManager.WakeLock wakeLock = this.lockStateUtility.acquireScreenAwakeWakeLock();
 
@@ -64,6 +75,7 @@ public class MotionUtility {
         }
 
         if (this.isDeviceScreenTurnedOff()) {
+            this.logStr += "Device screen failed to turn on - accelerometer might be not available.";
             throw new AccelerometerNotAvailableException();
         }
 
@@ -95,12 +107,16 @@ public class MotionUtility {
                 }
 
                 double delta = this.accelerationLast - accelerationCurrent;
+                logMsg[0] += "f: " + delta + " ";
 
                 if (delta > requiredAcceleration) {
+                    logMsg[0] += "(strong enough) ";
                     eventCounter++;
                 }
 
                 if (eventCounter > MotionUtility.this.aboveTresholdEventsNeededToAssumeMovement) {
+                    logMsg[0] += "Enough amount of accelerometer shakes recorded, device is in motion.";
+                    MotionUtility.this.logStr += logMsg[0];
                     MotionUtility.this.sensorManager.unregisterListener(this);
                     MotionUtility.this.lockStateUtility.releaseWakeLock(wakeLock);
                     result.set(true);
@@ -126,8 +142,11 @@ public class MotionUtility {
                 // it's because if screen is turned off before measurement finished, it means result can be falsy negative
                 // because we can't throw exception, we set value to null to indicate that something break measurement process.
                 if (screenTurnedOff) {
+                    MotionUtility.this.logStr += "Screen turned off before end of accelerometer measurement. Result is undefined.";
                     result.set(null);
                 } else {
+                    logMsg[0] += "Not enough shakes happened before timeout - device is not in movement";
+                    MotionUtility.this.logStr += logMsg[0];
                     result.set(false);
                 }
             }

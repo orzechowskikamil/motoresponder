@@ -199,4 +199,5 @@ public class SettingsActivity extends PreferenceActivity {
         dialogBuilder.create().show();
     }
 
+
 }

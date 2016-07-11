@@ -45,7 +45,7 @@
 
     <bool name="sensor_check_enabled_default_value">true</bool>
 
-    <bool name="is_riding_assumed_default_value">true</bool>
+    <bool name="is_riding_assumed_default_value">false</bool>
 
     <bool name="assume_screen_unlocked_as_not_riding_default_value">true</bool>
 

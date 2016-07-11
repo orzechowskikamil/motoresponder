@@ -43,11 +43,13 @@ public class UserRide {
 
 
     public boolean isUserRiding() {
+        this.log.add("Trying to measure if user riding, by checking conditions in which for sure he is not riding.");
+        
         // if rider rides, phone should be in pocket (ofc if somebody use phone during ride outside pocket, he should
         // disable this option).
         // in pocket is proxime (to leg or chest)... If there is no proximity, he is not riding.
         if (this.settings.isProximityCheckEnabled() && !this.isProxime()) {
-            this.log.add("Device screen is not near something.");
+            this.log.add("Device screen is not near something. User not riding.");
             return false;
         }
 
@@ -60,7 +62,7 @@ public class UserRide {
         // if phone doesn't report any movement we can also assume that user is not riding motorcycle
         try {
             if (this.settings.includeDeviceMotionCheck() && !this.motionSensorReportsMovement()) {
-                this.log.add("Device's accelerometer doesn't report movement.");
+                this.log.add("Device's accelerometer doesn't report movement. User not riding.");
                 return false;
             }
         } catch (AccelerometerNotAvailableException e) {
@@ -79,7 +81,7 @@ public class UserRide {
 
 
         if (!this.isSpeedForSureRiding(quickCheckSpeedKmh)) {
-            this.log.add("First check is speed less than sure riding speed, but not timeouted - checking again, using longer check.");
+            this.log.add("First check is speed less than sure riding speed, but not timeouted - checking again, using longer check. (User probably is stuck in traffic jam)");
 
             // if quick check returned speed below sure riding speed, but no timeout, it means that user is outside but 
             // he is not moving with motorcycle speed. We need to verify if it is not staying at traffic lights,
@@ -89,7 +91,7 @@ public class UserRide {
 
             if (this.isLocationTimeouted(longCheckSpeedKmh)) {
                 // but if again timeouted, then no mercy...
-                this.log.add("Second check of location timeouted - user is in building, or not moving fast enough to assume ride.");
+                this.log.add("Second check of location timeouted - user is in building, or not moving fast enough to assume ride. Not riding.");
                 return false;
             }
 
@@ -101,6 +103,7 @@ public class UserRide {
         }
 
         // all conditions when we are sure that user is not riding are not met - so user is riding.
+        this.log.add("All conditions met - user is riding.");
         return true;
     }
 
@@ -127,6 +130,8 @@ public class UserRide {
     protected boolean motionSensorReportsMovement() throws AccelerometerNotAvailableException {
         try {
             Boolean result = this.motionUtility.isDeviceInMotion(this.settings.getAccelerationRequiredToMotion()).get();
+
+            this.log.add(this.motionUtility.getInternalLog());
 
             if (result == null) {
                 // null means that something disturbed accelerometer during process, and it's equal to exception thrown situation.
@@ -193,6 +198,8 @@ public class UserRide {
 
         long endDateTimestamp = new Date().getTime();
         int checkDurationSeconds = Math.round((endDateTimestamp - startDateTimestamp) / 1000);
+
+        this.log.add(this.locationUtility.getInternalLog());
 
         if (location == null) {
             this.log.add("GPS check took " + checkDurationSeconds + "s and it was timeouted.");

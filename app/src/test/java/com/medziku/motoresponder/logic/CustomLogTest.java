@@ -35,8 +35,8 @@ public class CustomLogTest extends TestCase {
 
     @Test
     public void testAddingManyLines() {
-        int EXPECTED_MAX_LENGTH_OF_LOG = 5500;
-        int EXPECTED_MIN_LENGTH_OF_LOG = 1000;
+        int EXPECTED_MAX_LENGTH_OF_LOG = 23000;
+        int EXPECTED_MIN_LENGTH_OF_LOG = 15000;
         String DUMMY_LINE = "hellou!";
 
         for (int i = 0; i < 1000; i++) {

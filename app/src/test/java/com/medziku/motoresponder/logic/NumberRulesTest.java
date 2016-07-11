@@ -29,7 +29,8 @@ public class NumberRulesTest {
         this.contactsUtility = Mockito.mock(ContactsUtility.class);
         this.settings = Mockito.mock(Settings.class);
         this.countryPrefix = Mockito.mock(CountryPrefix.class);
-        this.numberRules = new NumberRules(contactsUtility, countryPrefix, settings);
+        CustomLog log = Mockito.mock(CustomLog.class);
+        this.numberRules = new NumberRules(contactsUtility, countryPrefix, settings, log);
 
         when(this.settings.isRespondingRestrictedToContactList()).thenReturn(true);
         this.setContactBookContainsContactReturnValue(true);

@@ -8,28 +8,34 @@ import com.medziku.motoresponder.utils.ContactsUtility;
  */
 public class NumberRules {
 
+    private CustomLog log;
     private ContactsUtility contactsUtility;
     private Settings settings;
     private CountryPrefix countryPrefix;
 
-    public NumberRules(ContactsUtility contactsUtility, CountryPrefix countryPrefix, Settings settings) {
+    public NumberRules(ContactsUtility contactsUtility, CountryPrefix countryPrefix, Settings settings, CustomLog log) {
         this.contactsUtility = contactsUtility;
         this.countryPrefix = countryPrefix;
         this.settings = settings;
-
+        this.log = log;
     }
 
 
     public boolean numberRulesAllowResponding(String phoneNumber) {
+        this.log.add("Measuring if number "+phoneNumber+" is allowed to get autoresponse.");
+        
         if (!this.isNumberNormal(phoneNumber)) {
+            this.log.add("This number is not normal. Not allowed.");
             return false;
         }
 
         if (this.isWhiteListEnabled() && !this.isNumberOnWhitelist(phoneNumber)) {
+            this.log.add("Whitelist is enabled and number is not on whitelist. Not allowed.");
             return false;
         }
 
         if (this.isBlackListEnabled() && this.isNumberOnBlacklist(phoneNumber)) {
+            this.log.add("Blacklist is enabled and number is on blacklist. Not allowed.");
             return false;
         }
 
@@ -38,20 +44,25 @@ public class NumberRules {
             try {
                 numberForeign = this.isNumberForeign(phoneNumber);
             } catch (Exception e) {
+                this.log.add("Filtering foreign numbers is not possible in this country.");
             }
             if (numberForeign) {
+                this.log.add("Number is foreign and filtering foreign number is enabled. Not allowed.");
                 return false;
             }
         }
 
         if (this.settings.isRespondingRestrictedToContactList() && !this.isInContactBook(phoneNumber)) {
+            this.log.add("Filtering only to contact book is enabled, and number is outside contact book. Not allowed.");
             return false;
         }
 
         if (this.isCurrentDevicePhoneNumber(phoneNumber)) {
+            this.log.add("This number is current device number (itself). Not allowed.");
             return false;
         }
 
+        this.log.add("Number seems to be ok and number rules allow responding.");
         return true;
     }
 

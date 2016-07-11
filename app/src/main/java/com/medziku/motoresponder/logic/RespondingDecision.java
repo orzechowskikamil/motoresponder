@@ -31,17 +31,19 @@ public class RespondingDecision {
     }
 
     public boolean shouldRespond(RespondingSubject subject) {
+        this.log.add("App will now make a decision if it should autorespond or not.");
+        
         if (this.deviceUnlocked.isNotRidingBecausePhoneUnlocked()) {
-            this.log.add("Phone is unlocked.");
+            this.log.add("User is not riding because phone is unlocked.");
             return false;
         }
-
+        
         Date dateOfReceiving = new Date();
 
         // do not answer numbers which user doesnt want to autorespond
         // this check is relatively cheap compared to measuring if user is riding
         if (!this.numberRules.numberRulesAllowResponding(subject.getPhoneNumber())) {
-            this.log.add("Number rules do not allow responding.");
+            this.log.add("App will not answer because number rules do not allow responding.");
             return false;
         }
 
