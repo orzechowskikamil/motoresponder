@@ -114,6 +114,26 @@ public class RespondingDecisionTest {
 
         this.expectRespondingDecisionShouldRespondToBe(false);
     }
+    
+    @Test
+    public void userManuallySetRidingAndSensorReportsNotRidingMakesTrueDecision(){
+        this.setUserRideIsUserRidingReturnValue(false);
+        
+        this.setSensorCheckEnabled(true);
+        this.setIsRidingAssumed(true);
+        
+        this.expectRespondingDecisionShouldRespondToBe(true);
+    }
+    
+    @Test
+    public void userEnabledSensorCheckAndManualSettingOffMakesTrueDecision(){
+             this.setUserRideIsUserRidingReturnValue(true);
+        
+        this.setSensorCheckEnabled(true);
+        this.setIsRidingAssumed(false);
+        
+        this.expectRespondingDecisionShouldRespondToBe(true);
+    }
 
 
     @Test

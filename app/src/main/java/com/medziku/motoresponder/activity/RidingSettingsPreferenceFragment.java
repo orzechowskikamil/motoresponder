@@ -36,7 +36,6 @@ public class RidingSettingsPreferenceFragment extends RidingSettingsPreferenceFr
     protected void manageEnabledState() {
         boolean responderEnabled = this.settings.isResponderEnabled();
 
-        this.getIsRidingAssumedPreference().setEnabled(!this.settings.isSensorCheckEnabled() && responderEnabled);
         this.getSensorCheckEnabledPreference().setEnabled(responderEnabled);
         this.getWaitBeforeResponsePreference().setEnabled(responderEnabled);
         this.getAssumePhoneUnlockedAsNotRidingPreference().setEnabled(responderEnabled);

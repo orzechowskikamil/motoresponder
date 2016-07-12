@@ -1,6 +1,6 @@
 <resources>
 
-    <string name="sensor_check_enabled_title">Sprawdzanie sensorami czy jedziesz</string>
+    <string name="sensor_check_enabled_title">Inteligentne wykrywanie jazdy</string>
     <string name="sensor_check_enabled_summary_on">Aplikacja użyje sensorów urządzenia, aby wykryć czy aktualnie
         jedziesz na motocyklu, czy nie.
     </string>
@@ -10,10 +10,9 @@
 
 
     <string name="is_riding_assumed_title">Aktualnie jadę</string>
-    <string name="is_riding_assumed_summary_on">Aplikacja za każdym razem odpowie, tak jakbyś jechał.
+    <string name="is_riding_assumed_summary_on">Aplikacja za każdym razem odpowie, tak jakbyś jechał. Inteligentne wykrywanie jazdy w tym momencie nie zostanie użyte, nawet jeśli jest włączone.
     </string>
-    <string name="is_riding_assumed_summary_off">Aplikacja nie będzie odpowiadała nikomu, ponieważ ustawiłeś że nie
-        jedziesz.
+    <string name="is_riding_assumed_summary_off">Aplikacja uzna że nie jedziesz, chyba że inteligentne wykrywanie jazdy jest włączone.
     </string>
 
 

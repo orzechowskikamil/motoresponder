@@ -61,18 +61,27 @@ public class RespondingDecision {
         }
 
 
-        // this check is more expensive in terms of power and battery
-        // so it's performed later.
-        if (this.settings.isSensorCheckEnabled()) {
-            if (!this.userRide.isUserRiding()) {
-                this.log.add("User is not riding.");
-                return false;
+        boolean isUserRiding = false;
+        
+        if (this.settings.isRidingAssumed()) {
+                isUserRiding = true;
+                 this.log.add("User manually set that he is riding now, no need to smart check.");
+        }else{
+          if (this.settings.isSensorCheckEnabled()) {
+            if (this.userRide.isUserRiding()) {
+                isUserRiding = true;
+                this.log.add("Sensor check (smart detection) is enabled and find out that user is riding.");
+            }else{
+                this.log.add("Sensor check (smart detection) is enabled and find out that user is NOT riding.");
             }
-        } else {
-            if (!this.settings.isRidingAssumed()) {
-                this.log.add("User set app to not riding mode.");
-                return false;
-            }
+        }  
+        }
+    
+        if (!isUserRiding){
+            this.log.add("Final decision is that User is NOT riding.");
+            return false;
+        }else{
+            this.log.add("Final decision is that User is riding.");
         }
 
         // and now because isUserRiding can took several seconds, we check again if user not unlocked phone during this time.

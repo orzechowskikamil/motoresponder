@@ -1,17 +1,15 @@
 <resources>
 
-    <string name="sensor_check_enabled_title">Riding sensor check</string>
+    <string name="sensor_check_enabled_title">Riding smart check</string>
     <string name="sensor_check_enabled_summary_on">Application will use all possible sensors of the device to
         automatically guess if you are riding in moment of incoming SMS/call or not.
     </string>
-    <string name="sensor_check_enabled_summary_off">Application will not try to detect if you are riding, but will
-        use "I am riding now" value.
-    </string>
+    <string name="sensor_check_enabled_summary_off">Application will not try to detect if you are riding.</string>
 
 
     <string name="is_riding_assumed_title">I am riding now</string>
-    <string name="is_riding_assumed_summary_on">Application will assume that you are riding now.</string>
-    <string name="is_riding_assumed_summary_off">Application will assume that you are not riding.</string>
+    <string name="is_riding_assumed_summary_on">Application will assume that you are riding now. If smart check is enabled, it will be not performed because it\'s reundant.</string>
+    <string name="is_riding_assumed_summary_off">Application will assume that you are not riding. If smart check is enabled, it still can automatically detect when you are riding.</string>
 
 
     <string name="assume_screen_unlocked_as_not_riding_title">Lockscreen test</string>
