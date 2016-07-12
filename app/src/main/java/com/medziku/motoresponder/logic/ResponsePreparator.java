@@ -72,10 +72,12 @@ public class ResponsePreparator {
 
     }
 
-    private String getAutoResponseMessageWithGeolocation() {
+    private String getAutoResponseMessageWithGeolocation(Location cachedLocation) {
         String messageTemplate = this.settings.getAutoResponseToSmsWithGeolocationTemplate();
+        
+       
 
-        Location location = this.getCurrentLocation();
+        Location location = (cachedLocation == null)? this.geCurrentLocation() : cachedLocation;
 
 
         String locationLink = LOCATION_LINK;
@@ -99,6 +101,8 @@ public class ResponsePreparator {
 
     private Location getCurrentLocation() {
         try {
+            // TODO k.orzechowsk think about this, from which settings get those parameters. I think it can be normal settings.
+            return this.locationUtility.getAccurateLocation(0, 30,)
             Future<Location> lastRequestedLocation = this.locationUtility.getLastRequestedLocation();
             if (lastRequestedLocation != null) {
                 return lastRequestedLocation.get();
