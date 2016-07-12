@@ -172,11 +172,11 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
     }
 
     private void showDebugNotification() {
-        String debugTitle = this.settings.getDebugNotificationTitleText();
-        String debugBigText = this.log.getLogStr();
-        String debugShortText = this.settings.getDebugNotificationShortText();
+        // String debugTitle = this.settings.getDebugNotificationTitleText();
+        // String debugBigText = this.log.getLogStr();
+        // String debugShortText = this.settings.getDebugNotificationShortText();
 
-        this.notificationUtility.showBigTextNotification(debugTitle, debugShortText, debugBigText);
+        // this.notificationUtility.showBigTextNotification(debugTitle, debugShortText, debugBigText);
     }
 
     private void showSummaryNotification(String phoneNumber) {

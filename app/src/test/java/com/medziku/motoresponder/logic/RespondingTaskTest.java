@@ -171,24 +171,24 @@ public class RespondingTaskTest {
     }
 
 
-    @Test
-    public void testOfEnabledDebugNotificationOnNotRespondingCase() {
-        when(this.settings.isShowingDebugNotificationEnabled()).thenReturn(true);
+    // @Test
+    // public void testOfEnabledDebugNotificationOnNotRespondingCase() {
+    //     when(this.settings.isShowingDebugNotificationEnabled()).thenReturn(true);
 
-        this.respondingTask.callLogic(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
+    //     this.respondingTask.callLogic(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
 
-        verify(this.notificationUtility, times(1)).showBigTextNotification(anyString(), anyString(), anyString());
-    }
+    //     verify(this.notificationUtility, times(1)).showBigTextNotification(anyString(), anyString(), anyString());
+    // }
 
-    @Test
-    public void testOfEnabledDebugNotificationRespondingCase() {
-        when(this.respondingDecision.shouldRespond(any(RespondingSubject.class))).thenReturn(true);
-        when(this.settings.isShowingDebugNotificationEnabled()).thenReturn(true);
+    // @Test
+    // public void testOfEnabledDebugNotificationRespondingCase() {
+    //     when(this.respondingDecision.shouldRespond(any(RespondingSubject.class))).thenReturn(true);
+    //     when(this.settings.isShowingDebugNotificationEnabled()).thenReturn(true);
 
-        this.respondingTask.callLogic(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
+    //     this.respondingTask.callLogic(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
 
-        verify(this.notificationUtility, times(1)).showBigTextNotification(anyString(), anyString(), anyString());
-    }
+    //     verify(this.notificationUtility, times(1)).showBigTextNotification(anyString(), anyString(), anyString());
+    // }
 
 
     @Test
