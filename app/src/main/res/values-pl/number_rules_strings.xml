@@ -17,6 +17,13 @@
     </string>
 
 
+    <string name="already_responded_filtering_enabled_title">Odpowiadanie tylko raz</string>
+    <string name="already_responded_filtering_enabled_summary_on">
+        Aplikacja nie wyśle automatycznej odpowiedzi, jeśli już wcześniej wysyłała powiadomienie do danego numeru, ale nie skontaktowałeś się od tamtej pory z tą osobą (SMS/połączenie). Uwaga: Jeśli masz smartfon Samsunga, lub dialer/apkę do SMSów inną niż standardowa Androida, włączenie tej opcji może spowodować brak automatycznych odpowiedzi.
+    </string>
+    <string name="already_responded_filtering_enabled_summary_off">Aplikacja nie będzie limitować automatycznych odpowiedzi.
+    </string>
+
     <string name="dont_use_whitelist_text">Nie używaj whitelisty</string>
 
     <string name="whitelist_group_name_title">Whitelista</string>

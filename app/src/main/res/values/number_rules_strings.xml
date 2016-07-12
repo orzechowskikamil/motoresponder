@@ -15,7 +15,13 @@
     <string name="responding_restricted_to_current_country_summary_off">Application will not care if number is foreign
         or not.
     </string>
-
+    
+      <string name="already_responded_filtering_enabled_title">Limiting responses</string>
+    <string name="already_responded_filtering_enabled_summary_on">After sending one autoresponse to given number, application will wait with autoresponding to this number until you will send SMS/make call to this number. Caution: Enabling this option on Samsung or if you have custom dialer/SMS app can make application not responding at all.
+    </string>
+    <string name="already_responded_filtering_enabled_summary_off">Application will not limit autoresponses per number.
+    </string>
+    
 
     <string name="dont_use_whitelist_text">Don\'t use whitelist</string>
 

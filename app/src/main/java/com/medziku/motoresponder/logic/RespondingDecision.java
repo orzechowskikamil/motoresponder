@@ -48,7 +48,7 @@ public class RespondingDecision {
         // this this will check if user or application already responded to this number. In case if he is already responded
         // we don't respond automatically. App can have some delay between receiving message and starting responding process
         // to allow user respond manually, so this check checks if it happened
-        if (this.alreadyResponded.isUserRespondedSince(dateOfReceiving, subject.getPhoneNumber())) {
+        if (this.settings.isAlreadyRespondedFilteringEnabled() && this.alreadyResponded.isUserRespondedSince(dateOfReceiving, subject.getPhoneNumber())) {
             this.log.add("User responded since receiving input, no need of autoresponse.");
             return false;
         }
@@ -84,7 +84,7 @@ public class RespondingDecision {
         // and now finally we check if user doesn't respond in time of checking if device is riding.
         // (there is possibility that user responded quickly, turning on screen doesn't affect logic, and user
         // quickly responded and hide phone before ride/not ride state was known)
-        if (this.alreadyResponded.isUserRespondedSince(dateOfReceiving, subject.getPhoneNumber())) {
+        if (this.settings.isAlreadyRespondedFilteringEnabled() && this.alreadyResponded.isUserRespondedSince(dateOfReceiving, subject.getPhoneNumber())) {
             this.log.add("User responded between receiving input and determining if user is riding.");
             return false;
         }

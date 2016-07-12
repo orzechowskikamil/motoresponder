@@ -99,6 +99,10 @@ public class Settings extends SettingsBase {
     public boolean isShowingPendingNotificationEnabled() {
         return this.getBooleanValue(R.string.showing_pending_notification_enabled_key);
     }
+    
+    public boolean isAlreadyRespondedFilteringEnabled(){
+        return this.getBooleanValue(R.string.already_responded_filtering_enabled_key);
+    }
 
     public void listenToSensorCheckEnabledChange(Predicate<Boolean> callback) {
         this.onChangeSensorCheckEnabledCallback = callback;

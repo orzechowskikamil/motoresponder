@@ -39,6 +39,7 @@ public class RespondingDecisionTest {
         this.settings = Mockito.mock(Settings.class);
         when(this.settings.getLimitOfGeolocationResponses()).thenReturn(2);
         when(this.settings.getLimitOfResponses()).thenReturn(1);
+        when(this.settings.isAlreadyRespondedFilteringEnabled()).thenReturn(true);
         CustomLog log = Mockito.mock(CustomLog.class);
         this.respondingDecision = new RespondingDecision(this.userRide, this.numberRules, this.alreadyResponded, this.deviceUnlocked, this.settings, log);
 
@@ -83,6 +84,14 @@ public class RespondingDecisionTest {
 
     @Test
     public void allFullfilledConditionsMakePositiveDecision() {
+        this.expectRespondingDecisionShouldRespondToBe(true);
+    }
+    
+    @Test
+    public void alreadyRespondedDoesntMatterWhenDisabled(){
+        when(this.settings.isAlreadyRespondedFilteringEnabled()).thenReturn(false);
+        this.setAlreadyRespondedIsUserRespondedSinceReturnValue(false);
+        
         this.expectRespondingDecisionShouldRespondToBe(true);
     }
 
