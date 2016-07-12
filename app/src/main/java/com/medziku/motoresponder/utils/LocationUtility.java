@@ -17,9 +17,9 @@ import java.util.concurrent.Future;
  * This utility allow to listen for accurate location and get response as promise.
  */
 public class LocationUtility {
+    
 
     private LocationManager locationManager;
-    private SettableFuture<Location> locationFuture;
     private GettingAccurateLocationProcess mostRecentLocationProcess;
 
 
@@ -38,12 +38,7 @@ public class LocationUtility {
         // which represent process of getting location, but I didn't want to break api so this method is almost empty.
         this.mostRecentLocationProcess = new GettingAccurateLocationProcess(this.locationManager, minimumExpectedSpeed, expectedAccuracy, timeoutMs);
 
-        this.locationFuture = this.mostRecentLocationProcess.getLocation();
-        return this.locationFuture;
-    }
-
-    public Future<Location> getLastRequestedLocation() {
-        return this.locationFuture;
+        return this.mostRecentLocationProcess.getLocation();
     }
 
     public void cancelGPSCheck() {
