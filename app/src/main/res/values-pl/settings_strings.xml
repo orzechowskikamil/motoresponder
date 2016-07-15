@@ -56,9 +56,10 @@
     </string>
 
 
-    <string name="showing_pending_notification_enabled_title">Notyfikacja o procesie</string>
+    <string name="showing_pending_notification_enabled_title">Bieżące notyfikacje</string>
     <string name="showing_pending_notification_enabled_summary_on">
-        Aplikacja będzie pokazywać notyfikację zawsze gdy będzie ustalać czy jedziesz, i będzie ją chować gdy ustali.
+        Aplikacja będzie pokazywać notyfikację na czas procesu inteligentnego wykrywania jazdy, lub gdy włączysz w aplikacji
+        tryb "aktualnie jadę".
     </string>
     <string name="showing_pending_notification_enabled_summary_off">
         Aplikacja nie będzie informować o procesie ustalania czy jedziesz.

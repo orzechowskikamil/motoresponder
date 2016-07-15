@@ -184,7 +184,7 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
 
     private void hidePendingNotificationIfEnabled() {
         if (this.settings.isShowingPendingNotificationEnabled()) {
-            this.notificationUtility.hideNotification();
+            this.notificationUtility.hideNotification(this.settings.ONGOING_NOTIFICATION_PENDING_AUTORESPOND_ID);
         }
 
     }
@@ -249,7 +249,7 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
     private void notifyAboutPendingAutoRespond() {
         String title = this.settings.getOngoingNotificationTitleText();
         String bigText = this.settings.getOngoingNotificationBigText();
-        this.notificationUtility.showOngoingNotification(title, bigText, "");
+        this.notificationUtility.showOngoingNotification(title, bigText, "", this.settings.ONGOING_NOTIFICATION_PENDING_AUTORESPOND_ID);
     }
 
 

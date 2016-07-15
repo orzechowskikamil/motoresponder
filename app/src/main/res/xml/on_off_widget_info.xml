@@ -1,0 +1,9 @@
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:minWidth="60dp"
+                    android:minHeight="60dp"
+                    android:updatePeriodMillis="0"
+                    android:initialLayout="@layout/riding_assumed_widget_disabled"
+                    android:resizeMode="none"
+                    android:widgetCategory="home_screen"
+                    android:previewImage="@drawable/on_off_widget_on">
+</appwidget-provider>

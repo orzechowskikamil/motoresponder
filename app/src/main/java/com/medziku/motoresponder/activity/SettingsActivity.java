@@ -26,6 +26,7 @@ public class SettingsActivity extends PreferenceActivity {
 
     private SharedPreferencesUtility sharedPreferencesUtility;
     private Settings settings;
+    private Predicate<Boolean> responderEnabledSettingChangedCallback;
 
     @Override
     public void onBuildHeaders(List<Header> target) {
@@ -49,11 +50,59 @@ public class SettingsActivity extends PreferenceActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        this.runBackgroundProcessOrPseudotests();
+        this.onGatheringFocus();
+    }
+
+    @Override
+    protected void onPause() {
+        this.onLoosingFocus();
+        super.onPause();
     }
 
 
-    // TODO K. Orzechowski: divide it to app launcher and activity.
+// TODO K. Orzechowski: divide it to app launcher and activity.
+
+    @Override
+    protected void onResume() {
+        this.onGatheringFocus();
+        super.onResume();
+    }
+
+    protected void onStop() {
+        this.onLoosingFocus();
+        super.onStop();
+    }
+
+    @Override
+    protected boolean isValidFragment(String fragmentName) {
+        // making this check only introduce errors when adding fragment. ignore it.
+        return true;
+    }
+
+    protected void acceptTermsAndConditions() {
+        this.settings.setTermsAndCondition(true);
+        this.settings.setResponderEnabled(true);
+    }
+
+    protected void rejectTermsAndConditions() {
+        this.settings.setTermsAndCondition(false);
+        this.settings.setResponderEnabled(false);
+        this.killApplication();
+    }
+
+    private void onGatheringFocus() {
+        this.runBackgroundProcessOrPseudotests();
+    }
+
+    private void onLoosingFocus() {
+        this.stopListeningToChangeResponderEnabledSetting();
+    }
+
+    private void stopListeningToChangeResponderEnabledSetting() {
+        if (this.settings != null) {
+            this.settings.stopListeningToSetting(this.settings.RESPONDER_ENABLED_KEY, this.responderEnabledSettingChangedCallback);
+        }
+    }
 
     private void runBackgroundProcessOrPseudotests() {
         if (this.arePseudoTestsEnabled()) {
@@ -70,35 +119,27 @@ public class SettingsActivity extends PreferenceActivity {
         this.settings = new Settings(this.sharedPreferencesUtility);
 
         this.toggleBackgroundServiceAccordingToSettings();
-        this.toggleBackgroundServiceOnSettingChange();
+        this.listenToChangeResponderEnabledSetting();
 
         if (!this.settings.isTermsAndConditionAccepted()) {
             this.showPopupWithDisclaimer();
         }
     }
 
-    private void toggleBackgroundServiceOnSettingChange() {
-        this.settings.listenToResponderEnabledChange(new Predicate<Boolean>() {
+    private void listenToChangeResponderEnabledSetting() {
+        if (this.responderEnabledSettingChangedCallback != null) {
+            this.stopListeningToChangeResponderEnabledSetting();
+        }
+
+        this.responderEnabledSettingChangedCallback = new Predicate<Boolean>() {
             @Override
             public boolean apply(Boolean input) {
                 SettingsActivity.this.toggleBackgroundServiceAccordingToSettings();
-                SettingsActivity.this.toggleDisabledMenuOptions();
                 return false;
             }
-        });
-    }
+        };
 
-    protected void toggleDisabledMenuOptions() {
-        if (this.settings.isResponderEnabled()) {
-
-        }
-    }
-
-    protected void onStop() {
-        if (this.settings != null) {
-            this.settings.stopListening();
-        }
-        super.onStop();
+        this.settings.listenToSettingChange(this.settings.RESPONDER_ENABLED_KEY, this.responderEnabledSettingChangedCallback);
     }
 
     /**
@@ -126,7 +167,6 @@ public class SettingsActivity extends PreferenceActivity {
         }
     }
 
-
     /**
      * Special mode in which app instead of doing it's work, run this method to start utilities on real device.
      * Because there is no possibility of good testing utilities by unit tests or instrumented tests.
@@ -150,23 +190,6 @@ public class SettingsActivity extends PreferenceActivity {
 
     private boolean areIntegrationPseudoTestsEnabled() {
         return IntegrationRunner.ARE_INTEGRATION_TESTS_ENABLED == true;
-    }
-
-    @Override
-    protected boolean isValidFragment(String fragmentName) {
-        // making this check only introduce errors when adding fragment. ignore it.
-        return true;
-    }
-
-    protected void acceptTermsAndConditions() {
-        this.settings.setTermsAndCondition(true);
-        this.settings.setResponderEnabled(true);
-    }
-
-    protected void rejectTermsAndConditions() {
-        this.settings.setTermsAndCondition(false);
-        this.settings.setResponderEnabled(false);
-        this.killApplication();
     }
 
     private void killApplication() {

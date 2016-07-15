@@ -1,9 +1,9 @@
 package com.medziku.motoresponder.logic;
 
 import android.content.Context;
-import android.test.mock.MockContext;
+import android.content.Intent;
+import android.content.IntentFilter;
 import com.google.common.base.Predicate;
-
 import com.medziku.motoresponder.utils.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,15 +17,14 @@ import static org.mockito.Mockito.*;
 
 public class ResponderTest {
 
+    private static final String GEOLOCATION_REQUEST_PATTERN = "Where are you";
     private String FAKE_PHONE_NUMBER = "777777777";
     private ExposedResponder responder;
-    private MockContext context;
-    private static final String GEOLOCATION_REQUEST_PATTERN = "Where are you";
-
+    private Context context;
 
     @Before
     public void setUp() throws Exception {
-        this.context = new MockContext();
+        this.context = mock(Context.class);
         this.responder = new ExposedResponder(this.context);
         when(this.responder.mockSettings.getGeolocationRequestPatterns()).thenReturn(new String[]{GEOLOCATION_REQUEST_PATTERN});
         when(this.responder.mockSettings.isResponderEnabled()).thenReturn(true);
@@ -142,12 +141,52 @@ class ExposedResponder extends Responder {
             this.sensorsUtility = this.createSensorsUtility();
 
             this.mockSMSUtility = this.smsUtility;
+            this.notificationUtility = mock(NotificationUtility.class);
+            this.intentsUtility = this.createIntentsUtility();
             this.mockCallsUtility = this.callsUtility;
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    @Override
+    protected RespondingTasksQueue createRespondingTasksQueue() {
+        RespondingTasksQueue mock = mock(RespondingTasksQueue.class);
+        this.respondingTasksQueueMock = mock;
+        return mock;
+    }
+
+    @Override
+    protected Settings createSettings() {
+        this.mockSettings = mock(Settings.class);
+
+        doAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                return null;
+            }
+        }).when(this.mockSettings).listenToSettingChange(anyString(), any(Predicate.class));
+
+        doAnswer(new Answer<Void>() {
+            public Void answer(InvocationOnMock invocation) throws Throwable {
+                Predicate callback = (Predicate<Boolean>) invocation.getArguments()[1];
+                ExposedResponder.this.changedSMSCallSettingCallback = callback;
+                return null;
+            }
+        }).when(this.mockSettings).listenToSettingChange(anyString(), any(Predicate.class));
+        return this.mockSettings;
+    }
+
+    private IntentsUtility createIntentsUtility() {
+        IntentsUtility mock = mock(IntentsUtility.class);
+        when(mock.createIntent(any(Context.class), any(Class.class))).thenAnswer(new Answer<Intent>() {
+            public Intent answer(InvocationOnMock invocation) throws Throwable {
+                return mock(Intent.class);
+            }
+        });
+        when(mock.createIntentFilter(anyString())).thenReturn(mock(IntentFilter.class));
+        return mock;
+    }
 
     private SensorsUtility createSensorsUtility() {
         return mock(SensorsUtility.class);
@@ -160,15 +199,9 @@ class ExposedResponder extends Responder {
         return mock;
     }
 
-    @Override
-    protected RespondingTasksQueue createRespondingTasksQueue() {
-        RespondingTasksQueue mock = mock(RespondingTasksQueue.class);
-        this.respondingTasksQueueMock = mock;
-        return mock;
-    }
-
     private LockStateUtility createMockLockStateUtility() throws Exception {
         LockStateUtility mock = mock(LockStateUtility.class);
+
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
@@ -178,6 +211,7 @@ class ExposedResponder extends Responder {
 
             }
         }).when(mock).listenToLockStateChanges(any(Predicate.class));
+
         return mock;
     }
 
@@ -206,24 +240,6 @@ class ExposedResponder extends Responder {
             }
         }).when(mock).listenForSMS(any(Predicate.class));
         return mock;
-    }
-
-    @Override
-    protected Settings createSettings() {
-        this.mockSettings = mock(Settings.class);
-
-        doAnswer(new Answer() {
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
-
-                Predicate callback = (Predicate<Boolean>) invocation.getArguments()[0];
-                ExposedResponder.this.changedSMSCallSettingCallback = callback;
-
-                return null;
-            }
-        }).when(this.mockSettings).listenToChangeRespondToSmsOrCallSetting(any(Predicate.class));
-
-        return this.mockSettings;
     }
 
 

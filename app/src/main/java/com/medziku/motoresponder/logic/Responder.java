@@ -26,16 +26,20 @@ public class Responder {
     protected SensorsUtility sensorsUtility;
     protected ResponsePreparator responsePreparator;
     protected SharedPreferencesUtility sharedPreferencesUtility;
+    protected IntentsUtility intentsUtility;
     protected boolean isRespondingNow;
-
 
     private boolean currentlyListeningForSMS = false;
     private boolean currentlyListeningForCalls = false;
-
     private CustomLog log;
     private GeolocationRequestRecognition geolocationRequestRecognition;
     private WiFiUtility wiFiUtility;
     private CountryPrefix countryPrefix;
+    private OnOffWidgetHandler onOffWidgetHandler;
+    private Predicate<Boolean> changeAutoResponseToCallOrSmsEnabledSettingCallback;
+
+    private IAmRidingNotificationHandler iAmRidingNotificationHandler;
+
 
     public Responder(Context context) {
         this.context = context;
@@ -44,6 +48,8 @@ public class Responder {
         this.createUtilities();
 
         this.settings = this.createSettings();
+        this.onOffWidgetHandler = new OnOffWidgetHandler(this.context, this.settings, this.intentsUtility);
+        this.iAmRidingNotificationHandler = new IAmRidingNotificationHandler(this.context, this.settings, this.notificationUtility, this.intentsUtility);
 
         this.log = new CustomLog(this.settings);
 
@@ -57,11 +63,6 @@ public class Responder {
         this.geolocationRequestRecognition = this.createGeolocationRequestRecognition();
         this.countryPrefix = this.createCountryPrefix();
     }
-
-    protected CountryPrefix createCountryPrefix() {
-        return new CountryPrefix(this.contactsUtility);
-    }
-
 
     /**
      * Call this to start responding
@@ -79,28 +80,15 @@ public class Responder {
 
         this.isRespondingNow = true;
         this.listenToIncomingAccordingToSettings();
-        this.settings.listenToChangeRespondToSmsOrCallSetting(new Predicate<Boolean>() {
-            @Override
-            public boolean apply(Boolean input) {
-                Responder.this.listenToIncomingAccordingToSettings();
-                return false;
-            }
-        });
+
+        this.listenToAutoResponseToCallOrSmsEnabledSettingChange();
+
         this.listenToProximityChanges();
         this.listenForLockStateChanges();
-    }
 
-    protected void listenToIncomingAccordingToSettings() {
-        if (this.settings.isRespondingForSMSEnabled() == true) {
-            this.listenForSMS();
-        } else {
-            this.stopListeningForSMS();
-        }
-        if (this.settings.isRespondingForCallsEnabled() == true) {
-            this.listenForCalls();
-        } else {
-            this.stopListeningForCalls();
-        }
+        this.iAmRidingNotificationHandler.handleNotification();
+
+        this.onOffWidgetHandler.handleWidget();
     }
 
 
@@ -117,8 +105,10 @@ public class Responder {
         this.stopListeningForSMS();
         this.stopListeningForCalls();
         this.stopListeningForLockStateChanges();
+        this.stopListeningToAutoResponseToCallOrSmsEnabledSettingChange();
+        this.iAmRidingNotificationHandler.stopHandlingNotification();
+        this.onOffWidgetHandler.stopHandlingWidget();
     }
-
 
     /**
      * Called when user will receive sms
@@ -126,7 +116,7 @@ public class Responder {
     public void onSMSReceived(String phoneNumber, String message) {
         SMSRespondingSubject subject;
 
-        this.log.add("Received sms from " + phoneNumber+" \r\n\r\n");
+        this.log.add("Received sms from " + phoneNumber + " \r\n\r\n");
 
         if (this.geolocationRequestRecognition.isGeolocationRequest(message)) {
             subject = new GeolocationRequestRespondingSubject(phoneNumber, message);
@@ -156,6 +146,23 @@ public class Responder {
         }
     }
 
+    protected CountryPrefix createCountryPrefix() {
+        return new CountryPrefix(this.contactsUtility);
+    }
+
+    protected void listenToIncomingAccordingToSettings() {
+        if (this.settings.isRespondingForSMSEnabled() == true) {
+            this.listenForSMS();
+        } else {
+            this.stopListeningForSMS();
+        }
+        if (this.settings.isRespondingForCallsEnabled() == true) {
+            this.listenForCalls();
+        } else {
+            this.stopListeningForCalls();
+        }
+    }
+
     /**
      * This method handles incoming sms or call by creating instance of RespondingTask (which handles incoming)
      * and add it to list of currently pending responses. After successfull autoresponse, it's removed from
@@ -164,7 +171,6 @@ public class Responder {
     protected void handleIncoming(RespondingSubject subject) {
         this.respondingTasksQueue.createAndExecuteRespondingTask(subject);
     }
-
 
     protected void listenForSMS() {
         if (this.currentlyListeningForSMS == true) {
@@ -240,7 +246,6 @@ public class Responder {
         this.sensorsUtility.unregisterSensors();
 
     }
-    // region factory methods
 
     protected void createUtilities() {
         this.sharedPreferencesUtility = new SharedPreferencesUtility(this.context);
@@ -253,22 +258,20 @@ public class Responder {
         this.motionUtility = new MotionUtility(this.context, this.lockStateUtility);
         this.sensorsUtility = new SensorsUtility(this.context);
         this.wiFiUtility = new WiFiUtility(this.context);
+        this.intentsUtility = new IntentsUtility(this.context);
     }
 
     protected AlreadyResponded createAlreadyResponded() {
         return new AlreadyResponded(this.callsUtility, this.smsUtility);
     }
 
-
     protected DeviceUnlocked createDeviceUnlocked() {
         return new DeviceUnlocked(this.settings, this.lockStateUtility);
     }
 
-
     protected UserRide createUserRide() {
         return new UserRide(this.settings, this.locationUtility, this.sensorsUtility, this.motionUtility, this.wiFiUtility, this.log);
     }
-
 
     protected NumberRules createNumberRules() {
         return new NumberRules(this.contactsUtility, this.countryPrefix, this.settings, this.log);
@@ -281,7 +284,6 @@ public class Responder {
     protected Settings createSettings() {
         return new Settings(this.sharedPreferencesUtility);
     }
-
 
     protected GeolocationRequestRecognition createGeolocationRequestRecognition() {
         return new GeolocationRequestRecognition(this.settings);
@@ -300,10 +302,30 @@ public class Responder {
         );
     }
 
-
     protected RespondingDecision createRespondingDecision() {
         return new RespondingDecision(this.userRide, this.numberRules, this.alreadyResponded, this.deviceUnlocked, this.settings, this.log);
     }
 
-    // endregion
+    private void listenToAutoResponseToCallOrSmsEnabledSettingChange() {
+        if (this.changeAutoResponseToCallOrSmsEnabledSettingCallback != null) {
+            return;
+        }
+
+        this.changeAutoResponseToCallOrSmsEnabledSettingCallback = new Predicate<Boolean>() {
+            @Override
+            public boolean apply(Boolean input) {
+                Responder.this.listenToIncomingAccordingToSettings();
+                return false;
+            }
+        };
+        this.settings.listenToSettingChange(this.settings.AUTO_RESPONSE_TO_CALL_ENABLED_KEY, this.changeAutoResponseToCallOrSmsEnabledSettingCallback);
+        this.settings.listenToSettingChange(this.settings.AUTO_RESPONSE_TO_SMS_ENABLED_KEY, this.changeAutoResponseToCallOrSmsEnabledSettingCallback);
+    }
+
+    private void stopListeningToAutoResponseToCallOrSmsEnabledSettingChange() {
+        this.settings.stopListeningToSetting(this.settings.AUTO_RESPONSE_TO_CALL_ENABLED_KEY, this.changeAutoResponseToCallOrSmsEnabledSettingCallback);
+        this.settings.stopListeningToSetting(this.settings.AUTO_RESPONSE_TO_SMS_ENABLED_KEY, this.changeAutoResponseToCallOrSmsEnabledSettingCallback);
+    }
+
+
 }

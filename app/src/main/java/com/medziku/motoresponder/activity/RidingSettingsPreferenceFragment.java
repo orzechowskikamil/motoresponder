@@ -2,7 +2,10 @@ package com.medziku.motoresponder.activity;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.preference.*;
+import android.preference.ListPreference;
+import android.preference.Preference;
+import android.preference.PreferenceFragment;
+import android.preference.SwitchPreference;
 import com.google.common.base.Predicate;
 import com.medziku.motoresponder.R;
 import com.medziku.motoresponder.logic.Settings;
@@ -10,27 +13,51 @@ import com.medziku.motoresponder.utils.SharedPreferencesUtility;
 
 public class RidingSettingsPreferenceFragment extends RidingSettingsPreferenceFragmentDefinition {
 
+    private Predicate<Boolean> responderEnabledSettingChangedCallback;
+    private Predicate<Boolean> sensorCheckSettingChangedCallback;
+    private Predicate<Boolean> isRidingAssumedSettingChangedCallback;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        this.settings.listenToSensorCheckEnabledChange(new Predicate<Boolean>() {
+        this.sensorCheckSettingChangedCallback = new Predicate<Boolean>() {
             @Override
             public boolean apply(Boolean input) {
                 RidingSettingsPreferenceFragment.this.manageEnabledState();
                 return true;
             }
-        });
+        };
 
-        this.settings.listenToResponderEnabledChange(new Predicate<Boolean>() {
+        this.responderEnabledSettingChangedCallback = new Predicate<Boolean>() {
             @Override
             public boolean apply(Boolean input) {
                 RidingSettingsPreferenceFragment.this.manageEnabledState();
                 return false;
             }
-        });
+        };
+
+        this.isRidingAssumedSettingChangedCallback = new Predicate<Boolean>() {
+            @Override
+            public boolean apply(Boolean input) {
+                RidingSettingsPreferenceFragment.this.updateIsRidingAssumed();
+                return false;
+            }
+        };
+
+        this.settings.listenToSettingChange(this.settings.SENSOR_CHECK_ENABLED_KEY, this.sensorCheckSettingChangedCallback);
+        this.settings.listenToSettingChange(this.settings.RESPONDER_ENABLED_KEY, this.responderEnabledSettingChangedCallback);
+        this.settings.listenToSettingChange(this.settings.IS_RIDING_ASSUMED_KEY, this.isRidingAssumedSettingChangedCallback);
 
         this.manageEnabledState();
+    }
+
+    @Override
+    public void onDestroy() {
+        this.settings.stopListeningToSetting(this.settings.RESPONDER_ENABLED_KEY, this.responderEnabledSettingChangedCallback);
+        this.settings.stopListeningToSetting(this.settings.SENSOR_CHECK_ENABLED_KEY, this.sensorCheckSettingChangedCallback);
+        this.settings.stopListeningToSetting(this.settings.IS_RIDING_ASSUMED_KEY, this.isRidingAssumedSettingChangedCallback);
+        super.onDestroy();
     }
 
     protected void manageEnabledState() {
@@ -39,6 +66,10 @@ public class RidingSettingsPreferenceFragment extends RidingSettingsPreferenceFr
         this.getSensorCheckEnabledPreference().setEnabled(responderEnabled);
         this.getWaitBeforeResponsePreference().setEnabled(responderEnabled);
         this.getAssumePhoneUnlockedAsNotRidingPreference().setEnabled(responderEnabled);
+    }
+
+    private void updateIsRidingAssumed() {
+        this.getIsRidingAssumedPreference().setChecked(this.settings.isRidingAssumed());
     }
 
 
@@ -62,10 +93,6 @@ abstract class RidingSettingsPreferenceFragmentDefinition extends PreferenceFrag
         this.settings = new Settings(this.sharedPreferencesUtility);
     }
 
-    private Preference findPreferenceByID(int preferenceID) {
-        return this.findPreference(sharedPreferencesUtility.getStringFromRes(preferenceID));
-    }
-
     protected SwitchPreference getIsRidingAssumedPreference() {
         return (SwitchPreference) this.findPreferenceByID(R.string.is_riding_assumed_key);
     }
@@ -80,6 +107,10 @@ abstract class RidingSettingsPreferenceFragmentDefinition extends PreferenceFrag
 
     protected SwitchPreference getAssumePhoneUnlockedAsNotRidingPreference() {
         return (SwitchPreference) this.findPreferenceByID(R.string.assume_screen_unlocked_as_not_riding_key);
+    }
+
+    private Preference findPreferenceByID(int preferenceID) {
+        return this.findPreference(sharedPreferencesUtility.getStringFromRes(preferenceID));
     }
 }
 

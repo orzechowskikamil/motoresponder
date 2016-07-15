@@ -1,4 +1,9 @@
 <resources>
+    <string name="app_name">Motoresponder</string>
+
+    <!-- widget -->
+    <string name="on_off_widget_label">Motoresponder\'s assume riding setting</string>
+
     <!-- notifications -->
     <string name="debug_notification_title_text">Motoresponder debug</string>
     <string name="debug_notification_short_text">Close other notifications to see details.</string>
@@ -18,8 +23,9 @@
     <string name="ongoing_notification_big_text">Motoresponder is trying to determine if you are riding now or not.
     </string>
 
+    <string name="ongoing_notification_is_riding_assumed_title_text">Riding mode </string>
+    <string name="ongoing_notification_is_riding_assumed_big_text">You set that you are riding now. Application will respond to every unanswered call and SMS. Tap this to turn off this mode.</string>
 
-    <string name="app_name">Motoresponder</string>
     <string name="settings_activity_label">Motoresponder settings</string>
 
     <string name="main_preferences_title">Basic settings</string>

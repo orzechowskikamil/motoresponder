@@ -18,6 +18,8 @@ import java.util.List;
 
 public class NumberRulesPreferenceFragment extends NumberRulesPreferenceFragmentsDefinition {
 
+    private Predicate<Boolean> responderEnabledKeyCallback;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,22 +32,16 @@ public class NumberRulesPreferenceFragment extends NumberRulesPreferenceFragment
         this.setupList(this.getBlackListGroupNamePreference(), this.settings.getDontUseBlacklistText());
         this.setupList(this.getGeolocationWhiteListGroupNamePreference(), this.settings.getDontUseGeolocationWhitelistText());
 
-        this.settings.listenToResponderEnabledChange(new Predicate<Boolean>() {
+
+        this.responderEnabledKeyCallback = new Predicate<Boolean>() {
             @Override
             public boolean apply(Boolean input) {
                 NumberRulesPreferenceFragment.this.manageDisabledState();
                 return false;
             }
-        });
+        };
 
-        this.settings.listenToResponderEnabledChange(new Predicate<Boolean>() {
-            @Override
-            public boolean apply(Boolean input) {
-                NumberRulesPreferenceFragment.this.manageDisabledState();
-                return false;
-            }
-        });
-
+        this.settings.listenToSettingChange(this.settings.RESPONDER_ENABLED_KEY, this.responderEnabledKeyCallback);
 
         this.manageDisabledState();
     }
@@ -55,6 +51,7 @@ public class NumberRulesPreferenceFragment extends NumberRulesPreferenceFragment
             this.getPreferenceScreen().removePreference(this.getDevicePhoneNumberPreference());
         }
     }
+
     private void hideRespondingRestrictedToCurrentCountryIfDeviceNotAbleToFilter() {
         if (!this.numberRules.isAbleToFilterForeignNumbers()) {
             this.getPreferenceScreen().removePreference(this.getRespondingRestrictedToCountryPreference());
@@ -64,7 +61,6 @@ public class NumberRulesPreferenceFragment extends NumberRulesPreferenceFragment
     private boolean deviceIsAbleToReadCurrentPhoneNumber() {
         return this.contactsUtility.isAbleToReadCurrentDeviceNumber();
     }
-
 
 
     private void setupList(ListPreference listPreference, String dontUseText) {
@@ -99,6 +95,11 @@ public class NumberRulesPreferenceFragment extends NumberRulesPreferenceFragment
         }
     }
 
+    @Override
+    public void onDestroy() {
+        this.settings.stopListeningToSetting(this.settings.RESPONDER_ENABLED_KEY, this.responderEnabledKeyCallback);
+        super.onDestroy();
+    }
 }
 
 abstract class NumberRulesPreferenceFragmentsDefinition extends PreferenceFragment {

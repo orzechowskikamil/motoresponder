@@ -117,13 +117,13 @@ public class RespondingTaskTest {
         ArgumentCaptor<String> summaryNotificationSmallText = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<String> summaryNotificationBigText = ArgumentCaptor.forClass(String.class);
 
-        verify(this.notificationUtility, times(1)).showOngoingNotification(anyString(), anyString(), anyString());
+        verify(this.notificationUtility, times(1)).showOngoingNotification(anyString(), anyString(), anyString(),anyInt());
         verify(this.notificationUtility, times(1)).showBigTextNotification(
                 anyString(),
                 summaryNotificationSmallText.capture(),
                 summaryNotificationBigText.capture()
         );
-        verify(this.notificationUtility, times(1)).hideNotification();
+        verify(this.notificationUtility, times(1)).hideNotification(anyInt());
 
         assertTrue(summaryNotificationSmallText.getValue().indexOf(FAKE_PHONE_NUMBER) >= 0);
         assertTrue(summaryNotificationBigText.getValue().indexOf(FAKE_PHONE_NUMBER) >= 0);

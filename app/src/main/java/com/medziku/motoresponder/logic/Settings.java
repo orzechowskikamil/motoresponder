@@ -5,19 +5,41 @@ import com.google.common.base.Predicate;
 import com.medziku.motoresponder.R;
 import com.medziku.motoresponder.utils.SharedPreferencesUtility;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 public class Settings extends SettingsBase {
 
 
-    private Predicate<Boolean> responderEnabledCallback;
-    private Predicate<Boolean> onChangeRespondingToSMSOrCallsCallback;
-    private Predicate<Boolean> onChangeSensorCheckEnabledCallback;
-    private Predicate<Boolean> onChangeRespondingWithGeolocationEnabled;
+    public String RESPONDER_ENABLED_KEY;
+    public String AUTO_RESPONSE_TO_CALL_ENABLED_KEY;
+    public String AUTO_RESPONSE_TO_SMS_ENABLED_KEY;
+    public String SENSOR_CHECK_ENABLED_KEY;
+    public String GEOLOCATION_REQUEST_ENABLED_KEY;
+    public String IS_RIDING_ASSUMED_KEY;
+    public int IS_RIDING_ASSUMED_NOTIFICATION_TITLE_TEXT_ID;
+    public int IS_RIDING_ASSUMED_NOTIFICATION_BIG_TEXT_ID;
+    public int ONGOING_NOTIFICATION_I_AM_RIDING_ID = 1;
+    public int ONGOING_NOTIFICATION_PENDING_AUTORESPOND_ID = 2;
+
 
     public static int POWER_SAVER_NOTIFICATION_ID = 3;
 
     public Settings(SharedPreferencesUtility sharedPreferencesUtility) {
         super(sharedPreferencesUtility);
+
+        this.RESPONDER_ENABLED_KEY = this.getStringFromRes(R.string.responder_enabled_key);
+        this.AUTO_RESPONSE_TO_CALL_ENABLED_KEY = this.getStringFromRes(R.string.auto_response_to_call_enabled_key);
+        this.AUTO_RESPONSE_TO_SMS_ENABLED_KEY = this.getStringFromRes(R.string.auto_response_to_sms_enabled_key);
+        this.SENSOR_CHECK_ENABLED_KEY = this.getStringFromRes(R.string.sensor_check_enabled_key);
+        this.GEOLOCATION_REQUEST_ENABLED_KEY = this.getStringFromRes(R.string.geolocation_request_enabled_key);
+        this.IS_RIDING_ASSUMED_KEY = this.getStringFromRes(R.string.is_riding_assumed_key);
+
+        this.IS_RIDING_ASSUMED_NOTIFICATION_TITLE_TEXT_ID = R.string.ongoing_notification_is_riding_assumed_title_text;
+        this.IS_RIDING_ASSUMED_NOTIFICATION_BIG_TEXT_ID = R.string.ongoing_notification_is_riding_assumed_big_text;
     }
+
 
     public boolean isResponderEnabled() {
         return this.getBooleanValue(R.string.responder_enabled_key);
@@ -40,6 +62,10 @@ public class Settings extends SettingsBase {
      */
     public boolean isRidingAssumed() {
         return this.getBooleanValue(R.string.is_riding_assumed_key);
+    }
+
+    public void setRidingAssumed(boolean value) {
+        this.setBooleanValue(R.string.is_riding_assumed_key, value);
     }
 
     public int getSureRidingSpeedKmh() {
@@ -106,17 +132,6 @@ public class Settings extends SettingsBase {
         return this.getBooleanValue(R.string.already_responded_filtering_enabled_key);
     }
 
-    public void listenToSensorCheckEnabledChange(Predicate<Boolean> callback) {
-        this.onChangeSensorCheckEnabledCallback = callback;
-    }
-
-    public void listenToRespondingWithGeolocationEnabledChange(Predicate<Boolean> callback) {
-        this.onChangeRespondingWithGeolocationEnabled = callback;
-    }
-
-    public void listenToResponderEnabledChange(Predicate<Boolean> callback) {
-        this.responderEnabledCallback = callback;
-    }
 
     public String[] getGeolocationRequestPatterns() {
         String responsePattern1 = this.getStringValue(R.string.geolocation_request_pattern_1_key);
@@ -172,48 +187,12 @@ public class Settings extends SettingsBase {
         return this.getBooleanValue(R.string.geolocation_request_enabled_key);
     }
 
-    protected void onSharedPreferenceChanged(String changedKey) {
-        String RESPONDER_ENABLED_KEY = this.getStringFromRes(R.string.responder_enabled_key);
-        String AUTO_RESPONSE_TO_CALL_ENABLED_KEY = this.getStringFromRes(R.string.auto_response_to_call_enabled_key);
-        String AUTO_RESPONSE_TO_SMS_ENABLED_KEY = this.getStringFromRes(R.string.auto_response_to_sms_enabled_key);
-        String SENSOR_CHECK_ENABLED_KEY = this.getStringFromRes(R.string.sensor_check_enabled_key);
-        String GEOLOCATION_REQUEST_ENABLED = this.getStringFromRes(R.string.geolocation_request_enabled_key);
-
-        if (changedKey.equals(RESPONDER_ENABLED_KEY)) {
-            if (this.responderEnabledCallback != null) {
-                this.responderEnabledCallback.apply(true);
-            }
-        }
-
-        if (changedKey.equals(AUTO_RESPONSE_TO_CALL_ENABLED_KEY) || changedKey.equals(AUTO_RESPONSE_TO_SMS_ENABLED_KEY)) {
-            if (this.onChangeRespondingToSMSOrCallsCallback != null) {
-                this.onChangeRespondingToSMSOrCallsCallback.apply(true);
-            }
-        }
-
-        if (changedKey.equals(SENSOR_CHECK_ENABLED_KEY)) {
-            if (this.onChangeSensorCheckEnabledCallback != null) {
-                this.onChangeSensorCheckEnabledCallback.apply(true);
-            }
-        }
-
-        if (changedKey.equals(GEOLOCATION_REQUEST_ENABLED)) {
-            if (this.onChangeRespondingWithGeolocationEnabled != null) {
-                this.onChangeRespondingWithGeolocationEnabled.apply(true);
-            }
-        }
-    }
-
     public boolean isRespondingForSMSEnabled() {
         return this.getBooleanValue(R.string.auto_response_to_sms_enabled_key);
     }
 
     public boolean isRespondingForCallsEnabled() {
         return this.getBooleanValue(R.string.auto_response_to_call_enabled_key);
-    }
-
-    public void listenToChangeRespondToSmsOrCallSetting(Predicate<Boolean> callback) {
-        this.onChangeRespondingToSMSOrCallsCallback = callback;
     }
 
     public String getDebugNotificationTitleText() {
@@ -306,84 +285,17 @@ public class Settings extends SettingsBase {
         this.setBooleanValue(R.string.terms_and_conditions_accepted_key, accepted);
     }
 
-}
-
-
-abstract class SettingsBase {
-
-    private SharedPreferencesUtility sharedPreferencesUtility;
-
-
-    public SettingsBase(SharedPreferencesUtility sharedPreferencesUtility) {
-
-        this.sharedPreferencesUtility = sharedPreferencesUtility;
-
-        this.sharedPreferencesUtility.listenToSharedPreferenceChanged(new Function<String, Boolean>() {
-            @Override
-            public Boolean apply(String changedKey) {
-                SettingsBase.this.onSharedPreferenceChanged(changedKey);
-                return false;
-            }
-        });
-    }
-
     protected void onSharedPreferenceChanged(String changedKey) {
-    }
-
-    protected String getStringValue(int resID) {
-        return this.getStringValue(this.getStringFromRes(resID));
-    }
-
-    protected String getStringValue(String name) {
-        return this.sharedPreferencesUtility.getStringValue(name, this.getDefaultStringValue(name));
-    }
-
-    protected void setStringValue(int resID, String value) {
-        this.sharedPreferencesUtility.setStringValue(this.getStringFromRes(resID), value);
-    }
-
-    protected String getStringFromRes(int resID) {
-        return this.sharedPreferencesUtility.getStringFromRes(resID);
-    }
-
-    protected boolean getBooleanValue(int resID) {
-        return this.getBooleanValue(this.getStringFromRes(resID));
-    }
-
-    protected boolean getBooleanValue(String name) {
-        return this.sharedPreferencesUtility.getBooleanValue(name, this.getDefaultBooleanValue(name));
-    }
-
-    protected void setBooleanValue(int resID, boolean value) {
-        this.sharedPreferencesUtility.setBooleanValue(this.getStringFromRes(resID), value);
-    }
-
-    protected int getIntValue(int resID) {
-        return this.getIntValue(this.getStringFromRes(resID));
-    }
-
-    protected int getIntValue(String name) {
-        return this.sharedPreferencesUtility.getIntValue(name, this.getDefaultIntValue(name));
-    }
-
-    protected String getDefaultStringValue(String name) {
-        return this.sharedPreferencesUtility.getStringFromRes(this.getDefaultValueName(name));
-    }
-
-    protected int getDefaultIntValue(String name) {
-        return this.sharedPreferencesUtility.getIntegerFromRes(this.getDefaultValueName(name));
-    }
-
-    protected boolean getDefaultBooleanValue(String name) {
-        return this.sharedPreferencesUtility.getBooleanFromRes(this.getDefaultValueName(name));
-    }
-
-    protected String getDefaultValueName(String name) {
-        return name + "_default_value";
-    }
-
-    public void stopListening() {
-        this.sharedPreferencesUtility.stopListeningToSharedPreferenceChanged();
+        try {
+            for (Predicate<Boolean> callback : this.getCallbacksListForSetting(changedKey)) {
+                if (callback != null) {
+                    callback.apply(true);
+                }
+            }
+        } catch (Exception e) {
+        }
     }
 
 }
+
+

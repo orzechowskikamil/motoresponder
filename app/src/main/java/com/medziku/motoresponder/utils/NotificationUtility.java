@@ -3,14 +3,12 @@ package com.medziku.motoresponder.utils;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.widget.Toast;
 import com.medziku.motoresponder.R;
-import com.medziku.motoresponder.activity.SettingsActivity;
 
 /**
  * Exposes simple methods for showing notifications.
@@ -32,10 +30,16 @@ public class NotificationUtility {
     /**
      * This will show notification which can't be hidden by user
      */
-    public void showOngoingNotification(String title, String content, String info, int notificationID) {
-        this.showNotification(title, content, info, notificationID, true, null);
+    public void showOngoingNotification(String title, String content, String info, int notificationID, String intentName) {
+        this.showNotification(title, content, info, notificationID, true, null, intentName);
     }
 
+    /**
+     * This will show notification which can't be hidden by user
+     */
+    public void showOngoingNotification(String title, String content, String info, int notificationID) {
+        this.showOngoingNotification(title, content, info, notificationID, null);
+    }
 
     /**
      * This will show notification which can't be hidden by user
@@ -59,12 +63,6 @@ public class NotificationUtility {
         this.showBigTextNotification(title, summary, bigContent, this.createNextNotificationID());
     }
 
-    private int createNextNotificationID() {
-        this.nonPermamentNotificationID++;
-        return this.nonPermamentNotificationID;
-    }
-
-
     /**
      * This will show normal notification with title as title, content on left side on bottom line, and info on right
      * side of bottom line.
@@ -81,7 +79,6 @@ public class NotificationUtility {
         this.showNormalNotification(title, content, info, this.createNextNotificationID());
     }
 
-
     /**
      * This will show toast. Thread must call Looper.prepare() and Looper.loop().
      *
@@ -91,16 +88,30 @@ public class NotificationUtility {
         Toast.makeText(this.context, message, Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * This will hide notification, no matter of type.
+     */
+    public void hideNotification(int notificationID) {
+        this.notificationManager.cancel(notificationID);
+    }
+
+    /**
+     * This will hide notification, no matter of type.
+     */
+    public void hideNotification() {
+        this.hideNotification(this.defaultNotificationID);
+    }
+
+    private int createNextNotificationID() {
+        this.nonPermamentNotificationID++;
+        return this.nonPermamentNotificationID;
+    }
+
     private void showNotification(String title, String content, String info, int notificationID, boolean isOngoing, Notification.Style style) {
-        Class<SettingsActivity> activityClass = SettingsActivity.class;
+        this.showNotification(title, content, info, notificationID, isOngoing, style, null);
+    }
 
-        Intent resultIntent = new Intent(this.context, activityClass);
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this.context);
-
-        stackBuilder.addParentStack(activityClass);
-        stackBuilder.addNextIntent(resultIntent);
-
-        PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+    private void showNotification(String title, String content, String info, int notificationID, boolean isOngoing, Notification.Style style, String intentName) {
 
         Notification.Builder notificationBuilder = new Notification.Builder(this.context.getApplicationContext());
 
@@ -108,8 +119,16 @@ public class NotificationUtility {
                 .setLargeIcon(this.getLauncherIcon())
                 .setContentTitle(title)
                 .setContentText(content)
-                .setContentInfo(info)
-                .setContentIntent(resultPendingIntent);
+                .setContentInfo(info);
+
+        if (intentName != null) {
+            notificationBuilder.setContentIntent(PendingIntent.getBroadcast(
+                    this.context,
+                    notificationID,
+                    new Intent(intentName),
+                    PendingIntent.FLAG_UPDATE_CURRENT
+            ));
+        }
 
         if (style != null) {
             notificationBuilder.setStyle(style);
@@ -125,21 +144,11 @@ public class NotificationUtility {
     }
 
     private Bitmap getLauncherIcon() {
-        return BitmapFactory.decodeResource(this.context.getResources(), R.mipmap.ic_launcher);
+        int iconID = R.mipmap.ic_launcher;
+        return this.getIcon(iconID);
     }
 
-
-    /**
-     * This will hide notification, no matter of type.
-     */
-    public void hideNotification(int notificationID) {
-        this.notificationManager.cancel(notificationID);
-    }
-
-    /**
-     * This will hide notification, no matter of type.
-     */
-    public void hideNotification() {
-        this.hideNotification(this.defaultNotificationID);
+    private Bitmap getIcon(int iconID) {
+        return BitmapFactory.decodeResource(this.context.getResources(), iconID);
     }
 }

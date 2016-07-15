@@ -50,13 +50,13 @@
     </string>
 
 
-    <string name="showing_pending_notification_enabled_title">Notification about responding process</string>
+    <string name="showing_pending_notification_enabled_title">Ongoing notifications</string>
     <string name="showing_pending_notification_enabled_summary_on">
-        Application will show notification when it will be determining if you are riding or not. When process will stop,
-        notification will be hidden.
+        Application will show notification about ongoing processes, for example when measuring if you are riding, or
+        when you will set app to riding mode.
     </string>
     <string name="showing_pending_notification_enabled_summary_off">
-        Application will not inform you about responding process with notification.
+        Application will not display any ongoing notifications.
     </string>
 
     <string name="showing_summary_notification_enabled_title">Summary notification</string>

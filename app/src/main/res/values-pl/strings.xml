@@ -1,4 +1,7 @@
 <resources>
+    <!-- widget -->
+    <string name="on_off_widget_label">Tryb jazdy Motorespondera</string>
+
     <!-- notifications -->
     <string name="debug_notification_title_text">Debugowanie Motorespondera</string>
     <string name="debug_notification_short_text">Zamknij inne notyfikacje aby zobaczyć treść.</string>
@@ -17,6 +20,12 @@
     <string name="ongoing_notification_title_text">Motoresponder</string>
     <string name="ongoing_notification_big_text">Motoresponder próbuje właśnie ustalić czy powinien odpowiadać na
         właśnie otrzymany SMS / nieodebrane połączenie.
+    </string>
+
+
+    <string name="ongoing_notification_is_riding_assumed_title_text">Tryb jazdy</string>
+    <string name="ongoing_notification_is_riding_assumed_big_text">Włączyłeś tryb jazdy, aplikacja będzie odpowiadać na
+        wszystkie SMSy i połączenia pozostawione bez odpowiedzi. Naciśnij tutaj, aby wyłączyć ten tryb.
     </string>
 
 
@@ -39,7 +48,6 @@
     <string name="how_it_works_preferences_title">Jak to działa?</string>
     <string name="how_it_works_preferences_summary">Tutaj dowiesz się, na jakiej zasadzie działa aplikacja.
     </string>
-
 
 
     <string name="disclaimer_title">Zaakceptuj warunki Motorespondera</string>
