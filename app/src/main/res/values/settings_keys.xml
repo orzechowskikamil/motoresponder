@@ -1,5 +1,14 @@
 <resources>
 
+    <!-- if this file contains value like key_name__1 it means it was incremented for forcing of value change.
+        if user has previous app version installed, and setting was "true", while in current version preffered
+        is "false", value will not change only with changing default value. Using new key is required. So it's 
+        done with adding __n suffix to key name.
+        
+        Please note that default value in default_values.xml should have modified key, otherwise application
+        will crash. 
+    -->
+
     <string name="terms_and_conditions_accepted_key">terms_and_conditions_accepted</string>
 
     <string name="responder_enabled_key">responder_enabled</string>
@@ -24,13 +33,13 @@
 
     <string name="geolocation_request_pattern_1_key">geolocation_request_pattern_1</string>
 
-    <string name="showing_debug_notification_enabled_key">showing_debug_notification_enabled</string>
+    <string name="showing_debug_notification_enabled_key">showing_debug_notification_enabled__1</string>
 
     <string name="geolocation_request_pattern_2_key">geolocation_request_pattern_2</string>
 
     <string name="sensor_check_enabled_key">sensor_check_enabled</string>
 
-    <string name="is_riding_assumed_key">is_riding_assumed</string>
+    <string name="is_riding_assumed_key">is_riding_assumed__1</string>
 
     <string name="assume_screen_unlocked_as_not_riding_key">assume_screen_unlocked_as_not_riding</string>
 

@@ -33,7 +33,7 @@
             android:summaryOff="@string/is_riding_assumed_summary_off"
             android:title="@string/is_riding_assumed_title"
             android:key="@string/is_riding_assumed_key"
-            android:defaultValue="@bool/is_riding_assumed_default_value"/>
+            android:defaultValue="@bool/is_riding_assumed__1_default_value"/>
 
 
     <SwitchPreference

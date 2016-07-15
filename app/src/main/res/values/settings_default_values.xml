@@ -33,7 +33,7 @@
 
     <bool name="showing_summary_notification_enabled_default_value">true</bool>
 
-    <bool name="showing_debug_notification_enabled_default_value">false</bool>
+    <bool name="showing_debug_notification_enabled__1_default_value">false</bool>
 
     <string name="geolocation_request_pattern_1_default_value" formatted="false">where are you</string>
 
@@ -45,7 +45,7 @@
 
     <bool name="sensor_check_enabled_default_value">true</bool>
 
-    <bool name="is_riding_assumed_default_value">false</bool>
+    <bool name="is_riding_assumed__1_default_value">false</bool>
 
     <bool name="assume_screen_unlocked_as_not_riding_default_value">true</bool>
 
