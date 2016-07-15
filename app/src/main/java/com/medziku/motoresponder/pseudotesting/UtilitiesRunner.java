@@ -77,7 +77,7 @@ public class UtilitiesRunner {
             private void runTest() {
                 // choose the test which you are interested in
                 // after performing, leave short note with date here about result of test
-                switch (77) {
+                switch (32) {
                     case 1:
                         // this is working 10.04.2016 on Android 5.1
                         UtilitiesRunner.this.locationUtilityTest.testOfGettingAccurateLocation();
@@ -100,6 +100,9 @@ public class UtilitiesRunner {
                     case 31:
                         // this is working 09.03.2016 on Android 5.1
                         UtilitiesRunner.this.lockStateUtilityTest.testOfIsLocked();
+                        break;
+                    case 32:
+                        UtilitiesRunner.this.lockStateUtilityTest.testOfDetectingPowerSave();
                         break;
 
 

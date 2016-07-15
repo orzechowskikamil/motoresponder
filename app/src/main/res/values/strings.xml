@@ -8,6 +8,11 @@
     <string name="summary_notification_big_text" formatted="false">Auto response sent to %recipient% because you was
         riding when you got a SMS/call.
     </string>
+    
+      <string name="power_save_notification_title_text">Motoresponder</string>
+    <string name="power_save_notification_short_text" formatted="false">Power save mode - app is off.</string>
+    <string name="power_save_notification_big_text" formatted="false">You got some message/call but phone is in power save mode, so Motoresponder is turned off to save your battery.
+    </string>
 
     <string name="ongoing_notification_title_text">Motoresponder</string>
     <string name="ongoing_notification_big_text">Motoresponder is trying to determine if you are riding now or not.

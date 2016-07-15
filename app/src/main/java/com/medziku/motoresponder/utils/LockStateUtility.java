@@ -103,6 +103,15 @@ public class LockStateUtility {
 
         return isScreenAwake;
     }
+    
+    public boolean isPowerSaveModeEnabled(){
+        // normally documented api is only available on Lollipop and newer.
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && powerManager.isPowerSaveMode()){
+            return true;
+        }
+        
+        return false;
+    }
 
     public PowerManager.WakeLock acquirePartialWakeLock() {
         return this.acquireWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Motoresponder partial wakelock");

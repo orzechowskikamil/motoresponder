@@ -48,6 +48,7 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
 
     protected Boolean doInBackground(RespondingSubject... params) {
         this.handleRespondingTask(params[0]);
+        this.finishTask();
         return true;
     }
 
@@ -105,6 +106,11 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
         if (this.isFinished == true) {
             return;
         }
+        
+        if (this.lockStateUtility.isPowerSaveModeEnabled()){
+            this.showNotificationAboutPowerSaveMode();
+            return;
+        }
 
         this.preventPhoneFromSleep();
 
@@ -113,7 +119,6 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
         // K. Orzechowski: I am not sure, but I read that I should check for this.
         if (this.isTerminated()) {
             this.log.add("Not responded because phone unlocked in meantime.");
-            this.finishTask();
             return;
         }
         
@@ -128,7 +133,6 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
             // this check can took long time so before responding we can check again for cancellation.
             if (this.isTerminated()) {
                 this.log.add("Not responded because phone unlocked after determining responding decision.");
-                this.finishTask();
                 return;
             }
 
@@ -231,6 +235,14 @@ public class RespondingTask extends AsyncTask<RespondingSubject, Boolean, Boolea
                 return true;
             }
         });
+    }
+    
+    private void showNotificationAboutPowerSaveMode(){
+    String title = this.settings.getPowerSaveNotificationTitleText();
+        String shortText = this.settings.getPowerSaveNotificationShortText();
+        String bigText = this.settings.getPowerSaveNotificationBigText();
+
+        this.notificationUtility.showBigTextNotification(title, shortText, bigText, this.settings.POWER_SAVER_NOTIFICATION_ID);
     }
 
 

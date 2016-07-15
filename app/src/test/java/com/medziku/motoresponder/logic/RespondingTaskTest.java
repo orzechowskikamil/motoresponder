@@ -240,6 +240,19 @@ public class RespondingTaskTest {
         verify(this.smsUtility, times(3)).sendSMS(anyString(), anyString(), any(Predicate.class));
     }
 
+
+    @Test
+    public void testPowerSaveMode() {
+        when(this.lockStateUtility.isPowerSaveModeEnabled()).thenReturn(true);
+
+        this.respondingTask.callLogic(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
+
+        // in power save mode it shouldn't try to respond.
+        verify(this.respondingDecision, times(0)).shouldRespond(any(RespondingSubject.class));
+        verify(this.smsUtility, times(0)).sendSMS(anyString(), anyString(), any(Predicate.class));
+        verify(this.notificationUtility, times(1)).showBigTextNotification(anyString(), anyString(), anyString(),anyInt());
+    }
+
 }
 
 class ExposedRespondingTask extends RespondingTask {

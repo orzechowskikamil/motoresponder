@@ -56,6 +56,9 @@ public class LockStateUtilityTest {
 
     }
 
-    // TODO K. Orzechowski: add test of stopping listening to changes.
+    public void testOfDetectingPowerSave(){
+        this.setUp();
+       Log.d(TAG, "Is in power save mode? = "+this.lockStateUtility.isPowerSaveModeEnabled());
+    }
 
 }

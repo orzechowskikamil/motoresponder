@@ -13,6 +13,8 @@ public class Settings extends SettingsBase {
     private Predicate<Boolean> onChangeSensorCheckEnabledCallback;
     private Predicate<Boolean> onChangeRespondingWithGeolocationEnabled;
 
+    public static int POWER_SAVER_NOTIFICATION_ID = 3;
+
     public Settings(SharedPreferencesUtility sharedPreferencesUtility) {
         super(sharedPreferencesUtility);
     }
@@ -233,6 +235,21 @@ public class Settings extends SettingsBase {
     public String getSummaryNotificationBigText() {
         return this.getStringFromRes(R.string.summary_notification_big_text);
     }
+    
+        public String getPowerSaveNotificationTitleText() {
+        return this.getStringFromRes(R.string.power_save_notification_title_text);
+    }
+
+    public String getPowerSaveNotificationShortText() {
+        return this.getStringFromRes(R.string.power_save_notification_short_text);
+    }
+
+    public String getPowerSaveNotificationBigText() {
+        return this.getStringFromRes(R.string.power_save_notification_big_text);
+    }
+    
+    
+    
 
     public String getOngoingNotificationTitleText() {
         return this.getStringFromRes(R.string.ongoing_notification_title_text);
