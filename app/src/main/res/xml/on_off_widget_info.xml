@@ -4,6 +4,5 @@
                     android:updatePeriodMillis="0"
                     android:initialLayout="@layout/riding_assumed_widget_disabled"
                     android:resizeMode="none"
-                    android:widgetCategory="home_screen"
-                    android:previewImage="@drawable/on_off_widget_on">
+                    android:widgetCategory="home_screen">
 </appwidget-provider>

@@ -11,10 +11,10 @@ import com.medziku.motoresponder.R;
 import com.medziku.motoresponder.logic.Settings;
 import com.medziku.motoresponder.utils.SharedPreferencesUtility;
 
-public class OnOffWidgetProvider extends AppWidgetProvider {
+public class RidingAssumedWidgetProvider extends AppWidgetProvider {
 
     // TODO Rename to WIDGET TOOGLE or WIDGET TAP
-    public static String ACTION_WIDGET_TAP = "com.medziku.motoresponder.widgets.OnOffWidgetProvider.ACTION_WIDGET_TAP";
+    public static String ACTION_WIDGET_TAP = "com.medziku.motoresponder.widgets.RidingAssumedWidgetProvider.ACTION_WIDGET_TAP";
 
     public void onReceive(Context context, Intent intent) {
         this.updateWidgetToActualValue(context);
@@ -61,12 +61,12 @@ public class OnOffWidgetProvider extends AppWidgetProvider {
         RemoteViews remoteViews = new RemoteViews(context.getPackageName(),
                 layoutID);
 
-        Intent intent = new Intent(OnOffWidgetProvider.ACTION_WIDGET_TAP);
+        Intent intent = new Intent(RidingAssumedWidgetProvider.ACTION_WIDGET_TAP);
         PendingIntent broadcast = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         remoteViews.setOnClickPendingIntent(R.id.actionButton, broadcast);
 
-        ComponentName myWidget = new ComponentName(context, OnOffWidgetProvider.class);
+        ComponentName myWidget = new ComponentName(context, RidingAssumedWidgetProvider.class);
         AppWidgetManager manager = AppWidgetManager.getInstance(context);
         manager.updateAppWidget(myWidget, remoteViews);
     }

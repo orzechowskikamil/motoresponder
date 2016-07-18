@@ -35,7 +35,7 @@ public class Responder {
     private GeolocationRequestRecognition geolocationRequestRecognition;
     private WiFiUtility wiFiUtility;
     private CountryPrefix countryPrefix;
-    private OnOffWidgetHandler onOffWidgetHandler;
+    private RidingAssumedWidgetHandler ridingAssumedWidgetHandler;
     private Predicate<Boolean> changeAutoResponseToCallOrSmsEnabledSettingCallback;
 
     private IAmRidingNotificationHandler iAmRidingNotificationHandler;
@@ -48,7 +48,7 @@ public class Responder {
         this.createUtilities();
 
         this.settings = this.createSettings();
-        this.onOffWidgetHandler = new OnOffWidgetHandler(this.context, this.settings, this.intentsUtility);
+        this.ridingAssumedWidgetHandler = new RidingAssumedWidgetHandler(this.context, this.settings, this.intentsUtility);
         this.iAmRidingNotificationHandler = new IAmRidingNotificationHandler(this.context, this.settings, this.notificationUtility, this.intentsUtility);
 
         this.log = new CustomLog(this.settings);
@@ -88,7 +88,7 @@ public class Responder {
 
         this.iAmRidingNotificationHandler.handleNotification();
 
-        this.onOffWidgetHandler.handleWidget();
+        this.ridingAssumedWidgetHandler.handleWidget();
     }
 
 
@@ -107,7 +107,7 @@ public class Responder {
         this.stopListeningForLockStateChanges();
         this.stopListeningToAutoResponseToCallOrSmsEnabledSettingChange();
         this.iAmRidingNotificationHandler.stopHandlingNotification();
-        this.onOffWidgetHandler.stopHandlingWidget();
+        this.ridingAssumedWidgetHandler.stopHandlingWidget();
     }
 
     /**

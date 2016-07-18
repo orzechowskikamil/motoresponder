@@ -51,6 +51,9 @@ public class SettingsActivity extends PreferenceActivity {
         super.onCreate(savedInstanceState);
 
         this.onGatheringFocus();
+
+        this.tryShowWizardIfRequired();
+        this.tryShowDisclaimerIfRequired();
     }
 
     @Override
@@ -60,7 +63,8 @@ public class SettingsActivity extends PreferenceActivity {
     }
 
 
-// TODO K. Orzechowski: divide it to app launcher and activity.
+    // TODO K. Orzechowski: divide it to app launcher and activity.
+
 
     @Override
     protected void onResume() {
@@ -104,6 +108,12 @@ public class SettingsActivity extends PreferenceActivity {
         }
     }
 
+
+    private void startWizard() {
+        this.startActivity(new Intent(this, WizardActivity.class));
+    }
+
+
     private void runBackgroundProcessOrPseudotests() {
         if (this.arePseudoTestsEnabled()) {
             this.runPseudoTesting();
@@ -120,10 +130,6 @@ public class SettingsActivity extends PreferenceActivity {
 
         this.toggleBackgroundServiceAccordingToSettings();
         this.listenToChangeResponderEnabledSetting();
-
-        if (!this.settings.isTermsAndConditionAccepted()) {
-            this.showPopupWithDisclaimer();
-        }
     }
 
     private void listenToChangeResponderEnabledSetting() {
@@ -210,6 +216,7 @@ public class SettingsActivity extends PreferenceActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 SettingsActivity.this.acceptTermsAndConditions();
+                SettingsActivity.this.tryShowWizardIfRequired();
             }
         });
 
@@ -220,6 +227,27 @@ public class SettingsActivity extends PreferenceActivity {
             }
         });
         dialogBuilder.create().show();
+    }
+
+    private boolean shouldWizardBeShown() {
+        return this.settings.isTermsAndConditionAccepted() && !this.settings.isWizardCompleted();
+    }
+
+    private void tryShowWizardIfRequired() {
+        if (this.shouldWizardBeShown()) {
+            this.startWizard();
+        }
+    }
+
+
+    private void tryShowDisclaimerIfRequired() {
+        if (this.shouldDisclaimerBeShown()) {
+            this.showPopupWithDisclaimer();
+        }
+    }
+
+    private boolean shouldDisclaimerBeShown() {
+        return (!this.settings.isTermsAndConditionAccepted());
     }
 
 

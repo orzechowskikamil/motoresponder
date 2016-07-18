@@ -2,7 +2,7 @@
     <string name="app_name">Motoresponder</string>
 
     <!-- widget -->
-    <string name="on_off_widget_label">Motoresponder\'s assume riding setting</string>
+    <string name="widget_on_off_label">Motoresponder\'s assume riding setting</string>
 
     <!-- notifications -->
     <string name="debug_notification_title_text">Motoresponder debug</string>

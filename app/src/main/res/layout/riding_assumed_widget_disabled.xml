@@ -20,7 +20,7 @@
                 android:layout_width="57dp"
                 android:layout_height="57dp"
                 android:id="@+id/actionButton"
-                android:src="@drawable/on_off_widget_off"
+                android:src="@drawable/ic_riding_assumed_widget_off"
                 android:layout_gravity="center" android:scaleType="fitCenter"/>
 
     </FrameLayout>

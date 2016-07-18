@@ -73,5 +73,9 @@
 
     <!-- it's not real setting but since it's value in shared preferences, empty string is required here to not have an error -->
     <string name="custom_log_default_value"></string>
+    
+    <bool name="wizard_completed_default_value">false</bool>
+    
+    <integer name="current_step_of_wizard_default_value">0</integer>
 
 </resources>

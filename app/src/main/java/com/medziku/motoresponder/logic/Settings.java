@@ -12,6 +12,7 @@ import java.util.List;
 public class Settings extends SettingsBase {
 
 
+    public static int POWER_SAVER_NOTIFICATION_ID = 3;
     public String RESPONDER_ENABLED_KEY;
     public String AUTO_RESPONSE_TO_CALL_ENABLED_KEY;
     public String AUTO_RESPONSE_TO_SMS_ENABLED_KEY;
@@ -22,9 +23,6 @@ public class Settings extends SettingsBase {
     public int IS_RIDING_ASSUMED_NOTIFICATION_BIG_TEXT_ID;
     public int ONGOING_NOTIFICATION_I_AM_RIDING_ID = 1;
     public int ONGOING_NOTIFICATION_PENDING_AUTORESPOND_ID = 2;
-
-
-    public static int POWER_SAVER_NOTIFICATION_ID = 3;
 
     public Settings(SharedPreferencesUtility sharedPreferencesUtility) {
         super(sharedPreferencesUtility);
@@ -55,6 +53,10 @@ public class Settings extends SettingsBase {
      */
     public boolean isSensorCheckEnabled() {
         return this.getBooleanValue(R.string.sensor_check_enabled_key);
+    }
+
+    public void setSensorCheckEnabled(boolean value) {
+        this.setBooleanValue(R.string.sensor_check_enabled_key, value);
     }
 
     /**
@@ -144,6 +146,34 @@ public class Settings extends SettingsBase {
         return 3;
     }
 
+    public boolean isWizardCompleted() {
+        return this.getBooleanValue(R.string.wizard_completed_key);
+    }
+
+    private void setWizardCompleted(boolean value) {
+        this.setBooleanValue(R.string.wizard_completed_key, value);
+    }
+
+    public void setWizardAsCompleted() {
+        this.setWizardCompleted(true);
+    }
+
+    /**
+     * Warning: Calling this will also reset current step of wizard to 0.
+     */
+    public void setWizardAsNotCompleted() {
+        this.setWizardCompleted(false);
+        this.setCurrentStepOfWizard(0);
+    }
+
+    public int getCurrentStepOfWizard() {
+        return this.getIntValue(R.string.current_step_of_wizard_key);
+    }
+
+    public void setCurrentStepOfWizard(int value) {
+        this.setIntValue(R.string.current_step_of_wizard_key, value);
+    }
+
     public boolean includeDeviceMotionCheck() {
         return this.getBooleanValue(R.string.include_accelerometer_check_key);
     }
@@ -187,6 +217,10 @@ public class Settings extends SettingsBase {
         return this.getBooleanValue(R.string.geolocation_request_enabled_key);
     }
 
+    public void setRespondingWithGeolocationEnabled(boolean value) {
+        this.setBooleanValue(R.string.geolocation_request_enabled_key, value);
+    }
+
     public boolean isRespondingForSMSEnabled() {
         return this.getBooleanValue(R.string.auto_response_to_sms_enabled_key);
     }
@@ -214,7 +248,7 @@ public class Settings extends SettingsBase {
     public String getSummaryNotificationBigText() {
         return this.getStringFromRes(R.string.summary_notification_big_text);
     }
-    
+
         public String getPowerSaveNotificationTitleText() {
         return this.getStringFromRes(R.string.power_save_notification_title_text);
     }
@@ -285,17 +319,4 @@ public class Settings extends SettingsBase {
         this.setBooleanValue(R.string.terms_and_conditions_accepted_key, accepted);
     }
 
-    protected void onSharedPreferenceChanged(String changedKey) {
-        try {
-            for (Predicate<Boolean> callback : this.getCallbacksListForSetting(changedKey)) {
-                if (callback != null) {
-                    callback.apply(true);
-                }
-            }
-        } catch (Exception e) {
-        }
-    }
-
 }
-
-

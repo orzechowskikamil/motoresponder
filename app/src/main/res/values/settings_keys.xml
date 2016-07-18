@@ -80,5 +80,8 @@
     <!-- it's not real setting, but it's stored in  -->
     <string name="custom_log_key">custom_log</string>
 
+    <string name="wizard_completed_key">wizard_completed</string>
+    
+    <string name="current_step_of_wizard_key">current_step_of_wizard</string>
 
 </resources>

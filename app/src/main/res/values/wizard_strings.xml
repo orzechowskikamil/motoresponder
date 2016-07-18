@@ -1,0 +1,59 @@
+<resources>
+    <string name="settings_wizard_label">Motoresponder quick setup</string>
+
+    <string name="wizard_sensor_check_title">Intelligent detection of motorcycle ride</string>
+    <string name="wizard_sensor_check_description">If you want, application can detect when you are riding on a
+        motorcycle
+        automatically. Don\'t worry, it doesn\'t consume a lot of battery. You can just turn it on, and forget about it,
+        it will magically detect when you are riding, and then application will automatically respond to SMSes and
+        calls. \n\nIf you don\'t want, you can manually turn application to a riding mode (then it will answer) with a
+        nice widget (you need to add it by yourself).
+    </string>
+    <string name="wizard_sensor_check_yes_label">Yes, use intelligent detection</string>
+    <string name="wizard_sensor_check_no_label">No, I will set this manually</string>
+
+
+    <string name="wizard_custom_dialer_messenger_title">Limiting responses</string>
+    <string name="wizard_custom_dialer_messenger_description">Application limit autoresponses, to prevent too much
+        charge of your mobile account. There is two methods of doing this:\n\n
+        Response based - after sending autoresponse, application will not respond given number until you will contact
+        this number manually by sending SMS or calling (Caution: not working if you have custom dialer application or
+        custom SMS application)\n\n
+        Time based - application will allow to send only one response to given number in given time. For example max.
+        one answer per 30 minutes.
+    </string>
+    <string name="wizard_custom_dialer_messenger_yes_label">Use response based limit</string>
+    <string name="wizard_custom_dialer_messenger_no_label">Use time based limit</string>
+
+
+    <string name="wizard_geolocation_title">Allow other people to ask for your location?</string>
+    <string name="wizard_geolocation_description">This function allow to respond people who are asking you by SMS
+        questions
+        like \"Hey? Where are you?\" with your current position on Google map. Of course it works only when you are
+        riding.\n\n
+
+        You can configure group of people which are allowed to get such information in settings, probably it shouldn\'t
+        share your location with everyone. You can also edit patterns which will be interpreted as question about
+        your position.\n\n
+
+
+    </string>
+    <string name="wizard_geolocation_yes_label">Yes, sure</string>
+    <string name="wizard_geolocation_no_label">No, thanks</string>
+
+
+    <string name="wizard_when_app_not_work_title">That\'s all</string>
+    <string name="wizard_when_app_not_work_description">Aplication is configured now. If you need to adjust it more,
+        there is plenty of settings available for customization.\n
+        If you choose manual mode, remember to set application into riding mode before ride.\n
+        If you use intelligent detection, just leave GPS on in device\'s settings.\n
+
+        Some of those cases can be resolved with proper menu setting. If you need advice, or you are interested about
+        how application works, you can read more in settings menu.\n\n
+        If you like application, it will be very nice, if you will rate application on Google Play :-)\n\n
+        Enjoy riding :-)
+    </string>
+    <string name="wizard_when_app_not_work_yes_label">Okay</string>
+
+
+</resources>

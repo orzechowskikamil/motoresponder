@@ -1,6 +1,6 @@
 <resources>
     <!-- widget -->
-    <string name="on_off_widget_label">Tryb jazdy Motorespondera</string>
+    <string name="widget_on_off_label">Tryb jazdy Motorespondera</string>
 
     <!-- notifications -->
     <string name="debug_notification_title_text">Debugowanie Motorespondera</string>

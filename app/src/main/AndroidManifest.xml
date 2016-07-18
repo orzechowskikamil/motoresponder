@@ -34,6 +34,11 @@
         </activity>
 
 
+        <activity android:name=".activity.WizardActivity"
+                  android:label="@string/settings_wizard_label">
+        </activity>
+
+
         <service android:name=".services.BackgroundService"></service>
 
         <receiver android:name=".receivers.BootReceiver">
@@ -43,9 +48,10 @@
         </receiver>
 
 
-        <receiver android:name=".widgets.OnOffWidgetProvider"
-                  android:label="@string/on_off_widget_label"
-                  android:icon="@drawable/on_off_widget_on">
+        <receiver android:name=".widgets.RidingAssumedWidgetProvider"
+                  android:label="@string/widget_on_off_label"
+                  android:icon="@drawable/ic_riding_assumed_widget_on"
+                  android:previewImage="@drawable/on_off_widget_preview">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
             </intent-filter>

@@ -4,12 +4,11 @@ import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import com.google.common.base.Predicate;
 import com.medziku.motoresponder.utils.IntentsUtility;
-import com.medziku.motoresponder.widgets.OnOffWidgetProvider;
+import com.medziku.motoresponder.widgets.RidingAssumedWidgetProvider;
 
-public class OnOffWidgetHandler {
+public class RidingAssumedWidgetHandler {
 
     private final IntentsUtility intentsUtility;
     protected Settings settings;
@@ -18,16 +17,11 @@ public class OnOffWidgetHandler {
     protected BroadcastReceiver receiver;
     private Predicate<Boolean> isRidingAssumedSettingChangeCallback;
 
-    public OnOffWidgetHandler(Context context, Settings settings, IntentsUtility intentsUtility) {
+    public RidingAssumedWidgetHandler(Context context, Settings settings, IntentsUtility intentsUtility) {
         this.settings = settings;
         this.context = context;
         this.intentsUtility = intentsUtility;
     }
-
-    // TODO K. Orzechowski: write unit tests later
-    // TODO K. Orzechowski: beautify widget - it has gray background and still too small icon.
-    // TODO K. Orzechowski: icon doesn't have preview in widget gallery - fix
-
 
     public void handleWidget() {
         this.listenToWidgetOnOffIntent();
@@ -62,18 +56,18 @@ public class OnOffWidgetHandler {
 
         this.receiver = new BroadcastReceiver() {
             public void onReceive(Context context, Intent intent) {
-                OnOffWidgetHandler.this.handleWidgetTap();
+                RidingAssumedWidgetHandler.this.handleWidgetTap();
             }
         };
 
-        this.context.registerReceiver(receiver, this.intentsUtility.createIntentFilter(OnOffWidgetProvider.ACTION_WIDGET_TAP));
+        this.context.registerReceiver(receiver, this.intentsUtility.createIntentFilter(RidingAssumedWidgetProvider.ACTION_WIDGET_TAP));
     }
 
     private void listenToIsRidingAssumedChangeInSettings() {
         this.isRidingAssumedSettingChangeCallback = new Predicate<Boolean>() {
             @Override
             public boolean apply(Boolean input) {
-                OnOffWidgetHandler.this.updateWidget();
+                RidingAssumedWidgetHandler.this.updateWidget();
                 return false;
             }
         };
@@ -87,7 +81,7 @@ public class OnOffWidgetHandler {
     }
 
     private void updateWidget() {
-        Intent intent = this.intentsUtility.createIntent(this.context, OnOffWidgetProvider.class);
+        Intent intent = this.intentsUtility.createIntent(this.context, RidingAssumedWidgetProvider.class);
         intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
         this.context.sendBroadcast(intent);
     }

@@ -1,0 +1,58 @@
+<resources>
+    <string name="settings_wizard_label">Szybkie ustawienia Motorespondera</string>
+
+    <string name="wizard_sensor_check_title">Inteligentne wykrywanie jazdy</string>
+    <string name="wizard_sensor_check_description">
+        Aplikacja może w automatyczny sposób wykrywać gdy jeździsz na motocyklu (z użyciem m.in akcelerometru oraz
+        GPSu), dzięki temu wie kiedy ma automatycznie odpowiedzieć w twoim imieniu. Bez obaw, to nie zużywa baterii.\n\n
+
+        Jeśli jednak preferujesz samemu sterować aplikacją, możesz dodać do ekranu startowego ładny widżet, dzięki
+        któremu jednym tapnięciem włączysz i wyłączysz automatyczne odpowiedzi.\n
+    </string>
+    <string name="wizard_sensor_check_yes_label">Chcę używać inteligentnego wykrywania jazdy</string>
+    <string name="wizard_sensor_check_no_label">Będę ręcznie sterował aplikacją</string>
+
+
+    <string name="wizard_custom_dialer_messenger_title">Limitowanie odpowiedzi</string>
+    <string name="wizard_custom_dialer_messenger_description">
+        Aplikacja limituje odpowiedzi, aby uniknąć sytuacji w której ktoś wysyła ci wiele SMSów, a twój telefon wysyła
+        skrupulatnie odpowiedź na każdą z nich. Są dwa sposoby limitowania: \n\n
+
+        Liczenie odpowiedzi - po tym jak dany numer otrzyma automatyczną odpowiedź, aplikacja nie będzie mu więcej
+        wysyłać automatycznych odpowiedzi, dopóki nie zadzwonisz do tej osoby, albo do niej nie odpiszesz. Uwaga - jeśli
+        używasz aplikacji połączeń lub SMS innej niż domyślna, aplikacja może w ogóle nie odpisywać (techniczne
+        ograniczenie).\n\n
+
+        Liczenie czasu - po tym jak dany numer otrzyma automatyczną odpowiedź, aplikacja nie będzie odpowiadała temu
+        numerowi przez określony czas. Ten tryb zawsze zadziała.
+    </string>
+    <string name="wizard_custom_dialer_messenger_yes_label">Limituj odpowiedzi poprzez liczenie</string>
+    <string name="wizard_custom_dialer_messenger_no_label">Limituj odpowiedzi poprzez czas</string>
+
+
+    <string name="wizard_geolocation_title">Pytanie o Twoją pozycję</string>
+    <string name="wizard_geolocation_description">
+        Gdy jeździsz, czasem ludzie próbują się dowiedzieć gdzie jesteś i kiedy do nich przyjedziesz, lecz podczas jazdy
+        ciężko im odpisać.\n
+        Aplikacja potrafi rozpoznać gdy ludzie pytają się gdzie jesteś, i odesłać im SMSa z mapką zawierającą twoją
+        pozycję.\n\n
+        W ustawieniach znajdziesz opcje które pozwolą ci ograniczyć tą funkcję do najbliższych osób.
+    </string>
+    <string name="wizard_geolocation_yes_label">Tak, chcę by aplikacja informowała o mojej pozycji</string>
+    <string name="wizard_geolocation_no_label">Nie, dziękuję</string>
+
+
+    <string name="wizard_when_app_not_work_title">To już wszystko</string>
+    <string name="wizard_when_app_not_work_description">Aplikacja została skonfigurowana. Więcej możliwości konfiguracji
+        znajdziesz w ustawieniach.\n
+        Jeśli wybrałeś ręczne sterowanie aplikacją, pamiętaj aby włączyć tryb jazdy zanim wsiądziesz na motocykl.\n
+        Jeśli używasz inteligentnego wykrywania, po prostu pozostaw włączony GPS w ustawieniach telefonu.\n\n
+
+        Aby dowiedzieć się więcej o tym jak działa aplikacja, użyj opcji "Jak to działa" w Ustawieniach.\n\n
+        Jeśli spodobała ci się aplikacja, będzie bardzo miło jeśli ocenisz ją na Google Play :-)\n\n
+        Miłego jeżdzenia! :-)
+    </string>
+    <string name="wizard_when_app_not_work_yes_label">Okej, przejdźmy dalej :)</string>
+
+
+</resources>

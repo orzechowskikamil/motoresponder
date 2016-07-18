@@ -16,7 +16,7 @@ import static org.mockito.Mockito.*;
 
 public class OnOffWidgetHandlerTest extends TestCase {
 
-    private OnOffWidgetHandler onOffWidgetHandler;
+    private RidingAssumedWidgetHandler ridingAssumedWidgetHandler;
     private Context context;
     private Settings settings;
     private IntentsUtility intentsUtility;
@@ -26,17 +26,17 @@ public class OnOffWidgetHandlerTest extends TestCase {
         this.context = mock(Context.class);
         this.settings = mock(Settings.class);
         this.intentsUtility = this.createIntentsUtility();
-        this.onOffWidgetHandler = new OnOffWidgetHandler(this.context, this.settings, this.intentsUtility);
+        this.ridingAssumedWidgetHandler = new RidingAssumedWidgetHandler(this.context, this.settings, this.intentsUtility);
     }
 
     @Test
     public void testListeningToIntent() {
-        this.onOffWidgetHandler.handleWidget();
+        this.ridingAssumedWidgetHandler.handleWidget();
         verify(this.settings, times(2)).listenToSettingChange(anyString(), any(Predicate.class));
         verify(this.context, times(1)).sendBroadcast(any(Intent.class));
         verify(this.context, times(1)).registerReceiver(any(BroadcastReceiver.class), any(IntentFilter.class));
 
-        this.onOffWidgetHandler.stopHandlingWidget();
+        this.ridingAssumedWidgetHandler.stopHandlingWidget();
         verify(this.settings, times(2)).stopListeningToSetting(anyString(), any(Predicate.class));
         verify(this.context, times(2)).sendBroadcast(any(Intent.class));
         verify(this.context, times(1)).unregisterReceiver(any(BroadcastReceiver.class));
@@ -49,14 +49,14 @@ public class OnOffWidgetHandlerTest extends TestCase {
         when(this.settings.isRidingAssumed()).thenReturn(false);
         when(this.settings.isResponderEnabled()).thenReturn(true);
 
-        this.onOffWidgetHandler.handleWidgetTap();
+        this.ridingAssumedWidgetHandler.handleWidgetTap();
 
         verify(this.settings, times(1)).setRidingAssumed(true);
         verify(this.settings, times(0)).setRidingAssumed(false);
 
 
         when(this.settings.isResponderEnabled()).thenReturn(false);
-        this.onOffWidgetHandler.handleWidgetTap();
+        this.ridingAssumedWidgetHandler.handleWidgetTap();
 
         verify(this.settings, times(1)).setRidingAssumed(true);
         verify(this.settings, times(0)).setRidingAssumed(false);

@@ -12,20 +12,21 @@ abstract public class SettingsBase {
 
     private SharedPreferencesUtility sharedPreferencesUtility;
     private HashMap<String, List<Predicate<Boolean>>> callbacksMap;
+    private boolean isListeningToSharedPreferencesChanges = false;
 
 
     public SettingsBase(SharedPreferencesUtility sharedPreferencesUtility) {
-
         this.sharedPreferencesUtility = sharedPreferencesUtility;
-
         this.startListening();
-
         this.callbacksMap = new HashMap<>();
     }
 
     public void listenToSettingChange(String settingName, Predicate<Boolean> callback) {
-//        List<Predicate<Boolean>> callbackList = this.getCallbacksListForSetting(settingName);
-//        callbackList.add(callback);
+        if (!this.isListeningToSharedPreferencesChanges) {
+            throw new RuntimeException("Not listening to shared prefs, no sense of listening to properties");
+        }
+        List<Predicate<Boolean>> callbackList = this.getCallbacksListForSetting(settingName);
+        callbackList.add(callback);
     }
 
     public void stopListeningToSetting(String settingName, Predicate<Boolean> callback) {
@@ -42,6 +43,14 @@ abstract public class SettingsBase {
     }
 
     protected void onSharedPreferenceChanged(String changedKey) {
+        try {
+            for (Predicate<Boolean> callback : this.getCallbacksListForSetting(changedKey)) {
+                if (callback != null) {
+                    callback.apply(true);
+                }
+            }
+        } catch (Exception e) {
+        }
     }
 
     protected String getStringValue(int resID) {
@@ -76,6 +85,10 @@ abstract public class SettingsBase {
         return this.getIntValue(this.getStringFromRes(resID));
     }
 
+    protected void setIntValue(int resID, int value) {
+        this.sharedPreferencesUtility.setIntValue(this.getStringFromRes(resID), value);
+    }
+
     protected int getIntValue(String name) {
         return this.sharedPreferencesUtility.getIntValue(name, this.getDefaultIntValue(name));
     }
@@ -98,6 +111,7 @@ abstract public class SettingsBase {
 
     private void stopListening() {
         this.sharedPreferencesUtility.stopListeningToSharedPreferenceChanged();
+        this.isListeningToSharedPreferencesChanges = false;
     }
 
     private void startListening() {
@@ -108,6 +122,7 @@ abstract public class SettingsBase {
                 return false;
             }
         });
+        this.isListeningToSharedPreferencesChanges = true;
     }
 
 }
