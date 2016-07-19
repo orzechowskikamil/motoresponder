@@ -6,6 +6,9 @@ import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
@@ -105,20 +108,67 @@ public class NumberRulesTest {
     }
 
     @Test
-    public void whiteListCorrectlyFilterNumber() throws Exception {
+    public void groupsWhiteListCorrectlyFilterNumber() throws Exception {
         when(this.settings.getWhiteListGroupName()).thenReturn("doesn't matter");
+        when(this.settings.isWhiteListEnabled()).thenReturn(true);
 
-        when(this.contactsUtility.hasGroupNumberByGroupName(anyString(), anyString())).thenReturn(false);
-        assertFalse(this.numberRules.numberRulesAllowResponding(FAKE_INCOMING_PHONE_NUMBER));
 
         when(this.contactsUtility.hasGroupNumberByGroupName(anyString(), anyString())).thenReturn(true);
         assertTrue(this.numberRules.numberRulesAllowResponding(FAKE_INCOMING_PHONE_NUMBER));
 
+        when(this.contactsUtility.hasGroupNumberByGroupName(anyString(), anyString())).thenReturn(false);
+        assertFalse(this.numberRules.numberRulesAllowResponding(FAKE_INCOMING_PHONE_NUMBER));
+
+        when(this.settings.isWhiteListEnabled()).thenReturn(false);
+
+        assertTrue(this.numberRules.numberRulesAllowResponding(FAKE_INCOMING_PHONE_NUMBER));
     }
 
+    @Test
+    public void contactsWhiteListCorrectlyFilterNumber() {
+        when(this.settings.isWhiteListEnabled()).thenReturn(true);
+        List<String> contactsWhitelisted = new ArrayList<>();
+        String WHITELISTED_CONTACT = "666-666-666";
+        String NUMBER_OUTSIDE_WHITELIST = "777-666-555";
+        contactsWhitelisted.add(WHITELISTED_CONTACT);
+
+        when(this.settings.getWhitelistedContactsList()).thenReturn(contactsWhitelisted);
+
+        assertTrue(this.numberRules.numberRulesAllowResponding(WHITELISTED_CONTACT));
+        assertTrue(this.numberRules.numberRulesAllowResponding("+48" + WHITELISTED_CONTACT));
+        assertFalse(this.numberRules.numberRulesAllowResponding(NUMBER_OUTSIDE_WHITELIST));
+        assertFalse(this.numberRules.numberRulesAllowResponding("+48" + NUMBER_OUTSIDE_WHITELIST));
+
+        when(this.settings.isWhiteListEnabled()).thenReturn(false);
+
+        assertTrue(this.numberRules.numberRulesAllowResponding(NUMBER_OUTSIDE_WHITELIST));
+        assertTrue(this.numberRules.numberRulesAllowResponding("+48" + NUMBER_OUTSIDE_WHITELIST));
+    }
 
     @Test
-    public void blackListCorrectlyFilterNumber() throws Exception {
+    public void contactsBlackListCorrectlyFilterNumber() {
+        when(this.settings.isBlackListEnabled()).thenReturn(true);
+        List<String> contactsBlackListed = new ArrayList<>();
+        String BLACKLISTED_CONTACT = "666-777-888";
+        String NUMBER_OUTSIDE_BLACKLIST = "333-444-555";
+        contactsBlackListed.add(BLACKLISTED_CONTACT);
+
+        when(this.settings.getBlacklistedContactsList()).thenReturn(contactsBlackListed);
+
+        assertFalse(this.numberRules.numberRulesAllowResponding(BLACKLISTED_CONTACT));
+        assertFalse(this.numberRules.numberRulesAllowResponding("+48" + BLACKLISTED_CONTACT));
+        assertTrue(this.numberRules.numberRulesAllowResponding(NUMBER_OUTSIDE_BLACKLIST));
+        assertTrue(this.numberRules.numberRulesAllowResponding("+48" + NUMBER_OUTSIDE_BLACKLIST));
+
+        when(this.settings.isBlackListEnabled()).thenReturn(false);
+
+        assertTrue(this.numberRules.numberRulesAllowResponding(BLACKLISTED_CONTACT));
+        assertTrue(this.numberRules.numberRulesAllowResponding("+48" + BLACKLISTED_CONTACT));
+    }
+
+    @Test
+    public void groupsBlackListCorrectlyFilterNumber() throws Exception {
+        when(this.settings.isBlackListEnabled()).thenReturn(true);
         when(this.settings.getBlackListGroupName()).thenReturn("doesn't matter");
 
         when(this.contactsUtility.hasGroupNumberByGroupName(anyString(), anyString())).thenReturn(false);
@@ -126,6 +176,10 @@ public class NumberRulesTest {
 
         when(this.contactsUtility.hasGroupNumberByGroupName(anyString(), anyString())).thenReturn(true);
         assertFalse(this.numberRules.numberRulesAllowResponding(FAKE_INCOMING_PHONE_NUMBER));
+
+        when(this.settings.isBlackListEnabled()).thenReturn(false);
+
+        assertTrue(this.numberRules.numberRulesAllowResponding(FAKE_INCOMING_PHONE_NUMBER));
     }
 
     @Test

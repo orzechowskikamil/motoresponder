@@ -3,6 +3,8 @@ package com.medziku.motoresponder.logic;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.medziku.motoresponder.utils.SharedPreferencesUtility;
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -123,6 +125,33 @@ abstract public class SettingsBase {
             }
         });
         this.isListeningToSharedPreferencesChanges = true;
+    }
+
+
+    /**
+     * @param resID resourceID
+     * @return Null means incorrect or nonexisting (not defined before) value
+     */
+    protected List<String> getStringArrayValue(int resID) {
+        try {
+            JSONArray jsonArray;
+            jsonArray = new JSONArray(this.getStringValue(resID));
+
+            List result = new ArrayList<String>();
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                result.add(jsonArray.get(i));
+            }
+            return result;
+        } catch (JSONException e) {
+            return null;
+        }
+    }
+
+    protected void setStringArrayValue(int resID, List<String> values) {
+        JSONArray array = new JSONArray(values);
+        String jsonStr = array.toString();
+        this.setStringValue(resID, jsonStr);
     }
 
 }

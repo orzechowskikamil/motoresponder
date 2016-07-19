@@ -3,6 +3,8 @@ package com.medziku.motoresponder.logic;
 import com.medziku.motoresponder.R;
 import com.medziku.motoresponder.utils.SharedPreferencesUtility;
 
+import java.util.List;
+
 public class Settings extends SettingsBase {
 
     public int TURNED_OFF_GPS_NOTIFICATION_TEXT_RES_ID;
@@ -121,6 +123,7 @@ public class Settings extends SettingsBase {
         return this.getStringValue(R.string.auto_response_to_sms_template_key);
     }
 
+
     public String getAutoResponseToCallTemplate() {
         return this.getStringValue(R.string.auto_response_to_call_template_key);
     }
@@ -192,6 +195,54 @@ public class Settings extends SettingsBase {
 
     public double getAccelerationRequiredToMotion() {
         return Double.parseDouble(this.getStringValue(R.string.acceleration_required_for_motion_key));
+    }
+
+
+    /**
+     * Return true if user defined custom list of geolocation-whitelisted contacts
+     */
+    public boolean isUsingCustomContactsGeolocationWhitelist() {
+        return this.getGeolocationWhitelistedContactsList() != null;
+    }
+
+
+    public List<String> getGeolocationWhitelistedContactsList() {
+        return this.getStringArrayValue(R.string.geolocation_whitelisted_contacts_key);
+    }
+
+    public void setGeolocationWhitelistedContactsList(List<String> contactNumbers) {
+        this.setStringArrayValue(R.string.geolocation_whitelisted_contacts_key, contactNumbers);
+    }
+
+
+    /**
+     * Return true if user defined custom list of whitelisted contacts
+     */
+    public boolean isUsingCustomContactsWhitelist() {
+        return this.getWhitelistedContactsList() != null;
+    }
+
+    public List<String> getWhitelistedContactsList() {
+        return this.getStringArrayValue(R.string.whitelisted_contacts_key);
+    }
+
+    public void setWhitelistedContactsList(List<String> contactNumbers) {
+        this.setStringArrayValue(R.string.whitelisted_contacts_key, contactNumbers);
+    }
+
+    public List<String> getBlacklistedContactsList() {
+        return this.getStringArrayValue(R.string.blacklisted_contacts_key);
+    }
+
+    public void setBlacklistedContactsList(List<String> contactNumbers) {
+        this.setStringArrayValue(R.string.blacklisted_contacts_key, contactNumbers);
+    }
+
+    /**
+     * Return true if user defined custom list of blacklisted contacts
+     */
+    public boolean isUsingBlacklistedContactsList() {
+        return this.getBlacklistedContactsList() != null;
     }
 
     public String getGeolocationWhitelistGroupName() {
@@ -276,6 +327,10 @@ public class Settings extends SettingsBase {
         this.setBooleanValue(R.string.terms_and_conditions_accepted_key, accepted);
     }
 
+    public boolean isWhiteListEnabled() {
+        return this.getBooleanValue(R.string.is_whitelist_enabled_key);
+    }
+
     public int getDistanceForTrafficJamDetectionMeters() {
         return this.getIntValue(R.string.distance_for_traffic_jam_detection_meters_key);
     }
@@ -283,4 +338,17 @@ public class Settings extends SettingsBase {
     public int getTrafficJamDelaySeconds() {
         return this.getIntValue(R.string.traffic_jam_detection_delay_seconds_key);
     }
+
+    public void setWhitelistEnabled(boolean enabled) {
+        this.setBooleanValue(R.string.is_whitelist_enabled_key, enabled);
+    }
+
+    public boolean isBlackListEnabled() {
+        return this.getBooleanValue(R.string.is_blacklist_enabled_key);
+    }
+
+    public void setBlackListEnabled(boolean enabled) {
+        this.setBooleanValue(R.string.is_blacklist_enabled_key, enabled);
+    }
 }
+

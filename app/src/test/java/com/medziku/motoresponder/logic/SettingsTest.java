@@ -8,9 +8,14 @@ import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 public class SettingsTest {
@@ -20,9 +25,12 @@ public class SettingsTest {
     private SharedPreferencesUtility sharedPreferencesUtility;
     private Settings settings;
 
+
     @Before
     public void setUp() {
         this.sharedPreferencesUtility = mock(SharedPreferencesUtility.class);
+
+        this.settings = new Settings(this.sharedPreferencesUtility);
 
         doAnswer(new Answer() {
             public Object answer(InvocationOnMock invocation) {
@@ -36,6 +44,62 @@ public class SettingsTest {
         when(this.sharedPreferencesUtility.getStringValue(anyString(), anyString())).thenReturn(STORED_VALUE);
     }
 
+    @Test
+    public void testOfWhitelistName() {
+        when(this.sharedPreferencesUtility.getStringValue(anyString(), anyString())).thenReturn("dd");
+        assertTrue(this.settings.getWhiteListGroupName().equals("dd"));
+
+        when(this.sharedPreferencesUtility.getStringValue(anyString(), anyString())).thenReturn(null);
+        assertTrue(this.settings.getWhiteListGroupName() == null);
+
+        when(this.sharedPreferencesUtility.getStringValue(anyString(), anyString())).thenReturn("");
+        assertTrue(this.settings.getWhiteListGroupName() == null);
+    }
+
+
+    @Test
+    public void testOfBlacklistName() {
+        when(this.sharedPreferencesUtility.getStringValue(anyString(), anyString())).thenReturn("dd");
+        assertTrue(this.settings.getBlackListGroupName().equals("dd"));
+
+        when(this.sharedPreferencesUtility.getStringValue(anyString(), anyString())).thenReturn(null);
+        assertTrue(this.settings.getBlackListGroupName() == null);
+
+        when(this.sharedPreferencesUtility.getStringValue(anyString(), anyString())).thenReturn("");
+        assertTrue(this.settings.getBlackListGroupName() == null);
+    }
+
+    @Test
+    public void testOfSavingStringArray() {
+        int RES_ID = 1;
+        String KEY_VALUE = "key";
+        when(this.sharedPreferencesUtility.getStringFromRes(RES_ID)).thenReturn(KEY_VALUE);
+
+        List<String> TEST_ARRAY = new ArrayList<>();
+        TEST_ARRAY.add("aaa");
+        TEST_ARRAY.add("bbb");
+        this.settings.setStringArrayValue(RES_ID, TEST_ARRAY);
+        verify(this.sharedPreferencesUtility, times(1)).setStringValue(eq(KEY_VALUE), contains("[\"aaa\",\"bbb\"]"));
+
+        this.settings.setStringArrayValue(RES_ID, null);
+        verify(this.sharedPreferencesUtility, times(1)).setStringValue(eq(KEY_VALUE), contains(""));
+    }
+
+
+    @Test
+    public void testOfReadingStringArray() {
+        int RES_ID = 1;
+
+        when(this.sharedPreferencesUtility.getStringValue(anyString(), anyString())).thenReturn("[\"aaa\",\"bbb\"]");
+        List<String> stringArrayValue = this.settings.getStringArrayValue(RES_ID);
+
+        assertTrue(stringArrayValue.size() == 2);
+        assertTrue(stringArrayValue.get(1).equals("aaa"));
+        assertTrue(stringArrayValue.get(2).equals("bbb"));
+
+        when(this.sharedPreferencesUtility.getStringValue(anyString(), anyString())).thenReturn("");
+        assertTrue(this.settings.getStringArrayValue(RES_ID) == null);
+    }
     @Test
     public void testListeningToSettings() {
         final boolean[] changed = {false};

@@ -17,8 +17,8 @@
             android:title="@string/responding_restricted_to_current_country_title"
             android:key="@string/responding_restricted_to_current_country_key"
             android:defaultValue="@bool/responding_restricted_to_current_country_default_value"/>
-            
-    
+
+
     <SwitchPreference
             android:summaryOn="@string/already_responded_filtering_enabled_summary_on"
             android:summaryOff="@string/already_responded_filtering_enabled_summary_off"
@@ -33,6 +33,14 @@
             android:key="@string/whitelist_group_name_key"
             android:defaultValue="@string/whitelist_group_name_default_value"
             />
+
+    <Preference
+            android:title="Whitelista"
+            android:summary="Wbitelista">
+
+        <intent android:action="com.medziku.motoresponder.whitelist_picker"/>
+
+    </Preference>
 
     <ListPreference
             android:title="@string/blacklist_group_name_title"

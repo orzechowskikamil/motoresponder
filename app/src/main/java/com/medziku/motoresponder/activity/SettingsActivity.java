@@ -65,15 +65,15 @@ public class SettingsActivity extends PreferenceActivity {
 
     // TODO K. Orzechowski: divide it to app launcher and activity.
 
+    protected void toggleDisabledMenuOptions() {
+        if (this.settings.isResponderEnabled()) {
 
-    @Override
-    protected void onResume() {
-        this.onGatheringFocus();
-        super.onResume();
+        }
     }
 
     protected void onStop() {
         this.onLoosingFocus();
+
         super.onStop();
     }
 
@@ -81,6 +81,14 @@ public class SettingsActivity extends PreferenceActivity {
     protected boolean isValidFragment(String fragmentName) {
         // making this check only introduce errors when adding fragment. ignore it.
         return true;
+    }
+
+
+
+    @Override
+    protected void onResume() {
+        this.onGatheringFocus();
+        super.onResume();
     }
 
     protected void acceptTermsAndConditions() {

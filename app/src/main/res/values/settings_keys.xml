@@ -77,6 +77,16 @@
 
     <string name="geolocation_whitelist_group_name_key">geolocation_whitelist_group_name</string>
 
+    <string name="whitelisted_contacts_key">whitelisted_contacts</string>
+
+    <string name="blacklisted_contacts_key">blacklisted_contacts</string>
+
+    <string name="is_whitelist_enabled_key">is_whitelist_enabled</string>
+
+    <string name="is_blacklist_enabled_key">is_blacklist_enabled</string>
+
+    <string name="geolocation_whitelisted_contacts_key">geolocation_whitelisted_contacts</string>
+
     <string name="device_phone_number_key">device_phone_number</string>
 
     <string name="already_responded_filtering_enabled_key">already_responded_filtering_enabled</string>

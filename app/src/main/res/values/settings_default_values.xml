@@ -41,6 +41,16 @@
 
     <string name="geolocation_whitelist_group_name_default_value" formatted="false"></string>
 
+    <string name="whitelisted_contacts_default_value"></string>
+
+    <string name="blacklisted_contacts_default_value"></string>
+
+    <bool name="is_whitelist_enabled_default_value">false</bool>
+
+    <bool name="is_blacklist_enabled_default_value">false</bool>
+
+    <string name="geolocation_whitelisted_contacts_default_value"></string>
+
     <string name="device_phone_number_default_value"></string>
 
     <bool name="sensor_check_enabled_default_value">true</bool>
@@ -72,7 +82,7 @@
     <bool name="include_accelerometer_check_default_value">true</bool>
 
     <string name="acceleration_required_for_motion_default_value">0.2</string>
-    
+
     <bool name="already_responded_filtering_enabled_default_value">true</bool>
 
     <!-- it's not real setting but since it's value in shared preferences, empty string is required here to not have an error -->

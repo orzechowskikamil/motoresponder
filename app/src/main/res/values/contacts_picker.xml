@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="contacts_picker_select_all">Select all</string>
+    <string name="contacts_picker_select_none">Select none</string>
+
+    <string name="whitelist_contact_picker_title">Whitelist</string>
+    <string name="whitelist_contact_picker_description">Choose contacts for whitelisting</string>
+
+    <string name="geolocation_whitelist_contact_picker_title">Geolocation whitelist</string>
+    <string name="geolocation_whitelist_contact_picker_description">Choose contacts for geolocation whitelist</string>
+
+    <string name="blacklist_contact_picker_title">Blacklist</string>
+    <string name="blacklist_contact_picker_description">Choose contacts for blacklisting</string>
+
+</resources>

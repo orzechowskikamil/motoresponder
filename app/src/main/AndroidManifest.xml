@@ -25,6 +25,16 @@
             android:theme="@style/AppTheme">
 
         <activity
+                android:name=".activity.WhiteListCheckboxPickerActivity"
+                android:label="@string/settings_activity_label">   <!-- todo change to whitelist -->
+
+            <intent-filter>
+                <action android:name="com.medziku.motoresponder.whitelist_picker"></action>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
+        <activity
                 android:name=".activity.SettingsActivity"
                 android:label="@string/settings_activity_label">
             <intent-filter>

@@ -76,11 +76,11 @@ public class NumberRules {
     }
 
     public boolean isWhiteListEnabled() {
-        return this.settings.getWhiteListGroupName() != null;
+        return this.settings.isWhiteListEnabled();
     }
 
     public boolean isBlackListEnabled() {
-        return this.settings.getBlackListGroupName() != null;
+        return this.settings.isBlackListEnabled();
     }
 
     private boolean isNumberNormal(String phoneNumber) {
@@ -106,6 +106,12 @@ public class NumberRules {
             if (this.contactsUtility.hasGroupNumberByGroupName(this.settings.getBlackListGroupName(), phoneNumber) == true) {
                 return true;
             }
+
+            for (String phoneNumberFromBlacklist : this.settings.getBlacklistedContactsList()) {
+                if (PhoneNumbersComparator.areNumbersEqual(phoneNumberFromBlacklist, phoneNumber)) {
+                    return true;
+                }
+            }
         } catch (Exception e) {
             return false;
         }
@@ -117,8 +123,13 @@ public class NumberRules {
             if (this.contactsUtility.hasGroupNumberByGroupName(this.settings.getWhiteListGroupName(), phoneNumber) == true) {
                 return true;
             }
+
+            for (String phoneNumberFromWhitelist : this.settings.getWhitelistedContactsList()) {
+                if (PhoneNumbersComparator.areNumbersEqual(phoneNumberFromWhitelist, phoneNumber)) {
+                    return true;
+                }
+            }
         } catch (Exception e) {
-            return false;
         }
         return false;
     }

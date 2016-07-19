@@ -4,6 +4,7 @@ package com.medziku.motoresponder.pseudotesting.utilities;
 import android.content.Context;
 import android.util.Log;
 import com.medziku.motoresponder.utils.ContactsUtility;
+import com.medziku.motoresponder.utils.structures.ContactDefinition;
 
 import java.util.List;
 
@@ -29,10 +30,6 @@ public class ContactsUtilityTest {
         this.context = context;
     }
 
-    private void setUp() {
-        this.contactsUtility = new ContactsUtility(this.context);
-    }
-
     public void testContactBookContainsContact() {
         this.setUp();
 
@@ -56,7 +53,6 @@ public class ContactsUtilityTest {
 
         Log.d(TAG, "Result: " + (isSuccess ? "Success!" : "Failure!"));
     }
-
 
     public void testReadCurrentDevicePhoneNumber() {
         this.setUp();
@@ -146,6 +142,18 @@ public class ContactsUtilityTest {
         Integer mcc = this.contactsUtility.readCurrentMobileCountryCode();
 
         Log.d(TAG, "Result is: " + String.valueOf(mcc));
+    }
+
+    public void testGetAllContacts() {
+        this.setUp();
+
+        List<ContactDefinition> allContacts = this.contactsUtility.getAllContacts();
+
+        Log.d(TAG, "tried to fetch all contacts. Fetched " + allContacts.size() + " contacts, first contact data is: number: " + allContacts.get(0).phoneNumber + ", name: " + allContacts.get(0).name);
+    }
+
+    private void setUp() {
+        this.contactsUtility = new ContactsUtility(this.context);
     }
 
     private void hasGroupNumberSubtest(String phoneNumber, String groupName) {

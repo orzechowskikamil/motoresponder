@@ -10,6 +10,7 @@ import android.provider.ContactsContract.Groups;
 import android.provider.ContactsContract.PhoneLookup;
 import android.telephony.TelephonyManager;
 import com.medziku.motoresponder.logic.PhoneNumbersComparator;
+import com.medziku.motoresponder.utils.structures.ContactDefinition;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,6 +68,28 @@ public class ContactsUtility {
         }
 
         return names;
+    }
+
+    public List<ContactDefinition> getAllContacts() {
+        String contactID = null;
+
+
+        String[] projection = {Phone.DISPLAY_NAME, Phone.NORMALIZED_NUMBER};
+        String[] selectionArgs = {};
+
+        Cursor cursor = context.getContentResolver().query(Phone.CONTENT_URI, projection, null, selectionArgs, null);
+        List<ContactDefinition> contacts = new ArrayList<>();
+        if (cursor.moveToFirst()) {
+            do {
+                ContactDefinition contactDefinition = new ContactDefinition();
+                contactDefinition.name = cursor.getString(cursor.getColumnIndex(Phone.DISPLAY_NAME));
+                contactDefinition.phoneNumber = cursor.getString(cursor.getColumnIndex(Phone.NORMALIZED_NUMBER));
+                contacts.add(contactDefinition);
+
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+        return contacts;
     }
 
 
@@ -227,3 +250,4 @@ public class ContactsUtility {
 
 
 }
+

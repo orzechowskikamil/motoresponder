@@ -13,7 +13,7 @@ import com.medziku.motoresponder.R;
  */
 public class SharedPreferencesUtility {
 
-    private Context context;
+    protected Context context;
     private SharedPreferences sharedPreferences;
     private Resources resources;
     private SharedPreferences.OnSharedPreferenceChangeListener sharedListener;

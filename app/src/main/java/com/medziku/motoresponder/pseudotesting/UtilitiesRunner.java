@@ -180,6 +180,10 @@ public class UtilitiesRunner {
                         // this is working 23 05 2016 on motog
                         UtilitiesRunner.this.contactsUtilityTest.testReadCurrentMobileCountryCode();
                         break;
+                    case 78:
+                        // working 01 08 2016 on motog
+                        UtilitiesRunner.this.contactsUtilityTest.testGetAllContacts();
+                        break;
 
 
                     case 80:
