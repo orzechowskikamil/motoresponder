@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- TODO rename this file to settings_preference_headers -->
 <preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
 
     <header android:fragment="com.medziku.motoresponder.activity.SettingsPreferenceFragment"
@@ -17,7 +18,7 @@
             android:summary="@string/number_rules_preferences_summary"/>
 
     <header android:fragment="com.medziku.motoresponder.activity.HowItWorksPreferenceFragment"
-            android:icon="@drawable/ic_number_rules_fragment"
+            android:icon="@drawable/ic_how_it_works_fragment"
             android:title="@string/how_it_works_preferences_title"
             android:summary="@string/how_it_works_preferences_summary"/>
 
