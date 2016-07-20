@@ -131,7 +131,7 @@ public class UserRide {
         try {
             Boolean result = this.motionUtility.isDeviceInMotion(this.settings.getAccelerationRequiredToMotion()).get();
 
-            this.log.add(this.motionUtility.getInternalLog());
+            this.log.add(this.motionUtility.getAndClearInternalLog());
 
             if (result == null) {
                 // null means that something disturbed accelerometer during process, and it's equal to exception thrown situation.
@@ -199,7 +199,7 @@ public class UserRide {
         long endDateTimestamp = new Date().getTime();
         int checkDurationSeconds = Math.round((endDateTimestamp - startDateTimestamp) / 1000);
 
-        this.log.add(this.locationUtility.getInternalLog());
+        this.log.add(this.locationUtility.getAndClearInternalLog());
 
         if (location == null) {
             this.log.add("GPS check took " + checkDurationSeconds + "s and it was timeouted.");

@@ -29,14 +29,13 @@ public class LocationUtility {
     }
 
 
-    public String getInternalLog() {
+    public String getAndClearInternalLog() {
         if (this.mostRecentLocationProcess == null) {
             return null;
         }
 
-
-        String logMsg = this.mostRecentLocationProcess.logMsg;
-        this.mostRecentLocationProcess.logMsg = "";
+        String logMsg = this.mostRecentLocationProcess.getInternalLog();
+        this.mostRecentLocationProcess.clearInternalLog();
 
         return logMsg;
     }
@@ -80,7 +79,7 @@ class GettingAccurateLocationProcess implements LocationListener {
     /**
      * It's way to expose information about how this class performed, to any other class without knowing about it.
      */
-    public String logMsg;
+    private String logMsg;
     private long timeoutMs;
     private float expectedSpeed;
     private float expectedAccuracy;
@@ -98,9 +97,16 @@ class GettingAccurateLocationProcess implements LocationListener {
         this.expectedAccuracy = expectedAccuracyMeters;
         this.timeoutMs = timeoutMs;
         this.result = SettableFuture.create();
-        this.logMsg = "GPS check: ";
+        this.clearInternalLog();
     }
 
+    public String getInternalLog() {
+        return this.logMsg;
+    }
+
+    public void clearInternalLog() {
+        this.logMsg = "GPS check: ";
+    }
 
     /**
      * Use this method to get a location.
@@ -127,35 +133,11 @@ class GettingAccurateLocationProcess implements LocationListener {
         return this.result;
     }
 
-
-    /**
-     * This is running in separate thread
-     */
-    protected void startListeningToLocationUpdates() {
-        // prepare looper for events in separate thread.
-        this.prepareLooper();
-
-        // this is safety timeout - if no location after desired time, it cancells location listening
-        this.setSafetyTimeout();
-
-        this.locationManager.requestLocationUpdates(
-                LocationManager.GPS_PROVIDER,
-                this.minimumTimeBetweenUpdates,
-                this.minimumDistanceBetweenUpdates,
-                this
-        );
-        this.logMsg += " Starting listening to GPS. ";
-
-        // this will prevent exiting from separate thread.
-        this.loopLooper();
-    }
-
-
     /**
      * This is also running in separate thread
      */
     public void onTimeout() {
-        this.logMsg += " Timeout happened to GPS check, we were waiting too long, and event with expected speed and accuracy not happened. ";
+        this.addToInternalLog(" Timeout happened to GPS check, we were waiting too long, and event with expected speed and accuracy not happened. ");
         this.setEmptyResultAndStopListening();
     }
 
@@ -166,13 +148,13 @@ class GettingAccurateLocationProcess implements LocationListener {
     public void onLocationChanged(Location location) {
         float accuracy = location.getAccuracy();
         float speed = location.getSpeed();
-        this.logMsg += "speed: " + speed + "m/s, accuracy: " + accuracy + "; ";
+        this.addToInternalLog("speed: " + String.format("%.3f", speed) + "m/s, accuracy: " + String.format("%.3f", accuracy) + "m; ");
 
         if (accuracy <= this.expectedAccuracy && speed >= this.expectedSpeed) {
-            this.logMsg += "Last event was with expected accuracy and speed. ";
+            this.addToInternalLog("Last event was with expected accuracy and speed. ");
             this.setResultAndStopListening(location);
         } else {
-            this.logMsg += "Not enough speed or accuracy. ";
+            this.addToInternalLog("Not enough speed or accuracy. ");
         }
     }
 
@@ -188,7 +170,7 @@ class GettingAccurateLocationProcess implements LocationListener {
             case LocationProvider.TEMPORARILY_UNAVAILABLE:
                 break;
             case LocationProvider.OUT_OF_SERVICE:
-                this.logMsg += " GPS is out of service.";
+                this.addToInternalLog(" GPS is out of service.");
                 this.setEmptyResultAndStopListening();
                 break;
         }
@@ -209,6 +191,60 @@ class GettingAccurateLocationProcess implements LocationListener {
         this.setEmptyResultAndStopListening();
     }
 
+    public void cancelGPSCheck() {
+        this.setEmptyResultAndStopListening();
+    }
+
+    protected void addToInternalLog(String log) {
+        this.logMsg += log + "; ";
+    }
+
+    /**
+     * This is running in separate thread
+     */
+    protected void startListeningToLocationUpdates() {
+        // prepare looper for events in separate thread.
+        this.prepareLooper();
+
+        // this is safety timeout - if no location after desired time, it cancells location listening
+        this.setSafetyTimeout();
+
+        this.locationManager.requestLocationUpdates(
+                LocationManager.GPS_PROVIDER,
+                this.minimumTimeBetweenUpdates,
+                this.minimumDistanceBetweenUpdates,
+                this
+        );
+        this.addToInternalLog(" Starting listening to GPS. ");
+
+        // this will prevent exiting from separate thread.
+        this.loopLooper();
+    }
+
+    protected void prepareLooper() {
+        Looper.prepare();
+        this.looperForListeningThread = Looper.myLooper();
+    }
+
+    protected void loopLooper() {
+        this.looperForListeningThread.loop();
+    }
+
+
+    // region wrapped static & unmockable methods
+
+    protected void quitLooper() {
+        this.looperForListeningThread.quitSafely();
+    }
+
+    protected void runWholeProcessInSeparateThread() {
+        (new Thread() {
+            @Override
+            public void run() {
+                GettingAccurateLocationProcess.this.startListeningToLocationUpdates();
+            }
+        }).start();
+    }
 
     private void setEmptyResultAndStopListening() {
         this.setResultAndStopListening(null);
@@ -221,7 +257,6 @@ class GettingAccurateLocationProcess implements LocationListener {
         this.quitLooper();
     }
 
-
     private void setSafetyTimeout() {
         new Timer().schedule(new TimerTask() {
             @Override
@@ -233,37 +268,6 @@ class GettingAccurateLocationProcess implements LocationListener {
                 }
             }
         }, this.timeoutMs);
-    }
-
-
-    // region wrapped static & unmockable methods
-
-
-    protected void prepareLooper() {
-        Looper.prepare();
-        this.looperForListeningThread = Looper.myLooper();
-    }
-
-    protected void loopLooper() {
-        this.looperForListeningThread.loop();
-    }
-
-    protected void quitLooper() {
-        this.looperForListeningThread.quitSafely();
-    }
-
-    public void cancelGPSCheck() {
-        this.setEmptyResultAndStopListening();
-    }
-
-
-    protected void runWholeProcessInSeparateThread() {
-        (new Thread() {
-            @Override
-            public void run() {
-                GettingAccurateLocationProcess.this.startListeningToLocationUpdates();
-            }
-        }).start();
     }
 
     // endregion
