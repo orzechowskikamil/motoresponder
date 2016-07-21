@@ -11,6 +11,10 @@ public class PhoneNumbersComparator {
     private static int MINIMAL_LENGTH_OF_NORMAL_NUMBER = 7;
 
     public static boolean areNumbersEqual(String firstPhoneNumber, String secondPhoneNumber) {
+        if (firstPhoneNumber == null || secondPhoneNumber == null) {
+            throw new RuntimeException("Numbers to compare can't be null");
+        }
+
         String normalized1stNumber = normalizeNumber(firstPhoneNumber);
         String normalized2ndNumber = normalizeNumber(secondPhoneNumber);
 

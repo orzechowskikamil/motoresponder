@@ -22,8 +22,8 @@ public class NumberRules {
 
 
     public boolean numberRulesAllowResponding(String phoneNumber) {
-        this.log.add("Measuring if number "+phoneNumber+" is allowed to get autoresponse.");
-        
+        this.log.add("Measuring if number " + phoneNumber + " is allowed to get autoresponse.");
+
         if (!this.isNumberNormal(phoneNumber)) {
             this.log.add("This number is not normal. Not allowed.");
             return false;
@@ -66,10 +66,29 @@ public class NumberRules {
         return true;
     }
 
-    private boolean isNumberNormal(String phoneNumber) {
-        return PhoneNumbersComparator.isNumberNormal(phoneNumber);
+    public boolean isAbleToFilterForeignNumbers() {
+        try {
+            this.isNumberForeign("");
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
     }
 
+    public boolean isWhiteListEnabled() {
+        return this.settings.getWhiteListGroupName() != null;
+    }
+
+    public boolean isBlackListEnabled() {
+        return this.settings.getBlackListGroupName() != null;
+    }
+
+    private boolean isNumberNormal(String phoneNumber) {
+        if (phoneNumber == null) {
+            return false; // null number is not normal...
+        }
+        return PhoneNumbersComparator.isNumberNormal(phoneNumber);
+    }
 
     private boolean isCurrentDevicePhoneNumber(String phoneNumber) {
         String currentDevicePhoneNumber;
@@ -104,15 +123,6 @@ public class NumberRules {
         return false;
     }
 
-    public boolean isAbleToFilterForeignNumbers() {
-        try {
-            this.isNumberForeign("");
-        } catch (Exception e) {
-            return false;
-        }
-        return true;
-    }
-
     private boolean isNumberForeign(String phoneNumber) throws Exception {
         String currentCountryCode = this.getCurrentCountryCode();
 
@@ -129,13 +139,5 @@ public class NumberRules {
 
     private boolean isInContactBook(String phoneNumber) {
         return this.contactsUtility.contactBookContainsNumber(phoneNumber);
-    }
-
-    public boolean isWhiteListEnabled() {
-        return this.settings.getWhiteListGroupName() != null;
-    }
-
-    public boolean isBlackListEnabled() {
-        return this.settings.getBlackListGroupName() != null;
     }
 }
