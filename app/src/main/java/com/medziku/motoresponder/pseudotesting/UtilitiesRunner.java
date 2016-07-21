@@ -32,7 +32,7 @@ public class UtilitiesRunner {
     /**
      * When this is true, debug utilities (tests of utilities) will be run instead of motoresponder application.
      */
-    public static final boolean ARE_PSEUDOTESTS_ENABLED = false;
+    public static final boolean ARE_PSEUDOTESTS_ENABLED = true;
 
 
     private LockStateUtilityTest lockStateUtilityTest;
@@ -67,9 +67,17 @@ public class UtilitiesRunner {
             protected Boolean doInBackground(Boolean... params) {
                 // unfortunately I can't show those errors in any different way that throwing exception
                 // and catching it here. Hope it will be enough to test.
+                Log.d(TAG, "====================================");
                 Log.d(TAG, "Utilities runner... starting...");
+                Log.d(TAG, "------------------------------------");
+                Log.d(TAG, "====================================");
+
                 this.runTest();
+                Log.d(TAG, "====================================");
                 Log.d(TAG, "Utilities runner... finished...");
+                Log.d(TAG, "------------------------------------");
+                Log.d(TAG, "====================================");
+
 
                 return null;
             }
@@ -77,7 +85,7 @@ public class UtilitiesRunner {
             private void runTest() {
                 // choose the test which you are interested in
                 // after performing, leave short note with date here about result of test
-                switch (77) {
+                switch (95) {
                     case 1:
                         // this is working 10.04.2016 on Android 5.1
                         UtilitiesRunner.this.locationUtilityTest.testOfGettingAccurateLocation();
@@ -215,6 +223,10 @@ public class UtilitiesRunner {
                     case 94:
                         // this is working on 20.03.2016 on Android 5.1 motog
                         UtilitiesRunner.this.smsUtilityTest.testWasOutgoingSMSSentAfterDate();
+                        break;
+
+                    case 95:
+                        UtilitiesRunner.this.smsUtilityTest.testIsDualSim();
                         break;
 
                     case 100:

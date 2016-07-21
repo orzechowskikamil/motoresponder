@@ -7,18 +7,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Telephony.Sms;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
-
-
+import android.util.Log;
 import com.google.common.base.Predicate;
 import com.medziku.motoresponder.BuildConfig;
 import com.medziku.motoresponder.logic.PhoneNumbersComparator;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class SMSUtility {
 
@@ -86,6 +87,12 @@ public class SMSUtility {
         this.smsManager.sendMultipartTextMessage(phoneNumber, null, messageParts, sentPIList, null);
     }
 
+    public boolean isDualSim() {
+        List<SimInfo> simInfo = this.getSIMInfo();
+
+        Log.d("DUPA", "DUUUUUPA= " + simInfo.size());
+        return false;
+    }
 
     /**
      * You can listen only with one smsReceivedCallback. If You wish to listen with another smsReceivedCallback,
@@ -112,17 +119,6 @@ public class SMSUtility {
         this.isCurrentlyListening = false;
 
         this.context.unregisterReceiver(this.incomingSMSReceiver);
-    }
-
-    private PendingIntent createPendingIntent(String SENT, BroadcastReceiver broadcastReceiver) {
-        PendingIntent sentPI = PendingIntent.getBroadcast(this.context, 0, new Intent(SENT), 0);
-        this.context.registerReceiver(broadcastReceiver, new IntentFilter(SENT));
-        return sentPI;
-    }
-
-
-    private String getApplicationPackageName() {
-        return BuildConfig.APPLICATION_ID;
     }
 
     /**
@@ -161,7 +157,6 @@ public class SMSUtility {
         return sentMsgDate;
     }
 
-
     /**
      * This method check if outgoing SMS was sent after date.
      * Because it performs normalization on phone number, note that it will query ALL smsManager messages since
@@ -197,14 +192,53 @@ public class SMSUtility {
         return result;
     }
 
-    private boolean areNumbersEqual(String firstPhoneNumber, String secondPhoneNuber) {
-        return PhoneNumbersComparator.areNumbersEqual(firstPhoneNumber, secondPhoneNuber);
-    }
-
     public boolean wasOutgoingSMSSentAfterDate(Date date, String phoneNumber, boolean shouldBeSentByOurApp) {
         return this.howManyOutgoingSMSSentAfterDate(date, phoneNumber, shouldBeSentByOurApp) > 0;
     }
 
+    private List<SimInfo> getSIMInfo() {
+        List<SimInfo> simInfoList = new ArrayList<>();
+        Uri URI_TELEPHONY = Uri.parse("content://telephony/siminfo/");
+        Cursor cursor= this.context.getContentResolver().query(URI_TELEPHONY, null, null, null, null);
+
+                if (cursor.moveToFirst()) {
+                            do {
+                                String[] names = cursor.getColumnNames();
+                                Log.d("debug_cursor", "------row-----------");
+                                for (int i = 0; i < names.length; i++) {
+                                    Log.d("debug_cursor", names[i] + " = " + cursor.getString(i));
+                                }
+                            } while (cursor.moveToNext());
+                        }
+//        if (c.moveToFirst()) {
+//            do {
+//                int id = c.getInt(0);
+//                int slot = c.getInt(c.getColumnIndex("slot"));
+//                String display_name = c.getString(c.getColumnIndex("display_name"));
+//                String icc_id = c.getString(c.getColumnIndex("icc_id"));
+//                SimInfo simInfo = new SimInfo(id, display_name, icc_id, slot);
+//                Log.d("apipas_sim_info", simInfo.toString());
+//                simInfoList.add(simInfo);
+//            } while (c.moveToNext());
+//        }
+//        c.close();
+
+        return simInfoList;
+    }
+
+    private PendingIntent createPendingIntent(String SENT, BroadcastReceiver broadcastReceiver) {
+        PendingIntent sentPI = PendingIntent.getBroadcast(this.context, 0, new Intent(SENT), 0);
+        this.context.registerReceiver(broadcastReceiver, new IntentFilter(SENT));
+        return sentPI;
+    }
+
+    private String getApplicationPackageName() {
+        return BuildConfig.APPLICATION_ID;
+    }
+
+    private boolean areNumbersEqual(String firstPhoneNumber, String secondPhoneNuber) {
+        return PhoneNumbersComparator.areNumbersEqual(firstPhoneNumber, secondPhoneNuber);
+    }
 
     // TODO K. Orzechowski: please inline it in some spare time because it looks like shit separated from the context. #Issue not needed
     private class IncomingSMSReceiver extends BroadcastReceiver {
@@ -251,5 +285,45 @@ public class SMSUtility {
     }
 
 
+}
+
+class SimInfo {
+    private int id_;
+    private String display_name;
+    private String icc_id;
+    private int slot;
+
+    public SimInfo(int id_, String display_name, String icc_id, int slot) {
+        this.id_ = id_;
+        this.display_name = display_name;
+        this.icc_id = icc_id;
+        this.slot = slot;
+    }
+
+    public int getId_() {
+        return id_;
+    }
+
+    public String getDisplay_name() {
+        return display_name;
+    }
+
+    public String getIcc_id() {
+        return icc_id;
+    }
+
+    public int getSlot() {
+        return slot;
+    }
+
+    @Override
+    public String toString() {
+        return "SimInfo{" +
+                "id_=" + id_ +
+                ", display_name='" + display_name + '\'' +
+                ", icc_id='" + icc_id + '\'' +
+                ", slot=" + slot +
+                '}';
+    }
 }
 

@@ -24,10 +24,6 @@ public class SMSUtilityTest {
         this.context = context;
     }
 
-    private void setUp() {
-        this.smsUtility = new SMSUtility(this.context);
-    }
-
     public void testGettingDateOfLastSMSSent() {
         this.setUp();
 
@@ -38,11 +34,6 @@ public class SMSUtilityTest {
         this.testGettingDateOfLastSmsSentCase(TEST_PHONE_NUMBER_ZERO_ZERO);
         this.testGettingDateOfLastSmsSentCase(TEST_PHONE_NUMBER_CODE);
 
-    }
-
-    private void testGettingDateOfLastSmsSentCase(String phoneNumber) {
-        Date date = this.smsUtility.getDateOfLastSMSSent(phoneNumber, false);
-        Log.d(TAG, "Date of last sms sent by device owner to number " + phoneNumber + " is: " + ((date == null) ? "null" : date.toString()));
     }
 
     public void testListeningForSMS() {
@@ -78,7 +69,7 @@ public class SMSUtilityTest {
                     return false;
                 }
 
-            
+
             });
         } catch (Exception e) {
             Log.d(TAG, "Exception happened during testing of sending sms!");
@@ -103,13 +94,6 @@ public class SMSUtilityTest {
         Log.d(TAG, "Yesterday date should be true (all), 30 seconds ago should be false");
     }
 
-    private boolean testcaseOutgoingSMSAfterDate(Date date, String mobileNumber) {
-        boolean result = this.smsUtility.wasOutgoingSMSSentAfterDate(date, mobileNumber, false);
-
-        Log.d(TAG, "Since " + date.toString() + " sms to number " + mobileNumber + " was sent? = " + result);
-        return result;
-    }
-
     public void testSendingSMSAndGettingItsDate() {
         this.setUp();
 
@@ -123,5 +107,27 @@ public class SMSUtilityTest {
 
         Log.d(TAG, "Date of last sms sent by our app is: " + dateOfLastSMSSent.toString() + ". Date should be close to NOW");
 
+    }
+
+    public void testIsDualSim() {
+        this.setUp();
+
+        Log.d(TAG, "Dual sim test. Is dual sim? = " + this.smsUtility.isDualSim());
+    }
+
+    private void setUp() {
+        this.smsUtility = new SMSUtility(this.context);
+    }
+
+    private void testGettingDateOfLastSmsSentCase(String phoneNumber) {
+        Date date = this.smsUtility.getDateOfLastSMSSent(phoneNumber, false);
+        Log.d(TAG, "Date of last sms sent by device owner to number " + phoneNumber + " is: " + ((date == null) ? "null" : date.toString()));
+    }
+
+    private boolean testcaseOutgoingSMSAfterDate(Date date, String mobileNumber) {
+        boolean result = this.smsUtility.wasOutgoingSMSSentAfterDate(date, mobileNumber, false);
+
+        Log.d(TAG, "Since " + date.toString() + " sms to number " + mobileNumber + " was sent? = " + result);
+        return result;
     }
 }
