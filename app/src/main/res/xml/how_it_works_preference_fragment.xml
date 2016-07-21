@@ -8,4 +8,10 @@
             android:summary="@string/log_viewer_summary"
             android:dialogTitle="@string/log_viewer_dialog_title"/>
 
+
+    <Preference android:title="@string/rate_app_on_market_title"
+                android:summary="@string/rate_app_on_market_summary">
+        <intent android:action="android.intent.action.VIEW" android:data="market://details?id=com.medziku.motoresponder"/>
+    </Preference>
+
 </PreferenceScreen>

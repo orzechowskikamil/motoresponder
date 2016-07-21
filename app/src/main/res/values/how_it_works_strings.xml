@@ -7,4 +7,7 @@
     <string name="custom_log_empty_message">Log is empty!</string>
 
 
+    <string name="rate_app_on_market_title">Rate app</string>
+    <string name="rate_app_on_market_summary">Share your thoughts about app in Google Play Store.</string>
+
 </resources>

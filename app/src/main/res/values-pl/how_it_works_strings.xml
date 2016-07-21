@@ -6,4 +6,7 @@
     <string name="log_viewer_dialog_title">Log</string>
     <string name="custom_log_empty_message">Log jest pusty!</string>
 
+    <string name="rate_app_on_market_title">Oceń aplikację</string>
+    <string name="rate_app_on_market_summary">Pozostaw swoje wrażenia odnośnie aplikacji w Sklepie Google Play.</string>
+
 </resources>
