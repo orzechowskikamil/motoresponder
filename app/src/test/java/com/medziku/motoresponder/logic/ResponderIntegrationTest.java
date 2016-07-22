@@ -161,7 +161,25 @@ class Emulation{
                    }
                     return false;
                   });
-        
+                  
+                  
+                      when(this.responder.contactsUtility).hasGroupNumberByGroupName(anyString(),anyString()).thenAnswer(new Answer() {
+          
+            @Override
+            public Boolean answer(InvocationOnMock invocation) throws Throwable {
+                 String groupID= (Date) invocation.getArguments()[0];
+               String phoneNumber= (Date) invocation.getArguments()[1];
+                   for (MockedContactEntry entry: this.contacts){
+                   if (entry.phoneNumber.equals(phoneNumber) && entry.group.equals(groupID)){ return true;
+                   }
+                    return false;
+                  });
+                  
+                  
+                  
+           when(this.responder.contactsUtility.isAbleToReadCurrentDeviceNumber()).thenReturn(false);
+              when(this.responder.contactsUtility.isAbleToReadCurrentDeviceNumber()).thenReturn(260);
+           
         
         
 
@@ -177,6 +195,6 @@ class MockedCallSMSLogEntry {
 }
 
 class MockedContactEntry{
-public String phoneNumber;public String name;
+public String phoneNumber;public String name;String groupID;
 }
 
