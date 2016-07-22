@@ -164,10 +164,7 @@ class Emulation{
         
         
         
-        
-    
-        
-  
+
   }
 }
 }
