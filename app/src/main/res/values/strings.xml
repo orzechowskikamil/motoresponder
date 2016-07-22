@@ -78,6 +78,7 @@
     </string>
     <string name="disclaimer_accept">Accept</string>
     <string name="disclaimer_reject">Reject</string>
+    <string name="geolocation_patterns_activity_title">Choose geolocation patterns</string>
 
 
 </resources>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="geolocation_patterns_tester_result_label">Result</string>
+    <string name="geolocation_patterns_tester_no_geolocation_label">No, this SMS message wouldn\'t be recognized as location request.</string>
+    <string name="geolocation_patterns_tester_yes_geolocation_label">Yes, this SMS message would be recognized as location request.</string>
+    <string name="geolocation_patterns_add_pattern_button">Add pattern</string>
+    <string name="geolocation_patterns_tester_button">Test against fake message</string>
+    <string name="geolocation_patterns_remove_reminder_label">(Tap pattern to remove it)</string>
+    <string name="geolocation_patterns_add_dialog_button">Add</string>
+    <string name="geolocation_patterns_cancel_dialog_button">Cancel</string>
+    <string name="geolocation_patterns_add_dialog_message">Please write here text of new pattern:</string>
+    <string name="geolocation_patterns_add_dialog_title">Add pattern</string>
+    <string name="geolocation_patterns_test_dialog_message">Enter here fake message to test if it will be detected as location request:</string>
+    <string name="geolocation_patterns_test_dialog_title">Test patterns</string>
+    <string name="geolocation_patterns_test_dialog_button">Test</string>
+    <string name="geolocation_patterns_accept_result_button">OK</string>
+
+
+</resources>

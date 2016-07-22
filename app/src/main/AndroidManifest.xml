@@ -34,6 +34,16 @@
         </activity>
 
 
+        <activity
+                android:name=".activity.GeolocationPatternsActivity"
+                android:label="@string/geolocation_patterns_activity_title">
+            <intent-filter>
+                <action android:name="com.medziku.motoresponder.geolocation_patterns"></action>
+                <category android:name="android.intent.category.DEFAULT"></category>
+            </intent-filter>
+        </activity>
+
+
         <activity android:name=".activity.WizardActivity"
                   android:label="@string/settings_wizard_label">
         </activity>

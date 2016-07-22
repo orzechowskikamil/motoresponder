@@ -2,6 +2,11 @@ package com.medziku.motoresponder.logic;
 
 import com.medziku.motoresponder.R;
 import com.medziku.motoresponder.utils.SharedPreferencesUtility;
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Settings extends SettingsBase {
 
@@ -143,11 +148,19 @@ public class Settings extends SettingsBase {
     }
 
 
-    public String[] getGeolocationRequestPatterns() {
-        String responsePattern1 = this.getStringValue(R.string.geolocation_request_pattern_1_key);
-        String responsePattern2 = this.getStringValue(R.string.geolocation_request_pattern_2_key);
-        String[] responsePatterns = {responsePattern1, responsePattern2};
-        return responsePatterns;
+    public List<String> getGeolocationRequestPatterns() {
+        List<String> value = this.getStringArrayValue(R.string.geolocation_request_patterns_key);
+
+        // in this particular case, if value is somehow null, return an empty list. but it never should.
+        if (value == null) {
+            value = new ArrayList<>();
+        }
+
+        return value;
+    }
+
+    public void setGeolocationRequestPatterns(List<String> patterns) {
+        this.setStringArrayValue(R.string.geolocation_request_patterns_key, patterns);
     }
 
     public int getLimitOfGeolocationResponses() {
@@ -280,7 +293,8 @@ public class Settings extends SettingsBase {
         return this.getIntValue(R.string.distance_for_traffic_jam_detection_meters_key);
     }
 
+
     public int getTrafficJamDelaySeconds() {
         return this.getIntValue(R.string.traffic_jam_detection_delay_seconds_key);
+            }
     }
-}

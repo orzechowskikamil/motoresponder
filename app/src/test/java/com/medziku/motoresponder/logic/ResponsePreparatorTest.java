@@ -4,11 +4,14 @@ import android.location.Location;
 import com.google.common.util.concurrent.SettableFuture;
 import com.medziku.motoresponder.utils.ContactsUtility;
 import com.medziku.motoresponder.utils.LocationUtility;
-import com.medziku.motoresponder.utils.SharedPreferencesUtility;
 import org.junit.Before;
 import org.junit.Test;
 
-import static junit.framework.Assert.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 
@@ -37,7 +40,9 @@ public class ResponsePreparatorTest {
         when(this.settings.getAutoResponseToCallTemplate()).thenReturn(RESPONSE_TEXT);
         when(this.settings.getAutoResponseToSmsWithGeolocationTemplate()).thenReturn(RESPONSE_TEXT_LOCATION);
         when(this.settings.getAutoResponseToSmsTemplate()).thenReturn(RESPONSE_TEXT);
-        when(this.settings.getGeolocationRequestPatterns()).thenReturn(new String[]{"Where are you"});
+        List<String> list = new ArrayList<>();
+        list.add("Where are you");
+        when(this.settings.getGeolocationRequestPatterns()).thenReturn(list);
         when(this.settings.isRespondingWithGeolocationEnabled()).thenReturn(true);
         when(this.settings.isRespondingWithGeolocationAlwaysEnabled()).thenReturn(false);
 

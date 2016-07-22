@@ -42,7 +42,8 @@
         Aplikacja na pytanie o lokalizację odpowie SMSem z linkiem do mapki z zaznaczoną twoją obecną pozycją.
     </string>
     <string name="geolocation_request_enabled_summary_off">
-        Aplikacja pytanie o lokalizację potraktuje jako zwykły SMS przychodzący i nie będzie wysyłać SMSów z mapką z twoją
+        Aplikacja pytanie o lokalizację potraktuje jako zwykły SMS przychodzący i nie będzie wysyłać SMSów z mapką z
+        twoją
         pozycją.
     </string>
 
@@ -73,9 +74,10 @@
         Aplikacja nie będzie pokazywać notyfikacji informującej o automatycznie wysłanej odpowiedzi.
     </string>
 
-    <string name="geolocation_request_pattern_1_title">Wzór #1 pytania o pozycję</string>
-    <string name="geolocation_request_pattern_1_summary" formatted="false">
-        Jeśli ten wzór znajdzie się w wiadomości SMS, zostanie ona uznana za pytanie o pozycję.
+
+    <string name="edit_geolocation_request_patterns_title">Edytuj wzór pytania o pozycję</string>
+    <string name="edit_geolocation_request_patterns_summary">Tutaj można dodać słowa lub sentencje na które aplikacja
+        będzie reagować jak na pytanie o pozycję.
     </string>
 
     <string name="showing_debug_notification_enabled_title">Notyfikacja debugowania</string>
@@ -85,11 +87,6 @@
     </string>
     <string name="showing_debug_notification_enabled_summary_off">
         Aplikacja nie będzie pokazywać szczegółowej notyfikacji.
-    </string>
-
-    <string name="geolocation_request_pattern_2_title">Wzór #2 pytania o pozycję</string>
-    <string name="geolocation_request_pattern_2_summary" formatted="false">
-        Drugi możliwy wzór pytania o pozycję.
     </string>
 
 

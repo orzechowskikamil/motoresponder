@@ -78,22 +78,31 @@
             android:defaultValue="@bool/showing_summary_notification_enabled_default_value"
             android:dependency="@string/responder_enabled_key"/>
 
-    <EditTextPreference
-            android:dialogTitle="@string/geolocation_request_pattern_1_title"
-            android:key="@string/geolocation_request_pattern_1_key"
-            android:summary="@string/geolocation_request_pattern_1_summary"
-            android:defaultValue="@string/geolocation_request_pattern_1_default_value"
-            android:title="@string/geolocation_request_pattern_1_title"
-            android:dependency="@string/geolocation_request_enabled_key"/>
+
+    <Preference
+        android:title="@string/edit_geolocation_request_patterns_title" 
+        android:summary="@string/edit_geolocation_request_patterns_summary">
+        
+          <intent android:action="com.medziku.motoresponder.geolocation_patterns"    />
+    </Preference>
 
 
-    <EditTextPreference
-            android:dialogTitle="@string/geolocation_request_pattern_2_title"
-            android:key="@string/geolocation_request_pattern_2_key"
-            android:summary="@string/geolocation_request_pattern_2_summary"
-            android:defaultValue="@string/geolocation_request_pattern_2_default_value"
-            android:title="@string/geolocation_request_pattern_2_title"
-            android:dependency="@string/geolocation_request_enabled_key"/>
+    <!--<EditTextPreference-->
+    <!--        android:dialogTitle="@string/geolocation_request_pattern_1_title"-->
+    <!--        android:key="@string/geolocation_request_pattern_1_key"-->
+    <!--        android:summary="@string/geolocation_request_pattern_1_summary"-->
+    <!--        android:defaultValue="@string/geolocation_request_pattern_1_default_value"-->
+    <!--        android:title="@string/geolocation_request_pattern_1_title"-->
+    <!--        android:dependency="@string/geolocation_request_enabled_key"/>-->
+
+
+    <!--<EditTextPreference-->
+    <!--        android:dialogTitle="@string/geolocation_request_pattern_2_title"-->
+    <!--        android:key="@string/geolocation_request_pattern_2_key"-->
+    <!--        android:summary="@string/geolocation_request_pattern_2_summary"-->
+    <!--        android:defaultValue="@string/geolocation_request_pattern_2_default_value"-->
+    <!--        android:title="@string/geolocation_request_pattern_2_title"-->
+    <!--        android:dependency="@string/geolocation_request_enabled_key"/>-->
 
 
 </PreferenceScreen>

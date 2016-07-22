@@ -12,8 +12,7 @@
         (Automatyczna odpowiedź) Cześć. Aktualnie jadę motocyklem i znajduję sie w %location%.
     </string>
 
-    <string name="geolocation_request_pattern_1_default_value" formatted="false">gdzie jesteś</string>
+    <string name="geolocation_request_patterns_default_value" formatted="false">[\"Gdzie jesteś\", \"Gdzie jestes\",\"Ile mam czekać\"]</string>
 
-    <string name="geolocation_request_pattern_2_default_value" formatted="false">gdzie jestes</string>
 
 </resources>

@@ -35,9 +35,7 @@
 
     <bool name="showing_debug_notification_enabled__1_default_value">false</bool>
 
-    <string name="geolocation_request_pattern_1_default_value" formatted="false">where are you</string>
-
-    <string name="geolocation_request_pattern_2_default_value" formatted="false">location</string>
+    <string name="geolocation_request_patterns_default_value" formatted="false">[\"Where are you\", \"How long\"]</string>
 
     <string name="geolocation_whitelist_group_name_default_value" formatted="false"></string>
 

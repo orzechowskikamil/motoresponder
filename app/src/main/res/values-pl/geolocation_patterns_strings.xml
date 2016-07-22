@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="geolocation_patterns_tester_result_label">Rezultat</string>
+    <string name="geolocation_patterns_tester_no_geolocation_label">Nie, ta wiadomość nie zostałaby uznana za pytanie o pozycję.</string>
+    <string name="geolocation_patterns_tester_yes_geolocation_label">Tak, ta wiadomość zostałaby uznana za pytanie o pozycję.</string>
+    <string name="geolocation_patterns_add_pattern_button">Dodaj wzór</string>
+    <string name="geolocation_patterns_tester_button">Przetestuj wzory</string>
+    <string name="geolocation_patterns_remove_reminder_label">(Naciśnij wzór, aby go usunąć)</string>
+    <string name="geolocation_patterns_add_dialog_button">Dodaj</string>
+    <string name="geolocation_patterns_cancel_dialog_button">Anuluj</string>
+    <string name="geolocation_patterns_add_dialog_message">Proszę wpisać tekst nowego wzoru:</string>
+    <string name="geolocation_patterns_add_dialog_title">Dodaj wzór</string>
+    <string name="geolocation_patterns_test_dialog_message">Podaj tutaj tekst próbnej wiadomości, aby zobaczyć czy zostałaby ona uznana za pytanie o pozycję.</string>
+    <string name="geolocation_patterns_test_dialog_title">Przetestuj wzory</string>
+    <string name="geolocation_patterns_test_dialog_button">Testuj</string>
+    <string name="geolocation_patterns_accept_result_button">Rozumiem</string>
+
+
+</resources>

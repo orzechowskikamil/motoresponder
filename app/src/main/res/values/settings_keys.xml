@@ -31,9 +31,7 @@
 
     <string name="showing_summary_notification_enabled_key">showing_summary_notification_enabled</string>
 
-    <string name="geolocation_request_pattern_1_key">geolocation_request_pattern_1</string>
-
-    <string name="geolocation_request_pattern_2_key">geolocation_request_pattern_2</string>
+    <string name="geolocation_request_patterns_key">geolocation_request_patterns</string>
 
     <string name="sensor_check_enabled_key">sensor_check_enabled</string>
 
@@ -78,14 +76,14 @@
     <string name="geolocation_whitelist_group_name_key">geolocation_whitelist_group_name</string>
 
     <string name="device_phone_number_key">device_phone_number</string>
-
+    
     <string name="already_responded_filtering_enabled_key">already_responded_filtering_enabled</string>
 
     <!-- it's not real setting, but it's stored in  -->
     <string name="custom_log_key">custom_log</string>
 
     <string name="wizard_completed_key">wizard_completed</string>
-    
+
     <string name="current_step_of_wizard_key">current_step_of_wizard</string>
 
 </resources>

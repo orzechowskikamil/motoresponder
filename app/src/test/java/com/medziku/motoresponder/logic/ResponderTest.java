@@ -10,6 +10,9 @@ import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
@@ -26,7 +29,10 @@ public class ResponderTest {
     public void setUp() throws Exception {
         this.context = mock(Context.class);
         this.responder = new ExposedResponder(this.context);
-        when(this.responder.mockSettings.getGeolocationRequestPatterns()).thenReturn(new String[]{GEOLOCATION_REQUEST_PATTERN});
+
+        List<String> list = new ArrayList<>();
+        list.add(GEOLOCATION_REQUEST_PATTERN);
+        when(this.responder.mockSettings.getGeolocationRequestPatterns()).thenReturn(list);
         when(this.responder.mockSettings.isResponderEnabled()).thenReturn(true);
         when(this.responder.mockSettings.isRespondingForSMSEnabled()).thenReturn(true);
         when(this.responder.mockSettings.isRespondingForCallsEnabled()).thenReturn(true);

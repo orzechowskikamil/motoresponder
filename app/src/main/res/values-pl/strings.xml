@@ -1,6 +1,7 @@
 <resources>
     <string name="turned_off_gps_notification_title">Wyłączony GPS</string>
-    <string name="turned_off_gps_notification_text">Do inteligentnego wykrywania jazdy potrzebny jest włączony GPS.</string>
+    <string name="turned_off_gps_notification_text">Do inteligentnego wykrywania jazdy potrzebny jest włączony GPS.
+    </string>
     <!-- widget -->
     <string name="widget_on_off_label">Tryb jazdy Motorespondera</string>
 
@@ -11,9 +12,13 @@
         %recipient%, i ponieważ jechałeś wtedy na motocyklu, Motoresponder odpowiedział za ciebie.
     </string>
 
-          <string name="power_save_notification_title_text">Motoresponder</string>
-    <string name="power_save_notification_short_text" formatted="false">Włączony tryb oszczędzania energii - aplikacja nie działa.</string>
-    <string name="power_save_notification_big_text" formatted="false">Otrzymałeś wiadomość/nieodebrane połączenie, lecz telefon jest w trybie oszczędzania energii, więc Motoresponder również się wyłączył aby oszczędzać baterię w twoim telefonie.
+    <string name="power_save_notification_title_text">Motoresponder</string>
+    <string name="power_save_notification_short_text" formatted="false">Włączony tryb oszczędzania energii - aplikacja
+        nie działa.
+    </string>
+    <string name="power_save_notification_big_text" formatted="false">Otrzymałeś wiadomość/nieodebrane połączenie, lecz
+        telefon jest w trybie oszczędzania energii, więc Motoresponder również się wyłączył aby oszczędzać baterię w
+        twoim telefonie.
     </string>
 
     <string name="ongoing_notification_title_text">Motoresponder</string>
@@ -81,5 +86,6 @@
     <string name="disclaimer_accept">Akceptuję</string>
     <string name="disclaimer_reject">Nie akceptuję</string>
 
+    <string name="geolocation_patterns_activity_title">Edytuj wzory pytań o pozycję</string>
 
 </resources>

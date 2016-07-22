@@ -5,6 +5,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.mockito.Mockito.when;
 
 public class GeolocationRequestRecognitionTest extends TestCase {
@@ -14,7 +17,10 @@ public class GeolocationRequestRecognitionTest extends TestCase {
     @Before
     public void setUp() {
         Settings settings = Mockito.mock(Settings.class);
-        when(settings.getGeolocationRequestPatterns()).thenReturn(new String[]{"where are you", "your location"});
+        List<String> list = new ArrayList<>();
+        list.add("where are you");
+        list.add("your location");
+        when(settings.getGeolocationRequestPatterns()).thenReturn(list);
         this.geolocationRequestRecognition = new GeolocationRequestRecognition(settings);
     }
 

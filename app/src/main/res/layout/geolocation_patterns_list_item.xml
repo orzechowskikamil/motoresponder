@@ -1,0 +1,13 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_height="wrap_content"
+              android:layout_width="match_parent">
+
+
+    <TextView android:id="@+id/geolocation_patterns_item_pattern"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:text="sample text" android:textColor="#000000"
+              android:layout_marginBottom="10dp"
+              android:layout_marginTop="10dp"></TextView>
+
+</LinearLayout>

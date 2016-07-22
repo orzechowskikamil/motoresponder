@@ -1,6 +1,6 @@
 package com.medziku.motoresponder.logic;
 
-class GeolocationRequestRecognition {
+public class GeolocationRequestRecognition {
 
     private Settings settings;
 

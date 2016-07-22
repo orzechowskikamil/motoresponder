@@ -1,0 +1,39 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_height="match_parent"
+                android:layout_width="match_parent">
+
+
+    <ListView android:id="@+id/geolocation_patterns_list"
+              android:layout_width="match_parent"
+              android:layout_height="200dp"
+              android:layout_alignParentStart="true"
+              android:layout_marginLeft="10dp"
+              android:layout_alignParentTop="true" android:layout_marginTop="10dp" android:layout_marginRight="10dp"
+              android:layout_above="@+id/textView"/>
+
+    <Button android:id="@+id/geolocation_patterns_new_pattern_add_button"
+            android:layout_width="160dp"
+            android:layout_height="60dp"
+            android:text="@string/geolocation_patterns_add_pattern_button"
+            android:layout_marginLeft="0dp"
+            android:layout_alignParentBottom="true" android:layout_alignStart="@+id/geolocation_patterns_list"
+            android:layout_marginBottom="10dp"/>
+
+    <Button android:id="@+id/geolocation_patterns_tester_button"
+            android:layout_width="160dp"
+            android:layout_height="60dp"
+            android:text="@string/geolocation_patterns_tester_button"
+            android:layout_marginLeft="0dp"
+            android:layout_alignTop="@+id/geolocation_patterns_new_pattern_add_button"
+            android:layout_alignParentEnd="true" android:layout_marginRight="10dp"
+            android:layout_toEndOf="@+id/geolocation_patterns_new_pattern_add_button"/>
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/geolocation_patterns_remove_reminder_label"
+            android:layout_above="@+id/geolocation_patterns_new_pattern_add_button"
+            android:layout_alignStart="@+id/geolocation_patterns_new_pattern_add_button" android:textStyle="italic"
+            android:id="@+id/textView"/>
+
+</RelativeLayout>
