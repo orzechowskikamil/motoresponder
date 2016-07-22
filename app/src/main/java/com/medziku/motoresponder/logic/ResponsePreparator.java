@@ -7,6 +7,7 @@ import com.medziku.motoresponder.utils.LocationUtility;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+
 public class ResponsePreparator {
 
     public static final String LOCATION_SUBSTITUTION_TAG = "%location%";
