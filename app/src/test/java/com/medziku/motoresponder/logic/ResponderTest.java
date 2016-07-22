@@ -35,7 +35,7 @@ public class ResponderTest {
     }
 
     @Test
-    public void testReactionOnCall() {
+    public void testRespondingToCall() {
         this.responder.startResponding();
         this.responder.currentCallCallback.apply(this.FAKE_PHONE_NUMBER);
 
@@ -43,7 +43,7 @@ public class ResponderTest {
     }
 
     @Test
-    public void testReactionOnSMS() {
+    public void testRespondingToSMS() {
         this.responder.startResponding();
         this.responder.currentSMSCallback.apply(new SMSObject(this.FAKE_PHONE_NUMBER, "mock message"));
 
@@ -51,7 +51,7 @@ public class ResponderTest {
     }
 
     @Test
-    public void testReactionOnGeolocationRequest() {
+    public void testRespondingToGeolocationRequest() {
         this.responder.startResponding();
         this.responder.currentSMSCallback.apply(new SMSObject(this.FAKE_PHONE_NUMBER, "Hey Bert, " + GEOLOCATION_REQUEST_PATTERN + " ? hahha"));
 
@@ -61,7 +61,7 @@ public class ResponderTest {
 
 
     @Test
-    public void testReactionOnSMSAndCallDisabled() {
+    public void tesRespondingWhenSMSAndCallDisabled() {
         when(this.responder.mockSettings.isRespondingForSMSEnabled()).thenReturn(false);
         when(this.responder.mockSettings.isRespondingForCallsEnabled()).thenReturn(false);
 
