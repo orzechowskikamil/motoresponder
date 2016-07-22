@@ -30,7 +30,7 @@ public class ResponsePreparator {
         if (subject instanceof SMSRespondingSubject) {
 
             if (this.shouldRespondWithGeolocation(subject)) {
-                return this.getAutoResponseMessageWithGeolocation();
+                return this.getAutoResponseMessageWithGeolocation(this.getCurrentLocation());
             }
 
             return this.settings.getAutoResponseToSmsTemplate();
@@ -101,8 +101,9 @@ public class ResponsePreparator {
 
     private Location getCurrentLocation() {
         try {
-            // TODO k.orzechowsk think about this, from which settings get those parameters. I think it can be normal settings.
-            return this.locationUtility.getAccurateLocation(0, 30,)
+            // it should be current location, even if staying. so it's 0
+            float requiredSpeed = 0;
+            return this.locationUtility.getAccurateLocation(requiredSpeed, this.settings.getRequiredAccuracyMeters());
             Future<Location> lastRequestedLocation = this.locationUtility.getLastRequestedLocation();
             if (lastRequestedLocation != null) {
                 return lastRequestedLocation.get();
