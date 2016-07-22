@@ -100,6 +100,9 @@ class Emulation{
 
   Predicate<String> unansweredCallCallback;
   MockedCallSMSLogEntry[] mockedCallSMSLog;
+  Location lastRequestedLocation;
+  
+  int currentLocation = 0;
 
   public Emulation(MockedUtilitiesResponder responder){
   this.responder=responder;
@@ -114,6 +117,12 @@ class Emulation{
   public void emulateContacts(MockedContactEntry[] entries){
   this.contacts=entries;
   }
+  
+  public void emulateLockStateChange(boolean isLocked){
+      this.lockStateChangeCallback.apply(isLocked);
+  }
+  
+  public void emulateLocations(Location[] entries){ this.locations=entries;}
   
   public void startEmulation(){
   
@@ -150,6 +159,7 @@ class Emulation{
             }
         });
         
+        // Contact book
         
           when(this.responder.contactsUtility).contactBookContainsNumber(anyString()).thenAnswer(new Answer() {
           
@@ -179,7 +189,36 @@ class Emulation{
                   
            when(this.responder.contactsUtility.isAbleToReadCurrentDeviceNumber()).thenReturn(false);
               when(this.responder.contactsUtility.isAbleToReadCurrentDeviceNumber()).thenReturn(260);
+              
+              
+              
+              
+              // Location 
            
+                     when(this.responder.locationUtility).getAccurateLocation(anyFloat(),anyFloat(),anyInt()).thenAnswer(new Answer() {
+                         Future<Location> value = SettableFuture.create();
+                         
+                         new Thread(){ private void run(){
+                            this.lastRequestedLocation = this.locations[currentLocation];
+                         currentLocation.set(lastRequestedLocation);
+                             currentLocation++;
+                         }
+                         }.start()
+                         
+                         return value;
+                         
+                     });
+                     
+                     // lock state 
+                     
+                      when(this.responder.lockStateUtility).listenToLockStateChanges(any(Predicate.class)).thenAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+               this.lockStateCallback = (Predicate<String>) invocation.getArguments()[0];
+                return null;
+            }
+        });
+      
         
         
 
