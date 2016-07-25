@@ -11,8 +11,6 @@ import android.os.Bundle;
 import android.provider.Telephony.Sms;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
-
-
 import com.google.common.base.Predicate;
 import com.medziku.motoresponder.BuildConfig;
 import com.medziku.motoresponder.logic.PhoneNumbersComparator;
@@ -114,17 +112,6 @@ public class SMSUtility {
         this.context.unregisterReceiver(this.incomingSMSReceiver);
     }
 
-    private PendingIntent createPendingIntent(String SENT, BroadcastReceiver broadcastReceiver) {
-        PendingIntent sentPI = PendingIntent.getBroadcast(this.context, 0, new Intent(SENT), 0);
-        this.context.registerReceiver(broadcastReceiver, new IntentFilter(SENT));
-        return sentPI;
-    }
-
-
-    private String getApplicationPackageName() {
-        return BuildConfig.APPLICATION_ID;
-    }
-
     /**
      * This method query for last SMS sent to given phone number.
      *
@@ -161,7 +148,6 @@ public class SMSUtility {
         return sentMsgDate;
     }
 
-
     /**
      * This method check if outgoing SMS was sent after date.
      * Because it performs normalization on phone number, note that it will query ALL smsManager messages since
@@ -177,7 +163,7 @@ public class SMSUtility {
         String[] selectionArgs = {String.valueOf(date.getTime()), creator};
 
         String sortOrder = Sms.DATE + " DESC";
-        Cursor cursor = this.query(  whichColumns, selections, selectionArgs, sortOrder);
+        Cursor cursor = this.query(whichColumns, selections, selectionArgs, sortOrder);
 
         int result = 0;
 
@@ -195,24 +181,31 @@ public class SMSUtility {
         }
         return result;
     }
-    
-    /**
-     * This function is required to be overridable in android instrumented tests of this class
-     */
-    protected Cursor query(  whichColumns, selections, selectionArgs, sortOrder){
-    return context.getContentResolver().query(Sms.Sent.CONTENT_URI,  whichColumns, selections, selectionArgs, sortOrder);
-    }
-
-    private boolean areNumbersEqual(String firstPhoneNumber, String secondPhoneNuber) {
-        return PhoneNumbersComparator.areNumbersEqual(firstPhoneNumber, secondPhoneNuber);
-    }
-    
-    
 
     public boolean wasOutgoingSMSSentAfterDate(Date date, String phoneNumber, boolean shouldBeSentByOurApp) {
         return this.howManyOutgoingSMSSentAfterDate(date, phoneNumber, shouldBeSentByOurApp) > 0;
     }
 
+    /**
+     * This function is required to be overridable in android instrumented tests of this class
+     */
+    protected Cursor query(String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+        return context.getContentResolver().query(Sms.Sent.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+    }
+
+    private PendingIntent createPendingIntent(String SENT, BroadcastReceiver broadcastReceiver) {
+        PendingIntent sentPI = PendingIntent.getBroadcast(this.context, 0, new Intent(SENT), 0);
+        this.context.registerReceiver(broadcastReceiver, new IntentFilter(SENT));
+        return sentPI;
+    }
+
+    private String getApplicationPackageName() {
+        return BuildConfig.APPLICATION_ID;
+    }
+
+    private boolean areNumbersEqual(String firstPhoneNumber, String secondPhoneNuber) {
+        return PhoneNumbersComparator.areNumbersEqual(firstPhoneNumber, secondPhoneNuber);
+    }
 
     // TODO K. Orzechowski: please inline it in some spare time because it looks like shit separated from the context. #Issue not needed
     private class IncomingSMSReceiver extends BroadcastReceiver {
