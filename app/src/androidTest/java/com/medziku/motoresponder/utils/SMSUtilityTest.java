@@ -55,24 +55,14 @@ public class SMSUtilityTest{
 }
 
 class ExposedSMSUtility extends SMSUtility{
-  MatrixCursor smsLog;
+    
+    public VirtualDatabase db;
   
   public Cursor query(  whichColumns, selections, selectionArgs, sortOrder){
-    if (smsLog == null){
+    if (db == null){
         super(  whichColumns, selections, selectionArgs, sortOrder);
     }else{
-    return this.smsLog;
+        db.query(whichColumns,selections,selectionArgs,sortOrder);
     }
   }
-}
-
-class VirtualDatabase extends SQLiteOpenHelper {
-    public void onCreate(SQLiteDatabase db) {
-    db.execSQL(creationSQL);
-    }
-    
-    public void insertData(){
-            SQLiteDatabase db = getWritableDatabase();
-            db.insertOrThrow();
-    }
 }
