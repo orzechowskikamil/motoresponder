@@ -48,6 +48,15 @@ public class SMSUtilityTest{
     @Test
     public void testGetDateOfLastSmsSent(){
       // it's hard to find appropriate data on device, so this test will use mocked data
+      
+      this.smsUtility.contentProvider = new VirtualDatabase(new String[](){"id","creator"}, new String[][](){ 
+            new String[](){ "aa", "bb"},
+            new String[](){ "aa", "bb"}
+          });
+          
+        Date date = this.smsUtility.getDateOfLastSmsSent();
+        
+        assertTrue(date.getTime()> new Date().getTime());
     }
     
     
@@ -56,13 +65,13 @@ public class SMSUtilityTest{
 
 class ExposedSMSUtility extends SMSUtility{
     
-    public VirtualDatabase db;
+    public VirtualDatabase contentProvider;
   
   public Cursor query(  whichColumns, selections, selectionArgs, sortOrder){
     if (db == null){
         super(  whichColumns, selections, selectionArgs, sortOrder);
     }else{
-        db.query(whichColumns,selections,selectionArgs,sortOrder);
+        contentProvider.query(whichColumns,selections,selectionArgs,sortOrder);
     }
   }
 }
