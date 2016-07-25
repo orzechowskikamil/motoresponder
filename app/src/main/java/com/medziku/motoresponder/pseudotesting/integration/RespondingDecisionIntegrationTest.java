@@ -20,6 +20,32 @@ public class RespondingDecisionIntegrationTest {
         Log.d(TAG, "[" + new Date().toString() + "]" + msg);
     }
 
+    public void testRespondingDecisionInIsolation() {
+        this.setUp();
+        // time to turn off the screen.
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        log("Starting isolated responding decision test. This test will make a responding decision from current state of the phone");
+        boolean result = false;
+        try {
+            result = this.respondingDecision.shouldRespond(new CallRespondingSubject("791467855"));
+        } catch (Exception e) {
+            log("GPS Error during testRespondingDecisionInIsolation()");
+        }
+        log("Result of testRespondingDecisionInIsolation()=" + result);
+    }
+
+    public void testRespondingDecisionInIsolationContinously() {
+        do {
+            log("\n\n\n\n========Performing next responding decision in isolation test========");
+            this.testRespondingDecisionInIsolation();
+        } while (true);
+    }
+
     private void setUp() {
         SharedPreferencesUtility sharedPreferencesUtility = new SharedPreferencesUtility(this.context);
         Settings settings = new Settings(sharedPreferencesUtility);
@@ -35,9 +61,10 @@ public class RespondingDecisionIntegrationTest {
         SMSUtility smsUtility = new SMSUtility(this.context);
         WiFiUtility wifiUtility = new WiFiUtility(this.context);
         CountryPrefix countryPrefix = new CountryPrefix(contactsUtility);
+        GPSRideRecognition gpsRideRecognition = new GPSRideRecognition(locationUtility, settings, log);
 
         DeviceUnlocked deviceUnlocked = this.createLoggingDeviceUnlocked(lockStateUtility, settings);
-        UserRide userRide = this.createLoggingUserRide(settings, locationUtility, sensorsUtility, motionUtility, wifiUtility, log);
+        UserRide userRide = this.createLoggingUserRide(settings, gpsRideRecognition, sensorsUtility, motionUtility, wifiUtility, log);
         NumberRules numberRules = this.createLoggingUserRules(contactsUtility, countryPrefix, settings, log);
         AlreadyResponded alreadyResponded = this.createLoggingAlreadyResponded(callsUtility, smsUtility);
 
@@ -47,28 +74,6 @@ public class RespondingDecisionIntegrationTest {
         sensorsUtility.registerSensors();
     }
 
-
-    public void testRespondingDecisionInIsolation() {
-        this.setUp();
-        // time to turn off the screen.
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        log("Starting isolated responding decision test. This test will make a responding decision from current state of the phone");
-        boolean result = this.respondingDecision.shouldRespond(new CallRespondingSubject("791467855"));
-        log("Result of testRespondingDecisionInIsolation()=" + result);
-    }
-
-    public void testRespondingDecisionInIsolationContinously() {
-        do {
-            log("\n\n\n\n========Performing next responding decision in isolation test========");
-            this.testRespondingDecisionInIsolation();
-        } while (true);
-    }
-
     // region extending classes to make them loggable
 
     private RespondingDecision createLoggingRespondingDecision(
@@ -76,7 +81,7 @@ public class RespondingDecisionIntegrationTest {
             AlreadyResponded alreadyResponded, Settings settings, CustomLog log
     ) {
         return new RespondingDecision(userRide, numberRules, alreadyResponded, deviceUnlocked, settings, log) {
-            public boolean shouldRespond(RespondingSubject subject) {
+            public boolean shouldRespond(RespondingSubject subject) throws GPSNotAvailableException {
                 boolean result = super.shouldRespond(subject);
                 log("shouldRespond()=" + result);
                 return result;
@@ -121,6 +126,7 @@ public class RespondingDecisionIntegrationTest {
         };
     }
 
+
     private DeviceUnlocked createLoggingDeviceUnlocked(final LockStateUtility lockStateUtility, final Settings settings) {
         return new DeviceUnlocked(settings, lockStateUtility) {
             public boolean isNotRidingBecausePhoneUnlocked() {
@@ -131,14 +137,19 @@ public class RespondingDecisionIntegrationTest {
         };
     }
 
-    private UserRide createLoggingUserRide(final Settings settings, final LocationUtility locationUtility, final SensorsUtility sensorsUtility, final MotionUtility motionUtility, WiFiUtility wifiUtility, CustomLog log) {
-        return new UserRide(settings, locationUtility, sensorsUtility, motionUtility, wifiUtility, log) {
-            public boolean isUserRiding() {
+    private UserRide createLoggingUserRide(final Settings settings, final GPSRideRecognition gpsRideRecognition, final SensorsUtility sensorsUtility, final MotionUtility motionUtility, WiFiUtility wifiUtility, CustomLog log) {
+        return new UserRide(settings, gpsRideRecognition, sensorsUtility, motionUtility, wifiUtility, log) {
+            public boolean isUserRiding() throws GPSNotAvailableException {
                 boolean result = super.isUserRiding();
                 log("isUserRiding()=" + result);
                 return result;
             }
 
+            public boolean motionSensorReportsMovement() {
+                boolean result = super.motionSensorReportsMovement();
+                log("motionSensorReportsMovement()=" + result);
+                return result;
+            }
 
             protected boolean isProxime() {
                 boolean result = super.isProxime();
@@ -146,27 +157,9 @@ public class RespondingDecisionIntegrationTest {
                 return result;
             }
 
-            public boolean isSpeedForSureRiding(float speedKmh) {
-                boolean result = super.isSpeedForSureRiding(speedKmh);
-                log("isSpeedForSureRiding()=" + result);
-                return result;
-            }
-
             protected boolean isWiFiConnected() {
                 boolean result = super.isWiFiConnected();
                 log("isWifiConnected()=" + result);
-                return result;
-            }
-
-            public Float getCurrentSpeedKmh(float minimumSpeedKmh, float maximumAccuracyMeters, long timeoutMs) {
-                Float result = super.getCurrentSpeedKmh(minimumSpeedKmh, maximumAccuracyMeters, timeoutMs);
-                log("getCurrentSpeedKmh()=" + result);
-                return result;
-            }
-
-            public boolean motionSensorReportsMovement() {
-                boolean result = super.motionSensorReportsMovement();
-                log("motionSensorReportsMovement()=" + result);
                 return result;
             }
         };

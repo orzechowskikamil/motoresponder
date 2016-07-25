@@ -34,6 +34,10 @@ abstract public class SettingsBase {
         callbackList.remove(callback);
     }
 
+    public String getStringFromRes(int resID) {
+        return this.sharedPreferencesUtility.getStringFromRes(resID);
+    }
+
     protected List<Predicate<Boolean>> getCallbacksListForSetting(String settingName) {
         if (!this.callbacksMap.containsKey(settingName)) {
             this.callbacksMap.put(settingName, new ArrayList<Predicate<Boolean>>());
@@ -63,10 +67,6 @@ abstract public class SettingsBase {
 
     protected void setStringValue(int resID, String value) {
         this.sharedPreferencesUtility.setStringValue(this.getStringFromRes(resID), value);
-    }
-
-    protected String getStringFromRes(int resID) {
-        return this.sharedPreferencesUtility.getStringFromRes(resID);
     }
 
     protected boolean getBooleanValue(int resID) {

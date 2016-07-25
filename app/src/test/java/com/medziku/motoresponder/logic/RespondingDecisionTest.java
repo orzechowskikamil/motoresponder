@@ -10,9 +10,9 @@ import org.mockito.stubbing.Answer;
 
 import java.util.Date;
 
-import static junit.framework.Assert.assertTrue;
-import static org.mockito.Mockito.when;
+import static junit.framework.Assert.fail;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.when;
 
 
 public class RespondingDecisionTest {
@@ -57,46 +57,58 @@ public class RespondingDecisionTest {
 
 
     @Test
-    public void unlockedScreenMakesNegativeDecision() {
+    public void unlockedScreenMakesNegativeDecision() throws GPSNotAvailableException {
         this.setDeviceUnlockedIsNotRidingReturnValue(true);
         this.expectRespondingDecisionShouldRespondToBe(false);
     }
 
+    @Test
+    public void gpsNotAvailableExceptionIsNotCatched() throws GPSNotAvailableException {
+        when(this.userRide.isUserRiding()).thenThrow(GPSNotAvailableException.class);
+
+        try {
+            this.expectRespondingDecisionShouldRespondToBe(false);
+            fail();
+        } catch (GPSNotAvailableException e) {
+            // success
+        }
+    }
+
 
     @Test
-    public void notFillingNumberRulesMakeNegativeDecision() {
+    public void notFillingNumberRulesMakeNegativeDecision() throws GPSNotAvailableException {
         this.setNumberRulesAllowRespondingReturnValue(false);
         this.expectRespondingDecisionShouldRespondToBe(false);
     }
 
     @Test
-    public void userRespondedSinceMessageReceivedMakeNegativeDecision() {
+    public void userRespondedSinceMessageReceivedMakeNegativeDecision() throws GPSNotAvailableException {
         this.setAlreadyRespondedIsUserRespondedSinceReturnValue(true);
         this.expectRespondingDecisionShouldRespondToBe(false);
     }
 
 
     @Test
-    public void userNotRidingMakeNegativeDecision() {
+    public void userNotRidingMakeNegativeDecision() throws GPSNotAvailableException {
         this.setUserRideIsUserRidingReturnValue(false);
         this.expectRespondingDecisionShouldRespondToBe(false);
     }
 
     @Test
-    public void allFullfilledConditionsMakePositiveDecision() {
-        this.expectRespondingDecisionShouldRespondToBe(true);
-    }
-    
-    @Test
-    public void alreadyRespondedDoesntMatterWhenDisabled(){
-        when(this.settings.isAlreadyRespondedFilteringEnabled()).thenReturn(false);
-        this.setAlreadyRespondedIsUserRespondedSinceReturnValue(false);
-        
+    public void allFullfilledConditionsMakePositiveDecision() throws GPSNotAvailableException {
         this.expectRespondingDecisionShouldRespondToBe(true);
     }
 
     @Test
-    public void userManuallySetRidingMakesTrueDecision() {
+    public void alreadyRespondedDoesntMatterWhenDisabled() throws GPSNotAvailableException {
+        when(this.settings.isAlreadyRespondedFilteringEnabled()).thenReturn(false);
+        this.setAlreadyRespondedIsUserRespondedSinceReturnValue(false);
+
+        this.expectRespondingDecisionShouldRespondToBe(true);
+    }
+
+    @Test
+    public void userManuallySetRidingMakesTrueDecision() throws GPSNotAvailableException {
         this.setUserRideIsUserRidingReturnValue(false);
 
         this.setSensorCheckEnabled(false);
@@ -106,7 +118,7 @@ public class RespondingDecisionTest {
     }
 
     @Test
-    public void userManuallySetNotRidingMakesFalseDecision() {
+    public void userManuallySetNotRidingMakesFalseDecision() throws GPSNotAvailableException {
         this.setUserRideIsUserRidingReturnValue(true);
 
         this.setSensorCheckEnabled(false);
@@ -114,30 +126,30 @@ public class RespondingDecisionTest {
 
         this.expectRespondingDecisionShouldRespondToBe(false);
     }
-    
+
     @Test
-    public void userManuallySetRidingAndSensorReportsNotRidingMakesTrueDecision(){
+    public void userManuallySetRidingAndSensorReportsNotRidingMakesTrueDecision() throws GPSNotAvailableException {
         this.setUserRideIsUserRidingReturnValue(false);
-        
+
         this.setSensorCheckEnabled(true);
         this.setIsRidingAssumed(true);
-        
+
         this.expectRespondingDecisionShouldRespondToBe(true);
     }
-    
+
     @Test
-    public void userEnabledSensorCheckAndManualSettingOffMakesTrueDecision(){
-             this.setUserRideIsUserRidingReturnValue(true);
-        
+    public void userEnabledSensorCheckAndManualSettingOffMakesTrueDecision() throws GPSNotAvailableException {
+        this.setUserRideIsUserRidingReturnValue(true);
+
         this.setSensorCheckEnabled(true);
         this.setIsRidingAssumed(false);
-        
+
         this.expectRespondingDecisionShouldRespondToBe(true);
     }
 
 
     @Test
-    public void tooMuchAutomaticalResponsesMakeNegativeDecision() {
+    public void tooMuchAutomaticalResponsesMakeNegativeDecision() throws GPSNotAvailableException {
         this.setAlreadyRespondedGetAmountOfAutomaticalResponsesSent(5);
         this.expectRespondingDecisionShouldRespondToBe(false);
 
@@ -146,7 +158,7 @@ public class RespondingDecisionTest {
     }
 
     @Test
-    public void lateUnlockOfDeviceMakeNegativeDecision() {
+    public void lateUnlockOfDeviceMakeNegativeDecision() throws GPSNotAvailableException {
         when(this.userRide.isUserRiding()).thenAnswer(new Answer<Boolean>() {
             @Override
             public Boolean answer(InvocationOnMock invocation) throws Throwable {
@@ -161,7 +173,7 @@ public class RespondingDecisionTest {
 
 
     @Test
-    public void lateResponseByUserMakeNegativeDecision() {
+    public void lateResponseByUserMakeNegativeDecision() throws GPSNotAvailableException {
         when(this.userRide.isUserRiding()).thenAnswer(new Answer<Boolean>() {
             @Override
             public Boolean answer(InvocationOnMock invocation) throws Throwable {
@@ -186,7 +198,7 @@ public class RespondingDecisionTest {
         when(this.settings.isSensorCheckEnabled()).thenReturn(val);
     }
 
-    private void expectRespondingDecisionShouldRespondToBe(boolean expectedValue) {
+    private void expectRespondingDecisionShouldRespondToBe(boolean expectedValue) throws GPSNotAvailableException {
         Assert.assertTrue(this.respondingDecision.shouldRespond(this.fakeRespondingSubject) == expectedValue);
     }
 
@@ -198,8 +210,12 @@ public class RespondingDecisionTest {
         when(this.deviceUnlocked.isNotRidingBecausePhoneUnlocked()).thenReturn(returnValue);
     }
 
-    private void setUserRideIsUserRidingReturnValue(boolean returnValue) {
-        when(this.userRide.isUserRiding()).thenReturn(returnValue);
+    private void setUserRideIsUserRidingReturnValue(boolean returnValue)  {
+        try {
+            when(this.userRide.isUserRiding()).thenReturn(returnValue);
+        } catch (GPSNotAvailableException e) {
+            e.printStackTrace();
+        }
     }
 
     private void setAlreadyRespondedIsUserRespondedSinceReturnValue(boolean returnValue) {
@@ -214,6 +230,4 @@ public class RespondingDecisionTest {
         when(this.alreadyResponded.getAmountOfAutomaticalResponsesSinceUserResponded(anyString())).thenReturn(val);
     }
     // endregion
-
-
 }

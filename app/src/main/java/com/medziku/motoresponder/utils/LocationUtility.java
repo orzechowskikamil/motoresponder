@@ -45,13 +45,22 @@ public class LocationUtility {
      *
      * @return Future which is fullfilled when location with appropriate accuracy is known, or null if timeout/error.
      */
-    public Future<Location> getAccurateLocation(float minimumExpectedSpeed, float expectedAccuracy, long timeoutMs) {
+    public Future<Location> getAccurateLocation(Float minimumExpectedSpeed, float expectedAccuracy, long timeoutMs) {
         // whole content of this method was moved to separate class GettingAccurateLocationProcess,
         // which represent process of getting location, but I didn't want to break api so this method is almost empty.
         this.mostRecentLocationProcess = new GettingAccurateLocationProcess(this.locationManager, minimumExpectedSpeed, expectedAccuracy, timeoutMs);
 
         this.locationFuture = this.mostRecentLocationProcess.getLocation();
         return this.locationFuture;
+    }
+
+    /**
+     * Listens for location update
+     *
+     * @return Future which is fullfilled when location with appropriate accuracy is known, or null if timeout/error.
+     */
+    public Future<Location> getAccurateLocation(float expectedAccuracy, long timeoutMs) {
+        return this.getAccurateLocation(null, expectedAccuracy, timeoutMs);
     }
 
     public Future<Location> getLastRequestedLocation() {
@@ -81,7 +90,7 @@ class GettingAccurateLocationProcess implements LocationListener {
      */
     private String logMsg;
     private long timeoutMs;
-    private float expectedSpeed;
+    private Float expectedSpeed;
     private float expectedAccuracy;
     private LocationManager locationManager;
     private Looper looperForListeningThread;
@@ -91,7 +100,7 @@ class GettingAccurateLocationProcess implements LocationListener {
      *
      * @param locationManager
      */
-    public GettingAccurateLocationProcess(LocationManager locationManager, float expectedSpeedMs, float expectedAccuracyMeters, long timeoutMs) {
+    public GettingAccurateLocationProcess(LocationManager locationManager, Float expectedSpeedMs, float expectedAccuracyMeters, long timeoutMs) {
         this.locationManager = locationManager;
         this.expectedSpeed = expectedSpeedMs;
         this.expectedAccuracy = expectedAccuracyMeters;
@@ -138,7 +147,7 @@ class GettingAccurateLocationProcess implements LocationListener {
      */
     public void onTimeout() {
         this.addToInternalLog(" Timeout happened to GPS check, we were waiting too long, and event with expected speed and accuracy not happened. ");
-        this.setEmptyResultAndStopListening();
+        this.setTimeoutedResultAndStopListening();
     }
 
     /**
@@ -150,7 +159,7 @@ class GettingAccurateLocationProcess implements LocationListener {
         float speed = location.getSpeed();
         this.addToInternalLog("speed: " + String.format("%.3f", speed) + "m/s, accuracy: " + String.format("%.3f", accuracy) + "m; ");
 
-        if (accuracy <= this.expectedAccuracy && speed >= this.expectedSpeed) {
+        if (accuracy <= this.expectedAccuracy && (this.expectedSpeed != null ? speed >= this.expectedSpeed : true)) {
             this.addToInternalLog("Last event was with expected accuracy and speed. ");
             this.setResultAndStopListening(location);
         } else {
@@ -170,8 +179,7 @@ class GettingAccurateLocationProcess implements LocationListener {
             case LocationProvider.TEMPORARILY_UNAVAILABLE:
                 break;
             case LocationProvider.OUT_OF_SERVICE:
-                this.addToInternalLog(" GPS is out of service.");
-                this.setEmptyResultAndStopListening();
+                this.rejectFutureAndStopListening();
                 break;
         }
     }
@@ -188,11 +196,11 @@ class GettingAccurateLocationProcess implements LocationListener {
      */
     @Override
     public void onProviderDisabled(String provider) {
-        this.setEmptyResultAndStopListening();
+        this.rejectFutureAndStopListening();
     }
 
     public void cancelGPSCheck() {
-        this.setEmptyResultAndStopListening();
+        this.setTimeoutedResultAndStopListening();
     }
 
     protected void addToInternalLog(String log) {
@@ -246,14 +254,22 @@ class GettingAccurateLocationProcess implements LocationListener {
         }).start();
     }
 
-    private void setEmptyResultAndStopListening() {
-        this.setResultAndStopListening(null);
-    }
 
     private void setResultAndStopListening(Location location) {
         this.locationManager.removeUpdates(this);
         result.set(location);
         // gently quit separate thread, because it is no longer needed
+        this.quitLooper();
+    }
+
+    private void setTimeoutedResultAndStopListening() {
+        this.setResultAndStopListening(null);
+    }
+
+    private void rejectFutureAndStopListening() {
+        this.addToInternalLog(" GPS is out of service.");
+        this.locationManager.removeUpdates(this);
+        this.result.setException(new Exception("GPS not available"));
         this.quitLooper();
     }
 
@@ -272,3 +288,4 @@ class GettingAccurateLocationProcess implements LocationListener {
 
     // endregion
 }
+

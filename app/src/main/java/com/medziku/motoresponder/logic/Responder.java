@@ -35,6 +35,8 @@ public class Responder {
     private GeolocationRequestRecognition geolocationRequestRecognition;
     private WiFiUtility wiFiUtility;
     private CountryPrefix countryPrefix;
+    private GPSRideRecognition gpsRideRecognition;
+    private NotificationFactory notificationFactory;
     private RidingAssumedWidgetHandler ridingAssumedWidgetHandler;
     private Predicate<Boolean> changeAutoResponseToCallOrSmsEnabledSettingCallback;
 
@@ -61,7 +63,9 @@ public class Responder {
         this.responsePreparator = this.createResponsePreparator();
         this.respondingTasksQueue = this.createRespondingTasksQueue();
         this.geolocationRequestRecognition = this.createGeolocationRequestRecognition();
+        this.gpsRideRecognition = this.createGpsRideRecognition();
         this.countryPrefix = this.createCountryPrefix();
+        this.notificationFactory = this.createNotificationFactory();
     }
 
     /**
@@ -264,13 +268,14 @@ public class Responder {
     protected AlreadyResponded createAlreadyResponded() {
         return new AlreadyResponded(this.callsUtility, this.smsUtility);
     }
+    // region factory methods
 
     protected DeviceUnlocked createDeviceUnlocked() {
         return new DeviceUnlocked(this.settings, this.lockStateUtility);
     }
 
     protected UserRide createUserRide() {
-        return new UserRide(this.settings, this.locationUtility, this.sensorsUtility, this.motionUtility, this.wiFiUtility, this.log);
+        return new UserRide(this.settings, this.gpsRideRecognition, this.sensorsUtility, this.motionUtility, this.wiFiUtility, this.log);
     }
 
     protected NumberRules createNumberRules() {
@@ -291,7 +296,7 @@ public class Responder {
 
     protected RespondingTasksQueue createRespondingTasksQueue() {
         return new RespondingTasksQueue(
-                this.notificationUtility,
+                this.notificationFactory,
                 this.smsUtility,
                 this.contactsUtility,
                 this.lockStateUtility,
@@ -306,10 +311,15 @@ public class Responder {
         return new RespondingDecision(this.userRide, this.numberRules, this.alreadyResponded, this.deviceUnlocked, this.settings, this.log);
     }
 
+    private NotificationFactory createNotificationFactory() {
+        return new NotificationFactory(this.notificationUtility, this.settings);
+    }
+
     private void listenToAutoResponseToCallOrSmsEnabledSettingChange() {
         if (this.changeAutoResponseToCallOrSmsEnabledSettingCallback != null) {
             return;
         }
+
 
         this.changeAutoResponseToCallOrSmsEnabledSettingCallback = new Predicate<Boolean>() {
             @Override
@@ -326,6 +336,12 @@ public class Responder {
         this.settings.stopListeningToSetting(this.settings.AUTO_RESPONSE_TO_CALL_ENABLED_KEY, this.changeAutoResponseToCallOrSmsEnabledSettingCallback);
         this.settings.stopListeningToSetting(this.settings.AUTO_RESPONSE_TO_SMS_ENABLED_KEY, this.changeAutoResponseToCallOrSmsEnabledSettingCallback);
     }
+
+
+    private GPSRideRecognition createGpsRideRecognition() {
+        return new GPSRideRecognition(this.locationUtility, this.settings, this.log);
+    }
+
 
 
 }

@@ -1,30 +1,24 @@
 package com.medziku.motoresponder.logic;
 
-import android.location.Location;
 import com.google.common.util.concurrent.SettableFuture;
-import com.medziku.motoresponder.utils.*;
+import com.medziku.motoresponder.utils.AccelerometerNotAvailableException;
+import com.medziku.motoresponder.utils.MotionUtility;
+import com.medziku.motoresponder.utils.SensorsUtility;
+import com.medziku.motoresponder.utils.WiFiUtility;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
-import java.util.concurrent.Future;
-
+import static junit.framework.Assert.fail;
 import static org.mockito.Matchers.anyDouble;
-import static org.mockito.Matchers.anyFloat;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 
 public class UserRideTest {
 
 
     private UserRide userRide;
-    private LocationUtility locationUtility;
     private SensorsUtility sensorsUtility;
     private MotionUtility motionUtility;
     private Settings settings;
@@ -33,64 +27,44 @@ public class UserRideTest {
 
     private double msToKmh = 3.6;
     private int FAKE_FOR_SURE_MOVING_SPEED = 70;
-    private int FAKE_TIMEOUT_SPEED = -1;
-    private double FAKE_UNSURE_MOVING_SPEED = 10 / msToKmh;
+    private GPSRideRecognition gpsRideRecognition;
 
     @Before
     public void setUp() throws Exception {
-        this.locationUtility = Mockito.mock(LocationUtility.class);
+        this.gpsRideRecognition = Mockito.mock(GPSRideRecognition.class);
         this.sensorsUtility = Mockito.mock(SensorsUtility.class);
         this.motionUtility = Mockito.mock(MotionUtility.class);
         this.wifiUtility = Mockito.mock(WiFiUtility.class);
         this.settings = Mockito.mock(Settings.class);
         CustomLog log = new CustomLog(this.settings);
-        this.userRide = new UserRide(this.settings, this.locationUtility, this.sensorsUtility, this.motionUtility, this.wifiUtility, log);
+        this.userRide = new UserRide(this.settings, this.gpsRideRecognition, this.sensorsUtility, this.motionUtility, this.wifiUtility, log);
 
         this.setIncludeProximityCheck(true);
         this.setSensorsUtilityIsProximeValue(true);
 
+
         this.setIncludeDeviceMotionCheck(true);
         this.setDeviceInMotionValue(true);
 
-        this.setLocationUtilityGetAccurateLocationSpeedResult(this.FAKE_FOR_SURE_MOVING_SPEED);
+        when(this.gpsRideRecognition.isUserRidingByGPS()).thenReturn(true);
+
 
         when(this.settings.getSureRidingSpeedKmh()).thenReturn(Math.round(this.FAKE_FOR_SURE_MOVING_SPEED));
         when(this.settings.isWiFiCheckEnabled()).thenReturn(true);
         when(this.wifiUtility.isWifiConnected()).thenReturn(false);
     }
 
-    @Test
-    public void testIfSureRidingSpeed1stHitProperlyHandled() {
-        this.setLocationUtilityGetAccurateLocationSpeedResult(this.FAKE_FOR_SURE_MOVING_SPEED);
-
-        this.expectUserRideIsUserRidingToBe(true);
-    }
 
     @Test
-    public void testIfTimeouted1stHitIsProperlyHandled() {
-        this.setLocationUtilityGetAccurateLocationSpeedResult(this.FAKE_TIMEOUT_SPEED);
-
-        this.expectUserRideIsUserRidingToBe(false);
+    public void throwErrorOnUnsupportedGPS() {
+        try {
+            when(this.gpsRideRecognition.isUserRidingByGPS()).thenThrow(GPSNotAvailableException.class);
+            this.userRide.isUserRiding();
+            fail();
+        } catch (GPSNotAvailableException e) {
+            // success
+        }
     }
-
-    @Test
-    public void testIfNotTimeouted1stHitThenTimeoutedIsProperlyHandled() {
-        this.setLocationUtilityGetAccurateLocationSpeedResult(this.FAKE_UNSURE_MOVING_SPEED, this.FAKE_TIMEOUT_SPEED);
-        this.expectUserRideIsUserRidingToBe(false);
-    }
-
-    @Test
-    public void testIfNotTimeouted1stHitThenUnsureRidingSpeedProperlyHandled() {
-        this.setLocationUtilityGetAccurateLocationSpeedResult(this.FAKE_UNSURE_MOVING_SPEED, this.FAKE_UNSURE_MOVING_SPEED);
-        this.expectUserRideIsUserRidingToBe(false);
-    }
-
-    @Test
-    public void testIfNotTimeouted1stHitThenSureRidingSpeedProperlyHandled() {
-        this.setLocationUtilityGetAccurateLocationSpeedResult(this.FAKE_UNSURE_MOVING_SPEED, this.FAKE_FOR_SURE_MOVING_SPEED);
-        this.expectUserRideIsUserRidingToBe(true);
-    }
-
 
     @Test
     public void testIfIncludeDeviceMotionCheckIsProperlyHandled() {
@@ -114,6 +88,12 @@ public class UserRideTest {
         this.setIncludeDeviceMotionCheck(true);
         this.setDeviceInMotionToException();
         this.expectUserRideIsUserRidingToBe(true);
+    }
+
+    @Test
+    public void testIfGpsNotRidingIsProperlyHandled() throws GPSNotAvailableException {
+        when(this.gpsRideRecognition.isUserRidingByGPS()).thenReturn(false);
+        this.expectUserRideIsUserRidingToBe(false);
     }
 
     @Test
@@ -147,7 +127,7 @@ public class UserRideTest {
     public void testOfCancellation() {
         this.userRide.cancelUserRideCheck();
 
-        verify(this.locationUtility, times(1)).cancelGPSCheck();
+        verify(this.gpsRideRecognition, times(1)).cancelGPSCheck();
     }
 
     @Test
@@ -173,7 +153,11 @@ public class UserRideTest {
     }
 
     private void expectUserRideIsUserRidingToBe(boolean result) {
-        Assert.assertEquals(result, this.userRide.isUserRiding());
+        try {
+            Assert.assertEquals(result, this.userRide.isUserRiding());
+        } catch (GPSNotAvailableException e) {
+            fail();
+        }
     }
 
     private void setDeviceInMotionValue(boolean value) {
@@ -204,42 +188,6 @@ public class UserRideTest {
     private void setIncludeProximityCheck(boolean value) {
         when(this.settings.isProximityCheckEnabled()).thenReturn(value);
     }
-
-
-    private void setLocationUtilityGetAccurateLocationSpeedResult(double value) {
-        SettableFuture<Location> result = SettableFuture.create();
-
-        Location location = Mockito.mock(Location.class);
-        when(location.getSpeed()).thenReturn((float) value);
-
-        Location valueOfFuture = (value > this.FAKE_TIMEOUT_SPEED) ? location : null;
-        result.set(valueOfFuture);
-        when(this.locationUtility.getAccurateLocation(anyFloat(), anyFloat(), anyLong())).thenReturn(result);
-    }
-
-    private void setLocationUtilityGetAccurateLocationSpeedResult(final double firstValue, final double secondValue) {
-        final boolean[] secondCall = {false};
-
-        when(this.locationUtility.getAccurateLocation(anyFloat(), anyFloat(), anyLong())).thenAnswer(new Answer<Future<Location>>() {
-            @Override
-            public Future answer(InvocationOnMock invocation) throws Throwable {
-                float value = (float) ((secondCall[0]) ? secondValue : firstValue);
-
-                final SettableFuture<Location> result = SettableFuture.create();
-                Location location = Mockito.mock(Location.class);
-                when(location.getSpeed()).thenReturn(value);
-
-                Location valueOfFuture = (value > UserRideTest.this.FAKE_TIMEOUT_SPEED) ? location : null;
-                result.set(valueOfFuture);
-                if (secondCall[0] == false) {
-                    secondCall[0] = true;
-                }
-                return result;
-            }
-        });
-    }
-
-
-    // endregion
+// endregion
 
 }

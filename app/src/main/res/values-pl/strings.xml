@@ -1,17 +1,16 @@
 <resources>
+    <string name="turned_off_gps_notification_title">Wyłączony GPS</string>
+    <string name="turned_off_gps_notification_text">Do inteligentnego wykrywania jazdy potrzebny jest włączony GPS.</string>
     <!-- widget -->
     <string name="widget_on_off_label">Tryb jazdy Motorespondera</string>
 
     <!-- notifications -->
-    <string name="debug_notification_title_text">Debugowanie Motorespondera</string>
-    <string name="debug_notification_short_text">Zamknij inne notyfikacje aby zobaczyć treść.</string>
-
     <string name="summary_notification_title_text">Motoresponder</string>
     <string name="summary_notification_short_text" formatted="false">Wysłano odpowiedź do %recipient%.</string>
     <string name="summary_notification_big_text" formatted="false">Otrzymałeś SMS lub nie odebrałeś połączenia od
         %recipient%, i ponieważ jechałeś wtedy na motocyklu, Motoresponder odpowiedział za ciebie.
     </string>
-    
+
           <string name="power_save_notification_title_text">Motoresponder</string>
     <string name="power_save_notification_short_text" formatted="false">Włączony tryb oszczędzania energii - aplikacja nie działa.</string>
     <string name="power_save_notification_big_text" formatted="false">Otrzymałeś wiadomość/nieodebrane połączenie, lecz telefon jest w trybie oszczędzania energii, więc Motoresponder również się wyłączył aby oszczędzać baterię w twoim telefonie.

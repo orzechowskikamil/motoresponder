@@ -30,7 +30,7 @@ public class RespondingDecision {
         this.log = log;
     }
 
-    public boolean shouldRespond(RespondingSubject subject) {
+    public boolean shouldRespond(RespondingSubject subject) throws GPSNotAvailableException {
         this.log.add("App will now make a decision if it should autorespond or not.");
         
         if (this.deviceUnlocked.isNotRidingBecausePhoneUnlocked()) {
@@ -111,6 +111,10 @@ public class RespondingDecision {
         return true;
     }
 
+    public void cancelDecision() {
+        this.userRide.cancelUserRideCheck();
+    }
+
     private boolean exceededAmountOfAllowedAutomaticalResponsesSinceUserResponded(RespondingSubject subject) {
         int limitOfAutoResponsesForRespondingSubject = this.getLimitForAutoresponses(subject);
         int automaticalSMSSent = this.alreadyResponded.getAmountOfAutomaticalResponsesSinceUserResponded(subject.getPhoneNumber());
@@ -124,11 +128,6 @@ public class RespondingDecision {
         return (subject instanceof GeolocationRequestRespondingSubject) ?
                 this.settings.getLimitOfGeolocationResponses() :
                 this.settings.getLimitOfResponses();
-    }
-
-
-    public void cancelDecision() {
-        this.userRide.cancelUserRideCheck();
     }
 
 }

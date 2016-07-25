@@ -61,6 +61,10 @@
 
     <integer name="quick_speed_check_duration_default_value">30</integer>
 
+    <integer name="traffic_jam_detection_duration_seconds_default_value">60</integer>
+
+    <integer name="distance_for_traffic_jam_detection_meters_key">100</integer>
+
     <integer name="long_speed_check_duration_default_value">240</integer>
 
     <integer name="required_accuracy_default_value">30</integer>

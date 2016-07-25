@@ -28,9 +28,9 @@ public class NumberRulesPreferenceFragment extends NumberRulesPreferenceFragment
 
         this.hideRespondingRestrictedToCurrentCountryIfDeviceNotAbleToFilter();
 
-        this.setupList(this.getWhiteListGroupNamePreference(), this.settings.getDontUseWhitelistText());
-        this.setupList(this.getBlackListGroupNamePreference(), this.settings.getDontUseBlacklistText());
-        this.setupList(this.getGeolocationWhiteListGroupNamePreference(), this.settings.getDontUseGeolocationWhitelistText());
+        this.setupList(this.getWhiteListGroupNamePreference(), this.settings.getStringFromRes(this.settings.DONT_USE_WHITELIST_TEXT_RES_ID));
+        this.setupList(this.getBlackListGroupNamePreference(), this.settings.getStringFromRes(this.settings.DONT_USE_BLACKLIST_TEXT_RES_ID));
+        this.setupList(this.getGeolocationWhiteListGroupNamePreference(), this.settings.getStringFromRes(this.settings.DONT_USE_GEOLOCATION_WHITELIST_TEXT_RES_ID));
 
 
         this.responderEnabledKeyCallback = new Predicate<Boolean>() {
