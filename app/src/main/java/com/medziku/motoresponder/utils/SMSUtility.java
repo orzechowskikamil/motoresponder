@@ -7,12 +7,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Telephony;
 import android.provider.Telephony.Sms;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
-
-
 import com.google.common.base.Predicate;
 import com.medziku.motoresponder.BuildConfig;
 import com.medziku.motoresponder.logic.PhoneNumbersComparator;
@@ -22,6 +23,7 @@ import java.util.Date;
 
 public class SMSUtility {
 
+    protected VersionDependentSMSAPIs versionDependentSMSAPIs;
     private Context context;
     private SmsManager smsManager;
     private boolean isCurrentlyListening;
@@ -33,7 +35,6 @@ public class SMSUtility {
     public SMSUtility() {
     }
 
-
     /**
      * This constructor is dedicated for real usage
      *
@@ -42,6 +43,7 @@ public class SMSUtility {
     public SMSUtility(Context context) {
         this.context = context;
         this.smsManager = SmsManager.getDefault();
+        this.versionDependentSMSAPIs = this.isBeforeKitkat() ? new BeforeKitkatAPI() : new AfterKitkatAPI();
     }
 
     public void sendSMS(String phoneNumber, String message, final Predicate<String> sendSMSCallback) throws RuntimeException {
@@ -86,7 +88,6 @@ public class SMSUtility {
         this.smsManager.sendMultipartTextMessage(phoneNumber, null, messageParts, sentPIList, null);
     }
 
-
     /**
      * You can listen only with one smsReceivedCallback. If You wish to listen with another smsReceivedCallback,
      * you need to unregister old with stopListeningForSMS() method.
@@ -114,17 +115,6 @@ public class SMSUtility {
         this.context.unregisterReceiver(this.incomingSMSReceiver);
     }
 
-    private PendingIntent createPendingIntent(String SENT, BroadcastReceiver broadcastReceiver) {
-        PendingIntent sentPI = PendingIntent.getBroadcast(this.context, 0, new Intent(SENT), 0);
-        this.context.registerReceiver(broadcastReceiver, new IntentFilter(SENT));
-        return sentPI;
-    }
-
-
-    private String getApplicationPackageName() {
-        return BuildConfig.APPLICATION_ID;
-    }
-
     /**
      * This method query for last SMS sent to given phone number.
      *
@@ -140,7 +130,7 @@ public class SMSUtility {
         String[] selectionArgs = {creator};
 
         String sortOrder = Sms.DATE + " DESC";
-        Cursor cursor = context.getContentResolver().query(Sms.Sent.CONTENT_URI,
+        Cursor cursor = context.getContentResolver().query(this.versionDependentSMSAPIs.getContentUri(),
                 whichColumns, selections, selectionArgs, sortOrder);
 
         Date sentMsgDate = null;
@@ -161,7 +151,6 @@ public class SMSUtility {
         return sentMsgDate;
     }
 
-
     /**
      * This method check if outgoing SMS was sent after date.
      * Because it performs normalization on phone number, note that it will query ALL smsManager messages since
@@ -177,7 +166,7 @@ public class SMSUtility {
         String[] selectionArgs = {String.valueOf(date.getTime()), creator};
 
         String sortOrder = Sms.DATE + " DESC";
-        Cursor cursor = context.getContentResolver().query(Sms.Sent.CONTENT_URI,
+        Cursor cursor = context.getContentResolver().query(this.versionDependentSMSAPIs.getContentUri(),
                 whichColumns, selections, selectionArgs, sortOrder);
 
         int result = 0;
@@ -197,17 +186,37 @@ public class SMSUtility {
         return result;
     }
 
-    private boolean areNumbersEqual(String firstPhoneNumber, String secondPhoneNuber) {
-        return PhoneNumbersComparator.areNumbersEqual(firstPhoneNumber, secondPhoneNuber);
-    }
-
     public boolean wasOutgoingSMSSentAfterDate(Date date, String phoneNumber, boolean shouldBeSentByOurApp) {
         return this.howManyOutgoingSMSSentAfterDate(date, phoneNumber, shouldBeSentByOurApp) > 0;
     }
 
+    private boolean isBeforeKitkat() {
+        return Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT;
+    }
+
+
+    private PendingIntent createPendingIntent(String SENT, BroadcastReceiver broadcastReceiver) {
+        PendingIntent sentPI = PendingIntent.getBroadcast(this.context, 0, new Intent(SENT), 0);
+        this.context.registerReceiver(broadcastReceiver, new IntentFilter(SENT));
+        return sentPI;
+    }
+
+    private String getApplicationPackageName() {
+        return BuildConfig.APPLICATION_ID;
+    }
+
+    private boolean areNumbersEqual(String firstPhoneNumber, String secondPhoneNuber) {
+        return PhoneNumbersComparator.areNumbersEqual(firstPhoneNumber, secondPhoneNuber);
+    }
+
+    interface VersionDependentSMSAPIs {
+        Uri getContentUri();
+
+        SmsMessage[] getMessagesFromIntent(Intent intent);
+    }
 
     // TODO K. Orzechowski: please inline it in some spare time because it looks like shit separated from the context. #Issue not needed
-    private class IncomingSMSReceiver extends BroadcastReceiver {
+    class IncomingSMSReceiver extends BroadcastReceiver {
 
         private Predicate<SMSObject> smsReceivedCallback;
 
@@ -217,39 +226,79 @@ public class SMSUtility {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            boolean receivedIntentIsSMS = intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED");
+            boolean receivedIntentIsSMS = intent.getAction().equals(Telephony.Sms.Intents.SMS_RECEIVED_ACTION);
 
-            if (receivedIntentIsSMS) {
-                Bundle bundle = intent.getExtras();
+            if (!receivedIntentIsSMS) {
+                return;
+            }
+            Bundle bundle = intent.getExtras();
 
-                if (bundle != null) {
-                    try {
-                        String phoneNumber = null;
-                        String multipartMessage = "";
+            if (bundle != null) {
+                try {
+                    String phoneNumber = null;
+                    String multipartMessage = "";
 
-                        Object[] pdus = (Object[]) bundle.get("pdus");
-                        SmsMessage[] smsMessages = new SmsMessage[pdus.length];
+                    SmsMessage[] smsMessages = SMSUtility.this.versionDependentSMSAPIs.getMessagesFromIntent(intent);
 
-                        for (int i = 0; i < smsMessages.length; i++) {
-                            smsMessages[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
+                    for (SmsMessage message : smsMessages) {
+                        phoneNumber = message.getOriginatingAddress();
+                        multipartMessage += message.getMessageBody();
 
-                            phoneNumber = smsMessages[i].getOriginatingAddress();
-                            String message = smsMessages[i].getMessageBody();
-
-                            multipartMessage += message;
-
-                        }
-                        if (this.smsReceivedCallback != null) {
-                            this.smsReceivedCallback.apply(new SMSObject(phoneNumber, multipartMessage));
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
+                    if (this.smsReceivedCallback != null) {
+                        this.smsReceivedCallback.apply(new SMSObject(phoneNumber, multipartMessage));
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+
             }
         }
     }
 
+    class BeforeKitkatAPI implements VersionDependentSMSAPIs {
+
+        @Override
+        public Uri getContentUri() {
+            return Uri.parse("content://sms/sent");
+        }
+
+        @Override
+        public SmsMessage[] getMessagesFromIntent(Intent intent) {
+            Bundle bundle = intent.getExtras();
+            SmsMessage[] smsMessages = null;
+            if (bundle != null) {
+                try {
+                    Object[] pdus = (Object[]) bundle.get("pdus");
+                    smsMessages = new SmsMessage[pdus.length];
+
+                    for (int i = 0; i < smsMessages.length; i++) {
+                        smsMessages[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
+
+                    }
+                } catch (Exception e) {
+
+                }
+
+            }
+            return smsMessages;
+        }
+    }
+
+    class AfterKitkatAPI implements VersionDependentSMSAPIs {
+
+        @Override
+        public Uri getContentUri() {
+            return Sms.Sent.CONTENT_URI;
+        }
+
+        @Override
+        public SmsMessage[] getMessagesFromIntent(Intent intent) {
+            return Telephony.Sms.Intents.getMessagesFromIntent(intent);
+        }
+    }
 
 }
+
+
 
