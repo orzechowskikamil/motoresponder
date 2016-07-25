@@ -32,7 +32,8 @@ public class UtilitiesRunner {
     /**
      * When this is true, debug utilities (tests of utilities) will be run instead of motoresponder application.
      */
-    public static final boolean ARE_PSEUDOTESTS_ENABLED = false;
+    public static final boolean ARE_PSEUDOTESTS_ENABLED = true;
+    private final SoundUtilityTest soundUtilityTest;
 
 
     private LockStateUtilityTest lockStateUtilityTest;
@@ -58,6 +59,7 @@ public class UtilitiesRunner {
         this.sharedPreferencesUtilityTest = new SharedPreferencesUtilityTest(context);
         this.smsUtilityTest = new SMSUtilityTest(context);
         this.wifiUtilityTest = new WiFiUtilityTest(context);
+        this.soundUtilityTest = new SoundUtilityTest(context);
     }
 
 
@@ -77,7 +79,7 @@ public class UtilitiesRunner {
             private void runTest() {
                 // choose the test which you are interested in
                 // after performing, leave short note with date here about result of test
-                switch (32) {
+                switch (110) {
                     case 1:
                         // this is working 10.04.2016 on Android 5.1
                         UtilitiesRunner.this.locationUtilityTest.testOfGettingAccurateLocation();
@@ -223,6 +225,11 @@ public class UtilitiesRunner {
                     case 100:
                         // working on 23.05.2016 on motog 5.1
                         UtilitiesRunner.this.wifiUtilityTest.wifiSensorTest();
+                        break;
+
+                    case 110:
+                        // TEST THIS
+                        UtilitiesRunner.this.soundUtilityTest.testMeasurementAverageSound();
                         break;
                 }
             }
