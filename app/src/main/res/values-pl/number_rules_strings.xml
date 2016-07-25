@@ -19,9 +19,13 @@
 
     <string name="already_responded_filtering_enabled_title">Odpowiadanie tylko raz</string>
     <string name="already_responded_filtering_enabled_summary_on">
-        Aplikacja nie wyśle automatycznej odpowiedzi, jeśli już wcześniej wysyłała powiadomienie do danego numeru, ale nie skontaktowałeś się od tamtej pory z tą osobą (SMS/połączenie). Uwaga: Jeśli masz smartfon Samsunga, lub dialer/apkę do SMSów inną niż standardowa Androida, włączenie tej opcji może spowodować brak automatycznych odpowiedzi.
+        Aplikacja nie wyśle automatycznej odpowiedzi, jeśli już wcześniej wysyłała powiadomienie do danego numeru, ale
+        nie skontaktowałeś się od tamtej pory z tą osobą (SMS/połączenie). Uwaga: Jeśli masz smartfon Samsunga, lub
+        dialer/apkę do SMSów inną niż standardowa Androida, włączenie tej opcji może spowodować brak automatycznych
+        odpowiedzi.
     </string>
-    <string name="already_responded_filtering_enabled_summary_off">Aplikacja nie będzie limitować automatycznych odpowiedzi.
+    <string name="already_responded_filtering_enabled_summary_off">Aplikacja nie będzie limitować automatycznych
+        odpowiedzi.
     </string>
 
     <string name="dont_use_whitelist_text">Nie używaj whitelisty</string>
@@ -56,6 +60,21 @@
         Podaj tutaj swój numer telefonu, aby zapobiec wysyłaniu odpowiedzi przez aplikację na twój numer telefonu (np
         jeśli dzwoni do ciebie poczta głosowa).
     </string>
+
+
+    <string name="delay_between_responses_minutes_title">Przerwa między automatycznymi odpowiedziami</string>
+    <string name="delay_between_responses_minutes_summary">Po tym jak zostanie wysłana jedna automatyczna odpowiedź na
+        dany numer, aplikacja nie będzie odpowiadać danemu numerowi przez określony czas.
+    </string>
+    <string name="delay_between_responses_minutes_dialog_title">Wybierz czas przerwy</string>
+
+
+    <string name="method_of_limiting_responses_title">Sposób limitowania automatycznych odpowiedzi</string>
+    <string name="method_of_limiting_responses_summary">Aplikacja może nie odpowiadać na dany numer ponownie, tak długo
+        jak użytkownik sam się nie skontaktuje z danym numerem, lub zwlekać z kolejną odpowiedzią na dany numer przez
+        pewien czas. Można też wyłączyć tą funkcję
+    </string>
+    <string name="method_of_limiting_responses_dialog_title">Wybierz sposób</string>
 
 
 </resources>

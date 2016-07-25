@@ -2,19 +2,18 @@ package com.medziku.motoresponder.logic;
 
 import android.os.PowerManager;
 import com.google.common.base.Predicate;
+import com.medziku.motoresponder.mocks.SettingsMock;
 import com.medziku.motoresponder.utils.ContactsUtility;
 import com.medziku.motoresponder.utils.LockStateUtility;
-import com.medziku.motoresponder.utils.NotificationUtility;
 import com.medziku.motoresponder.utils.SMSUtility;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
+import java.util.Date;
+
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
@@ -25,22 +24,26 @@ public class RespondingTaskTest {
 
     private ExposedRespondingTask respondingTask;
     private RespondingDecision respondingDecision;
-    private Settings settings;
-    private NotificationUtility notificationUtility;
+    private SettingsMock settings;
     private SMSUtility smsUtility;
     private Predicate<Boolean> returnCallback;
     private String FAKE_PHONE_NUMBER = "777777777";
     private ResponsePreparator responsePreparator;
     private ContactsUtility contactsUtility;
     private LockStateUtility lockStateUtility;
+    private NotificationFactory notificationFactory;
+    private CurrentAlreadyResponded currentAlreadyResponded;
+    private TimeBasedAlreadyResponded timeBasedAlreadyResponded;
 
 
     @Before
     public void setUp() {
-
         this.respondingDecision = Mockito.mock(RespondingDecision.class);
-        this.settings = Mockito.mock(Settings.class);
-        this.notificationUtility = Mockito.mock(NotificationUtility.class);
+        this.currentAlreadyResponded = Mockito.mock(CurrentAlreadyResponded.class);
+        this.timeBasedAlreadyResponded = mock(TimeBasedAlreadyResponded.class);
+        when(this.currentAlreadyResponded.get()).thenReturn(this.timeBasedAlreadyResponded);
+        this.settings = new SettingsMock();
+        this.notificationFactory = Mockito.mock(NotificationFactory.class);
         this.smsUtility = Mockito.mock(SMSUtility.class);
         this.responsePreparator = Mockito.mock(ResponsePreparator.class);
         this.returnCallback = Mockito.mock(Predicate.class);
@@ -49,39 +52,29 @@ public class RespondingTaskTest {
         CustomLog log = Mockito.mock(CustomLog.class);
 
 
+        when(this.settings.mock.isShowingPendingNotificationEnabled()).thenReturn(true);
+        this.setRespondingDecisionShouldRespond(false);
+
+        when(this.lockStateUtility.acquirePartialWakeLock()).thenReturn(Mockito.mock(PowerManager.WakeLock.class));
+
         this.respondingTask = new ExposedRespondingTask(
                 this.respondingDecision,
-                this.settings,
-                this.notificationUtility,
+                this.settings.mock,
+                this.notificationFactory,
                 this.smsUtility,
                 this.contactsUtility,
                 this.lockStateUtility,
                 this.responsePreparator,
                 log,
+                this.currentAlreadyResponded,
                 this.returnCallback);
-
-        when(this.settings.getDebugNotificationTitleText()).thenReturn("debug");
-        when(this.settings.getDebugNotificationShortText()).thenReturn("debug");
-
-        when(this.settings.getSummaryNotificationTitleText()).thenReturn("summary");
-        when(this.settings.getSummaryNotificationShortText()).thenReturn("summary %recipient%.");
-        when(this.settings.getSummaryNotificationBigText()).thenReturn("summary %recipient%.");
-        when(this.settings.getOngoingNotificationTitleText()).thenReturn("ongoing");
-        when(this.settings.getOngoingNotificationBigText()).thenReturn("ongoing");
-
-        when(this.settings.isShowingPendingNotificationEnabled()).thenReturn(true);
-        when(this.respondingDecision.shouldRespond(any(RespondingSubject.class))).thenReturn(false);
-
-        when(this.settings.isShowingDebugNotificationEnabled()).thenReturn(false);
-        when(this.lockStateUtility.acquirePartialWakeLock()).thenReturn(Mockito.mock(PowerManager.WakeLock.class));
     }
-
 
     @Test
     public void testOfResponse() throws Exception {
-        when(this.respondingDecision.shouldRespond(any(RespondingSubject.class))).thenReturn(true);
+        this.setRespondingDecisionShouldRespond(true);
 
-        this.respondingTask.callLogic(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
+        this.respondingTask.callLogic(createRespondingSubject());
 
         verify(this.smsUtility).sendSMS(anyString(), anyString(), any(Predicate.class));
 
@@ -89,119 +82,78 @@ public class RespondingTaskTest {
 
     @Test
     public void testOfDisabledSummaryNotificationsOnNotRespondingCase() {
-        when(this.settings.isShowingSummaryNotificationEnabled()).thenReturn(false);
+        this.setRespondingDecisionShouldRespond(false);
 
-        this.respondingTask.callLogic(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
+        this.respondingTask.callLogic(createRespondingSubject());
 
-        verify(this.notificationUtility, times(0)).showBigTextNotification(anyString(), anyString(), anyString());
+        verify(this.notificationFactory, times(0)).showSummaryNotification(anyString());
     }
 
     @Test
     public void testOfDisabledSummaryNotificationsOnRespondingCase() {
-        when(this.respondingDecision.shouldRespond(any(RespondingSubject.class))).thenReturn(true);
+        this.setRespondingDecisionShouldRespond(true);
 
-        when(this.settings.isShowingSummaryNotificationEnabled()).thenReturn(false);
+        when(this.settings.mock.isShowingSummaryNotificationEnabled()).thenReturn(false);
 
-        this.respondingTask.callLogic(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
+        this.respondingTask.callLogic(createRespondingSubject());
 
-        verify(this.notificationUtility, times(0)).showBigTextNotification(anyString(), anyString(), anyString());
+        verify(this.notificationFactory, times(0)).showSummaryNotification(anyString());
     }
 
     @Test
-    public void testOfEnabledSummaryNotificationOnRespondingCase() {
-        when(this.settings.isShowingSummaryNotificationEnabled()).thenReturn(true);
-        when(this.respondingDecision.shouldRespond(any(RespondingSubject.class))).thenReturn(true);
+    public void testOfEnabledPendingNotificationOnRespondingCase() {
+        when(this.settings.mock.isShowingSummaryNotificationEnabled()).thenReturn(true);
+        this.setRespondingDecisionShouldRespond(true);
 
-        this.respondingTask.callLogic(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
+        this.respondingTask.callLogic(createRespondingSubject());
 
-        ArgumentCaptor<String> summaryNotificationSmallText = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> summaryNotificationBigText = ArgumentCaptor.forClass(String.class);
-
-        verify(this.notificationUtility, times(1)).showOngoingNotification(anyString(), anyString(), anyString(),anyInt());
-        verify(this.notificationUtility, times(1)).showBigTextNotification(
-                anyString(),
-                summaryNotificationSmallText.capture(),
-                summaryNotificationBigText.capture()
-        );
-        verify(this.notificationUtility, times(1)).hideNotification(anyInt());
-
-        assertTrue(summaryNotificationSmallText.getValue().indexOf(FAKE_PHONE_NUMBER) >= 0);
-        assertTrue(summaryNotificationBigText.getValue().indexOf(FAKE_PHONE_NUMBER) >= 0);
+        verify(this.notificationFactory, times(1)).showPendingNotification();
+        verify(this.notificationFactory, times(1)).hidePendingNotification();
     }
 
 
     @Test
-    public void testOfDisplayingContactName() {
-        String TEST_CONTACT_NAME = "test contact";
+    public void testOfEnabledSummaryNotificationOnRespondingCase() {
+        when(this.settings.mock.isShowingSummaryNotificationEnabled()).thenReturn(true);
+        this.setRespondingDecisionShouldRespond(true);
 
-        when(this.settings.isShowingSummaryNotificationEnabled()).thenReturn(true);
-        when(this.contactsUtility.getContactDisplayName(anyString())).thenReturn(TEST_CONTACT_NAME);
-        when(this.respondingDecision.shouldRespond(any(RespondingSubject.class))).thenReturn(true);
+        this.respondingTask.callLogic(createRespondingSubject());
 
-        this.respondingTask.callLogic(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
-
-        ArgumentCaptor<String> summaryNotificationSmallText = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> summaryNotificationBigText = ArgumentCaptor.forClass(String.class);
-
-        verify(this.notificationUtility, times(1)).showBigTextNotification(
-                anyString(),
-                summaryNotificationSmallText.capture(),
-                summaryNotificationBigText.capture()
-        );
-
-        String smallText = summaryNotificationSmallText.getValue();
-        String bigText = summaryNotificationBigText.getValue();
-
-        assertTrue(smallText.indexOf(TEST_CONTACT_NAME) >= 0);
-        assertFalse(smallText.indexOf(FAKE_PHONE_NUMBER) >= 0);
-
-        assertTrue(bigText.indexOf(TEST_CONTACT_NAME) >= 0);
-        assertFalse(bigText.indexOf(FAKE_PHONE_NUMBER) >= 0);
-
+        verify(this.notificationFactory, times(1)).showSummaryNotification(anyString());
+        verify(this.notificationFactory, times(1)).hidePendingNotification();
     }
 
+
+    @Test
+    public void testGPSNotAvailableNotification() throws GPSNotAvailableException {
+        when(this.respondingDecision.shouldRespond(any(RespondingSubject.class))).thenThrow(GPSNotAvailableException.class);
+
+        this.respondingTask.callLogic(createRespondingSubject());
+
+        verify(this.notificationFactory, times(1)).showNotificationAboutTurnedOffGPS();
+
+    }
 
     @Test
     public void testOfEnabledSummaryNotificationsOnNotRespondingCase() {
-        when(this.settings.isShowingSummaryNotificationEnabled()).thenReturn(true);
+        when(this.settings.mock.isShowingSummaryNotificationEnabled()).thenReturn(true);
 
-        this.respondingTask.callLogic(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
+        this.respondingTask.callLogic(createRespondingSubject());
 
-        verify(this.notificationUtility, times(0)).showBigTextNotification(anyString(), anyString(), anyString());
+        verify(this.notificationFactory, times(0)).showSummaryNotification(anyString());
     }
-
-
-    // @Test
-    // public void testOfEnabledDebugNotificationOnNotRespondingCase() {
-    //     when(this.settings.isShowingDebugNotificationEnabled()).thenReturn(true);
-
-    //     this.respondingTask.callLogic(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
-
-    //     verify(this.notificationUtility, times(1)).showBigTextNotification(anyString(), anyString(), anyString());
-    // }
-
-    // @Test
-    // public void testOfEnabledDebugNotificationRespondingCase() {
-    //     when(this.respondingDecision.shouldRespond(any(RespondingSubject.class))).thenReturn(true);
-    //     when(this.settings.isShowingDebugNotificationEnabled()).thenReturn(true);
-
-    //     this.respondingTask.callLogic(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
-
-    //     verify(this.notificationUtility, times(1)).showBigTextNotification(anyString(), anyString(), anyString());
-    // }
-
 
     @Test
     public void testOfTermination() throws Exception {
         this.respondingTask.terminated = true;
-        this.respondingTask.callLogic(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
+        this.respondingTask.callLogic(createRespondingSubject());
 
         verify(this.smsUtility, times(0)).sendSMS(anyString(), anyString(), any(Predicate.class));
     }
 
     @Test
     public void testOfWakelock() {
-        this.respondingTask.callLogic(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
+        this.respondingTask.callLogic(createRespondingSubject());
         verify(this.lockStateUtility, times(1)).acquirePartialWakeLock();
         verify(this.lockStateUtility, times(1)).releaseWakeLock(any(PowerManager.WakeLock.class));
     }
@@ -209,11 +161,10 @@ public class RespondingTaskTest {
     @Test
     public void testOfWakelockOnTerminatedTask() {
         this.respondingTask.terminated = true;
-        this.respondingTask.callLogic(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
+        this.respondingTask.callLogic(createRespondingSubject());
         verify(this.lockStateUtility, times(1)).acquirePartialWakeLock();
         verify(this.lockStateUtility, times(1)).releaseWakeLock(any(PowerManager.WakeLock.class));
     }
-
 
     @Test
     public void testOfRetryingSendingSms() {
@@ -240,20 +191,49 @@ public class RespondingTaskTest {
         verify(this.smsUtility, times(3)).sendSMS(anyString(), anyString(), any(Predicate.class));
     }
 
+    @Test
+    public void testIfItNotRememberWhenItDoesntAutorespond() {
+        this.respondingTask.callLogic(this.createRespondingSubject());
+
+        verify(this.timeBasedAlreadyResponded, times(0)).rememberAboutAutoResponse(any(RespondingSubject.class));
+
+    }
+
 
     @Test
-    public void testPowerSaveMode() {
+    public void testIfRememberWhenItAutorespond() {
+        this.setRespondingDecisionShouldRespond(true);
+
+        this.respondingTask.callLogic(this.createRespondingSubject());
+
+        verify(this.timeBasedAlreadyResponded, times(1)).rememberAboutAutoResponse(any(RespondingSubject.class));
+    }
+
+    @Test
+    public void testPowerSaveMode() throws GPSNotAvailableException {
         when(this.lockStateUtility.isPowerSaveModeEnabled()).thenReturn(true);
 
-        this.respondingTask.callLogic(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
+        this.respondingTask.callLogic(createRespondingSubject());
 
         // in power save mode it shouldn't try to respond.
         verify(this.respondingDecision, times(0)).shouldRespond(any(RespondingSubject.class));
         verify(this.smsUtility, times(0)).sendSMS(anyString(), anyString(), any(Predicate.class));
-        verify(this.notificationUtility, times(1)).showBigTextNotification(anyString(), anyString(), anyString(),anyInt());
+        verify(this.notificationFactory, times(1)).showNotificationAboutPowerSaveMode();
     }
 
+    private CallRespondingSubject createRespondingSubject() {
+        return new CallRespondingSubject(this.FAKE_PHONE_NUMBER, new Date(), this.settings.mock);
+    }
+
+    private void setRespondingDecisionShouldRespond(boolean value) {
+        try {
+            when(this.respondingDecision.shouldRespond(any(RespondingSubject.class))).thenReturn(value);
+        } catch (GPSNotAvailableException e) {
+            e.printStackTrace();
+        }
+    }
 }
+
 
 class ExposedRespondingTask extends RespondingTask {
 
@@ -261,14 +241,15 @@ class ExposedRespondingTask extends RespondingTask {
 
     public ExposedRespondingTask(RespondingDecision respondingDecision,
                                  Settings sharedPreferencesUtility,
-                                 NotificationUtility notificationUtility,
+                                 NotificationFactory notificationFactory,
                                  SMSUtility smsUtility,
                                  ContactsUtility contactsUtility,
                                  LockStateUtility lockStateUtility,
                                  ResponsePreparator responsePreparator,
                                  CustomLog log,
+                                 CurrentAlreadyResponded alreadyResponded,
                                  Predicate<Boolean> resultCallback) {
-        super(respondingDecision, sharedPreferencesUtility, notificationUtility, smsUtility, contactsUtility, lockStateUtility, responsePreparator, log, resultCallback);
+        super(respondingDecision, sharedPreferencesUtility, notificationFactory, smsUtility, contactsUtility, lockStateUtility, responsePreparator, log, alreadyResponded, resultCallback);
     }
 
 

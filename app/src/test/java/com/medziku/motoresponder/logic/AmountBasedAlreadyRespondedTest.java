@@ -13,24 +13,28 @@ import org.mockito.stubbing.Answer;
 
 import java.util.Date;
 
+import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 
-public class AlreadyRespondedTest {
+public class AmountBasedAlreadyRespondedTest {
 
     private SMSUtility smsUtility;
-    private AlreadyResponded alreadyResponded;
+    private AmountBasedAlreadyResponded amountBasedAlreadyResponded;
     private CallsUtility callsUtility;
     private Date dateOfLastSMSSentByUser;
     private Date dateOfLastSMSSentByApp;
     private Date dateOfLastCallMadeByUser;
     private String FAKE_INCOMING_PHONE_NUMBER = "777777777";
+    private Settings settings;
+    private int LIMIT_OF_RESPONSES = 1;
 
     @Before
     public void setUp() throws Exception {
         this.callsUtility = Mockito.mock(CallsUtility.class);
         this.smsUtility = Mockito.mock(SMSUtility.class);
+        this.settings = Mockito.mock(Settings.class);
 
         this.dateOfLastSMSSentByUser = null;
         this.dateOfLastSMSSentByApp = null;
@@ -39,7 +43,9 @@ public class AlreadyRespondedTest {
         this.stubCallsUtility();
         this.stubSMSUtility();
 
-        this.alreadyResponded = new AlreadyResponded(this.callsUtility, this.smsUtility);
+        when(this.settings.getLimitOfResponses()).thenReturn(this.LIMIT_OF_RESPONSES);
+
+        this.amountBasedAlreadyResponded = new AmountBasedAlreadyResponded(this.callsUtility, this.smsUtility);
     }
 
     @Test
@@ -68,22 +74,25 @@ public class AlreadyRespondedTest {
 
 
     @Test
-    public void testWasAutomaticalResponseLast() {
-        Date oldest = new Date(5000);
-        Date mid = new Date(7500);
-        Date newest = new Date(10000);
+    public void testLimitExceed() {
+        when(this.settings.getLimitOfResponses()).thenReturn(1);
+        when(this.settings.getLimitOfGeolocationResponses()).thenReturn(3);
+        when(this.smsUtility.howManyOutgoingSMSSentAfterDate(any(Date.class), anyString(), eq(true))).thenReturn(2);
 
 
-        this.testCaseWasAutomaticalResponseLast(true, mid, newest, oldest);
-        this.testCaseWasAutomaticalResponseLast(false, newest, oldest, mid);
-        this.testCaseWasAutomaticalResponseLast(false, oldest, mid, newest);
-        this.testCaseWasAutomaticalResponseLast(false, newest, mid, oldest);
-        this.testCaseWasAutomaticalResponseLast(false, oldest, null, newest);
-        this.testCaseWasAutomaticalResponseLast(true, null, oldest, null);
-        this.testCaseWasAutomaticalResponseLast(false, null, oldest, newest);
-        this.testCaseWasAutomaticalResponseLast(true, oldest, newest, null);
-        this.testCaseWasAutomaticalResponseLast(true, null, newest, oldest);
+        assertTrue(this.amountBasedAlreadyResponded.isAutoResponsesLimitExceeded(new CallRespondingSubject(FAKE_INCOMING_PHONE_NUMBER, new Date(), this.settings)));
 
+        when(this.smsUtility.howManyOutgoingSMSSentAfterDate(any(Date.class), anyString(), eq(true))).thenReturn(0);
+
+        assertFalse(this.amountBasedAlreadyResponded.isAutoResponsesLimitExceeded(new CallRespondingSubject(FAKE_INCOMING_PHONE_NUMBER, new Date(), this.settings)));
+
+        when(this.smsUtility.howManyOutgoingSMSSentAfterDate(any(Date.class), anyString(), eq(true))).thenReturn(0);
+
+        assertFalse(this.amountBasedAlreadyResponded.isAutoResponsesLimitExceeded(new GeolocationRequestRespondingSubject(FAKE_INCOMING_PHONE_NUMBER, "", new Date(), this.settings)));
+
+        when(this.smsUtility.howManyOutgoingSMSSentAfterDate(any(Date.class), anyString(), eq(true))).thenReturn(10);
+
+        assertTrue(this.amountBasedAlreadyResponded.isAutoResponsesLimitExceeded(new GeolocationRequestRespondingSubject(FAKE_INCOMING_PHONE_NUMBER, "", new Date(), this.settings)));
     }
 
 
@@ -92,7 +101,7 @@ public class AlreadyRespondedTest {
         boolean SENT_BY_USER = false;
         when(this.smsUtility.getDateOfLastSMSSent(FAKE_INCOMING_PHONE_NUMBER, SENT_BY_USER)).thenReturn(null);
 
-        this.alreadyResponded.getAmountOfAutomaticalResponsesSinceUserResponded(FAKE_INCOMING_PHONE_NUMBER);
+        this.amountBasedAlreadyResponded.isAutoResponsesLimitExceeded(new CallRespondingSubject(FAKE_INCOMING_PHONE_NUMBER, new Date(), this.settings));
         ArgumentCaptor<Date> dateOfLastUserResponse = ArgumentCaptor.forClass(Date.class);
         verify(this.smsUtility, times(1)).howManyOutgoingSMSSentAfterDate(dateOfLastUserResponse.capture(), anyString(), eq(true));
 
@@ -109,19 +118,20 @@ public class AlreadyRespondedTest {
         this.expectIsRespondedIsUserRespondedSinceToBe(expectedResult, dateToCheck);
     }
 
-    private void testCaseWasAutomaticalResponseLast(boolean expectedResult, Date lastCallMadeByUser, Date lastSMSSentByApp, Date lastSMSSentByUser) {
+    private void testCaseLimitExceed(boolean limitExceed, Date lastCallMadeByUser, Date lastSMSSentByApp, Date lastSMSSentByUser) {
         this.dateOfLastCallMadeByUser = lastCallMadeByUser;
         this.dateOfLastSMSSentByApp = lastSMSSentByApp;
         this.dateOfLastSMSSentByUser = lastSMSSentByUser;
-        this.expectIsAutomaticalResponseLastToBe(expectedResult);
+        this.expectIsLimitExceed(limitExceed);
     }
 
-    private void expectIsAutomaticalResponseLastToBe(boolean expectedResult) {
-        Assert.assertEquals(expectedResult, this.alreadyResponded.isAutomaticalResponseLast(this.FAKE_INCOMING_PHONE_NUMBER));
+
+    private void expectIsLimitExceed(boolean exceeded) {
+        Assert.assertEquals(exceeded, this.amountBasedAlreadyResponded.isAutoResponsesLimitExceeded(new CallRespondingSubject(FAKE_INCOMING_PHONE_NUMBER, new Date(), this.settings)));
     }
 
     private void expectIsRespondedIsUserRespondedSinceToBe(boolean expectedResult, Date dateToCheck) {
-        Assert.assertEquals(expectedResult, this.alreadyResponded.isUserRespondedSince(dateToCheck, FAKE_INCOMING_PHONE_NUMBER));
+        Assert.assertEquals(expectedResult, this.amountBasedAlreadyResponded.isUserRespondedSince(new CallRespondingSubject(FAKE_INCOMING_PHONE_NUMBER, dateToCheck, this.settings)));
     }
 
 
@@ -137,8 +147,8 @@ public class AlreadyRespondedTest {
                 Date dateOfLastMessage;
 
                 dateOfLastMessage = (byOurApp)
-                        ? AlreadyRespondedTest.this.dateOfLastSMSSentByApp
-                        : AlreadyRespondedTest.this.dateOfLastSMSSentByUser;
+                        ? AmountBasedAlreadyRespondedTest.this.dateOfLastSMSSentByApp
+                        : AmountBasedAlreadyRespondedTest.this.dateOfLastSMSSentByUser;
 
                 if (dateOfLastMessage == null) {
                     return false;
@@ -156,8 +166,8 @@ public class AlreadyRespondedTest {
                 boolean byOurApp = (Boolean) invocation.getArguments()[1];
 
                 return byOurApp
-                        ? AlreadyRespondedTest.this.dateOfLastSMSSentByApp
-                        : AlreadyRespondedTest.this.dateOfLastSMSSentByUser;
+                        ? AmountBasedAlreadyRespondedTest.this.dateOfLastSMSSentByApp
+                        : AmountBasedAlreadyRespondedTest.this.dateOfLastSMSSentByUser;
             }
         });
     }
@@ -169,15 +179,12 @@ public class AlreadyRespondedTest {
             @Override
             public Boolean answer(InvocationOnMock invocation) throws Throwable {
                 Date dateToCheck = (Date) invocation.getArguments()[0];
-                if (AlreadyRespondedTest.this.dateOfLastCallMadeByUser == null) {
+                if (AmountBasedAlreadyRespondedTest.this.dateOfLastCallMadeByUser == null) {
                     return false;
                 }
-                return dateToCheck.getTime() < AlreadyRespondedTest.this.dateOfLastCallMadeByUser.getTime();
+                return dateToCheck.getTime() < AmountBasedAlreadyRespondedTest.this.dateOfLastCallMadeByUser.getTime();
             }
         });
     }
-
-
-// endregion
 
 }

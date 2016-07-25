@@ -20,11 +20,6 @@ public class LocationUtilityTest {
         this.context = context;
     }
 
-    private void setUp() {
-        this.locationUtility = new LocationUtility(this.context);
-    }
-
-
     public void testOfGettingAccurateLocation() {
         this.setUp();
 
@@ -40,7 +35,7 @@ public class LocationUtilityTest {
         }
 
         try {
-            Future<Location> accurateLocation = this.locationUtility.getAccurateLocation(-1, 20, 60 * 1000);
+            Future<Location> accurateLocation = this.locationUtility.getAccurateLocation((float)-1, 20, 60 * 1000);
             location = accurateLocation.get();
 
             lastKnownLocation = this.locationUtility.getLastRequestedLocation().get();
@@ -66,7 +61,7 @@ public class LocationUtilityTest {
 
     public void testOfBreakingAccurateLocationProcess() {
         this.setUp();
-        Future<Location> future = this.locationUtility.getAccurateLocation(10000, 3, 10000);
+        Future<Location> future = this.locationUtility.getAccurateLocation((float)10000, 3, 10000);
 
         try {
             Thread.sleep(2000);
@@ -77,5 +72,9 @@ public class LocationUtilityTest {
         this.locationUtility.cancelGPSCheck();
         Log.d(TAG, "is done right now? = " + future.isDone());
         Log.d(TAG, "Also check if location icon disappear after two seconds ");
+    }
+
+    private void setUp() {
+        this.locationUtility = new LocationUtility(this.context);
     }
 }

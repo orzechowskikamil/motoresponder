@@ -3,7 +3,6 @@ package com.medziku.motoresponder.logic;
 import com.google.common.base.Predicate;
 import com.medziku.motoresponder.utils.ContactsUtility;
 import com.medziku.motoresponder.utils.LockStateUtility;
-import com.medziku.motoresponder.utils.NotificationUtility;
 import com.medziku.motoresponder.utils.SMSUtility;
 
 import java.util.ArrayList;
@@ -14,45 +13,33 @@ public class RespondingTasksQueue {
     private ContactsUtility contactsUtility;
     private RespondingDecision respondingDecision;
     private Settings settings;
-    private NotificationUtility notificationUtility;
     private SMSUtility smsUtility;
     private ResponsePreparator responsePreparator;
     private CustomLog log;
     private LockStateUtility lockStateUtility;
+    private NotificationFactory notificationFactory;
+    private CurrentAlreadyResponded currentAlreadyResponded;
 
-    public RespondingTasksQueue(NotificationUtility notificationUtility,
+    public RespondingTasksQueue(NotificationFactory notificationFactory,
                                 SMSUtility smsUtility,
                                 ContactsUtility contactsUtility,
                                 LockStateUtility lockStateUtility,
                                 Settings settings,
                                 RespondingDecision respondingDecision,
                                 ResponsePreparator responsePreparator,
+                                CurrentAlreadyResponded currentAlreadyResponded,
                                 CustomLog log) {
         this.pendingRespondingTasks = new ArrayList<>();
-        this.notificationUtility = notificationUtility;
         this.smsUtility = smsUtility;
+        this.notificationFactory = notificationFactory;
         this.settings = settings;
         this.respondingDecision = respondingDecision;
+        this.currentAlreadyResponded = currentAlreadyResponded;
         this.responsePreparator = responsePreparator;
         this.log = log;
         this.lockStateUtility = lockStateUtility;
         this.contactsUtility = contactsUtility;
     }
-
-
-    protected RespondingTask createRespondingTask(Predicate<Boolean> resultCallback) {
-        return new RespondingTask(
-                this.respondingDecision,
-                this.settings,
-                this.notificationUtility,
-                this.smsUtility,
-                this.contactsUtility,
-                this.lockStateUtility,
-                this.responsePreparator,
-                this.log,
-                resultCallback);
-    }
-
 
     /**
      * This method cancels all currently pending responding tasks, and clean after themselves.
@@ -63,7 +50,6 @@ public class RespondingTasksQueue {
         }
         this.pendingRespondingTasks.clear();
     }
-
 
     public void createAndExecuteRespondingTask(RespondingSubject subject) {
         final RespondingTask[] task = new RespondingTask[1];
@@ -84,6 +70,20 @@ public class RespondingTasksQueue {
 
         this.pendingRespondingTasks.add(task[0]);
         task[0].execute(subject);
+    }
+
+    protected RespondingTask createRespondingTask(Predicate<Boolean> resultCallback) {
+        return new RespondingTask(
+                this.respondingDecision,
+                this.settings,
+                this.notificationFactory,
+                this.smsUtility,
+                this.contactsUtility,
+                this.lockStateUtility,
+                this.responsePreparator,
+                this.log,
+                this.currentAlreadyResponded,
+                resultCallback);
     }
 
 }

@@ -17,4 +17,31 @@
         <item>900</item>
     </string-array>
 
+
+    <string-array name="delay_between_responses_minutes_entries">
+        <item>Short (1 minute)</item>
+        <item>Medium (5 minutes)</item>
+        <item>Long (15 minutes)</item>
+    </string-array>
+
+    <string-array name="delay_between_responses_minutes_entry_values">
+        <item>1</item>
+        <item>5</item>
+        <item>15</item>
+    </string-array>
+
+
+    <string-array name="method_of_limiting_responses_entries">
+        <item>No limiting</item>
+        <item>Enforcing delay between responses</item>
+        <item>Counting responses</item>
+    </string-array>
+
+    <string-array name="method_of_limiting_responses_entry_values">
+        <item>@string/method_of_limiting_responses_no_limiting</item>
+        <item>@string/method_of_limiting_responses_time_based</item>
+        <item>@string/method_of_limiting_responses_amount_based</item>
+    </string-array>
+
+
 </resources>

@@ -28,9 +28,9 @@ public class NumberRulesPreferenceFragment extends NumberRulesPreferenceFragment
 
         this.hideRespondingRestrictedToCurrentCountryIfDeviceNotAbleToFilter();
 
-        this.setupList(this.getWhiteListGroupNamePreference(), this.settings.getDontUseWhitelistText());
-        this.setupList(this.getBlackListGroupNamePreference(), this.settings.getDontUseBlacklistText());
-        this.setupList(this.getGeolocationWhiteListGroupNamePreference(), this.settings.getDontUseGeolocationWhitelistText());
+        this.setupList(this.getWhiteListGroupNamePreference(), this.settings.getStringFromRes(this.settings.DONT_USE_WHITELIST_TEXT_RES_ID));
+        this.setupList(this.getBlackListGroupNamePreference(), this.settings.getStringFromRes(this.settings.DONT_USE_BLACKLIST_TEXT_RES_ID));
+        this.setupList(this.getGeolocationWhiteListGroupNamePreference(), this.settings.getStringFromRes(this.settings.DONT_USE_GEOLOCATION_WHITELIST_TEXT_RES_ID));
 
 
         this.responderEnabledKeyCallback = new Predicate<Boolean>() {
@@ -46,9 +46,21 @@ public class NumberRulesPreferenceFragment extends NumberRulesPreferenceFragment
         this.manageDisabledState();
     }
 
+    @Override
+    public void onDestroy() {
+        this.settings.stopListeningToSetting(this.settings.RESPONDER_ENABLED_KEY, this.responderEnabledKeyCallback);
+        super.onDestroy();
+    }
+
     private void setVisibilityOfPhoneNumberField() {
         if (this.deviceIsAbleToReadCurrentPhoneNumber()) {
             this.getPreferenceScreen().removePreference(this.getDevicePhoneNumberPreference());
+        }
+    }
+
+    private void setVisibilityOfDelayField() {
+        if (this.settings.getMethodOfLimitingResponses() != this.settings.METHOD_OF_LIMITING_RESPONSES_TIME_BASED) {
+            this.getPreferenceScreen().removePreference(this.getDelayBetweenResponsesPreference());
         }
     }
 
@@ -62,7 +74,6 @@ public class NumberRulesPreferenceFragment extends NumberRulesPreferenceFragment
         return this.contactsUtility.isAbleToReadCurrentDeviceNumber();
     }
 
-
     private void setupList(ListPreference listPreference, String dontUseText) {
         List groupNames = contactsUtility.readAllContactBookGroupNames();
         List<String> entriesList = new ArrayList<>(groupNames);
@@ -74,7 +85,6 @@ public class NumberRulesPreferenceFragment extends NumberRulesPreferenceFragment
         listPreference.setEntries(entriesList.toArray(new String[0]));
         listPreference.setEntryValues(entryValuesList.toArray(new String[0]));
     }
-
 
     private void manageDisabledState() {
         boolean responderEnabled = this.settings.isResponderEnabled();
@@ -93,12 +103,6 @@ public class NumberRulesPreferenceFragment extends NumberRulesPreferenceFragment
         if (devicePhoneNumberPreference != null) {
             devicePhoneNumberPreference.setEnabled(responderEnabled);
         }
-    }
-
-    @Override
-    public void onDestroy() {
-        this.settings.stopListeningToSetting(this.settings.RESPONDER_ENABLED_KEY, this.responderEnabledKeyCallback);
-        super.onDestroy();
     }
 }
 
@@ -149,6 +153,10 @@ abstract class NumberRulesPreferenceFragmentsDefinition extends PreferenceFragme
 
     public EditTextPreference getDevicePhoneNumberPreference() {
         return (EditTextPreference) this.findPreferenceByID(R.string.device_phone_number_key);
+    }
+
+    protected ListPreference getDelayBetweenResponsesPreference() {
+        return (ListPreference) this.findPreferenceByID(R.string.delay_between_responses_minutes_key);
     }
 
     private Preference findPreferenceByID(int preferenceID) {

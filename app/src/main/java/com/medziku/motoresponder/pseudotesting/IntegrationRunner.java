@@ -3,6 +3,7 @@ package com.medziku.motoresponder.pseudotesting;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+import com.medziku.motoresponder.logic.GPSNotAvailableException;
 import com.medziku.motoresponder.pseudotesting.integration.ResponderIntegrationTest;
 import com.medziku.motoresponder.pseudotesting.integration.RespondingDecisionIntegrationTest;
 
@@ -46,7 +47,7 @@ public class IntegrationRunner {
         }).execute();
     }
 
-    private void runTest() {
+    private void runTest()  {
         switch (21) {
             case 10:
                 // this is working at 10.04.2016 on Android 5.1 Motog

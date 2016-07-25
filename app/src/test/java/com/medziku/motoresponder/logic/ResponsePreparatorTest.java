@@ -4,11 +4,13 @@ import android.location.Location;
 import com.google.common.util.concurrent.SettableFuture;
 import com.medziku.motoresponder.utils.ContactsUtility;
 import com.medziku.motoresponder.utils.LocationUtility;
-import com.medziku.motoresponder.utils.SharedPreferencesUtility;
 import org.junit.Before;
 import org.junit.Test;
 
-import static junit.framework.Assert.*;
+import java.util.Date;
+
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 
@@ -55,13 +57,13 @@ public class ResponsePreparatorTest {
 
     @Test
     public void testPrepareNormalResponse() throws Exception {
-        String result = this.responsePreparator.prepareResponse(new SMSRespondingSubject(FAKE_PHONE_NUMBER, INCOMING_MESSAGE));
+        String result = this.responsePreparator.prepareResponse(new SMSRespondingSubject(FAKE_PHONE_NUMBER, INCOMING_MESSAGE, new Date(), this.settings));
         assertTrue(result.equals(RESPONSE_TEXT));
     }
 
     @Test
     public void testPrepareGeolocationResponse() throws Exception {
-        String result = this.responsePreparator.prepareResponse(new GeolocationRequestRespondingSubject(FAKE_PHONE_NUMBER, GEOLOCATION_REQUEST_INCOMING_MESSAGE));
+        String result = this.responsePreparator.prepareResponse(new GeolocationRequestRespondingSubject(FAKE_PHONE_NUMBER, GEOLOCATION_REQUEST_INCOMING_MESSAGE, new Date(), this.settings));
         assertTrue(result.indexOf(RESPONSE_TEXT_LOCATION_KEYWORD) != -1);
         assertTrue(isGeolocationResponse(result));
         assertTrue(result.indexOf(Double.toString(LATITUDE)) != -1);
@@ -70,7 +72,7 @@ public class ResponsePreparatorTest {
 
     @Test
     public void testPrepareResponseForCall() {
-        String result = this.responsePreparator.prepareResponse(new CallRespondingSubject(FAKE_PHONE_NUMBER));
+        String result = this.responsePreparator.prepareResponse(new CallRespondingSubject(FAKE_PHONE_NUMBER, new Date(), this.settings));
         assertTrue(result.equals(RESPONSE_TEXT));
     }
 
@@ -79,12 +81,12 @@ public class ResponsePreparatorTest {
         when(this.settings.isRespondingWithGeolocationAlwaysEnabled()).thenReturn(true);
         when(this.settings.isRespondingWithGeolocationEnabled()).thenReturn(false);
 
-        String result = this.responsePreparator.prepareResponse(new GeolocationRequestRespondingSubject(FAKE_PHONE_NUMBER, GEOLOCATION_REQUEST_INCOMING_MESSAGE));
+        String result = this.responsePreparator.prepareResponse(new GeolocationRequestRespondingSubject(FAKE_PHONE_NUMBER, GEOLOCATION_REQUEST_INCOMING_MESSAGE, new Date(), this.settings));
 
         assertFalse(isGeolocationResponse(result));
 
         when(this.settings.isRespondingWithGeolocationEnabled()).thenReturn(true);
-        String enabledResult = this.responsePreparator.prepareResponse(new GeolocationRequestRespondingSubject(FAKE_PHONE_NUMBER, GEOLOCATION_REQUEST_INCOMING_MESSAGE));
+        String enabledResult = this.responsePreparator.prepareResponse(new GeolocationRequestRespondingSubject(FAKE_PHONE_NUMBER, GEOLOCATION_REQUEST_INCOMING_MESSAGE, new Date(), this.settings));
 
         assertTrue(isGeolocationResponse(enabledResult));
 
@@ -93,7 +95,9 @@ public class ResponsePreparatorTest {
     @Test
     public void testDisabledGeoresponse() {
         when(this.settings.isRespondingWithGeolocationEnabled()).thenReturn(false);
-        String result = this.responsePreparator.prepareResponse(new SMSRespondingSubject(FAKE_PHONE_NUMBER, GEOLOCATION_REQUEST_INCOMING_MESSAGE));
+        String result = this.responsePreparator.prepareResponse(
+                new SMSRespondingSubject(FAKE_PHONE_NUMBER, GEOLOCATION_REQUEST_INCOMING_MESSAGE, new Date(), this.settings)
+        );
         assertTrue(result.equals(RESPONSE_TEXT));
     }
 
@@ -119,7 +123,7 @@ public class ResponsePreparatorTest {
         when(this.contactsUtility.hasGroupNumberByGroupName(anyString(), anyString())).thenReturn(hasGroupNumber);
 
         String result = this.responsePreparator.prepareResponse(
-                new GeolocationRequestRespondingSubject(FAKE_PHONE_NUMBER, GEOLOCATION_REQUEST_INCOMING_MESSAGE)
+                new GeolocationRequestRespondingSubject(FAKE_PHONE_NUMBER, GEOLOCATION_REQUEST_INCOMING_MESSAGE, new Date(), this.settings)
         );
 
         assertTrue(isGeolocationResponse(result) == expectedResult);

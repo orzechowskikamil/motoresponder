@@ -1,19 +1,20 @@
 <resources>
+    <string name="turned_off_gps_notification_title">GPS is turned off</string>
+    <string name="turned_off_gps_notification_text">For intelligent ride detection turned on GPS is required.</string>
+
     <string name="app_name">Motoresponder</string>
 
     <!-- widget -->
     <string name="widget_on_off_label">Motoresponder\'s assume riding setting</string>
 
     <!-- notifications -->
-    <string name="debug_notification_title_text">Motoresponder debug</string>
-    <string name="debug_notification_short_text">Close other notifications to see details.</string>
 
     <string name="summary_notification_title_text">Motoresponder</string>
     <string name="summary_notification_short_text" formatted="false">Auto response sent to %recipient%.</string>
     <string name="summary_notification_big_text" formatted="false">Auto response sent to %recipient% because you was
         riding when you got a SMS/call.
     </string>
-    
+
       <string name="power_save_notification_title_text">Motoresponder</string>
     <string name="power_save_notification_short_text" formatted="false">Power save mode - app is off.</string>
     <string name="power_save_notification_big_text" formatted="false">You got some message/call but phone is in power save mode, so Motoresponder is turned off to save your battery.

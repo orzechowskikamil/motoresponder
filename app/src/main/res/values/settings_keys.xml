@@ -33,8 +33,6 @@
 
     <string name="geolocation_request_pattern_1_key">geolocation_request_pattern_1</string>
 
-    <string name="showing_debug_notification_enabled_key">showing_debug_notification_enabled__1</string>
-
     <string name="geolocation_request_pattern_2_key">geolocation_request_pattern_2</string>
 
     <string name="sensor_check_enabled_key">sensor_check_enabled</string>
@@ -57,6 +55,12 @@
 
     <string name="long_speed_check_duration_key">long_speed_check_duration</string>
 
+    <string name="traffic_jam_detection_duration_seconds_key">traffic_jam_detection_duration_seconds</string>
+
+    <string name="distance_for_traffic_jam_detection_meters_key">distance_for_traffic_jam_detection_meters</string>
+
+    <string name="traffic_jam_detection_delay_seconds_key">traffic_jam_detection_delay_seconds</string>
+
     <string name="required_accuracy_key">required_accuracy</string>
 
     <string name="include_accelerometer_check_key">include_accelerometer_check</string>
@@ -74,8 +78,15 @@
     <string name="geolocation_whitelist_group_name_key">geolocation_whitelist_group_name</string>
 
     <string name="device_phone_number_key">device_phone_number</string>
-    
+
     <string name="already_responded_filtering_enabled_key">already_responded_filtering_enabled</string>
+
+
+    <string name="delay_between_responses_minutes_key">delay_between_responses_minutes</string>
+
+    <string name="method_of_limiting_responses_key">method_of_limiting_responses</string>
+
+
 
     <!-- it's not real setting, but it's stored in  -->
     <string name="custom_log_key">custom_log</string>

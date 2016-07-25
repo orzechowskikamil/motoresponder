@@ -4,6 +4,7 @@ import com.google.common.base.Predicate;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -23,7 +24,7 @@ public class RespondingTasksQueueTest {
 
     @Test
     public void testAddingTask() {
-        this.exposedRespondingTasksQueue.createAndExecuteRespondingTask(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
+        this.createAndExecuteRespondingTask();
         RespondingTask lastTask = this.exposedRespondingTasksQueue.lastMockedRespondingTask;
 
         assertEquals(1, this.exposedRespondingTasksQueue.getTasksList().size());
@@ -39,11 +40,11 @@ public class RespondingTasksQueueTest {
 
     @Test
     public void testOfAddingTwoTasks() {
-        this.exposedRespondingTasksQueue.createAndExecuteRespondingTask(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
+        this.createAndExecuteRespondingTask();
         assertEquals(1, this.exposedRespondingTasksQueue.getTasksList().size());
         Predicate<Boolean> firstCallback = this.exposedRespondingTasksQueue.lastResultCallback;
 
-        this.exposedRespondingTasksQueue.createAndExecuteRespondingTask(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
+        this.createAndExecuteRespondingTask();
         assertEquals(2, this.exposedRespondingTasksQueue.getTasksList().size());
         Predicate<Boolean> secondCallback = this.exposedRespondingTasksQueue.lastResultCallback;
 
@@ -59,9 +60,9 @@ public class RespondingTasksQueueTest {
 
     @Test
     public void testOfCancellingTasks() {
-        this.exposedRespondingTasksQueue.createAndExecuteRespondingTask(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
-        this.exposedRespondingTasksQueue.createAndExecuteRespondingTask(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
-        this.exposedRespondingTasksQueue.createAndExecuteRespondingTask(new CallRespondingSubject(this.FAKE_PHONE_NUMBER));
+        this.createAndExecuteRespondingTask();
+        this.createAndExecuteRespondingTask();
+        this.createAndExecuteRespondingTask();
 
         RespondingTask firstTask = this.exposedRespondingTasksQueue.getTasksList().get(0);
         RespondingTask secondTask = this.exposedRespondingTasksQueue.getTasksList().get(1);
@@ -76,6 +77,10 @@ public class RespondingTasksQueueTest {
 
     }
 
+    private void createAndExecuteRespondingTask() {
+        this.exposedRespondingTasksQueue.createAndExecuteRespondingTask(new CallRespondingSubject(this.FAKE_PHONE_NUMBER, new Date(), null));
+    }
+
 
 }
 
@@ -87,7 +92,11 @@ class ExposedRespondingTasksQueue extends RespondingTasksQueue {
 
 
     public ExposedRespondingTasksQueue() {
-        super(null, null, null, null, null, null, null, null);
+        super(null, null, null, null,null, null, null, null, null);
+    }
+
+    public List<RespondingTask> getTasksList() {
+        return this.pendingRespondingTasks;
     }
 
     @Override
@@ -96,9 +105,5 @@ class ExposedRespondingTasksQueue extends RespondingTasksQueue {
         RespondingTask mock = mock(RespondingTask.class);
         this.lastMockedRespondingTask = mock;
         return mock;
-    }
-
-    public List<RespondingTask> getTasksList() {
-        return this.pendingRespondingTasks;
     }
 }

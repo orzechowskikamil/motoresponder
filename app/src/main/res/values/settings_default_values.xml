@@ -61,6 +61,10 @@
 
     <integer name="quick_speed_check_duration_default_value">30</integer>
 
+    <integer name="traffic_jam_detection_duration_seconds_default_value">60</integer>
+
+    <integer name="distance_for_traffic_jam_detection_meters_key">100</integer>
+
     <integer name="long_speed_check_duration_default_value">240</integer>
 
     <integer name="required_accuracy_default_value">30</integer>
@@ -68,8 +72,19 @@
     <bool name="include_accelerometer_check_default_value">true</bool>
 
     <string name="acceleration_required_for_motion_default_value">0.2</string>
-    
+
     <bool name="already_responded_filtering_enabled_default_value">true</bool>
+
+    <integer name="delay_between_responses_minutes_default_value">0</integer>
+
+    <string name="method_of_limiting_responses_default_value">
+        @string/method_of_limiting_responses_time_based
+    </string>
+
+    <string name="method_of_limiting_responses_no_limiting">no_limiting</string>
+    <string name="method_of_limiting_responses_time_based">time_based</string>
+    <string name="method_of_limiting_responses_amount_based">response_based</string>
+
 
     <!-- it's not real setting but since it's value in shared preferences, empty string is required here to not have an error -->
     <string name="custom_log_default_value"></string>

@@ -1,41 +1,58 @@
 package com.medziku.motoresponder.logic;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.medziku.motoresponder.R;
 import com.medziku.motoresponder.utils.SharedPreferencesUtility;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class Settings extends SettingsBase {
 
+    public int METHOD_OF_LIMITING_RESPONSES_AMOUNT_BASED = 1;
+    public int METHOD_OF_LIMITING_RESPONSES_NO_LIMITING = 0;
+    public int METHOD_OF_LIMITING_RESPONSES_TIME_BASED = 2;
 
-    public static int POWER_SAVER_NOTIFICATION_ID = 3;
+    public int TURNED_OFF_GPS_NOTIFICATION_TEXT_RES_ID;
+    public int TURNED_OFF_GPS_NOTIFICATION_TITLE_RES_ID;
+    public int SUMMARY_NOTIFICATION_TITLE_TEXT_RES_ID;
+    public int SUMMARY_NOTIFICATION_SHORT_TEXT_RES_ID;
+    public int SUMMARY_NOTIFICATION_BIG_TEXT_RES_ID;
+    public int ONGOING_NOTIFICATION_TITLE_TEXT_RES_ID;
+    public int ONGOING_NOTIFICATION_BIG_TEXT_RES_ID;
+    public int DONT_USE_WHITELIST_TEXT_RES_ID;
+    public int DONT_USE_BLACKLIST_TEXT_RES_ID;
+    public int DONT_USE_GEOLOCATION_WHITELIST_TEXT_RES_ID;
+
+    public int POWER_SAVE_NOTIFICATION_TITLE_TEXT_RES_ID;
+    public int POWER_SAVE_NOTIFICATION_SHORT_TEXT_RES_ID;
+    public int POWER_SAVE_NOTIFICATION_BIG_TEXT;
+
     public String RESPONDER_ENABLED_KEY;
     public String AUTO_RESPONSE_TO_CALL_ENABLED_KEY;
     public String AUTO_RESPONSE_TO_SMS_ENABLED_KEY;
     public String SENSOR_CHECK_ENABLED_KEY;
-    public String GEOLOCATION_REQUEST_ENABLED_KEY;
     public String IS_RIDING_ASSUMED_KEY;
     public int IS_RIDING_ASSUMED_NOTIFICATION_TITLE_TEXT_ID;
     public int IS_RIDING_ASSUMED_NOTIFICATION_BIG_TEXT_ID;
     public int ONGOING_NOTIFICATION_I_AM_RIDING_ID = 1;
-    public int ONGOING_NOTIFICATION_PENDING_AUTORESPOND_ID = 2;
+
 
     public Settings(SharedPreferencesUtility sharedPreferencesUtility) {
         super(sharedPreferencesUtility);
 
-        this.RESPONDER_ENABLED_KEY = this.getStringFromRes(R.string.responder_enabled_key);
-        this.AUTO_RESPONSE_TO_CALL_ENABLED_KEY = this.getStringFromRes(R.string.auto_response_to_call_enabled_key);
-        this.AUTO_RESPONSE_TO_SMS_ENABLED_KEY = this.getStringFromRes(R.string.auto_response_to_sms_enabled_key);
-        this.SENSOR_CHECK_ENABLED_KEY = this.getStringFromRes(R.string.sensor_check_enabled_key);
-        this.GEOLOCATION_REQUEST_ENABLED_KEY = this.getStringFromRes(R.string.geolocation_request_enabled_key);
-        this.IS_RIDING_ASSUMED_KEY = this.getStringFromRes(R.string.is_riding_assumed_key);
-
-        this.IS_RIDING_ASSUMED_NOTIFICATION_TITLE_TEXT_ID = R.string.ongoing_notification_is_riding_assumed_title_text;
-        this.IS_RIDING_ASSUMED_NOTIFICATION_BIG_TEXT_ID = R.string.ongoing_notification_is_riding_assumed_big_text;
+        // TODO K. Orzechowski: think about creating resource helper instead of holding this in settings
+        this.TURNED_OFF_GPS_NOTIFICATION_TITLE_RES_ID = R.string.turned_off_gps_notification_title;
+        this.TURNED_OFF_GPS_NOTIFICATION_TEXT_RES_ID = R.string.turned_off_gps_notification_text;
+        this.SUMMARY_NOTIFICATION_TITLE_TEXT_RES_ID = R.string.summary_notification_title_text;
+        this.SUMMARY_NOTIFICATION_SHORT_TEXT_RES_ID = R.string.summary_notification_short_text;
+        this.SUMMARY_NOTIFICATION_BIG_TEXT_RES_ID = R.string.summary_notification_big_text;
+        this.ONGOING_NOTIFICATION_TITLE_TEXT_RES_ID = R.string.ongoing_notification_title_text;
+        this.ONGOING_NOTIFICATION_BIG_TEXT_RES_ID = R.string.ongoing_notification_big_text;
+        this.DONT_USE_WHITELIST_TEXT_RES_ID = R.string.dont_use_whitelist_text;
+        this.DONT_USE_BLACKLIST_TEXT_RES_ID = R.string.dont_use_blacklist_text;
+        this.DONT_USE_GEOLOCATION_WHITELIST_TEXT_RES_ID = R.string.dont_use_geolocation_whitelist_text;
+        this.POWER_SAVE_NOTIFICATION_BIG_TEXT = R.string.power_save_notification_big_text;
+        this.POWER_SAVE_NOTIFICATION_SHORT_TEXT_RES_ID = R.string.power_save_notification_short_text;
+        this.POWER_SAVE_NOTIFICATION_TITLE_TEXT_RES_ID = R.string.power_save_notification_title_text;
     }
 
 
@@ -122,9 +139,6 @@ public class Settings extends SettingsBase {
         return this.getBooleanValue(R.string.showing_summary_notification_enabled_key);
     }
 
-    public boolean isShowingDebugNotificationEnabled() {
-        return this.getBooleanValue(R.string.showing_debug_notification_enabled_key);
-    }
 
     public boolean isShowingPendingNotificationEnabled() {
         return this.getBooleanValue(R.string.showing_pending_notification_enabled_key);
@@ -132,6 +146,23 @@ public class Settings extends SettingsBase {
 
     public boolean isAlreadyRespondedFilteringEnabled() {
         return this.getBooleanValue(R.string.already_responded_filtering_enabled_key);
+    }
+
+    public int getMethodOfLimitingResponses() {
+        String method = this.getStringValue(R.string.method_of_limiting_responses_key);
+
+        if (method.equals(this.getStringFromRes(R.string.method_of_limiting_responses_time_based))) {
+            return this.METHOD_OF_LIMITING_RESPONSES_TIME_BASED;
+        } else if (method.equals(this.getStringFromRes(R.string.method_of_limiting_responses_amount_based))) {
+            return this.METHOD_OF_LIMITING_RESPONSES_AMOUNT_BASED;
+        }
+
+        return this.METHOD_OF_LIMITING_RESPONSES_NO_LIMITING;
+    }
+
+    public void setMethodOfLimitingResponses(String value) {
+        throw new RuntimeException("TODO");
+//        this.setStringValue(R.string.method_of_limiting_responses_key, value);
     }
 
 
@@ -182,6 +213,15 @@ public class Settings extends SettingsBase {
         return 1;
     }
 
+    public HashMap<String, Long> getTimestampsOfLastResponses() {
+        throw new RuntimeException("Implement ");
+    }
+
+    public void setTimestampsOfLastResponses(HashMap<String, Long> lastResponses) {
+        throw new RuntimeException("Implement ");
+    }
+
+
     public double getAccelerationRequiredToMotion() {
         return Double.parseDouble(this.getStringValue(R.string.acceleration_required_for_motion_key));
     }
@@ -221,67 +261,16 @@ public class Settings extends SettingsBase {
         this.setBooleanValue(R.string.geolocation_request_enabled_key, value);
     }
 
+    public int getTrafficJamDetectionDurationSeconds() {
+        return this.getIntValue(R.string.traffic_jam_detection_duration_seconds_key);
+    }
+
     public boolean isRespondingForSMSEnabled() {
         return this.getBooleanValue(R.string.auto_response_to_sms_enabled_key);
     }
 
     public boolean isRespondingForCallsEnabled() {
         return this.getBooleanValue(R.string.auto_response_to_call_enabled_key);
-    }
-
-    public String getDebugNotificationTitleText() {
-        return this.getStringFromRes(R.string.debug_notification_title_text);
-    }
-
-    public String getDebugNotificationShortText() {
-        return this.getStringFromRes(R.string.debug_notification_short_text);
-    }
-
-    public String getSummaryNotificationTitleText() {
-        return this.getStringFromRes(R.string.summary_notification_title_text);
-    }
-
-    public String getSummaryNotificationShortText() {
-        return this.getStringFromRes(R.string.summary_notification_short_text);
-    }
-
-    public String getSummaryNotificationBigText() {
-        return this.getStringFromRes(R.string.summary_notification_big_text);
-    }
-
-        public String getPowerSaveNotificationTitleText() {
-        return this.getStringFromRes(R.string.power_save_notification_title_text);
-    }
-
-    public String getPowerSaveNotificationShortText() {
-        return this.getStringFromRes(R.string.power_save_notification_short_text);
-    }
-
-    public String getPowerSaveNotificationBigText() {
-        return this.getStringFromRes(R.string.power_save_notification_big_text);
-    }
-    
-    
-    
-
-    public String getOngoingNotificationTitleText() {
-        return this.getStringFromRes(R.string.ongoing_notification_title_text);
-    }
-
-    public String getOngoingNotificationBigText() {
-        return this.getStringFromRes(R.string.ongoing_notification_big_text);
-    }
-
-    public String getDontUseWhitelistText() {
-        return this.getStringFromRes(R.string.dont_use_whitelist_text);
-    }
-
-    public String getDontUseBlacklistText() {
-        return this.getStringFromRes(R.string.dont_use_blacklist_text);
-    }
-
-    public String getDontUseGeolocationWhitelistText() {
-        return this.getStringFromRes(R.string.dont_use_geolocation_whitelist_text);
     }
 
     /**
@@ -319,4 +308,15 @@ public class Settings extends SettingsBase {
         this.setBooleanValue(R.string.terms_and_conditions_accepted_key, accepted);
     }
 
+    public int getDelayBetweenResponsesMinutes() {
+        return this.getIntValue(R.string.delay_between_responses_minutes_key);
+    }
+
+    public int getDistanceForTrafficJamDetectionMeters() {
+        return this.getIntValue(R.string.distance_for_traffic_jam_detection_meters_key);
+    }
+
+    public int getTrafficJamDelaySeconds() {
+        return this.getIntValue(R.string.traffic_jam_detection_delay_seconds_key);
+    }
 }

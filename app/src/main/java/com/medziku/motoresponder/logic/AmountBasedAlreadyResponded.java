@@ -8,26 +8,35 @@ import java.util.Date;
 /**
  * Class perform logic checking if user already responded to some number.
  */
-public class AlreadyResponded {
+public class AmountBasedAlreadyResponded implements AlreadyRespondedInterface {
 
     private CallsUtility callsUtility;
     private SMSUtility smsUtility;
 
-    /**
-     * For real usage
-     *
-     * @param callsUtility
-     * @param smsUtility
-     */
-    public AlreadyResponded(CallsUtility callsUtility, SMSUtility smsUtility) {
+
+    public AmountBasedAlreadyResponded(CallsUtility callsUtility, SMSUtility smsUtility) {
         this.callsUtility = callsUtility;
         this.smsUtility = smsUtility;
     }
 
-    /**
-     * Return if user responded with call or SMS since given time
-     */
-    public boolean isUserRespondedSince(Date time, String phoneNumber) {
+    public boolean isAutoResponsesLimitExceeded(RespondingSubject subject) {
+        int limitOfAutoResponsesForRespondingSubject = subject.getAmountLimitForAutoresponses();
+        int automaticalSMSSent = this.getAmountOfAutomaticalResponsesSinceUserResponded(subject.getPhoneNumber());
+
+        boolean limitExceeded = automaticalSMSSent >= limitOfAutoResponsesForRespondingSubject;
+
+        return limitExceeded;
+
+    }
+
+    public void rememberAboutAutoResponse(RespondingSubject subject) {
+        // in this method it's not needed.
+    }
+
+    public boolean isUserRespondedSince(RespondingSubject subject) {
+        Date time = subject.getDate();
+        String phoneNumber = subject.getPhoneNumber();
+
         if (this.callsUtility.wasOutgoingCallAfterDate(time, phoneNumber)) {
             return true;
         }
@@ -39,7 +48,7 @@ public class AlreadyResponded {
         return false;
     }
 
-    public int getAmountOfAutomaticalResponsesSinceUserResponded(String phoneNumber) {
+    private int getAmountOfAutomaticalResponsesSinceUserResponded(String phoneNumber) {
         boolean SENT_BY_USER = false;
         boolean SENT_BY_APP = true;
 
@@ -55,26 +64,4 @@ public class AlreadyResponded {
 
         return amountOfResponsesSentByApplication;
     }
-
-
-    /**
-     * Check if user answered given number with SMS or call after application answered automatically
-     */
-    public boolean isAutomaticalResponseLast(String phoneNumber) {
-        Date dateOfLastAutomaticalAnswer = this.getDateOfLastAutomaticalResponse(phoneNumber);
-
-        if (dateOfLastAutomaticalAnswer == null) {
-            // if no automatical response before, no problem, user response can't be older than automatical response
-            return false;
-        }
-
-
-        return !this.isUserRespondedSince(dateOfLastAutomaticalAnswer, phoneNumber);
-    }
-
-
-    private Date getDateOfLastAutomaticalResponse(String phoneNumber) {
-        return this.smsUtility.getDateOfLastSMSSent(phoneNumber, true);
-    }
-
 }

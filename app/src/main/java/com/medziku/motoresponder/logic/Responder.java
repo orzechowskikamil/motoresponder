@@ -4,6 +4,8 @@ import android.content.Context;
 import com.google.common.base.Predicate;
 import com.medziku.motoresponder.utils.*;
 
+import java.util.Date;
+
 /**
  * It's like all responding logic entry point
  */
@@ -12,7 +14,7 @@ public class Responder {
     protected LockStateUtility lockStateUtility;
     protected NumberRules numberRules;
     protected UserRide userRide;
-    protected AlreadyResponded alreadyResponded;
+    protected CurrentAlreadyResponded alreadyResponded;
     protected Context context;
     protected NotificationUtility notificationUtility;
     protected SMSUtility smsUtility;
@@ -35,6 +37,8 @@ public class Responder {
     private GeolocationRequestRecognition geolocationRequestRecognition;
     private WiFiUtility wiFiUtility;
     private CountryPrefix countryPrefix;
+    private GPSRideRecognition gpsRideRecognition;
+    private NotificationFactory notificationFactory;
     private RidingAssumedWidgetHandler ridingAssumedWidgetHandler;
     private Predicate<Boolean> changeAutoResponseToCallOrSmsEnabledSettingCallback;
 
@@ -61,7 +65,9 @@ public class Responder {
         this.responsePreparator = this.createResponsePreparator();
         this.respondingTasksQueue = this.createRespondingTasksQueue();
         this.geolocationRequestRecognition = this.createGeolocationRequestRecognition();
+        this.gpsRideRecognition = this.createGpsRideRecognition();
         this.countryPrefix = this.createCountryPrefix();
+        this.notificationFactory = this.createNotificationFactory();
     }
 
     /**
@@ -119,10 +125,10 @@ public class Responder {
         this.log.add("Received sms from " + phoneNumber + " \r\n\r\n");
 
         if (this.geolocationRequestRecognition.isGeolocationRequest(message)) {
-            subject = new GeolocationRequestRespondingSubject(phoneNumber, message);
+            subject = new GeolocationRequestRespondingSubject(phoneNumber, message, new Date(), this.settings);
             this.log.add("This SMS was recognized as location request (contains some patterns).");
         } else {
-            subject = new SMSRespondingSubject(phoneNumber, message);
+            subject = new SMSRespondingSubject(phoneNumber, message,new Date(), this.settings);
         }
 
         this.handleIncoming(subject);
@@ -133,7 +139,7 @@ public class Responder {
      */
     public void onUnAnsweredCallReceived(String phoneNumber) {
         this.log.add("Unanswered call from " + phoneNumber + " happened. \r\n\r\n");
-        this.handleIncoming(new CallRespondingSubject(phoneNumber));
+        this.handleIncoming(new CallRespondingSubject(phoneNumber, new Date(),this.settings));
     }
 
     /**
@@ -261,16 +267,17 @@ public class Responder {
         this.intentsUtility = new IntentsUtility(this.context);
     }
 
-    protected AlreadyResponded createAlreadyResponded() {
-        return new AlreadyResponded(this.callsUtility, this.smsUtility);
+    protected CurrentAlreadyResponded createAlreadyResponded() {
+        return new CurrentAlreadyResponded(this.settings, this.callsUtility, this.smsUtility);
     }
+    // region factory methods
 
     protected DeviceUnlocked createDeviceUnlocked() {
         return new DeviceUnlocked(this.settings, this.lockStateUtility);
     }
 
     protected UserRide createUserRide() {
-        return new UserRide(this.settings, this.locationUtility, this.sensorsUtility, this.motionUtility, this.wiFiUtility, this.log);
+        return new UserRide(this.settings, this.gpsRideRecognition, this.sensorsUtility, this.motionUtility, this.wiFiUtility, this.log);
     }
 
     protected NumberRules createNumberRules() {
@@ -291,13 +298,14 @@ public class Responder {
 
     protected RespondingTasksQueue createRespondingTasksQueue() {
         return new RespondingTasksQueue(
-                this.notificationUtility,
+                this.notificationFactory,
                 this.smsUtility,
                 this.contactsUtility,
                 this.lockStateUtility,
                 this.settings,
                 this.respondingDecision,
                 this.responsePreparator,
+                this.alreadyResponded,
                 this.log
         );
     }
@@ -306,10 +314,15 @@ public class Responder {
         return new RespondingDecision(this.userRide, this.numberRules, this.alreadyResponded, this.deviceUnlocked, this.settings, this.log);
     }
 
+    private NotificationFactory createNotificationFactory() {
+        return new NotificationFactory(this.notificationUtility, this.settings);
+    }
+
     private void listenToAutoResponseToCallOrSmsEnabledSettingChange() {
         if (this.changeAutoResponseToCallOrSmsEnabledSettingCallback != null) {
             return;
         }
+
 
         this.changeAutoResponseToCallOrSmsEnabledSettingCallback = new Predicate<Boolean>() {
             @Override
@@ -325,6 +338,11 @@ public class Responder {
     private void stopListeningToAutoResponseToCallOrSmsEnabledSettingChange() {
         this.settings.stopListeningToSetting(this.settings.AUTO_RESPONSE_TO_CALL_ENABLED_KEY, this.changeAutoResponseToCallOrSmsEnabledSettingCallback);
         this.settings.stopListeningToSetting(this.settings.AUTO_RESPONSE_TO_SMS_ENABLED_KEY, this.changeAutoResponseToCallOrSmsEnabledSettingCallback);
+    }
+
+
+    private GPSRideRecognition createGpsRideRecognition() {
+        return new GPSRideRecognition(this.locationUtility, this.settings, this.log);
     }
 
 
