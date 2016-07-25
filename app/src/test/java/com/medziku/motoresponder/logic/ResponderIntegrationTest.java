@@ -18,6 +18,11 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 
+/**
+ * This is integration test (non-instrumented) where all utility classes (which are dependent on Android APIs, and their 
+ * purpose is to isolate my logic from unmockable Android APIs) are mocked, so integration testing of logic layer can be done 
+ * automatically without connecting a device
+ */
 public class ResponderIntegrationTest {
 
     private MockedUtilitiesResponder responder;
@@ -37,7 +42,6 @@ public class ResponderIntegrationTest {
 
 
 }
-
 
 class MockedUtilitiesResponder extends Responder {
 
