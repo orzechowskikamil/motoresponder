@@ -177,8 +177,7 @@ public class SMSUtility {
         String[] selectionArgs = {String.valueOf(date.getTime()), creator};
 
         String sortOrder = Sms.DATE + " DESC";
-        Cursor cursor = context.getContentResolver().query(Sms.Sent.CONTENT_URI,
-                whichColumns, selections, selectionArgs, sortOrder);
+        Cursor cursor = this.query(  whichColumns, selections, selectionArgs, sortOrder);
 
         int result = 0;
 
@@ -196,10 +195,19 @@ public class SMSUtility {
         }
         return result;
     }
+    
+    /**
+     * This function is required to be overridable in android instrumented tests of this class
+     */
+    protected Cursor query(  whichColumns, selections, selectionArgs, sortOrder){
+    return context.getContentResolver().query(Sms.Sent.CONTENT_URI,  whichColumns, selections, selectionArgs, sortOrder);
+    }
 
     private boolean areNumbersEqual(String firstPhoneNumber, String secondPhoneNuber) {
         return PhoneNumbersComparator.areNumbersEqual(firstPhoneNumber, secondPhoneNuber);
     }
+    
+    
 
     public boolean wasOutgoingSMSSentAfterDate(Date date, String phoneNumber, boolean shouldBeSentByOurApp) {
         return this.howManyOutgoingSMSSentAfterDate(date, phoneNumber, shouldBeSentByOurApp) > 0;
