@@ -78,7 +78,7 @@ public class ResponsePreparator {
         
        
 
-        Location location = (cachedLocation == null)? this.geCurrentLocation() : cachedLocation;
+        Location location = (cachedLocation == null)? this.getCurrentLocation() : cachedLocation;
 
 
         String locationLink = LOCATION_LINK;
