@@ -27,14 +27,11 @@ public class Responder {
     protected ResponsePreparator responsePreparator;
     protected SharedPreferencesUtility sharedPreferencesUtility;
     protected boolean isRespondingNow;
-
-
+    protected WiFiUtility wiFiUtility;
     private boolean currentlyListeningForSMS = false;
     private boolean currentlyListeningForCalls = false;
-
     private CustomLog log;
     private GeolocationRequestRecognition geolocationRequestRecognition;
-    private WiFiUtility wiFiUtility;
     private CountryPrefix countryPrefix;
 
     public Responder(Context context) {
@@ -57,11 +54,6 @@ public class Responder {
         this.geolocationRequestRecognition = this.createGeolocationRequestRecognition();
         this.countryPrefix = this.createCountryPrefix();
     }
-
-    protected CountryPrefix createCountryPrefix() {
-        return new CountryPrefix(this.contactsUtility);
-    }
-
 
     /**
      * Call this to start responding
@@ -90,20 +82,6 @@ public class Responder {
         this.listenForLockStateChanges();
     }
 
-    protected void listenToIncomingAccordingToSettings() {
-        if (this.settings.isRespondingForSMSEnabled() == true) {
-            this.listenForSMS();
-        } else {
-            this.stopListeningForSMS();
-        }
-        if (this.settings.isRespondingForCallsEnabled() == true) {
-            this.listenForCalls();
-        } else {
-            this.stopListeningForCalls();
-        }
-    }
-
-
     /**
      * Call this to stop responding at all.
      */
@@ -119,14 +97,13 @@ public class Responder {
         this.stopListeningForLockStateChanges();
     }
 
-
     /**
      * Called when user will receive sms
      */
     public void onSMSReceived(String phoneNumber, String message) {
         SMSRespondingSubject subject;
 
-        this.log.add("Received sms from " + phoneNumber+" \r\n\r\n");
+        this.log.add("Received sms from " + phoneNumber + " \r\n\r\n");
 
         if (this.geolocationRequestRecognition.isGeolocationRequest(message)) {
             subject = new GeolocationRequestRespondingSubject(phoneNumber, message);
@@ -153,6 +130,23 @@ public class Responder {
         if (this.settings.isAssumingScreenUnlockedAsNotRidingEnabled()) {
             this.log.add("Phone unlocked, cancelling all autoresponding processes.");
             this.respondingTasksQueue.cancelAllHandling();
+        }
+    }
+
+    protected CountryPrefix createCountryPrefix() {
+        return new CountryPrefix(this.contactsUtility);
+    }
+
+    protected void listenToIncomingAccordingToSettings() {
+        if (this.settings.isRespondingForSMSEnabled() == true) {
+            this.listenForSMS();
+        } else {
+            this.stopListeningForSMS();
+        }
+        if (this.settings.isRespondingForCallsEnabled() == true) {
+            this.listenForCalls();
+        } else {
+            this.stopListeningForCalls();
         }
     }
 
