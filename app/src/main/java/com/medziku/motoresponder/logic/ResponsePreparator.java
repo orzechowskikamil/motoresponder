@@ -75,10 +75,9 @@ public class ResponsePreparator {
 
     private String getAutoResponseMessageWithGeolocation(Location cachedLocation) {
         String messageTemplate = this.settings.getAutoResponseToSmsWithGeolocationTemplate();
-        
-       
 
-        Location location = (cachedLocation == null)? this.getCurrentLocation() : cachedLocation;
+
+        Location location = (cachedLocation == null) ? this.getCurrentLocation() : cachedLocation;
 
 
         String locationLink = LOCATION_LINK;
@@ -104,8 +103,8 @@ public class ResponsePreparator {
         try {
             // it should be current location, even if staying. so it's 0
             float requiredSpeed = 0;
-            return this.locationUtility.getAccurateLocation(requiredSpeed, this.settings.getRequiredAccuracyMeters());
-            Future<Location> lastRequestedLocation = this.locationUtility.getLastRequestedLocation();
+            int timeout = 15000;
+            Future<Location> lastRequestedLocation = this.locationUtility.getAccurateLocation(requiredSpeed, this.settings.getRequiredAccuracyMeters(), timeout);
             if (lastRequestedLocation != null) {
                 return lastRequestedLocation.get();
             }

@@ -32,7 +32,7 @@ public class LocationUtilityTest {
 
         Location location = null;
 
-        Future<Location> future = this.locationUtility.getLastRequestedLocation();
+        Future<Location> future = this.locationUtility.getAccurateLocation();
         Location lastKnownLocation = null;
 
         if (future != null) {
