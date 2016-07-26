@@ -1,16 +1,16 @@
 class MockedUtilitiesResponder extends Responder {
 
-    private Settings mockSettings;
-    private SharedPreferencesUtility mockSharedPreferencesUtility;
-    private LockStateUtility mocklockStateUtility;
-    private SMSUtility mockSmsUtility;
-    private NotificationUtility mockNotificationUtility;
-    private CallsUtility mockCallsUtility;
-    private LocationUtility mockLocationUtility;
-    private ContactsUtility mockContactsUtility;
-    private SensorsUtility mockSensorsUtility;
-    private MotionUtility mockMotionUtility;
-    private WiFiUtility mockWiFiUtility;
+    public Settings mockSettings;
+    public SharedPreferencesUtility mockSharedPreferencesUtility;
+    public LockStateUtility mocklockStateUtility;
+    public SMSUtility mockSmsUtility;
+    public NotificationUtility mockNotificationUtility;
+    public CallsUtility mockCallsUtility;
+    public LocationUtility mockLocationUtility;
+    public ContactsUtility mockContactsUtility;
+    public SensorsUtility mockSensorsUtility;
+    public MotionUtility mockMotionUtility;
+    public WiFiUtility mockWiFiUtility;
 
     public MockedUtilitiesResponder(Context context) {
         super(context);
