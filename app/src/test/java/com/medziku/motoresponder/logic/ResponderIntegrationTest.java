@@ -111,6 +111,10 @@ class MockedUtilitiesResponder extends Responder {
         }
     }}
 
+
+/**
+ * This class allows to steer mocked utilities, allowing to simulate behavior of device 
+ */
     class Emulation {
 
         private final MockedUtilitiesResponder responder;
@@ -127,30 +131,28 @@ class MockedUtilitiesResponder extends Responder {
             this.responder = responder;
         }
 
-        public void emulateUnansweredCall(String phoneNumber) {
+        public void simulateUnansweredCall(String phoneNumber) {
             if (this.unansweredCallCallback != null) {
                 this.unansweredCallCallback.apply(phoneNumber);
             }
         }
 
-        public void emulateSMSCallLog(MockedCallSMSLogEntry[] entries) {
+        public void setFixedSMSCallLog(MockedCallSMSLogEntry[] entries) {
             this.mockedCallSMSLog = entries;
         }
 
-        public void emulateContacts(MockedContactEntry[] entries) {
+        public void setFixedContacts(MockedContactEntry[] entries) {
             this.contacts = entries;
         }
 
-        public void emulateLockStateChange(boolean isLocked) {
+        public void simulateLockStateChange(boolean isLocked) {
             this.lockStateChangeCallback.apply(isLocked);
         }
 
-        public void emulateLocations(Location[] entries) {
+        public void setFixedListOfLocations(Location[] entries) {
             this.locations = entries;
         }
-
-        public void startEmulation() throws Exception {
-
+        private void setUpCallsUtility(){
             doAnswer(new Answer() {
                 @Override
                 public Object answer(InvocationOnMock invocation) throws Throwable {
@@ -183,9 +185,9 @@ class MockedUtilitiesResponder extends Responder {
                     return false;
                 }
             }).when(this.responder.callsUtility).wasOutgoingCallAfterDate(any(Date.class), anyString());
-
-            // Contact book
-
+        }
+        
+        private void setUpContactsUtility(){
             when(this.responder.contactsUtility.contactBookContainsNumber(anyString())).thenAnswer(new Answer() {
 
                 @Override
@@ -200,9 +202,8 @@ class MockedUtilitiesResponder extends Responder {
                 }
 
             });
-
-
-                    when(this.responder.contactsUtility.hasGroupNumberByGroupName(anyString(), anyString())).thenAnswer(new Answer() {
+            
+        when(this.responder.contactsUtility.hasGroupNumberByGroupName(anyString(), anyString())).thenAnswer(new Answer() {
 
                         @Override
                         public Boolean answer(InvocationOnMock invocation) throws Throwable {
@@ -222,10 +223,10 @@ class MockedUtilitiesResponder extends Responder {
                             when(this.responder.contactsUtility.isAbleToReadCurrentDeviceNumber()).thenReturn(false);
                             when(this.responder.contactsUtility.readCurrentMobileCountryCode()).thenReturn(260);
 
-
-                            // Location
-
-                            when(this.responder.locationUtility.getAccurateLocation(anyFloat(), anyFloat(), anyInt())).thenAnswer(new Answer() {
+        }
+        
+        private void setUpLocationUtility(){
+                    when(this.responder.locationUtility.getAccurateLocation(anyFloat(), anyFloat(), anyInt())).thenAnswer(new Answer() {
 
                                 public Future<Location> answer(InvocationOnMock invocation) throws Throwable {
                                 final Future<Location> value = SettableFuture.create();
@@ -245,21 +246,30 @@ class MockedUtilitiesResponder extends Responder {
                                 return value;
 
                             });
-
-                            // lock state
-
-                            when(this.responder.lockStateUtility).listenToLockStateChanges(any(Predicate.class)).thenAnswer(new Answer() {
+        }
+        
+        private void setUpLockStateUtility(){
+              when(this.responder.lockStateUtility).listenToLockStateChanges(any(Predicate.class)).thenAnswer(new Answer() {
                                 @Override
                                 public Object answer(InvocationOnMock invocation) throws Throwable {
                                     this.lockStateCallback = (Predicate<String>) invocation.getArguments()[0];
                                     return null;
                                 }
                             });
-
-
-                        }
-                    }
         }
+
+        public void startEmulation() throws Exception {
+
+            this.setUpCallsUtility();
+
+            // Contact book
+            this.setUpContactsUtility();
+            
+
+this.setUpLocationUtility()
+
+this.setUpLockStateUtility();
+
 
             }
         }
