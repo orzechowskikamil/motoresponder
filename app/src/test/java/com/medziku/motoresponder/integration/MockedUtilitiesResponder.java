@@ -2,14 +2,14 @@ class MockedUtilitiesResponder extends Responder {
 
     public Settings mockSettings;
     public SharedPreferencesUtility mockSharedPreferencesUtility;
-    public LockStateUtility mocklockStateUtility;
-    public SMSUtility mockSmsUtility;
+    public MockedLockStateUtility mockedLockStateUtility;
+    public MockedSMSUtility mockedSmsUtility;
     public NotificationUtility mockNotificationUtility;
-    public CallsUtility mockCallsUtility;
-    public LocationUtility mockLocationUtility;
-    public ContactsUtility mockContactsUtility;
+    public MockedCallsUtility mockedCallsUtility;
+    public MockedLocationUtility mockedLocationUtility;
+    public MockedContactsUtility mockedContactsUtility;
     public SensorsUtility mockSensorsUtility;
-    public MotionUtility mockMotionUtility;
+    public MockedMotionUtility mockMotionUtility;
     public WiFiUtility mockWiFiUtility;
 
     public MockedUtilitiesResponder(Context context) {
@@ -32,13 +32,15 @@ class MockedUtilitiesResponder extends Responder {
 
             this.lockStateUtility = mock(LockStateUtility.class);
             this.mocklockStateUtility = this.lockStateUtility;
-
-            this.smsUtility = mock(SMSUtility.class);
-            this.mockSmsUtility = this.smsUtility;
-
-
-            this.callsUtility = mock(CallsUtility.class);
-            this.mockCallsUtility = this.callsUtility;
+                
+            // FOLLOW THIS IDEA!!!!!    
+                
+            this.mockedSMSUtility = new MockedSMSUtility();
+            this.smsUtility =this.mockSMSUtility.mock;
+            
+            this.mockedCallsUtility = new MockedCallsUtility();
+            this.callsUtility = this.mockedCallsUtility.mock;
+            
 
             this.notificationUtility = mock(NotificationUtility.class);
             this.mockNotificationUtility = this.notificationUtility;
