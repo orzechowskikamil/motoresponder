@@ -7,8 +7,12 @@ public class SmsUtilityCompatibilityTestCase extends CompatibilityTestCase{
         this.smsUtility = new SmsUtility(this.context);
     }
     
-  public CompatibilityTestResult runTest(){
-      this.smsUtility.read
+  public CompatibilityTestResult runTest() {
+      Cursor cursor = this.smsUtility.querySmsLog(['id','date','etc'], null,null,null);
+
+if (cursor.length() == 0){
+    throw new RuntimeException("Looks like SMSes can't be read");
+}
   }
     
 }
