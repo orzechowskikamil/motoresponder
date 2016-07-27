@@ -8,11 +8,14 @@ public class SmsUtilityCompatibilityTestCase extends CompatibilityTestCase{
     }
     
   public void runTest() {
-      Cursor cursor = this.smsUtility.querySmsLog(['id','date','etc'], null,null,null);
+      this.checkIfAbleToReadAnythingFromSMSLog();
+  }
+  
+  private void checkIfAbleToReadAnythingFromSMSLog(){
+  Cursor cursor = this.smsUtility.querySmsLog(['id','date','etc'], null,null,null);
 
 if (cursor.length() == 0){
     throw new RuntimeException("Looks like SMSes can't be read");
 }
   }
-    
 }
