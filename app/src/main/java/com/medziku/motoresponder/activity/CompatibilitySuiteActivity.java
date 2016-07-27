@@ -1,7 +1,7 @@
 class CompatibilitySuiteActivity extends Activity {
 
 
-public void onCreate(){ super.onCreate()} 
+public void onCreate(){ super.onCreate() this.loadFromResource(R.layout.compatibility_suite);} 
 
 public void startTests(){
   runner = new CompatibilitySuiteRunner(this.getContext());
