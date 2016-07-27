@@ -29,8 +29,8 @@ public class MockedUtilitiesResponder extends Responder {
 
     @Override
     protected Settings createSettings() {
-        this.settingsMock = mock(Settings.class);
-        return this.settingsMock;
+        this.settingsMock =new SettingsUtilityMock();
+        return this.settingsMock.mock;
     }
 
 
