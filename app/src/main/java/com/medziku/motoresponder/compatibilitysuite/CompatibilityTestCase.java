@@ -7,12 +7,25 @@
 abstract class CompatibilityTestCase{
   protected Context context;
   public CompatibilityTestCase(Context context) { this.context=context;}
+  abstract public String getName();
 
- abstract public CompatibilityTestResult runTest();
+ abstract protected void runTest();
+ public CompatibilityTestResult run(){
+   CompatibilityTestResult result = new CompatibilityTestResult();
+   result.name=this.getName();
+   try{
+     this.runTest();
+   }catch(Exception e){
+     result.isCompatible = false;
+     result.errorMessage = e.getMessage();
+   }
+   result.isCompatible=true;
 
 }
 
 public CompatibilityTestResult{
     public boolean isCompatible;
+    public String name;
+    public String errorMessage;
 }
 
