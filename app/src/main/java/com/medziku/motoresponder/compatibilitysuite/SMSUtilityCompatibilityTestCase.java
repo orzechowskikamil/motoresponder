@@ -7,7 +7,7 @@ public class SmsUtilityCompatibilityTestCase extends CompatibilityTestCase{
         this.smsUtility = new SmsUtility(this.context);
     }
     
-  public CompatibilityTestResult runTest() {
+  public void runTest() {
       Cursor cursor = this.smsUtility.querySmsLog(['id','date','etc'], null,null,null);
 
 if (cursor.length() == 0){
