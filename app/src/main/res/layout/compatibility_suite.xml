@@ -1,0 +1,6 @@
+<LinearLayout>
+
+<Button android:id="@+id/start_compatibility_suite_button"/>
+<TextView android:id="@+id/compatibility_suite_result"/>
+
+</LinearLayout>
