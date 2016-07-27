@@ -252,21 +252,3 @@ public class SMSUtility {
 
 
 }
-
-class SMSAPIs{
-   public SMSAPIs(Context context){
-     this.context=context;  
-   }   
-   
-   public void sendSMS(){
-  
-   }
-   
-   public void query(whichColumns, selections, selectionArgs, sortOrder){
-       return this.context.getContentResolver().query(Sms.Sent.CONTENT_URI,
-                whichColumns, selections, selectionArgs, sortOrder);
-   }
-    
-}
-
-
