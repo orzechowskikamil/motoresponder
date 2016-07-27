@@ -7,5 +7,13 @@
             android:title="@string/log_viewer_title"
             android:summary="@string/log_viewer_summary"
             android:dialogTitle="@string/log_viewer_dialog_title"/>
+            
+            
+        <Preference
+        android:title="@string/run_compatibility_suite_title" 
+        android:summary="@string/run_compatibility_suite_summary">
+        
+          <intent android:action=".activity.CompatibilitySuiteActivity"    />
+    </Preference>
 
 </PreferenceScreen>
