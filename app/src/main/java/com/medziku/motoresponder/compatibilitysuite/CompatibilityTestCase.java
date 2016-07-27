@@ -5,9 +5,10 @@
  * so using any test suite like JUnit is not possible.
  */
 abstract class CompatibilityTestCase{
+  protected Context context;
+  public CompatibilityTestCase(Context context) { this.context=context;}
 
-  public CompatibilityTestResult runTest(){
-  }
+ abstract public CompatibilityTestResult runTest();
 
 }
 
