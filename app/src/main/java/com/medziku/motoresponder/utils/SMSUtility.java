@@ -124,6 +124,11 @@ public class SMSUtility {
     private String getApplicationPackageName() {
         return BuildConfig.APPLICATION_ID;
     }
+    
+    public Cursor querySmsLog(String[] projection, String selection, String[] selectionArgs, String sortOrder){
+        return context.getContentResolver().query(Sms.Sent.CONTENT_URI,
+                projection, selection, selectionArgs, sortOrder);
+    }
 
     /**
      * This method query for last SMS sent to given phone number.
@@ -140,8 +145,7 @@ public class SMSUtility {
         String[] selectionArgs = {creator};
 
         String sortOrder = Sms.DATE + " DESC";
-        Cursor cursor = context.getContentResolver().query(Sms.Sent.CONTENT_URI,
-                whichColumns, selections, selectionArgs, sortOrder);
+        Cursor cursor = this.querySmsLog(whichColumns, selections, selectionArgs, sortOrder);
 
         Date sentMsgDate = null;
 
@@ -177,8 +181,7 @@ public class SMSUtility {
         String[] selectionArgs = {String.valueOf(date.getTime()), creator};
 
         String sortOrder = Sms.DATE + " DESC";
-        Cursor cursor = context.getContentResolver().query(Sms.Sent.CONTENT_URI,
-                whichColumns, selections, selectionArgs, sortOrder);
+        Cursor cursor = this.querySmsLog(whichColumns, selections, selectionArgs, sortOrder);
 
         int result = 0;
 
