@@ -32,9 +32,8 @@ public class ResponderTest {
     @Test
     public void testReactionOnCall() {
         LocationUtilityMock locationMock = this.responder.locationUtilityMock;
-
         locationMock.setMockLocations(new Location[]{
-                locationMock.createLocation(50)
+                locationMock.createLocation(50);
         });
 
         this.responder.motionUtilityMock.setIsDeviceInMotionResult(true);
@@ -47,6 +46,10 @@ public class ResponderTest {
 
         verify(this.responder.smsUtilityMock.mock, times(1)).sendSMS(anyString(), anyString(), any(Predicate.class));
     }
+    
+    
+
+
 
 
 }
