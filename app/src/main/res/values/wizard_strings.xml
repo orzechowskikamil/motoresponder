@@ -11,6 +11,18 @@
     </string>
     <string name="wizard_sensor_check_yes_label">Yes, use intelligent detection</string>
     <string name="wizard_sensor_check_no_label">No, I will set this manually</string>
+    
+    
+    
+    <string name="wizard_hold_phone_in_pocket_title">Where you put phone during ride?</string>
+    <string name="wizard_hold_phone_in_pocket_description">If you put phone in tight pocket, please choose "pocket" option.
+    Example of such pocket is jacket's pocket, or pants' pocket. \n\n
+    If you put phone into backpack, bag, or you have phone mount for motorcycle, please choose "somewhere else" option.\n\n
+    (Purpose of this: If you put phone in pocket when you are riding, application can assume that you are not riding everytime
+    when proximity sensor reports that there is nothing touching the screen)
+    </string>
+    <string name="wizard_hold_phone_in_pocket_yes_label">In pocket</string>
+    <string name="wizard_hold_phone_in_pocket_no_label">Somewhere else</string>
 
 
     <string name="wizard_custom_dialer_messenger_title">Limiting responses</string>
@@ -54,6 +66,5 @@
         Enjoy riding :-)
     </string>
     <string name="wizard_when_app_not_work_yes_label">Okay</string>
-
-
+    
 </resources>
