@@ -21,9 +21,12 @@ public class WizardActivity extends WizardActivityBase {
                 this.loadEnableSensorCheckStepOfWizard();
                 return true;
             case 1:
-                this.loadAllowGeolocationStepOfWizard();
+                this.loadHoldPhoneInPocketStepOfWizard();
                 return true;
             case 2:
+                this.loadAllowGeolocationStepOfWizard();
+                return true;
+            case 3:
                 this.loadWhenAppNotWorkStepOfWizard();
                 return true;
         }
@@ -36,6 +39,33 @@ public class WizardActivity extends WizardActivityBase {
                 R.string.wizard_when_app_not_work_title,
                 R.string.wizard_when_app_not_work_description,
                 R.string.wizard_when_app_not_work_yes_label);
+    }
+    
+    private void loadHoldPhoneInPocketStepOfWizard(){
+        if (!this.settings.isSensorCheckEnabled()){
+            this.onFinishingStepOfWizard(); // TODO rename finishWizardStep()
+            return;
+        }
+        
+          this.loadYesNoWizardStep(
+                R.string.wizard_hold_phone_in_pocket_title,
+                R.string.wizard_hold_phone_in_pocket_description,
+                R.string.wizard_hold_phone_in_pocket_yes_label,
+                R.string.wizard_hold_phone_in_pocket_no_label,
+                new Predicate<Boolean>() {
+                    @Override
+                    public boolean apply(Boolean input) {
+                        WizardActivity.this.settings.setProximityCheckEnabled(true);
+                        return false;
+                    }
+                },
+                new Predicate<Boolean>() {
+                    @Override
+                    public boolean apply(Boolean input) {
+                        WizardActivity.this.settings.setProximityCheckEnabled(false);
+                        return false;
+                    }
+                });
     }
 
     private void loadAllowGeolocationStepOfWizard() {
