@@ -85,12 +85,13 @@
     <string name="method_of_limiting_responses_time_based">time_based</string>
     <string name="method_of_limiting_responses_amount_based">response_based</string>
 
+    <string name="timestamps_of_last_responses_default_value">{}</string>
 
     <!-- it's not real setting but since it's value in shared preferences, empty string is required here to not have an error -->
     <string name="custom_log_default_value"></string>
-    
+
     <bool name="wizard_completed_default_value">false</bool>
-    
+
     <integer name="current_step_of_wizard_default_value">0</integer>
 
 </resources>

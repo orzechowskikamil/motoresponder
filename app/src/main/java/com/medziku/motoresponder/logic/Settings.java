@@ -3,7 +3,7 @@ package com.medziku.motoresponder.logic;
 import com.medziku.motoresponder.R;
 import com.medziku.motoresponder.utils.SharedPreferencesUtility;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public class Settings extends SettingsBase {
 
@@ -213,12 +213,12 @@ public class Settings extends SettingsBase {
         return 1;
     }
 
-    public HashMap<String, Long> getTimestampsOfLastResponses() {
-        throw new RuntimeException("Implement ");
+    public Map<String, Long> getTimestampsOfLastResponses() {
+        return this.getMapValue(R.string.timestamps_of_last_responses_key);
     }
 
-    public void setTimestampsOfLastResponses(HashMap<String, Long> lastResponses) {
-        throw new RuntimeException("Implement ");
+    public void setTimestampsOfLastResponses(Map<String, Long> lastResponses) {
+        this.setMapValue(R.string.timestamps_of_last_responses_key, lastResponses);
     }
 
 

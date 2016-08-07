@@ -86,7 +86,7 @@
 
     <string name="method_of_limiting_responses_key">method_of_limiting_responses</string>
 
-
+    <string name="timestamps_of_last_responses_key">timestamps_of_last_responses</string>
 
     <!-- it's not real setting, but it's stored in  -->
     <string name="custom_log_key">custom_log</string>

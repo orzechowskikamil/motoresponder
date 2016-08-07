@@ -2,6 +2,7 @@ package com.medziku.motoresponder.logic;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 class TimeBasedAlreadyResponded implements AlreadyRespondedInterface {
 
@@ -34,7 +35,7 @@ class TimeBasedAlreadyResponded implements AlreadyRespondedInterface {
     }
 
     private long getTimestampOfLastResponseMs(String phoneNumber) {
-        HashMap<String, Long> timestamps = this.settings.getTimestampsOfLastResponses();
+        Map<String, Long> timestamps = this.settings.getTimestampsOfLastResponses();
 
         Long timestampForPhoneNumberSeconds = timestamps.get(phoneNumber);
 
@@ -48,7 +49,7 @@ class TimeBasedAlreadyResponded implements AlreadyRespondedInterface {
 
     private void setTimestampOfLastResponse(String phoneNumber) {
         String phoneNumberNormalized = PhoneNumbersComparator.normalizeNumber(phoneNumber);
-        HashMap<String, Long> timestamps = this.settings.getTimestampsOfLastResponses();
+        Map<String, Long> timestamps = this.settings.getTimestampsOfLastResponses();
 
         long timestampSeconds = new Date().getTime() / 1000;
 

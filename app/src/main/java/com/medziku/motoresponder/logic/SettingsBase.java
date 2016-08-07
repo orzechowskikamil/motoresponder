@@ -3,10 +3,9 @@ package com.medziku.motoresponder.logic;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.medziku.motoresponder.utils.SharedPreferencesUtility;
+import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 abstract public class SettingsBase {
 
@@ -54,6 +53,33 @@ abstract public class SettingsBase {
                 }
             }
         } catch (Exception e) {
+        }
+    }
+
+    protected void setMapValue(int resID, Map<String, Long> value) {
+        JSONObject jsonObject = new JSONObject(value);
+
+        String jsonStr = jsonObject.toString();
+        this.setStringValue(resID, jsonStr);
+    }
+
+    protected Map<String, Long> getMapValue(int resID) {
+        try {
+            String jsonStr = this.getStringValue(resID);
+            Map<String, Long> outputMap = new HashMap<>();
+
+            JSONObject jsonObject = new JSONObject(jsonStr);
+            Iterator<String> keysItr = jsonObject.keys();
+
+            while (keysItr.hasNext()) {
+                String key = keysItr.next();
+                Long value = Long.parseLong(jsonObject.get(key).toString(), 10);
+                outputMap.put(key, value);
+            }
+
+            return outputMap;
+        } catch (Exception e) {
+            return null;
         }
     }
 

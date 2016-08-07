@@ -8,6 +8,9 @@ import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
@@ -51,6 +54,35 @@ public class SettingsTest {
         sharedPreferenceChangedCallback[0].apply(this.settings.RESPONDER_ENABLED_KEY);
 
         assertTrue(changed[0]);
+
+    }
+
+
+    @Test
+    public void testReadingHashMap() {
+        int ID = 3;
+
+        String jsonStr = "{\"789789789\":3000, \"123123123\":3500}";
+        when(this.sharedPreferencesUtility.getStringValue(anyString(), anyString())).thenReturn(jsonStr);
+
+        Map<String, Long> mapValue = this.settings.getMapValue(ID);
+        assertTrue(mapValue.get("789789789") == 3000);
+        assertTrue(mapValue.get("123123123") == 3500);
+    }
+
+    @Test
+    public void testSavingHashMap() {
+        int ID = 3;
+
+        String jsonStr = "{\"789789789\":3000}";
+
+
+        Map<String, Long> map = new HashMap<>();
+        map.put("789789789", (long) 3000);
+        this.settings.setMapValue(ID, map);
+
+        verify(this.sharedPreferencesUtility, times(1)).setStringValue(anyString(), contains(jsonStr));
+
 
     }
 
