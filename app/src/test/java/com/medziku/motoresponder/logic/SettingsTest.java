@@ -81,10 +81,20 @@ public class SettingsTest {
         this.settings.setStringArrayValue(RES_ID, TEST_ARRAY);
         verify(this.sharedPreferencesUtility, times(1)).setStringValue(eq(KEY_VALUE), contains("[\"aaa\",\"bbb\"]"));
 
+
+    }
+
+
+    @Test
+    public void testOfErasingStringArray() {
+        int RES_ID = 1;
+        String KEY_VALUE = "key";
+
+        when(this.sharedPreferencesUtility.getStringFromRes(RES_ID)).thenReturn(KEY_VALUE);
+
         this.settings.setStringArrayValue(RES_ID, null);
         verify(this.sharedPreferencesUtility, times(1)).setStringValue(eq(KEY_VALUE), contains(""));
     }
-
 
     @Test
     public void testOfReadingStringArray() {
@@ -94,8 +104,8 @@ public class SettingsTest {
         List<String> stringArrayValue = this.settings.getStringArrayValue(RES_ID);
 
         assertTrue(stringArrayValue.size() == 2);
-        assertTrue(stringArrayValue.get(1).equals("aaa"));
-        assertTrue(stringArrayValue.get(2).equals("bbb"));
+        assertTrue(stringArrayValue.get(0).equals("aaa"));
+        assertTrue(stringArrayValue.get(1).equals("bbb"));
 
         when(this.sharedPreferencesUtility.getStringValue(anyString(), anyString())).thenReturn("");
         assertTrue(this.settings.getStringArrayValue(RES_ID) == null);
