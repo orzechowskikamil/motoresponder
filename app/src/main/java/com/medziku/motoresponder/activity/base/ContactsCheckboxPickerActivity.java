@@ -29,15 +29,7 @@ public abstract class ContactsCheckboxPickerActivity extends CheckboxPickerActiv
         this.settings = new Settings(new SharedPreferencesUtility(this.context));
         this.contactsUtility = new ContactsUtility(this.context);
         super.onCreate(savedInstanceState);
-
-        ((TextView) this.findViewById(R.id.checkbox_picker_screen_title)).setText(this.getTitleTextResID());
-        ((TextView) this.findViewById(R.id.checkbox_picker_screen_description)).setText(this.getDescriptionTextResID());
-
     }
-
-    protected abstract int getDescriptionTextResID();
-
-    protected abstract int getTitleTextResID();
 
 
     protected List<CheckboxPickerRowDefinition> getRows() {

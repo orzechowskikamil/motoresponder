@@ -1,37 +1,25 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-    <TextView android:id="@+id/checkbox_picker_screen_title"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:text="Title" style="@style/Base.TextAppearance.AppCompat.Headline"
-              android:layout_marginLeft="5dp" android:layout_marginTop="5dp"/>
-
-    <TextView android:id="@+id/checkbox_picker_screen_description"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:text="Description"
-              android:layout_alignParentTop="true" android:layout_alignParentStart="true"
-              android:layout_marginTop="35dp" android:layout_marginLeft="5dp"/>
-
 
     <ListView android:id="@+id/checkboxes_rows_scroll"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:layout_centerHorizontal="true"
-              android:layout_below="@+id/checkbox_picker_screen_description"
-              android:layout_above="@+id/checkbox_picker_select_all"/>
+              android:layout_above="@+id/checkbox_picker_select_all" android:layout_marginLeft="10dp"
+              android:layout_marginRight="10dp" android:layout_marginTop="10dp"/>
 
-    <Button android:layout_width="40dp"
-            android:layout_height="30dp"
+    <Button android:layout_width="170dp"
+            android:layout_height="60dp"
             android:id="@+id/checkbox_picker_select_all"
             android:text="@string/contacts_picker_select_all" android:layout_alignParentBottom="true"
-            android:layout_alignParentStart="true"/>
+            android:layout_alignParentStart="true" android:layout_marginLeft="10dp" android:layout_marginBottom="10dp"/>
 
-    <Button android:layout_width="40dp"
+    <Button android:layout_width="160dp"
             android:id="@+id/checkbox_picker_select_none"
-            android:layout_height="30dp"
-            android:text="@string/contacts_picker_select_none" android:layout_alignParentBottom="true"
-            android:layout_alignEnd="@+id/checkbox_picker_screen_description"/>
+            android:layout_height="60dp"
+            android:text="@string/contacts_picker_select_none"
+            android:layout_below="@+id/checkboxes_rows_scroll"
+            android:layout_toEndOf="@+id/checkbox_picker_select_all" android:layout_marginLeft="10dp"/>
 
 </RelativeLayout>
