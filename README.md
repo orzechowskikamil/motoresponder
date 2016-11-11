@@ -11,3 +11,5 @@ Then app checks if sender is someone who should be responded automatically. By d
 If not, it try to measure if you are riding. Firstly using most cheap sensors, like proximity. They are checked for conditions usual for riding motorcycle, then more power consuming like accelerometer, and if phone is shaking like normal ride, finally GPS is used to measure your speed.
 
 And if app will assume that you are riding, app will automatically respond with configurable message.
+
+# Because I got very strong injury in motorcycle accident, project is postponed until ???????.
