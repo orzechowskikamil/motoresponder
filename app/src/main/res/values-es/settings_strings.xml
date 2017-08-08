@@ -1,0 +1,88 @@
+<resources>
+
+    <string name="responder_enabled_title">Moto Responder turned on</string>
+    <string name="responder_enabled_summary_on">
+        If you will not read a message or not receive an answer, application will try to determine if you are
+        currently riding, and if yes, it will send automatical response.
+    </string>
+    <string name="responder_enabled_summary_off">
+        Application process will not work in background, automatical responses will not be sent.
+    </string>
+
+    <string name="auto_response_to_sms_enabled_title">Answer to SMS</string>
+    <string name="auto_response_to_sms_enabled_summary_on">Application will answer to unread SMSes.</string>
+    <string name="auto_response_to_sms_enabled_summary_off">Application will ignore unread SMSes.</string>
+
+    <string name="auto_response_to_sms_template_title">Template of automatical answer to SMS</string>
+    <string name="auto_response_to_sms_template_summary">
+        This text will be used as template for automatical response to SMS, when you are riding on a motorcycle.
+    </string>
+
+    <string name="auto_response_to_call_enabled_title">Answer to calls</string>
+    <string name="auto_response_to_call_enabled_summary_on">
+        Application will answer to unanswered calls, when you are riding on a motorcycle.
+    </string>
+    <string name="auto_response_to_call_enabled_summary_off">
+        Application will ignore unanswered calls.
+    </string>
+
+    <string name="auto_response_to_call_template_title">Template of automatical answer to call</string>
+    <string name="auto_response_to_call_template_summary">
+        This text will be used as template for automatical response to unanswered call, when you are riding on a
+        motorcycle.
+    </string>
+
+    <string name="geolocation_request_enabled_title">Share location request</string>
+    <string name="geolocation_request_enabled_summary_on">
+        When application will receive request for sharing your location, it will send a SMS with link to google map
+        with your location marked on it.
+    </string>
+    <string name="geolocation_request_enabled_summary_off">
+        Application will treat request for sharing your location as any other incoming SMS, and will not share your
+        location with anyone.
+    </string>
+
+
+    <string name="auto_response_to_sms_with_geolocation_template_title">Template of location request answer.</string>
+    <string name="auto_response_to_sms_with_geolocation_template_summary" formatted="false">
+        This text will be used as template, for automatical response with your location, when you are riding a
+        motorcycle. This template should have tag "%location%", in this place will be placed link to the map.
+    </string>
+
+
+    <string name="showing_pending_notification_enabled_title">Notification about responding process</string>
+    <string name="showing_pending_notification_enabled_summary_on">
+        Application will show notification when it will be determining if you are riding or not. When process will stop,
+        notification will be hidden.
+    </string>
+    <string name="showing_pending_notification_enabled_summary_off">
+        Application will not inform you about responding process with notification.
+    </string>
+
+    <string name="showing_summary_notification_enabled_title">Summary notification</string>
+    <string name="showing_summary_notification_enabled_summary_on">
+        Application will show notification when it will send automatical response.
+    </string>
+    <string name="showing_summary_notification_enabled_summary_off">
+        Application will not show any notification about automatical response.
+    </string>
+
+    <string name="geolocation_request_pattern_1_title">Location request pattern #1</string>
+    <string name="geolocation_request_pattern_1_summary" formatted="false">
+        If this pattern will be found in incoming SMS message, it will be treat as location request.
+    </string>
+
+    <string name="showing_debug_notification_enabled_title">Debug notification</string>
+    <string name="showing_debug_notification_enabled_summary_on">
+        Application will show detailed notification about all conditions which influenced decision about responding or
+        not responding to call/SMS. It\'s useful for debug, or adjusting settings.
+    </string>
+    <string name="showing_debug_notification_enabled_summary_off">
+        Application will not show debug notification. Good for normal usage of application.
+    </string>
+
+    <string name="geolocation_request_pattern_2_title">Location request pattern #2</string>
+    <string name="geolocation_request_pattern_2_summary" formatted="false">Additional request pattern.</string>
+
+
+</resources>

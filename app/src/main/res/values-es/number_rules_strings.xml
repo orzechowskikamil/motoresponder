@@ -1,0 +1,64 @@
+<resources>
+
+    <string name="responding_restricted_to_contact_list_title">Respond only to your contacts</string>
+    <string name="responding_restricted_to_contact_list_summary_on">Application will respond only if number is in your
+        contacts list.
+    </string>
+    <string name="responding_restricted_to_contact_list_summary_off">Application will not care if number is in your
+        contacts list or not.
+    </string>
+
+    <string name="responding_restricted_to_current_country_title">Don\'t respond to foreign numbers</string>
+    <string name="responding_restricted_to_current_country_summary_on">Application will respond only if number is coming
+        from your country.
+    </string>
+    <string name="responding_restricted_to_current_country_summary_off">Application will not care if number is foreign
+        or not.
+    </string>
+    
+      <string name="already_responded_filtering_enabled_title">Limiting responses</string>
+    <string name="already_responded_filtering_enabled_summary_on">After sending one autoresponse to given number, application will wait with autoresponding to this number until you will send SMS/make call to this number. Caution: Enabling this option on Samsung or if you have custom dialer/SMS app can make application not responding at all.
+    </string>
+    <string name="already_responded_filtering_enabled_summary_off">Application will not limit autoresponses per number.
+    </string>
+    
+
+    <string name="dont_use_whitelist_text">Don\'t use whitelist</string>
+
+    <string name="whitelist_group_name_title">Whitelist</string>
+    <string name="whitelist_group_name_summary">
+        If you will choose any of listed contacts groups, this list will become whitelist (all numbers which aren\'t in
+        that group will not receive any automatical response). You can only choose groups which contains at least one
+        contact.
+    </string>
+
+    <string name="dont_use_blacklist_text">Don\'t use blacklist</string>
+
+
+    <string name="blacklist_group_name_title">Blacklist</string>
+    <string name="blacklist_group_name_summary">
+        If you will choose any of listed contact groups, this list will become blacklist (all numbers which are in this
+        group will not receive any automatical response). You can only choose groups which contains at least one
+        contact.
+    </string>
+
+
+    <string name="dont_use_geolocation_whitelist_text">Don\'t use whitelist</string>
+
+    <string name="geolocation_whitelist_group_name_title">Location request whitelist</string>
+    <string name="geolocation_whitelist_group_name_summary">
+        If you will choose any of listed contact groups, this list will become whitelist (all numbers which aren\'t in
+        that group will not receive any automatical response). You can only choose groups which contains at least one
+        contact.
+    </string>
+
+
+    <string name="device_phone_number_title">Your phone number</string>
+    <string name="device_phone_number_summary">
+        Your mobile device can\'t read your actual number from SIM card.
+        For preventing responding to your own number (for example, when voice mail call you), please put here your phone
+        number.
+    </string>
+
+
+</resources>

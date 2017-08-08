@@ -1,0 +1,77 @@
+<resources>
+    <bool name="terms_and_conditions_accepted_default_value">false</bool>
+
+    <bool name="responder_enabled_default_value">true</bool>
+
+    <bool name="responding_restricted_to_contact_list_default_value">true</bool>
+
+    <bool name="responding_restricted_to_current_country_default_value">true</bool>
+
+    <bool name="auto_response_to_sms_enabled_default_value">true</bool>
+
+    <string name="auto_response_to_sms_template_default_value">
+        (Automatical response) Hello. I can\'t answer your message, because I am riding motorcycle now.
+    </string>
+
+    <bool name="auto_response_to_call_enabled_default_value">true</bool>
+
+    <string name="auto_response_to_call_template_default_value">
+        (Automatical response) Hello. I can\'t answer your call, because I am riding motorcycle now.
+    </string>
+
+    <bool name="geolocation_request_enabled_default_value">false</bool>
+
+    <string name="whitelist_group_name_default_value"></string>
+
+    <string name="blacklist_group_name_default_value"></string>
+
+    <string name="auto_response_to_sms_with_geolocation_template_default_value" formatted="false">
+        (Automatical response) Hello. I am actually riding motorcycle and my location is: %location%
+    </string>
+
+    <bool name="showing_pending_notification_enabled_default_value">false</bool>
+
+    <bool name="showing_summary_notification_enabled_default_value">true</bool>
+
+    <bool name="showing_debug_notification_enabled_default_value">false</bool>
+
+    <string name="geolocation_request_pattern_1_default_value" formatted="false">where are you</string>
+
+    <string name="geolocation_request_pattern_2_default_value" formatted="false">location</string>
+
+    <string name="geolocation_whitelist_group_name_default_value" formatted="false"></string>
+
+    <string name="device_phone_number_default_value"></string>
+
+    <bool name="sensor_check_enabled_default_value">true</bool>
+
+    <bool name="is_riding_assumed_default_value">false</bool>
+
+    <bool name="assume_screen_unlocked_as_not_riding_default_value">true</bool>
+
+    <integer name="wait_before_response_default_value">300</integer>
+
+    <bool name="include_proximity_check_default_value">true</bool>
+
+    <bool name="wifi_check_enabled_default_value">true</bool>
+
+    <integer name="sure_riding_speed_default_value">40</integer>
+
+    <integer name="staying_still_speed_default_value">3</integer>
+
+    <integer name="quick_speed_check_duration_default_value">30</integer>
+
+    <integer name="long_speed_check_duration_default_value">240</integer>
+
+    <integer name="required_accuracy_default_value">30</integer>
+
+    <bool name="include_accelerometer_check_default_value">true</bool>
+
+    <string name="acceleration_required_for_motion_default_value">0.2</string>
+    
+    <bool name="already_responded_filtering_enabled_default_value">true</bool>
+
+    <!-- it's not real setting but since it's value in shared preferences, empty string is required here to not have an error -->
+    <string name="custom_log_default_value"></string>
+
+</resources>

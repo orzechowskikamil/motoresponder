@@ -1,0 +1,71 @@
+<resources>
+    <!-- notifications -->
+    <string name="debug_notification_title_text">Motoresponder debug</string>
+    <string name="debug_notification_short_text">Close other notifications to see details.</string>
+
+    <string name="summary_notification_title_text">Motoresponder</string>
+    <string name="summary_notification_short_text" formatted="false">Auto response sent to %recipient%.</string>
+    <string name="summary_notification_big_text" formatted="false">Auto response sent to %recipient% because you was
+        riding when you got a SMS/call.
+    </string>
+
+    <string name="ongoing_notification_title_text">Motoresponder</string>
+    <string name="ongoing_notification_big_text">Motoresponder is trying to determine if you are riding now or not.
+    </string>
+
+
+    <string name="app_name">Motoresponder</string>
+    <string name="settings_activity_label">Motoresponder settings</string>
+
+    <string name="main_preferences_title">Basic settings</string>
+    <string name="main_preferences_summary">Basic settings of application.</string>
+
+    <string name="riding_preferences_title">Riding detection settings</string>
+    <string name="riding_preferences_summary">Here you can configure parameters of riding detection, according to your
+        needs.
+    </string>
+
+    <string name="number_rules_preferences_title">Contacts filtering settings</string>
+    <string name="number_rules_preferences_summary">Here you can configure to which contacts or groups application
+        can automatically respond.
+    </string>
+
+    <string name="how_it_works_preferences_title">How it works?</string>
+    <string name="how_it_works_preferences_summary">Here you can see how application works, or view log, or read
+        information about author.
+    </string>
+
+
+    <string name="disclaimer_title">Accept Motoresponder disclaimer</string>
+    <string name="disclaimer_message">
+        Authors of Motoresponder made all efforts to make it working as best as it can (we are using it on daily
+        basis).\n\n
+
+        But it is possible that application has some bugs inside. \n\n
+
+        Because application operate on a little bit risky field, which is automatic responding for incoming SMS and
+        calls, we advice caution with using it in case of very expensive phone subscription. \n\n
+
+        Application has functionality of sharing your location with choosen group of people (when you are riding, and
+        they are asking for it). It is disabled by default. Please take care during configuring it, because otherwise
+        people who shouldn\'t know your location, will be able to get it. \n\n
+
+        We give to you application for free, \"as it is\" and even if we make all efforts to make it perfect, your are
+        using it on your own risk. \n\n
+
+        So, authors can\'t be responsible to any damages made by application.\n\n
+        If you don\'t accept this, please don\'t use application, and uninstall it. \n\n
+
+        Authors of Motoresponder deeply believe that nobody should disturb you, when you enjoy riding on your bike.
+        But some sort of people who never ride a motorcycle, never understand simple fact that (unless you have
+        headset/intercom) you can\'t answer them when you are riding, and if we are not answering, it means that we
+        are riding. They will call us fifteen times, until you will stop a motorcycle, and answer them.
+        This application is solving this problem. Enjoy your ride! \n\n
+
+        Credits: Orzech &amp; Medziku
+    </string>
+    <string name="disclaimer_accept">Accept</string>
+    <string name="disclaimer_reject">Reject</string>
+
+
+</resources>

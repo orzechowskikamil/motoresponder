@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="wait_before_response_entries">
+        <item>Immediately</item>
+        <item>Very quickly (30 sec)</item>
+        <item>Quickly (1 sec)</item>
+        <item>Normal (5 min)</item>
+        <item>After big delay (15 min)</item>
+    </string-array>
+
+    <string-array name="wait_before_response_entry_values">
+        <item>1</item>
+        <item>30</item>
+        <item>60</item>
+        <item>300</item>
+        <item>900</item>
+    </string-array>
+
+</resources>

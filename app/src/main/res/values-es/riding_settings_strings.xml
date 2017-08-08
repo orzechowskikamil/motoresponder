@@ -1,0 +1,101 @@
+<resources>
+
+    <string name="sensor_check_enabled_title">Riding smart check</string>
+    <string name="sensor_check_enabled_summary_on">Application will use all possible sensors of the device to
+        automatically guess if you are riding in moment of incoming SMS/call or not.
+    </string>
+    <string name="sensor_check_enabled_summary_off">Application will not try to detect if you are riding.</string>
+
+
+    <string name="is_riding_assumed_title">I am riding now</string>
+    <string name="is_riding_assumed_summary_on">Application will assume that you are riding now. If smart check is enabled, it will be not performed because it\'s reundant.</string>
+    <string name="is_riding_assumed_summary_off">Application will assume that you are not riding. If smart check is enabled, it still can automatically detect when you are riding.</string>
+
+
+    <string name="assume_screen_unlocked_as_not_riding_title">Lockscreen test</string>
+    <string name="assume_screen_unlocked_as_not_riding_summary_on">
+        If device has unlocked, screen, application will assume that you are not riding (because you are doing something
+        on your device). If you will unlock screen during "Wait before response" delay, or sensor checks, application
+        will stop checks, and assume that you are not riding also.
+    </string>
+    <string name="assume_screen_unlocked_as_not_riding_summary_off">Application will not care if device has unlocked
+        screen or not.
+    </string>
+
+    <string name="wait_before_response_title">Wait before response</string>
+    <string name="wait_before_response_summary">Application will wait with automatical response, giving you time to
+        respond (or not) manually.
+    </string>
+    <string name="wait_before_response_dialog_title">Delay value...</string>
+
+
+    <string name="include_proximity_check_title">Proximity sensor test</string>
+    <string name="include_proximity_check_summary_on">
+        If proximity sensor reports that device screen is not near something, application will assume that you
+        are not riding (if you are riding, you should have phone in pocket - so device screen is near something).
+    </string>
+    <string name="include_proximity_check_summary_off">Application will not care about proximity sensor values.
+    </string>
+
+    <string name="wifi_check_enabled_title">WiFi test</string>
+    <string name="wifi_check_enabled_summary_on">If your device is connected to WiFi network, application will
+        assume that you are not riding (because being connected to WiFi means that you are in some building, so you are
+        not riding now).
+    </string>
+    <string name="wifi_check_enabled_summary_off">Application will not care about WiFi connection status.</string>
+
+
+    <string name="sure_riding_speed_title">Riding speed (km/h)</string>
+    <string name="sure_riding_speed_summary">If GPS will report that you exceeded this speed, application will assume
+        that you are riding on a motorcycle (For imperial units: 1 mile = approx 1,6km/h).
+    </string>
+
+
+    <string name="staying_still_speed_title">Staying still speed (km/h)</string>
+    <string name="staying_still_speed_summary">
+        Application will treat this speed and lower speeds as staying still. Best if it is like 3km/h, because sometimes
+        GPS report speed up to 3km/h when you are staying still in reality (For imperial units: 1 mile = approx
+        1,6km/h).
+    </string>
+
+
+    <string name="quick_speed_check_duration_title">Short GPS check duration (s)</string>
+    <string name="quick_speed_check_duration_summary">
+        Application will try to measure your speed by GPS for this amount of seconds.
+        If it will fail (timeout), application will assume that you are inside building, without GPS signal.
+        This value should be adjusted, to make GPS always fail inside building, and always succeed outside building.
+    </string>
+
+
+    <string name="long_speed_check_duration_title">Long GPS check duration (s)</string>
+    <string name="long_speed_check_duration_summary">
+        If first test will succeed to measure your speed, but it will be slower than "Riding speed", application will
+        perform longer GPS test, to see if you are not staying in front of the traffic lights.
+        This value should be adjusted, to let you enough time to have green light and start riding, before long GPS
+        check
+        will be timeouted.
+    </string>
+
+
+    <string name="required_accuracy_title">GPS accuracy (meters)</string>
+    <string name="required_accuracy_summary">
+        GPS result must be equally or more accurate than this value, to finish short and long GPS check.
+        Smaller value is more accurate. Depending on GPS sensor on your device, very high accuracies can be impossible
+        to achieve and cause timeouts everytime, even when you are really riding.
+    </string>
+
+    <string name="include_accelerometer_check_title">Accelerometer test</string>
+    <string name="include_accelerometer_check_summary_on">Application will not respond automatically, if accelerometer
+        will not detect shakes (device laying still suggest that you are not riding, usually during ride there are some
+        shakes).
+    </string>
+    <string name="include_accelerometer_check_summary_off">Application will not care about values from accelerometer.
+    </string>
+
+
+    <string name="acceleration_required_for_motion_title">Shakes acceleration (m/s)</string>
+    <string name="acceleration_required_for_motion_summary">Accelerometer must report higher acceleration than this value,
+        to assume that device is not laying still and you are possibly riding.
+    </string>
+
+</resources>
