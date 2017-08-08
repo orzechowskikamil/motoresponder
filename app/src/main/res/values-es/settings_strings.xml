@@ -1,75 +1,73 @@
 <resources>
 
-    <string name="responder_enabled_title">Moto Responder turned on</string>
+    <!-- Spanish translation made by Adolfo Alsina <stardustaa@gmail.com> - thanks!! -->
+
+    <string name="responder_enabled_title">Moto Responder activado</string>
     <string name="responder_enabled_summary_on">
-        If you will not read a message or not receive an answer, application will try to determine if you are
-        currently riding, and if yes, it will send automatical response.
+        Si no lee un mensaje o no recibe una respuesta, la aplicación intentará determina si usted está conduciendo,
+        y si así es, enviará una respuesta automática.
     </string>
     <string name="responder_enabled_summary_off">
-        Application process will not work in background, automatical responses will not be sent.
+        La aplicación no funcionará en segundo plano, las respuestas automáticas no se enviarán.
     </string>
 
-    <string name="auto_response_to_sms_enabled_title">Answer to SMS</string>
-    <string name="auto_response_to_sms_enabled_summary_on">Application will answer to unread SMSes.</string>
-    <string name="auto_response_to_sms_enabled_summary_off">Application will ignore unread SMSes.</string>
+    <string name="auto_response_to_sms_enabled_title">Respuesta a SMS</string>
+    <string name="auto_response_to_sms_enabled_summary_on">La aplicación responderá los SMSes no leídos.</string>
+    <string name="auto_response_to_sms_enabled_summary_off">La aplicación ignorará los SMSes no leídos.</string>
 
-    <string name="auto_response_to_sms_template_title">Template of automatical answer to SMS</string>
+    <string name="auto_response_to_sms_template_title">Modelo de respuesta automática a SMS</string>
     <string name="auto_response_to_sms_template_summary">
-        This text will be used as template for automatical response to SMS, when you are riding on a motorcycle.
+        Este texto se utilizará como modelo para la respuesta automática a los mensajes SMS, cuando conduce una motocicleta.
     </string>
 
-    <string name="auto_response_to_call_enabled_title">Answer to calls</string>
+    <string name="auto_response_to_call_enabled_title">Respuesta a las llamadas</string>
     <string name="auto_response_to_call_enabled_summary_on">
-        Application will answer to unanswered calls, when you are riding on a motorcycle.
+        La aplicación responderá las llamadas no contestadas,  cuando conduces una motocicleta.
     </string>
     <string name="auto_response_to_call_enabled_summary_off">
-        Application will ignore unanswered calls.
+        La aplicación ignorará las llamadas no contestadas.
     </string>
 
-    <string name="auto_response_to_call_template_title">Template of automatical answer to call</string>
+    <string name="auto_response_to_call_template_title">Modelo de respuesta automática a llamadas</string>
     <string name="auto_response_to_call_template_summary">
-        This text will be used as template for automatical response to unanswered call, when you are riding on a
-        motorcycle.
+        Este texto se utilizará como modelo para la respuesta a una llamada sin respuesta, cuando esté conduciendo una motocicleta.
     </string>
 
-    <string name="geolocation_request_enabled_title">Share location request</string>
+    <string name="geolocation_request_enabled_title">Solicitud de compartir su ubicación</string>
     <string name="geolocation_request_enabled_summary_on">
-        When application will receive request for sharing your location, it will send a SMS with link to google map
-        with your location marked on it.
+        Cuando la aplicación reciba una solicitud para compartir su ubicación, enviará un SMS con un enlace a Google Map con su ubicación marcada en él.
     </string>
     <string name="geolocation_request_enabled_summary_off">
-        Application will treat request for sharing your location as any other incoming SMS, and will not share your
-        location with anyone.
+        La aplicación tratará la solicitud de compartir su ubicación como cualquier otro SMS entrante, y  no compartirá su ubicación con nadie.
     </string>
 
 
-    <string name="auto_response_to_sms_with_geolocation_template_title">Template of location request answer.</string>
+    <string name="auto_response_to_sms_with_geolocation_template_title">Modelo de respuesta de solicitud de ubicación</string>
     <string name="auto_response_to_sms_with_geolocation_template_summary" formatted="false">
-        This text will be used as template, for automatical response with your location, when you are riding a
-        motorcycle. This template should have tag "%location%", in this place will be placed link to the map.
+        Este texto se utilizará como modelo, para respuesta automática con su ubicación, cuando usted está conduciendo
+        una motocicleta. Este modelo debe tener etiqueta %location%, en este lugar se colocará el enlace al mapa.
     </string>
 
 
-    <string name="showing_pending_notification_enabled_title">Notification about responding process</string>
+    <string name="showing_pending_notification_enabled_title">Notificación del proceso de respuesta.</string>
     <string name="showing_pending_notification_enabled_summary_on">
-        Application will show notification when it will be determining if you are riding or not. When process will stop,
-        notification will be hidden.
+        La aplicación mostrará notificación cuando determine si usted está conduciendo. Cuando se detenga, la notificación se oculta.
     </string>
     <string name="showing_pending_notification_enabled_summary_off">
-        Application will not inform you about responding process with notification.
+        La aplicación mostrará notificación cuando determine si usted está conduciendo. Cuando se detenga, la notificación se oculta.
     </string>
 
-    <string name="showing_summary_notification_enabled_title">Summary notification</string>
+    <string name="showing_summary_notification_enabled_title">Resumen de Notificaciones</string>
     <string name="showing_summary_notification_enabled_summary_on">
-        Application will show notification when it will send automatical response.
+        La aplicación mostrará notificación cuando se envié una respuesta automática.
     </string>
     <string name="showing_summary_notification_enabled_summary_off">
-        Application will not show any notification about automatical response.
+        La aplicación mostrará notificación cuando se envié una respuesta automática.
     </string>
 
-    <string name="geolocation_request_pattern_1_title">Location request pattern #1</string>
+    <string name="geolocation_request_pattern_1_title">Solicitud de ubicación referencia # 1</string>
     <string name="geolocation_request_pattern_1_summary" formatted="false">
-        If this pattern will be found in incoming SMS message, it will be treat as location request.
+        Si se encuentra este patrón en SMS entrantes mensaje, se tratará como solicitud de ubicación.
     </string>
 
     <string name="showing_debug_notification_enabled_title">Debug notification</string>
@@ -81,8 +79,8 @@
         Application will not show debug notification. Good for normal usage of application.
     </string>
 
-    <string name="geolocation_request_pattern_2_title">Location request pattern #2</string>
-    <string name="geolocation_request_pattern_2_summary" formatted="false">Additional request pattern.</string>
+    <string name="geolocation_request_pattern_2_title">Solicitud de ubicación referencia # 2</string>
+    <string name="geolocation_request_pattern_2_summary" formatted="false">Solicitud de referencia adicional.</string>
 
 
 </resources>

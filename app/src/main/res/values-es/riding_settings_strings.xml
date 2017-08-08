@@ -1,101 +1,108 @@
 <resources>
 
-    <string name="sensor_check_enabled_title">Riding smart check</string>
-    <string name="sensor_check_enabled_summary_on">Application will use all possible sensors of the device to
-        automatically guess if you are riding in moment of incoming SMS/call or not.
+    <!-- Spanish translation made by Adolfo Alsina <stardustaa@gmail.com> - thanks!! -->
+
+    <string name="sensor_check_enabled_title">Control inteligente de conducción</string>
+    <string name="sensor_check_enabled_summary_on">La aplicación utilizará todos los sensores posibles del dispositivo
+        para determinar automáticamente si usted está conduciendo o no, en el momento que recibe SMS / llamada.
     </string>
-    <string name="sensor_check_enabled_summary_off">Application will not try to detect if you are riding.</string>
+    <string name="sensor_check_enabled_summary_off">La aplicación no detectará si usted está conduciendo.</string>
 
 
-    <string name="is_riding_assumed_title">I am riding now</string>
-    <string name="is_riding_assumed_summary_on">Application will assume that you are riding now. If smart check is enabled, it will be not performed because it\'s reundant.</string>
-    <string name="is_riding_assumed_summary_off">Application will assume that you are not riding. If smart check is enabled, it still can automatically detect when you are riding.</string>
+    <string name="is_riding_assumed_title">Estoy conduciendo ahora</string>
+    <string name="is_riding_assumed_summary_on">
+        La aplicación asumirá que usted está conduciendo. Si el control inteligente está activado, no lo considera por ser redundante.
+    </string>
+    <string name="is_riding_assumed_summary_off">
+        La aplicación asumirá que usted no está conduciendo. Si el control inteligente está activado, el control detectará automáticamente cuando usted este conduciendo.
+    </string>
 
 
-    <string name="assume_screen_unlocked_as_not_riding_title">Lockscreen test</string>
+    <string name="assume_screen_unlocked_as_not_riding_title">Prueba de bloqueo de pantalla</string>
     <string name="assume_screen_unlocked_as_not_riding_summary_on">
-        If device has unlocked, screen, application will assume that you are not riding (because you are doing something
-        on your device). If you will unlock screen during "Wait before response" delay, or sensor checks, application
-        will stop checks, and assume that you are not riding also.
+        Si en el dispositivo se ha desbloqueado la pantalla, la aplicación asumirá que usted no está conduciendo
+        (porque está haciendo algo en su dispositivo). Si desbloquea la pantalla durante el retardo de respuesta,
+        o los sensores están en proceso de detección, la aplicación detendrá los controles y asumirá que usted no
+        está conduciendo tampoco.
     </string>
-    <string name="assume_screen_unlocked_as_not_riding_summary_off">Application will not care if device has unlocked
-        screen or not.
+    <string name="assume_screen_unlocked_as_not_riding_summary_off">La aplicación no toma en cuenta si el dispositivo
+        tiene la pantalla desbloqueada o no.
     </string>
 
-    <string name="wait_before_response_title">Wait before response</string>
-    <string name="wait_before_response_summary">Application will wait with automatical response, giving you time to
-        respond (or not) manually.
+    <string name="wait_before_response_title">Espera antes de responder</string>
+    <string name="wait_before_response_summary">La aplicación esperará para enviar la respuesta automática,
+        dándole tiempo para responder (o no) manualmente.
     </string>
-    <string name="wait_before_response_dialog_title">Delay value...</string>
+    <string name="wait_before_response_dialog_title">Valor de retardo</string>
 
 
-    <string name="include_proximity_check_title">Proximity sensor test</string>
+    <string name="include_proximity_check_title">Prueba del sensor de proximidad</string>
     <string name="include_proximity_check_summary_on">
-        If proximity sensor reports that device screen is not near something, application will assume that you
-        are not riding (if you are riding, you should have phone in pocket - so device screen is near something).
+        Si el sensor de proximidad informa que la pantalla no está cerca de algo, la aplicación asumirá que usted no
+        está conduciendo (si usted está conduciendo, usted debe tener el teléfono en el bolsillo - por lo que la pantalla del dispositivo está cerca de algo).
     </string>
-    <string name="include_proximity_check_summary_off">Application will not care about proximity sensor values.
+    <string name="include_proximity_check_summary_off">La aplicación no toma en cuenta los valores del sensor de proximidad.
     </string>
 
-    <string name="wifi_check_enabled_title">WiFi test</string>
-    <string name="wifi_check_enabled_summary_on">If your device is connected to WiFi network, application will
-        assume that you are not riding (because being connected to WiFi means that you are in some building, so you are
-        not riding now).
+    <string name="wifi_check_enabled_title">Prueba WiFi</string>
+    <string name="wifi_check_enabled_summary_on">Si su dispositivo está conectado a una red de WiFi,
+        la aplicación asumirá que usted no está conduciendo (porque estar conectado a
+        WiFi significa que está en algún edificio, por lo que no está conduciendo en ese momento).
     </string>
-    <string name="wifi_check_enabled_summary_off">Application will not care about WiFi connection status.</string>
-
-
-    <string name="sure_riding_speed_title">Riding speed (km/h)</string>
-    <string name="sure_riding_speed_summary">If GPS will report that you exceeded this speed, application will assume
-        that you are riding on a motorcycle (For imperial units: 1 mile = approx 1,6km/h).
+    <string name="wifi_check_enabled_summary_off">La aplicación no toma en cuenta el estado de conexión a WiFi.
     </string>
 
 
-    <string name="staying_still_speed_title">Staying still speed (km/h)</string>
+    <string name="sure_riding_speed_title">Velocidad de conducción (km/h)</string>
+    <string name="sure_riding_speed_summary">Si el GPS informa que superó esta velocidad, la aplicación asume que usted
+        está conduciendo en una motocicleta (para unidades inglesas: 1 milla = aprox. 1,6 km/h).
+    </string>
+
+    <string name="staying_still_speed_title">Mantenerse en velocidad constante (km/h)</string>
     <string name="staying_still_speed_summary">
-        Application will treat this speed and lower speeds as staying still. Best if it is like 3km/h, because sometimes
-        GPS report speed up to 3km/h when you are staying still in reality (For imperial units: 1 mile = approx
-        1,6km/h).
+        A esta velocidad y velocidades más bajas, la aplicación considerará que está quieto. Es mejor ajustar al menos
+        a  3km / h, porque a veces el GPS informa hasta más de 3 km/h aunque esté quieto en realidad.
+        (para unidades inglesas: 1 milla = aprox. 1,6 km/h)
     </string>
 
-
-    <string name="quick_speed_check_duration_title">Short GPS check duration (s)</string>
+    <string name="quick_speed_check_duration_title">Tiempo de comprobación de GPS corto (s)</string>
     <string name="quick_speed_check_duration_summary">
-        Application will try to measure your speed by GPS for this amount of seconds.
-        If it will fail (timeout), application will assume that you are inside building, without GPS signal.
-        This value should be adjusted, to make GPS always fail inside building, and always succeed outside building.
+        La aplicación intentará medir su velocidad con GPS durante esta cantidad de segundos. Si falla (tiempo excedido),
+        la aplicación asumirá que usted está dentro de un edificio, sin señal GPS. Este valor debe ajustarse,
+        para hacer que el GPS siempre falle dentro del edificio, y siempre tenga éxito fuera del edificio.
     </string>
 
 
-    <string name="long_speed_check_duration_title">Long GPS check duration (s)</string>
+    <string name="long_speed_check_duration_title">Tiempo de comprobación de GPS largo (s)</string>
     <string name="long_speed_check_duration_summary">
-        If first test will succeed to measure your speed, but it will be slower than "Riding speed", application will
-        perform longer GPS test, to see if you are not staying in front of the traffic lights.
-        This value should be adjusted, to let you enough time to have green light and start riding, before long GPS
-        check
-        will be timeouted.
+        Si la primera prueba tiene éxito para medir su velocidad, pero es más lenta que la velocidad de conducción,
+        la aplicación realizará una prueba de GPS más larga, para ver si no te has detenido delante de un semáforo.
+        Este valor debe ser suficiente para darle tiempo a que el semáforo cambie a luz verde y comience a andar,
+        antes que el tiempo de control del GPS se exceda.
     </string>
 
 
-    <string name="required_accuracy_title">GPS accuracy (meters)</string>
+
+
+    <string name="required_accuracy_title">Precisión GPS (metros)</string>
     <string name="required_accuracy_summary">
-        GPS result must be equally or more accurate than this value, to finish short and long GPS check.
-        Smaller value is more accurate. Depending on GPS sensor on your device, very high accuracies can be impossible
-        to achieve and cause timeouts everytime, even when you are really riding.
+        El resultado GPS debe ser igual o más preciso que este valor, para finalizar la comprobación de GPS corta y
+        larga. Valores más pequeños es más exacto. Dependiendo la precisión del GPS en su dispositivo, precisiones muy
+        altas pueden ser imposibles de lograr y causar tiempos excedidos todo el tiempo, incluso cuando usted está
+        realmente conduciendo.
     </string>
 
-    <string name="include_accelerometer_check_title">Accelerometer test</string>
-    <string name="include_accelerometer_check_summary_on">Application will not respond automatically, if accelerometer
-        will not detect shakes (device laying still suggest that you are not riding, usually during ride there are some
-        shakes).
+    <string name="include_accelerometer_check_title">Prueba del acelerómetro</string>
+    <string name="include_accelerometer_check_summary_on">La aplicación no responderá automáticamente,
+        si el acelerómetro no detecta movimientos (el dispositivo en reposos sugiere que usted no está conduciendo,
+        generalmente durante la conducción hay movimientos).
     </string>
-    <string name="include_accelerometer_check_summary_off">Application will not care about values from accelerometer.
+    <string name="include_accelerometer_check_summary_off">La aplicación no toma en cuenta los valores del acelerómetro.
     </string>
 
-
-    <string name="acceleration_required_for_motion_title">Shakes acceleration (m/s)</string>
-    <string name="acceleration_required_for_motion_summary">Accelerometer must report higher acceleration than this value,
-        to assume that device is not laying still and you are possibly riding.
+    <string name="acceleration_required_for_motion_title">Aceleración de movimientos (m/s)</string>
+    <string name="acceleration_required_for_motion_summary">El acelerómetro debe reportar una aceleración mayor que la
+        de  este valor, para considerar que el dispositivo no está en reposo, y usted está conduciendo posiblemente.
     </string>
 
 </resources>

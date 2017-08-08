@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- Spanish translation made by Adolfo Alsina <stardustaa@gmail.com> - thanks!! -->
+
     <string name="log_viewer_title">See log</string>
     <string name="log_viewer_summary">You can see here, what factors influenced application\'s behavior.</string>
     <string name="log_viewer_dialog_title">Log</string>

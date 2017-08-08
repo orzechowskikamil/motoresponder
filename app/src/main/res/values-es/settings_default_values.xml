@@ -1,4 +1,7 @@
 <resources>
+
+    <!-- Spanish translation made by Adolfo Alsina <stardustaa@gmail.com> - thanks!! -->
+
     <bool name="terms_and_conditions_accepted_default_value">false</bool>
 
     <bool name="responder_enabled_default_value">true</bool>
@@ -10,13 +13,13 @@
     <bool name="auto_response_to_sms_enabled_default_value">true</bool>
 
     <string name="auto_response_to_sms_template_default_value">
-        (Automatical response) Hello. I can\'t answer your message, because I am riding motorcycle now.
+        (Respuesta automática). Hola. No puedo contestar tu mensaje ahora. Estoy conduciendo mi motocicleta.
     </string>
 
     <bool name="auto_response_to_call_enabled_default_value">true</bool>
 
     <string name="auto_response_to_call_template_default_value">
-        (Automatical response) Hello. I can\'t answer your call, because I am riding motorcycle now.
+        (Respuesta automática). Hola. No puedo contestar tu llamada ahora. Estoy conduciendo mi motocicleta.
     </string>
 
     <bool name="geolocation_request_enabled_default_value">false</bool>
@@ -26,7 +29,7 @@
     <string name="blacklist_group_name_default_value"></string>
 
     <string name="auto_response_to_sms_with_geolocation_template_default_value" formatted="false">
-        (Automatical response) Hello. I am actually riding motorcycle and my location is: %location%
+        (Respuesta automática). Hola. Actualmente estoy conducido mi motocicleta, y mi ubicación es: %location%
     </string>
 
     <bool name="showing_pending_notification_enabled_default_value">false</bool>
@@ -35,9 +38,9 @@
 
     <bool name="showing_debug_notification_enabled_default_value">false</bool>
 
-    <string name="geolocation_request_pattern_1_default_value" formatted="false">where are you</string>
+    <string name="geolocation_request_pattern_1_default_value" formatted="false">donde te encuentras</string>
 
-    <string name="geolocation_request_pattern_2_default_value" formatted="false">location</string>
+    <string name="geolocation_request_pattern_2_default_value" formatted="false">ubicación</string>
 
     <string name="geolocation_whitelist_group_name_default_value" formatted="false"></string>
 

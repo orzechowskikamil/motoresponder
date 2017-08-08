@@ -1,5 +1,7 @@
 <resources>
 
+    <!-- Spanish translation made by Adolfo Alsina <stardustaa@gmail.com> - thanks!! -->
+
     <string name="responding_restricted_to_contact_list_title">Respond only to your contacts</string>
     <string name="responding_restricted_to_contact_list_summary_on">Application will respond only if number is in your
         contacts list.

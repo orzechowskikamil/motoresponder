@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- Spanish translation made by Adolfo Alsina <stardustaa@gmail.com> - thanks!! -->
+
     <string-array name="wait_before_response_entries">
-        <item>Immediately</item>
-        <item>Very quickly (30 sec)</item>
-        <item>Quickly (1 sec)</item>
+        <item>Inmediatamente</item>
+        <item>Muy rápido (30 seg)</item>
+        <item>Rápido (1 min)</item>
         <item>Normal (5 min)</item>
-        <item>After big delay (15 min)</item>
+        <item>Gran retardo (15 min)</item>
     </string-array>
 
     <string-array name="wait_before_response_entry_values">

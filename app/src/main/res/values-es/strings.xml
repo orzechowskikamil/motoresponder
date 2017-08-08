@@ -1,4 +1,6 @@
 <resources>
+    <!-- Spanish translation made by Adolfo Alsina <stardustaa@gmail.com> - thanks!! -->
+
     <!-- notifications -->
     <string name="debug_notification_title_text">Motoresponder debug</string>
     <string name="debug_notification_short_text">Close other notifications to see details.</string>
@@ -15,24 +17,20 @@
 
 
     <string name="app_name">Motoresponder</string>
-    <string name="settings_activity_label">Motoresponder settings</string>
+    <string name="settings_activity_label">Ajustes de Motoresponder</string>
 
-    <string name="main_preferences_title">Basic settings</string>
-    <string name="main_preferences_summary">Basic settings of application.</string>
+    <string name="main_preferences_title">Ajustes básicos</string>
+    <string name="main_preferences_summary">Ajustes básicos de la aplicación.</string>
 
-    <string name="riding_preferences_title">Riding detection settings</string>
-    <string name="riding_preferences_summary">Here you can configure parameters of riding detection, according to your
-        needs.
-    </string>
+    <string name="riding_preferences_title">Ajustes de detección de conducción</string>
+    <string name="riding_preferences_summary">Aquí puede configurar parámetros de detección de conducción, según sus necesidades.</string>
 
-    <string name="number_rules_preferences_title">Contacts filtering settings</string>
-    <string name="number_rules_preferences_summary">Here you can configure to which contacts or groups application
-        can automatically respond.
-    </string>
+    <string name="number_rules_preferences_title">Ajustes de filtrado de contactos</string>
+    <string name="number_rules_preferences_summary">Aquí puede configurar a qué contactos o grupo de aplicaciones pueden responder automáticamente.</string>
 
-    <string name="how_it_works_preferences_title">How it works?</string>
-    <string name="how_it_works_preferences_summary">Here you can see how application works, or view log, or read
-        information about author.
+    <string name="how_it_works_preferences_title">¿Cómo funciona?</string>
+    <string name="how_it_works_preferences_summary">Aquí puede ver cómo funciona la aplicación, o ver el registro de
+        actividad del sistema, o leer información sobre el autor.
     </string>
 
 
