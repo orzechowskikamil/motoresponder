@@ -17,12 +17,13 @@
 
     <string name="auto_response_to_sms_template_title">Modelo de respuesta automática a SMS</string>
     <string name="auto_response_to_sms_template_summary">
-        Este texto se utilizará como modelo para la respuesta automática a los mensajes SMS, cuando conduce una motocicleta.
+        Este texto se utilizará como modelo para la respuesta automática a los mensajes SMS, cuando conduce una
+        motocicleta.
     </string>
 
     <string name="auto_response_to_call_enabled_title">Respuesta a las llamadas</string>
     <string name="auto_response_to_call_enabled_summary_on">
-        La aplicación responderá las llamadas no contestadas,  cuando conduces una motocicleta.
+        La aplicación responderá las llamadas no contestadas, cuando conduces una motocicleta.
     </string>
     <string name="auto_response_to_call_enabled_summary_off">
         La aplicación ignorará las llamadas no contestadas.
@@ -30,19 +31,23 @@
 
     <string name="auto_response_to_call_template_title">Modelo de respuesta automática a llamadas</string>
     <string name="auto_response_to_call_template_summary">
-        Este texto se utilizará como modelo para la respuesta a una llamada sin respuesta, cuando esté conduciendo una motocicleta.
+        Este texto se utilizará como modelo para la respuesta a una llamada sin respuesta, cuando esté conduciendo una
+        motocicleta.
     </string>
 
     <string name="geolocation_request_enabled_title">Solicitud de compartir su ubicación</string>
     <string name="geolocation_request_enabled_summary_on">
-        Cuando la aplicación reciba una solicitud para compartir su ubicación, enviará un SMS con un enlace a Google Map con su ubicación marcada en él.
+        Cuando la aplicación reciba una solicitud para compartir su ubicación, enviará un SMS con un enlace a Google Map
+        con su ubicación marcada en él.
     </string>
     <string name="geolocation_request_enabled_summary_off">
-        La aplicación tratará la solicitud de compartir su ubicación como cualquier otro SMS entrante, y  no compartirá su ubicación con nadie.
+        La aplicación tratará la solicitud de compartir su ubicación como cualquier otro SMS entrante, y no compartirá
+        su ubicación con nadie.
     </string>
 
 
-    <string name="auto_response_to_sms_with_geolocation_template_title">Modelo de respuesta de solicitud de ubicación</string>
+    <string name="auto_response_to_sms_with_geolocation_template_title">Modelo de respuesta de solicitud de ubicación
+    </string>
     <string name="auto_response_to_sms_with_geolocation_template_summary" formatted="false">
         Este texto se utilizará como modelo, para respuesta automática con su ubicación, cuando usted está conduciendo
         una motocicleta. Este modelo debe tener etiqueta %location%, en este lugar se colocará el enlace al mapa.
@@ -51,10 +56,12 @@
 
     <string name="showing_pending_notification_enabled_title">Notificación del proceso de respuesta.</string>
     <string name="showing_pending_notification_enabled_summary_on">
-        La aplicación mostrará notificación cuando determine si usted está conduciendo. Cuando se detenga, la notificación se oculta.
+        La aplicación mostrará notificación cuando determine si usted está conduciendo. Cuando se detenga, la
+        notificación se oculta.
     </string>
     <string name="showing_pending_notification_enabled_summary_off">
-        La aplicación mostrará notificación cuando determine si usted está conduciendo. Cuando se detenga, la notificación se oculta.
+        La aplicación mostrará notificación cuando determine si usted está conduciendo. Cuando se detenga, la
+        notificación se oculta.
     </string>
 
     <string name="showing_summary_notification_enabled_title">Resumen de Notificaciones</string>
@@ -70,13 +77,17 @@
         Si se encuentra este patrón en SMS entrantes mensaje, se tratará como solicitud de ubicación.
     </string>
 
-    <string name="showing_debug_notification_enabled_title">Debug notification</string>
+    <string name="showing_debug_notification_enabled_title">Aviso de depuración</string>
+
     <string name="showing_debug_notification_enabled_summary_on">
-        Application will show detailed notification about all conditions which influenced decision about responding or
-        not responding to call/SMS. It\'s useful for debug, or adjusting settings.
+        La aplicación mostrará una recomendación
+        detallada sobre todas las condiciones que influyen en la decisión de responder
+        o no a llamadas / SMS. Es útil para depurar, o ajustar la configuración.
     </string>
+
     <string name="showing_debug_notification_enabled_summary_off">
-        Application will not show debug notification. Good for normal usage of application.
+        La aplicación no mostrará el aviso de depuración. Práctico
+        para su uso normal.
     </string>
 
     <string name="geolocation_request_pattern_2_title">Solicitud de ubicación referencia # 2</string>

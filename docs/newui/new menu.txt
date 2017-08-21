@@ -1,0 +1,6 @@
+Ustawienia -->
+    Tekst odpowiedzi -->
+    Filtrowanie kontaktów -->
+    Ustawienia zaawansowane -->
+        Ustawienia wykrywania jazdy -->
+        Log -->
