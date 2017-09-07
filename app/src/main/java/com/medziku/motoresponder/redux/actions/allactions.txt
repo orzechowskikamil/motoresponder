@@ -13,3 +13,53 @@ SETTINGS_LOADED
 
 CONTACTS_LOADED
 
+
+
+state{
+
+   respondingProcesses{
+    
+   }
+   
+   proximityState{
+    hasProximity
+   }
+   
+   gpsState {
+       isListening
+       updatesList
+   }
+   
+   accelerometerState{
+      isListening
+      updatesList
+   }
+
+  contactsList{
+  }
+  
+  settings{
+  }
+}
+
+
+reducers{
+proximityReducer{}
+
+respondingProcessReducer{
+incoming_message
+incoming_call
+}
+
+  gpsReducer{
+  }
+  
+  accelerometerReducer{
+  }
+  
+  contactList{
+  }
+  
+  settings{
+  }
+}
