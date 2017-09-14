@@ -5,7 +5,13 @@ public interface State {
     Accelerometer accelerometer();
     List<RespondingProcess> respondingProcesses();
     Settings settings();
+    Proximity proximity();
     
+    
+       @Value.Immutable
+    interface Proximity{
+    boolean proximity;
+    }
     
     @Value.Immutable
     interface GPS{}
