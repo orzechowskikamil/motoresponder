@@ -14,12 +14,28 @@ public interface State {
     interface Accelerometer{}
     
     @Value.Immutable
-    interface RespondingProcess{}
+    interface RespondingProcess{
+        String phoneNumber;
+    }
+    
+    @Value.Immutable
+    interface CallRespondingProcess extends RespondingProcess{
+    }
+    
+    interface MessageRespondingProcess extends RespondingProcess{
+        String message;
+    }
     
     @Value.Immutable
     interface Settings{
     boolean isEnabled();
     }
+    
+    @Value.Immutable
+    interface Contacts{
+    }
+    
+    
 }
     
      class Default {
