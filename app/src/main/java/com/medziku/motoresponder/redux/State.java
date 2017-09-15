@@ -3,7 +3,7 @@
 public interface State {
     GPS gps();
     Accelerometer accelerometer();
-    List<RespondingProcess> respondingProcesses();
+    RespondingProcesses respondingProcesses();
     Settings settings();
     Proximity proximity();
     
@@ -20,17 +20,26 @@ public interface State {
     interface Accelerometer{}
     
     @Value.Immutable
+    interface RespondingProcesses{
+        List<RespondingProcess> list;
+        int nextId;
+        
+          @Value.Immutable
     interface RespondingProcess{
         String phoneNumber;
+        int id;
     }
     
     @Value.Immutable
     interface CallRespondingProcess extends RespondingProcess{
     }
-    
+    @Value.Immutable
     interface MessageRespondingProcess extends RespondingProcess{
         String message;
     }
+    }
+    
+  
     
     @Value.Immutable
     interface Settings{
@@ -49,7 +58,10 @@ public interface State {
             return ImmutableState.builder()
                     .gps(ImmutableGPS.builder().build())
                     .accelerometer(ImmutableAccelerometer.builder().build())
-                    .respondingProcesses(new ArrayList<ImmutableRespondingProcess>())
+                    .respondingProcesses(ImmutableRespondingProcesses.builder()
+                                         .list(new ArrayList<ImmutableRespondingProcess>())
+                                         .nextId(0)
+                                         ).build()
                     .settings(ImmutableSettings.builder()
                       .isEnabled(false)
                       .build()
