@@ -14,14 +14,20 @@ public interface State {
     }
     
     @Value.Immutable
-    interface GPS{}
+    interface GPS{
+        ImmutableList<LocationUpdate> updatesList;
+        boolean isEnabled;
+    }
     
     @Value.Immutable
-    interface Accelerometer{}
+    interface Accelerometer{
+        ImmutableList<AccelerometerEvent> eventsList;
+        boolean isEnabled;
+    }
     
     @Value.Immutable
     interface RespondingProcesses{
-        List<RespondingProcess> list;
+        ImmutableList<RespondingProcess> list;
         int nextId;
         
           @Value.Immutable
@@ -56,10 +62,16 @@ public interface State {
      class Default {
         public static State build() {
             return ImmutableState.builder()
-                    .gps(ImmutableGPS.builder().build())
-                    .accelerometer(ImmutableAccelerometer.builder().build())
+                    .gps(ImmutableGPS.builder()
+                          .locationUpdates(new ImmutableList<LocationUpdate>())
+                                   .isEnabled(false)
+                                   .build())
+                    .accelerometer(ImmutableAccelerometer.builder()
+                                   .eventsList(new ImmutableList<AccelerometerEvent>())
+                                   .isEnabled(false)
+                                   .build())
                     .respondingProcesses(ImmutableRespondingProcesses.builder()
-                                         .list(new ArrayList<ImmutableRespondingProcess>())
+                                         .list(new ImmutableList<RespondingProcess>())
                                          .nextId(0)
                                          ).build()
                     .settings(ImmutableSettings.builder()
