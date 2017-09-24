@@ -1,103 +1,171 @@
 package com.medziku.motoresponder.redux;
 
-import com.google.common.collect.ImmutableList;
-import org.immutables.gson.Gson;
-import org.immutables.value.Value;
+import java.util.ArrayList;
+import java.util.List;
 
-@Value.Immutable
-@Gson.TypeAdapters
+class State {
+    GPS gps;
+    Accelerometer accelerometer;
+    RespondingProcesses respondingProcesses;
+    Settings settings;
+    boolean proximity;
+}
 
-public interface State {
-    GPS gps();
+class Accelerometer {
+    List<AccelerometerEvent> eventsList;
+    boolean isEnabled;
 
-    Accelerometer accelerometer();
-
-    RespondingProcesses respondingProcesses();
-
-    Settings settings();
-
-    Proximity proximity();
-
-    @Value.Immutable
-    interface Proximity {
-        boolean proximity();
+    public Accelerometer(Accelerometer old) {
+        this.eventsList = old.eventsList;
+        this.isEnabled = old.isEnabled;
     }
 
-    @Value.Immutable
-    interface GPS {
-        ImmutableList<LocationUpdate> updatesList();
-
-        boolean isEnabled();
-
-        @Value.Immutable
-        interface LocationUpdate {
-        }
+    public Accelerometer() {
     }
 
-    @Value.Immutable
-    interface Accelerometer {
-        ImmutableList<AccelerometerEvent> eventsList();
-
-        boolean isEnabled();
-
-        @Value.Immutable
-        interface AccelerometerEvent {
-        }
+    public Accelerometer clone() {
+        return new Accelerometer(this);
     }
 
-    @Value.Immutable
-    interface RespondingProcesses {
-        ImmutableList<RespondingProcess> list();
-
-        int nextId();
-
-
-        interface RespondingProcess {
-            String phoneNumber();
-
-            int id();
-        }
-
-        @Value.Immutable
-        interface CallRespondingProcess extends RespondingProcess {
-        }
-
-        @Value.Immutable
-        interface MessageRespondingProcess extends RespondingProcess {
-            String message();
-        }
+    public List<AccelerometerEvent> getClearEventsList() {
+        return new ArrayList<>();
     }
 
+    public List<AccelerometerEvent> getEventsListWith(AccelerometerEvent event) {
+        List<AccelerometerEvent> list = new ArrayList<>(this.eventsList);
+        list.add(event);
+        return list;
+    }
+}
 
-    @Value.Immutable
-    interface Settings {
-        boolean isEnabled();
+class AccelerometerEvent {
+}
+
+
+class RespondingProcesses {
+    List<RespondingProcess> list;
+    int nextId;
+
+
+    public RespondingProcesses(RespondingProcesses old) {
+        this.list = old.list;
+        this.nextId = old.nextId;
     }
 
-    @Value.Immutable
-    interface Contacts {
+    public RespondingProcesses() {
+
+
     }
+
+    public RespondingProcesses clone() {
+        return new RespondingProcesses(this);
+    }
+
+    public List<RespondingProcess> getListWith(RespondingProcess newProcess) {
+        List<RespondingProcess> list = new ArrayList<>(this.list);
+        list.add(newProcess);
+        return list;
+    }
+}
+
+abstract class RespondingProcess {
+    String phoneNumber;
+    int id;
+
+    public RespondingProcess(String phoneNumber, int id) {
+        this.phoneNumber = "";
+        this.id = id;
+    }
+}
+
+class CallRespondingProcess extends RespondingProcess {
+    public CallRespondingProcess(String phoneNumber, int id) {
+        super(phoneNumber, id);
+    }
+}
+
+class MessageRespondingProcess extends RespondingProcess {
+    String message;
+
+    public MessageRespondingProcess(String phoneNumber, String message, int id) {
+        super(phoneNumber, id);
+        this.message = message;
+    }
+}
+
+class Settings {
+    boolean isEnabled;
+
+    public Settings() {
+        this.isEnabled = false;
+    }
+
+    public Settings(Settings old) {
+        this.isEnabled = old.isEnabled;
+    }
+
+    public Settings clone() {
+        return new Settings(this);
+    }
+}
+
+class Contacts {
+}
+
+class GPS {
+    List<LocationUpdate> updatesList;
+    boolean isEnabled;
+
+    public GPS(GPS gps) {
+        this.updatesList = gps.updatesList;
+        this.isEnabled = gps.isEnabled;
+    }
+
+    public GPS() {
+
+    }
+
+    public GPS clone() {
+        return new GPS(this);
+    }
+
+    public List<LocationUpdate> getClearUpdatesList() {
+        return new ArrayList<>();
+    }
+
+    public List<LocationUpdate> getUpdatesListWith(LocationUpdate event) {
+        List<LocationUpdate> list = new ArrayList<>(this.updatesList);
+        list.add(event);
+        return list;
+    }
+}
+
+
+class LocationUpdate {
 }
 
 
 class Default {
     public static State build() {
-        return ImmutableState.builder()
-                .gps(ImmutableGPS.builder()
-                        .locationUpdates(new ImmutableList<LocationUpdate>())
-                        .isEnabled(false)
-                        .build())
-                .accelerometer(ImmutableAccelerometer.builder()
-                        .eventsList(new ImmutableList<AccelerometerEvent>())
-                        .isEnabled(false)
-                        .build())
-                .respondingProcesses(ImmutableRespondingProcesses.builder()
-                        .list(new ImmutableList<RespondingProcess>())
-                        .nextId(0)
-                ).build()
-                .settings(ImmutableSettings.builder()
-                        .isEnabled(false)
-                        .build()
-                ).build();
+        State state = new State();
+
+        state.gps = new GPS();
+        state.gps.isEnabled = false;
+        state.gps.updatesList = state.gps.getClearUpdatesList();
+
+        state.respondingProcesses = new RespondingProcesses();
+        state.respondingProcesses.list = new ArrayList<>();
+        state.respondingProcesses.nextId = 0;
+
+        state.proximity = false;
+
+        state.settings = new Settings();
+        state.settings.isEnabled = false;
+
+        state.accelerometer = new Accelerometer();
+        state.accelerometer.eventsList = state.accelerometer.getClearEventsList();
+        state.accelerometer.isEnabled = false;
+
+        return state;
     }
 }

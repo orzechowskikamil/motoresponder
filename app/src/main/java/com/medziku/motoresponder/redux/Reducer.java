@@ -1,122 +1,103 @@
 package com.medziku.motoresponder.redux;
 
 import android.util.Pair;
-import com.google.common.collect.ImmutableList;
 import trikita.jedux.Action;
 import trikita.jedux.Store;
 
 class Reducer implements Store.Reducer<Action, State> {
 
-
     public State reduce(Action action, State currentState) {
-        return ImmutableState.builder().from(currentState)
-                .gps(this.reduceGPS(action, currentState.gps()))
-                .accelerometer(this.reduceAccelerometer(action, currentState.accelerometer()))
-                .respondingProcesses(this.reduceRespondingProcesses(action, currentState.respondingProcesses()))
-                .settings(this.reduceSettings(action, currentState.settings()))
-                .proximity(this.reduceProximity(action, currentState.proximity()))
-                .build();
+        State newState = new State();
+
+        newState.gps = this.reduceGPS(action, currentState.gps);
+        newState.accelerometer = this.reduceAccelerometer(action, currentState.accelerometer);
+        newState.respondingProcesses = this.reduceRespondingProcesses(action, currentState.respondingProcesses);
+        newState.settings = this.reduceSettings(action, currentState.settings);
+        newState.proximity = this.reduceProximity(action, currentState.proximity);
+
+        return newState;
     }
 
-//    private State.Proximity reduceProximity(Action action, State.Proximity proximity) {
-//        return proximity;
-//    }
 
-
-    State.Settings reduceSettings(Action action, State.Settings settings) {
+    Settings reduceSettings(Action action, Settings oldSettings) {
         if (action.type instanceof Actions.Settings) {
             Actions.Settings type = (Actions.Settings) action.type;
             switch (type) {
-//                     case SET_RAMPING:
-//                         return ImmutableSettings.copyOf(settings).withRamping((Boolean) action.value);
-//                     case SET_VIBRATE:
-//                         return ImmutableSettings.copyOf(settings).withVibrate((Boolean) action.value);
-//                     case SET_SNAP:
-//                         return ImmutableSettings.copyOf(settings).withSnap((Boolean) action.value);
-//                     case SET_RINGTONE:
-//                         return ImmutableSettings.copyOf(settings).withRingtone((String) action.value);
-//                     case SET_THEME:
-//                         return ImmutableSettings.copyOf(settings).withTheme((Integer) action.value);
+                case LOAD_SETTINGS:
+                    break;
+                case SETTINGS_UPDATED:
+                    break;
             }
         }
-        return settings;
+        return oldSettings;
     }
 
-    State.GPS reduceGPS(Action action, State.GPS gps) {
+    GPS reduceGPS(Action action, GPS gps) {
         if (action.type instanceof Actions.GPS) {
             Actions.GPS type = (Actions.GPS) action.type;
+
+            GPS newGps = gps.clone();
+
             switch (type) {
                 case ON:
-                    return ImmutableGPS.copyOf(gps).withIsEnabled(true);
+                    newGps.isEnabled = true;
+                    return newGps;
                 case OFF:
-                    return ImmutableGPS.builder()
-                            .isEnabled(false)
-                            .updatesList(ImmutableList.<State.GPS.LocationUpdate>of())
-                            .build();
+                    newGps.isEnabled = false;
+                    newGps.updatesList = newGps.getClearUpdatesList();
+                    return newGps;
                 case LOCATION_UPDATE:
-                    return ImmutableGPS.copyOf(gps)
-                            .withUpdatesList(
-                                    ImmutableList.<State.GPS.LocationUpdate>builder()
-                                            .addAll(gps.updatesList())
-                                            .add((State.GPS.LocationUpdate) action.value)
-                                            .build()
-                            );
+                    newGps.updatesList = newGps.getUpdatesListWith((LocationUpdate) action.value);
+                    return newGps;
             }
         }
         return gps;
     }
 
 
-    State.Accelerometer reduceAccelerometer(Action action, State.Accelerometer accelerometer) {
+    Accelerometer reduceAccelerometer(Action action, Accelerometer oldAccelerometer) {
         if (action.type instanceof Actions.Accelerometer) {
             Actions.Accelerometer type = (Actions.Accelerometer) action.type;
+            Accelerometer newAccelerometer = oldAccelerometer.clone();
             switch (type) {
                 case ON:
-                    return ImmutableAccelerometer.copyOf(accelerometer).withIsEnabled(true);
+                    newAccelerometer.isEnabled = true;
+                    return newAccelerometer;
                 case OFF:
-                    return ImmutableAccelerometer.builder()
-                            .isEnabled(false)
-                            .eventsList(ImmutableList.<State.Accelerometer.AccelerometerEvent>of())
-                            .build();
+                    newAccelerometer.isEnabled = false;
+                    newAccelerometer.eventsList = newAccelerometer.getClearEventsList();
+                    return newAccelerometer;
                 case MOTION_EVENT:
-                    return ImmutableAccelerometer.copyOf(accelerometer)
-                            .withEventsList(
-                                    ImmutableList.<State.Accelerometer.AccelerometerEvent>builder()
-                                            .addAll(accelerometer.eventsList())
-                                            .add((State.Accelerometer.AccelerometerEvent) action.value)
-                                            .build()
-                            );
+                    newAccelerometer.eventsList = newAccelerometer.getEventsListWith((AccelerometerEvent) action.value);
+                    return newAccelerometer;
             }
         }
-        return accelerometer;
+        return oldAccelerometer;
     }
 
 
-    //// resp process reducer
-    State.RespondingProcesses reduceRespondingProcesses(Action action, State.RespondingProcesses old) {
+    RespondingProcesses reduceRespondingProcesses(Action action, RespondingProcesses old) {
         if (action.type instanceof Actions.RespondingProcess) {
             Actions.RespondingProcess type = (Actions.RespondingProcess) action.type;
+
+            RespondingProcesses newRespondingProcesses = old.clone();
+
             switch (type) {
                 case INCOMING_CALL:
-                    State.RespondingProcesses.CallRespondingProcess newProcess =
-                            ImmutableCallRespondingProcess.builder()
-                                    .id(old.nextId())
-                                    .phoneNumber((String) action.value)
-                                    .build();
-
-                    return ImmutableRespondingProcesses.builder()
-                            .list(ImmutableList< State.RespondingProcesses.builder().add(newProcess).build())
-                            .id(old.nextId + 1)
-                            .build();
+                    newRespondingProcesses.nextId++;
+                    CallRespondingProcess newProcess = new CallRespondingProcess((String) action.value,
+                            newRespondingProcesses.nextId);
+                    newRespondingProcesses.list = newRespondingProcesses.getListWith(newProcess);
+                    return newRespondingProcesses;
                 case INCOMING_MESSAGE:
-                    return ImmutableRespondingProcesses.copyOf(old).builder()
-                            .list(this.addToList(ImmutableMessageRespondingProcess.builder()
-                                    .id(old.nextId)
-                                    .phoneNumber((String) ((Pair) action.value).first)
-                                    .message((String) ((Pair) action.value).second)
-                                    .build()))
-                            .id(old.nextId + 1)
-                            .build();
+                    newRespondingProcesses.nextId++;
+                    MessageRespondingProcess newMsgProcess = new MessageRespondingProcess(
+                            (String) ((Pair) action.value).first,
+                            (String) ((Pair) action.value).second,
+                            newRespondingProcesses.nextId);
+
+                    newRespondingProcesses.list = newRespondingProcesses.getListWith(newMsgProcess);
+                    return newRespondingProcesses;
 //                case RESPOND_WITH_MESSAGE:
 //                    return ;
             }
@@ -124,22 +105,15 @@ class Reducer implements Store.Reducer<Action, State> {
         return old;
     }
 
-//        List<RespondingProcess> addToList (RespondingProcess process){
-//            ImmutableList copy = ImmutableList.copyOf(
-//            copy.add(process);
-//            return copy;
-//        }
 
-    //// resp process reducer
-
-    State.Proximity reduceProximity(Action action, State.Proximity oldState) {
+    boolean reduceProximity(Action action, boolean oldState) {
         if (action.type instanceof Actions.Proximity) {
             Actions.Proximity type = (Actions.Proximity) action.type;
             switch (type) {
                 case PROXIMITY:
-                    return ImmutableProximity.copyOf(oldState).withProximity(true);
+                    return true;
                 case NO_PROXIMITY:
-                    return ImmutableProximity.copyOf(oldState).withProximity(false);
+                    return false;
             }
         }
         return oldState;
