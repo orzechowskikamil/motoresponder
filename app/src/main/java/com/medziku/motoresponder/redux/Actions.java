@@ -1,3 +1,5 @@
+package com.medziku.motoresponder.redux;
+
 public final class Actions {
     public enum GPS {ON, OFF, LOCATION_UPDATE}
     public enum Accelerometer {ON, OFF, MOTION_EVENT}
