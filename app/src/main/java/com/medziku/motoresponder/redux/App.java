@@ -31,5 +31,5 @@ public class App {
                     Default.build());
 
             this.store.subscribe(Anvil::render);
-        }
+        }                                                                                                 :
     }
