@@ -5,7 +5,11 @@ public final class Actions {
 
     public enum Accelerometer {ON, OFF, MOTION_EVENT}
 
-    public enum RespondingProcess {INCOMING_CALL, INCOMING_MESSAGE, RESPOND_WITH_MESSAGE}
+    public enum RespondingProcess {RESPOND_WITH_MESSAGE}
+
+    public enum Calls {INCOMING_CALL}
+
+    public enum Messages {INCOMING_MESSAGE, SEND_SMS}
 
     public enum Settings {LOAD_SETTINGS, SETTINGS_UPDATED}
 

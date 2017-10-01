@@ -1,25 +1,35 @@
 package com.medziku.motoresponder.redux;
 
-import android.util.Pair;
+import com.medziku.motoresponder.redux.reducers.RespondingProcessesReducer;
 import trikita.jedux.Action;
 import trikita.jedux.Store;
 
 class Reducer implements Store.Reducer<Action, State> {
+
+    private Store.Reducer<Action, State> respondingProcessesReducer = new RespondingProcessesReducer();
+
 
     public State reduce(Action action, State currentState) {
         State newState = new State();
 
         newState.gps = this.reduceGPS(action, currentState.gps);
         newState.accelerometer = this.reduceAccelerometer(action, currentState.accelerometer);
-        newState.respondingProcesses = this.reduceRespondingProcesses(action, currentState.respondingProcesses);
         newState.settings = this.reduceSettings(action, currentState.settings);
         newState.proximity = this.reduceProximity(action, currentState.proximity);
+        newState.calls = this.reduceCalls(action, currentState.calls);
+        newState.messages = this.reduceMessages(action, currentState.messages);
+
+        newState = this.respondingProcessesReducer.reduce(action, currentState);
 
         return newState;
     }
 
+    private State.Messages reduceMessages(Action action, State.Messages messages) {
+        return messages;
+    }
 
-    Settings reduceSettings(Action action, Settings oldSettings) {
+
+    State.Settings reduceSettings(Action action, State.Settings oldSettings) {
         if (action.type instanceof Actions.Settings) {
             Actions.Settings type = (Actions.Settings) action.type;
             switch (type) {
@@ -32,11 +42,10 @@ class Reducer implements Store.Reducer<Action, State> {
         return oldSettings;
     }
 
-    GPS reduceGPS(Action action, GPS gps) {
+    State.GPS reduceGPS(Action action, State.GPS gps) {
         if (action.type instanceof Actions.GPS) {
             Actions.GPS type = (Actions.GPS) action.type;
-
-            GPS newGps = gps.clone();
+            State.GPS newGps = gps.clone();
 
             switch (type) {
                 case ON:
@@ -44,67 +53,49 @@ class Reducer implements Store.Reducer<Action, State> {
                     return newGps;
                 case OFF:
                     newGps.isEnabled = false;
-                    newGps.updatesList = newGps.getClearUpdatesList();
+                    newGps.updatesList = new ArrayListFn<>();
                     return newGps;
                 case LOCATION_UPDATE:
-                    newGps.updatesList = newGps.getUpdatesListWith((LocationUpdate) action.value);
+                    newGps.updatesList = newGps.updatesList.union((State.GPS.LocationUpdate) action.value);
                     return newGps;
             }
         }
         return gps;
     }
 
-
-    Accelerometer reduceAccelerometer(Action action, Accelerometer oldAccelerometer) {
+    State.Accelerometer reduceAccelerometer(Action action, State.Accelerometer oldAccelerometer) {
         if (action.type instanceof Actions.Accelerometer) {
             Actions.Accelerometer type = (Actions.Accelerometer) action.type;
-            Accelerometer newAccelerometer = oldAccelerometer.clone();
+            State.Accelerometer newAccelerometer = oldAccelerometer.clone();
             switch (type) {
                 case ON:
                     newAccelerometer.isEnabled = true;
                     return newAccelerometer;
                 case OFF:
                     newAccelerometer.isEnabled = false;
-                    newAccelerometer.eventsList = newAccelerometer.getClearEventsList();
+                    newAccelerometer.eventsList = new ArrayListFn<>();
                     return newAccelerometer;
                 case MOTION_EVENT:
-                    newAccelerometer.eventsList = newAccelerometer.getEventsListWith((AccelerometerEvent) action.value);
+                    newAccelerometer.eventsList = newAccelerometer.eventsList.union((State.Accelerometer.Event) action.value);
                     return newAccelerometer;
             }
         }
         return oldAccelerometer;
     }
 
-
-    RespondingProcesses reduceRespondingProcesses(Action action, RespondingProcesses old) {
-        if (action.type instanceof Actions.RespondingProcess) {
-            Actions.RespondingProcess type = (Actions.RespondingProcess) action.type;
-
-            RespondingProcesses newRespondingProcesses = old.clone();
-
-            switch (type) {
-                case INCOMING_CALL:
-                    newRespondingProcesses.nextId++;
-                    CallRespondingProcess newProcess = new CallRespondingProcess((String) action.value,
-                            newRespondingProcesses.nextId);
-                    newRespondingProcesses.list = newRespondingProcesses.getListWith(newProcess);
-                    return newRespondingProcesses;
-                case INCOMING_MESSAGE:
-                    newRespondingProcesses.nextId++;
-                    MessageRespondingProcess newMsgProcess = new MessageRespondingProcess(
-                            (String) ((Pair) action.value).first,
-                            (String) ((Pair) action.value).second,
-                            newRespondingProcesses.nextId);
-
-                    newRespondingProcesses.list = newRespondingProcesses.getListWith(newMsgProcess);
-                    return newRespondingProcesses;
-//                case RESPOND_WITH_MESSAGE:
-//                    return ;
-            }
+    State.Calls reduceCalls(Action action, State.Calls old) {
+        if (action.type == Actions.Calls.INCOMING_CALL) {
+            State.Calls newCalls = old.clone();
+            newCalls.unhandledCalls = newCalls.unhandledCalls.union((String) action.value);
         }
         return old;
     }
 
+
+
+    // doesnt matter which action
+
+//    }
 
     boolean reduceProximity(Action action, boolean oldState) {
         if (action.type instanceof Actions.Proximity) {

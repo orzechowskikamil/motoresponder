@@ -1,171 +1,111 @@
 package com.medziku.motoresponder.redux;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.medziku.motoresponder.redux.state.RespondingProcesses;
+import com.medziku.motoresponder.utils.SMSObject;
 
-class State {
-    GPS gps;
-    Accelerometer accelerometer;
-    RespondingProcesses respondingProcesses;
-    Settings settings;
-    boolean proximity;
-}
+public class State implements Cloneable {
 
-class Accelerometer {
-    List<AccelerometerEvent> eventsList;
-    boolean isEnabled;
+    public GPS gps = new GPS();
+    public Accelerometer accelerometer = new Accelerometer();
+    public RespondingProcesses respondingProcesses = new RespondingProcesses();
+    public Settings settings = new Settings();
+    public Calls calls = new Calls();
+    public Messages messages = new Messages();
+    public boolean proximity;
 
-    public Accelerometer(Accelerometer old) {
-        this.eventsList = old.eventsList;
-        this.isEnabled = old.isEnabled;
+    public State clone() {
+        try {
+            return (State) super.clone();
+        } catch (CloneNotSupportedException e) {
+        }
+        return null;
     }
 
-    public Accelerometer() {
+    class Calls implements Cloneable {
+        public ArrayListFn<String> unhandledCalls=new ArrayListFn<>();
+
+        public Calls clone() {
+            try {
+                return (Calls) super.clone();
+            } catch (CloneNotSupportedException e) {
+            }
+            return null;
+        }
     }
 
-    public Accelerometer clone() {
-        return new Accelerometer(this);
+    public class Messages implements Cloneable {
+        public ArrayListFn<SMSObject> toSend=new ArrayListFn<>();
+
+        public Messages clone() {
+            try {
+                return (Messages) super.clone();
+            } catch (CloneNotSupportedException e) {
+            }
+            return null;
+        }
     }
 
-    public List<AccelerometerEvent> getClearEventsList() {
-        return new ArrayList<>();
-    }
+    class Accelerometer implements Cloneable {
+        public ArrayListFn<Accelerometer.Event> eventsList=new ArrayListFn<>();
+        public boolean isEnabled;
 
-    public List<AccelerometerEvent> getEventsListWith(AccelerometerEvent event) {
-        List<AccelerometerEvent> list = new ArrayList<>(this.eventsList);
-        list.add(event);
-        return list;
-    }
-}
+        public Accelerometer clone() {
+            try {
+                return (Accelerometer) super.clone();
+            } catch (CloneNotSupportedException e) {
+            }
+            return null;
+        }
 
-class AccelerometerEvent {
-}
-
-
-class RespondingProcesses {
-    List<RespondingProcess> list;
-    int nextId;
-
-
-    public RespondingProcesses(RespondingProcesses old) {
-        this.list = old.list;
-        this.nextId = old.nextId;
-    }
-
-    public RespondingProcesses() {
-
-
-    }
-
-    public RespondingProcesses clone() {
-        return new RespondingProcesses(this);
-    }
-
-    public List<RespondingProcess> getListWith(RespondingProcess newProcess) {
-        List<RespondingProcess> list = new ArrayList<>(this.list);
-        list.add(newProcess);
-        return list;
-    }
-}
-
-abstract class RespondingProcess {
-    String phoneNumber;
-    int id;
-
-    public RespondingProcess(String phoneNumber, int id) {
-        this.phoneNumber = "";
-        this.id = id;
-    }
-}
-
-class CallRespondingProcess extends RespondingProcess {
-    public CallRespondingProcess(String phoneNumber, int id) {
-        super(phoneNumber, id);
-    }
-}
-
-class MessageRespondingProcess extends RespondingProcess {
-    String message;
-
-    public MessageRespondingProcess(String phoneNumber, String message, int id) {
-        super(phoneNumber, id);
-        this.message = message;
-    }
-}
-
-class Settings {
-    boolean isEnabled;
-
-    public Settings() {
-        this.isEnabled = false;
-    }
-
-    public Settings(Settings old) {
-        this.isEnabled = old.isEnabled;
-    }
-
-    public Settings clone() {
-        return new Settings(this);
-    }
-}
-
-class Contacts {
-}
-
-class GPS {
-    List<LocationUpdate> updatesList;
-    boolean isEnabled;
-
-    public GPS(GPS gps) {
-        this.updatesList = gps.updatesList;
-        this.isEnabled = gps.isEnabled;
-    }
-
-    public GPS() {
+        public class Event {
+        }
 
     }
 
-    public GPS clone() {
-        return new GPS(this);
+
+    class Settings implements Cloneable {
+        public boolean isEnabled;
+
+        public Settings clone() {
+            try {
+                return (Settings) super.clone();
+            } catch (CloneNotSupportedException e) {
+            }
+            return null;
+        }
     }
 
-    public List<LocationUpdate> getClearUpdatesList() {
-        return new ArrayList<>();
+    class Contacts implements Cloneable {
+
+        public Contacts clone() {
+            try {
+                return (Contacts) super.clone();
+            } catch (CloneNotSupportedException e) {
+            }
+            return null;
+        }
     }
 
-    public List<LocationUpdate> getUpdatesListWith(LocationUpdate event) {
-        List<LocationUpdate> list = new ArrayList<>(this.updatesList);
-        list.add(event);
-        return list;
+    class GPS implements Cloneable {
+        public ArrayListFn<LocationUpdate> updatesList=new ArrayListFn<>();
+        public boolean isEnabled;
+
+        public GPS clone() {
+            try {
+                return (GPS) super.clone();
+            } catch (CloneNotSupportedException e) {
+            }
+            return null;
+        }
+
+        class LocationUpdate {
+        }
     }
-}
-
-
-class LocationUpdate {
 }
 
 
 class Default {
     public static State build() {
-        State state = new State();
-
-        state.gps = new GPS();
-        state.gps.isEnabled = false;
-        state.gps.updatesList = state.gps.getClearUpdatesList();
-
-        state.respondingProcesses = new RespondingProcesses();
-        state.respondingProcesses.list = new ArrayList<>();
-        state.respondingProcesses.nextId = 0;
-
-        state.proximity = false;
-
-        state.settings = new Settings();
-        state.settings.isEnabled = false;
-
-        state.accelerometer = new Accelerometer();
-        state.accelerometer.eventsList = state.accelerometer.getClearEventsList();
-        state.accelerometer.isEnabled = false;
-
-        return state;
+        return new State();
     }
 }
