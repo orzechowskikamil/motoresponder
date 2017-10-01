@@ -1,11 +1,11 @@
 package com.medziku.motoresponder.redux.state;
 
-import com.medziku.motoresponder.redux.ArrayListFn;
+import com.medziku.motoresponder.redux.ArrayList;
 
 import java.util.Arrays;
 
 public class RespondingProcesses implements Cloneable {
-    public ArrayListFn<Process> list;
+    public ArrayList<Process> list;
     public int nextId;
 
     public RespondingProcesses clone() {
@@ -32,8 +32,8 @@ public class RespondingProcesses implements Cloneable {
             this.id = id;
         }
 
-        public ArrayListFn<Check> getConditionsAsList() {
-            return new ArrayListFn<>(Arrays.asList(
+        public ArrayList<Check> getConditionsAsList() {
+            return new ArrayList<>(Arrays.asList(
                     this.proximityCheck,
                     this.screenOnCheck,
                     this.gpsCheck,

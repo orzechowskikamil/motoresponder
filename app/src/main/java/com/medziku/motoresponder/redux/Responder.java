@@ -11,12 +11,12 @@ import com.medziku.motoresponder.redux.sideeffects.Messages;
 public class Responder {
 
 
-    private final AppStore store;
+    private final Store store;
     private final Context context;
     private Messages messages;
     private Calls calls;
 
-    public Responder(AppStore store, Context context) {
+    public Responder(Store store, Context context) {
         this.context=context;
         this.store = store;
 

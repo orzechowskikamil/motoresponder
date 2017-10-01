@@ -22,7 +22,7 @@ public class State implements Cloneable {
     }
 
     class Calls implements Cloneable {
-        public ArrayListFn<String> unhandledCalls=new ArrayListFn<>();
+        public ArrayList<String> unhandledCalls=new ArrayList<>();
 
         public Calls clone() {
             try {
@@ -34,7 +34,7 @@ public class State implements Cloneable {
     }
 
     public class Messages implements Cloneable {
-        public ArrayListFn<SMSObject> toSend=new ArrayListFn<>();
+        public ArrayList<SMSObject> toSend=new ArrayList<>();
 
         public Messages clone() {
             try {
@@ -46,7 +46,7 @@ public class State implements Cloneable {
     }
 
     class Accelerometer implements Cloneable {
-        public ArrayListFn<Accelerometer.Event> eventsList=new ArrayListFn<>();
+        public ArrayList<Event> eventsList=new ArrayList<>();
         public boolean isEnabled;
 
         public Accelerometer clone() {
@@ -87,7 +87,7 @@ public class State implements Cloneable {
     }
 
     class GPS implements Cloneable {
-        public ArrayListFn<LocationUpdate> updatesList=new ArrayListFn<>();
+        public ArrayList<LocationUpdate> updatesList=new ArrayList<>();
         public boolean isEnabled;
 
         public GPS clone() {

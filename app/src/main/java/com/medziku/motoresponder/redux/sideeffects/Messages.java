@@ -4,17 +4,17 @@ import android.content.Context;
 import android.util.Pair;
 import com.google.common.base.Predicate;
 import com.medziku.motoresponder.redux.Actions;
-import com.medziku.motoresponder.redux.AppStore;
+import com.medziku.motoresponder.redux.Store;
 import com.medziku.motoresponder.utils.SMSObject;
 import com.medziku.motoresponder.utils.SMSUtility;
 import trikita.jedux.Action;
 
 public class Messages {
 
-    private final AppStore store;
+    private final Store store;
     private final SMSUtility smsUtility;
 
-    public Messages(AppStore store, Context context) {
+    public Messages(Store store, Context context) {
         this.store = store;
         this.smsUtility = new SMSUtility(context);
     }

@@ -53,7 +53,7 @@ class Reducer implements Store.Reducer<Action, State> {
                     return newGps;
                 case OFF:
                     newGps.isEnabled = false;
-                    newGps.updatesList = new ArrayListFn<>();
+                    newGps.updatesList = new ArrayList<>();
                     return newGps;
                 case LOCATION_UPDATE:
                     newGps.updatesList = newGps.updatesList.union((State.GPS.LocationUpdate) action.value);
@@ -73,7 +73,7 @@ class Reducer implements Store.Reducer<Action, State> {
                     return newAccelerometer;
                 case OFF:
                     newAccelerometer.isEnabled = false;
-                    newAccelerometer.eventsList = new ArrayListFn<>();
+                    newAccelerometer.eventsList = new ArrayList<>();
                     return newAccelerometer;
                 case MOTION_EVENT:
                     newAccelerometer.eventsList = newAccelerometer.eventsList.union((State.Accelerometer.Event) action.value);

@@ -3,7 +3,7 @@ package com.medziku.motoresponder.redux.reducers;
 import android.util.Pair;
 import com.android.internal.util.Predicate;
 import com.medziku.motoresponder.redux.Actions;
-import com.medziku.motoresponder.redux.ArrayListFn;
+import com.medziku.motoresponder.redux.ArrayList;
 import com.medziku.motoresponder.redux.State;
 import com.medziku.motoresponder.redux.state.RespondingProcesses;
 import com.medziku.motoresponder.utils.SMSObject;
@@ -61,7 +61,7 @@ public class RespondingProcessesReducer implements Store.Reducer<Action, State> 
         newState.respondingProcesses = newState.respondingProcesses.clone();
         newState.messages = newState.messages.clone();
 
-        final List<SMSObject> smsesToSend = new ArrayListFn<>();
+        final List<SMSObject> smsesToSend = new ArrayList<>();
 
         newState.respondingProcesses.list = newState.respondingProcesses.list.map(new Predicate<RespondingProcesses.Process>() {
             @Override
