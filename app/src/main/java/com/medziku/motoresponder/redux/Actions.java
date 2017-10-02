@@ -17,5 +17,5 @@ public final class Actions {
 
     public enum Proximity {PROXIMITY, NO_PROXIMITY}
     
-    public enum Responses {RESPONSE_SEND}
+    public enum Responses {RESPONSES_HANDLED}
 }
