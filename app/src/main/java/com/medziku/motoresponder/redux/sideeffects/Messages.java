@@ -20,6 +20,7 @@ public class Messages {
     }
 
     public void start() {
+        //new method listenForSms
         this.smsUtility.listenForSMS(new Predicate<SMSObject>() {
             @Override
             public boolean apply(SMSObject input) {
@@ -28,9 +29,30 @@ public class Messages {
                 return false;
             }
         });
+        
+        // new method listenForPendingResponses
+        Runnable unsubscribeFromStore=this.store.subscribe(new Runnable(){
+            public void run(){
+                this.handleResponses();
+            }
+        });
+    }
+    
+    public void handleResponses(){
+        List<int> handledResponsesIds=new ArrayList<>();
+                
+                for (Response response:Messages.this.store.getState().responses.list){
+                    if (response instanceof SmsResponse){
+                        this.smsUtility.sendSms();
+                        handleResponsesIds.add(response.id);
+                    }
+                }
+        
+        this.store.dispatch(new Action(Actions.Response.HANDLED_RESPONSES,handleResponsesIds));
     }
 
     public void stop() {
         this.smsUtility.stopListeningForSMS();
+        this.unsubscribeFromStore.run();
     }
 }
