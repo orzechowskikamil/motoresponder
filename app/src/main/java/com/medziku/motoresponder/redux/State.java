@@ -47,6 +47,7 @@ public class State implements Cloneable {
     
     public class Responses implements Cloneable{
      public ArrayList<Response> list=new ArrayList<>();
+        public int nextId =0;
         
         public abstract Response{
         }
@@ -54,10 +55,12 @@ public class State implements Cloneable {
         public SmsResponse extends Response{
             public String message;
             public String phoneNumber;
+            public int id;
             
-            public SmsResponse(String message,  String phoneNumber){
+            public SmsResponse(String message,  String phoneNumber, int id){
             this.message=message;
                 this.phoneNumber=phoneNumber;
+                this.id=id;
             }
         }
         
