@@ -21,28 +21,46 @@ public class State implements Cloneable {
         return null;
     }
 
-    class Calls implements Cloneable {
-        public ArrayList<String> unhandledCalls=new ArrayList<>();
+//     class Calls implements Cloneable {
+//         public ArrayList<String> unhandledCalls=new ArrayList<>();
 
-        public Calls clone() {
-            try {
-                return (Calls) super.clone();
-            } catch (CloneNotSupportedException e) {
-            }
-            return null;
+//         public Calls clone() {
+//             try {
+//                 return (Calls) super.clone();
+//             } catch (CloneNotSupportedException e) {
+//             }
+//             return null;
+//         }
+//     }
+
+//     public class Messages implements Cloneable {
+//         public ArrayList<SMSObject> toSend=new ArrayList<>();
+
+//         public Messages clone() {
+//             try {
+//                 return (Messages) super.clone();
+//             } catch (CloneNotSupportedException e) {
+//             }
+//             return null;
+//         }
+//     }
+    
+    public class Responses implements Cloneable{
+     public ArrayList<Response> list=new ArrayList<>();
+        
+        public abstract Response{
         }
-    }
-
-    public class Messages implements Cloneable {
-        public ArrayList<SMSObject> toSend=new ArrayList<>();
-
-        public Messages clone() {
-            try {
-                return (Messages) super.clone();
-            } catch (CloneNotSupportedException e) {
+        
+        public SmsResponse extends Response{
+            public String message;
+            public String phoneNumber;
+            
+            public SmsResponse(String message,  String phoneNumber){
+            this.message=message;
+                this.phoneNumber=phoneNumber;
             }
-            return null;
         }
+        
     }
 
     class Accelerometer implements Cloneable {
