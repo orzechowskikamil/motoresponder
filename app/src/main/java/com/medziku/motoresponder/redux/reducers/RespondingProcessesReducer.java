@@ -59,7 +59,7 @@ public class RespondingProcessesReducer implements Store.Reducer<Action, State> 
     private State reducePendingProcesses(State old) {
         final State newState = old.clone();
         newState.respondingProcesses = newState.respondingProcesses.clone();
-        newState.messages = newState.messages.clone();
+        newState.responses = newState.responses.clone();
 
         final List<SMSObject> smsesToSend = new ArrayList<>();
 
@@ -71,7 +71,12 @@ public class RespondingProcessesReducer implements Store.Reducer<Action, State> 
                 boolean shouldRespond = RespondingProcessesReducer.this.shouldRespond(process);
 
                 if (shouldRespond == true) {
-                    smsesToSend.add(new SMSObject(process.phoneNumber, RespondingProcessesReducer.this.generateMessage()));
+                    newState.responses.nextId++;
+                    smsesToSend.add(new Responses.SmsResponse(
+                        process.phoneNumber, 
+                        RespondingProcessesReducer.this.generateMessage()
+                        newState.responses.nextId;
+                    ));
                     keepInList = false;
                 }
 
@@ -84,7 +89,7 @@ public class RespondingProcessesReducer implements Store.Reducer<Action, State> 
             }
         });
 
-        newState.messages.toSend = newState.messages.toSend.union(smsesToSend);
+        newState.responses.list = newState.responses.list.union(smsesToSend);
         return newState;
     }
 
