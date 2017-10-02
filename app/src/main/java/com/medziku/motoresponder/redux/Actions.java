@@ -5,7 +5,7 @@ public final class Actions {
 
     public enum Accelerometer {ON, OFF, MOTION_EVENT}
 
-    public enum RespondingProcess {RESPOND_WITH_MESSAGE}
+    public enum RespondingProcess {}
 
     public enum Calls {INCOMING_CALL}
 
@@ -16,4 +16,6 @@ public final class Actions {
     public enum Contacts {LOAD_CONTACTS}
 
     public enum Proximity {PROXIMITY, NO_PROXIMITY}
+    
+    public enum Responses {RESPONSE_SEND}
 }
