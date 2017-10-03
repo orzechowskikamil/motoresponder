@@ -104,6 +104,42 @@ public class CallsUtility {
         this.quitLooper();
     }
 
+    
+    /**
+     * Get call log from last 3 days
+     */
+    public List<Call> getCallLog(){
+        const int THREE_DAYS=3*24*60*60*1000;
+        String[] projection = {CallLog.Calls.NUMBER, CallLog.Calls.DATE, CallLog.Calls.TYPE};
+        String selections = CallLog.Calls.DATE + ">?";
+        String[] selectionArgs = {String.valueOf(date.getTime()-THREE_DAYS)};
+        String sortOrder = CallLog.Calls.DATE + " DESC";
+        
+        
+          Cursor cursor = this.context.getContentResolver()
+                .query(CallLog.Calls.CONTENT_URI, projection, selections, selectionArgs, sortOrder);   
+        
+        phoneNumberColIndex=cursor.getColumnIndex(CallLog.Calls.NUMBER);
+        dateColIndex=cursor.getColumnIndex(CallLog.Calls.DATE);
+        typeColIndex=cursor.getColumnIndex(CallLog.Calls.TYPE);
+        
+        List<Call> callLog=new ArrayList<>();
+        
+    
+             if (cursor.moveToFirst()) {
+            do {
+                String phoneNumber= cursor.getString(phoneNumberColIndex);
+                String date=cursor.getString(dateColIndex);
+                String type=cursor.getString(typeColIndex)
+                callLog.add(new Call(phoneNumber,date,type));
+                    
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        
+        return callLog;
+    }
 
     public boolean wasOutgoingCallAfterDate(Date date, String phoneNumber) {
         String[] projection = {CallLog.Calls.NUMBER};

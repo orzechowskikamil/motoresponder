@@ -19,6 +19,8 @@ public class RespondingProcessesReducer implements Store.Reducer<Action, State> 
         State newState = old.clone();
 
         if (action.type == Actions.Calls.INCOMING_CALL || action.type == Actions.Messages.INCOMING_MESSAGE) {
+             // need fresh call log
+            newState.calls.freshCallLog=null;
             newState.respondingProcesses = this.reduceIncoming(action, newState.respondingProcesses);
         }
 
@@ -43,8 +45,8 @@ public class RespondingProcessesReducer implements Store.Reducer<Action, State> 
             String message = (String) pair.second;
             process = new RespondingProcesses.MessageProcess(phoneNumber, message, newProcesses.nextId);
         }
-
-
+        
+       
         // TODO combine it with actual settings later
         process.accelerometerCheck.enabled = true;
         process.numberRulesCheck.enabled = true;
@@ -85,7 +87,7 @@ public class RespondingProcessesReducer implements Store.Reducer<Action, State> 
                     keepInList = false;
                 }
 
-                // shouldRespond == null
+                // shouldRespond == null, means that process is pending
                 return keepInList;
             }
         });
