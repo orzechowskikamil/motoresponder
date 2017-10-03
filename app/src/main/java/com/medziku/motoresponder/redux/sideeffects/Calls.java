@@ -18,7 +18,7 @@ public class Calls {
 
     public void start() {
        this.unsubscribe= this.store.subscribe(new Runnable(){ run(){
-            if (this.store.getState().calls.callLogIsActual==false){
+            if (this.store.getState().calls.callLogIsFresh==false){
                 Calls.this.store.dispatch(new Action(Actions.Calls.CALL_LOG_UPDATE), this.callsUtility.getCallLog());
             }
         }});
