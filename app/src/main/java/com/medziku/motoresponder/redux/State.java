@@ -1,7 +1,7 @@
 package com.medziku.motoresponder.redux;
 
 import com.medziku.motoresponder.redux.state.RespondingProcesses;
-import com.medziku.motoresponder.utils.SMSObject;
+import com.medziku.motoresponder.redux.state.Responses;
 
 public class State implements Cloneable {
 
@@ -9,9 +9,10 @@ public class State implements Cloneable {
     public Accelerometer accelerometer = new Accelerometer();
     public RespondingProcesses respondingProcesses = new RespondingProcesses();
     public Settings settings = new Settings();
-    public Calls calls = new Calls();
-    public Messages messages = new Messages();
+    //    public Calls calls = new Calls();
+//    public Messages messages = new Messages();
     public boolean proximity;
+    public Responses responses;
 
     public State clone() {
         try {
@@ -44,30 +45,10 @@ public class State implements Cloneable {
 //             return null;
 //         }
 //     }
-    
-    public class Responses implements Cloneable{
-     public ArrayList<Response> list=new ArrayList<>();
-        public int nextId =0;
-        
-        public abstract Response{
-        }
-        
-        public SmsResponse extends Response{
-            public String message;
-            public String phoneNumber;
-            public int id;
-            
-            public SmsResponse(String message,  String phoneNumber, int id){
-            this.message=message;
-                this.phoneNumber=phoneNumber;
-                this.id=id;
-            }
-        }
-        
-    }
+
 
     class Accelerometer implements Cloneable {
-        public ArrayList<Event> eventsList=new ArrayList<>();
+        public ArrayList<Event> eventsList = new ArrayList<>();
         public boolean isEnabled;
 
         public Accelerometer clone() {
@@ -108,7 +89,7 @@ public class State implements Cloneable {
     }
 
     class GPS implements Cloneable {
-        public ArrayList<LocationUpdate> updatesList=new ArrayList<>();
+        public ArrayList<LocationUpdate> updatesList = new ArrayList<>();
         public boolean isEnabled;
 
         public GPS clone() {

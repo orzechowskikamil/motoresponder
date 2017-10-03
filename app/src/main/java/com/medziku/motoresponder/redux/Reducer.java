@@ -16,16 +16,10 @@ class Reducer implements Store.Reducer<Action, State> {
         newState.accelerometer = this.reduceAccelerometer(action, currentState.accelerometer);
         newState.settings = this.reduceSettings(action, currentState.settings);
         newState.proximity = this.reduceProximity(action, currentState.proximity);
-        newState.calls = this.reduceCalls(action, currentState.calls);
-        newState.messages = this.reduceMessages(action, currentState.messages);
 
         newState = this.respondingProcessesReducer.reduce(action, currentState);
 
         return newState;
-    }
-
-    private State.Messages reduceMessages(Action action, State.Messages messages) {
-        return messages;
     }
 
 
@@ -81,14 +75,6 @@ class Reducer implements Store.Reducer<Action, State> {
             }
         }
         return oldAccelerometer;
-    }
-
-    State.Calls reduceCalls(Action action, State.Calls old) {
-        if (action.type == Actions.Calls.INCOMING_CALL) {
-            State.Calls newCalls = old.clone();
-            newCalls.unhandledCalls = newCalls.unhandledCalls.union((String) action.value);
-        }
-        return old;
     }
 
 

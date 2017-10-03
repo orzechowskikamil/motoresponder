@@ -6,6 +6,7 @@ import com.medziku.motoresponder.redux.Actions;
 import com.medziku.motoresponder.redux.ArrayList;
 import com.medziku.motoresponder.redux.State;
 import com.medziku.motoresponder.redux.state.RespondingProcesses;
+import com.medziku.motoresponder.redux.state.Responses;
 import com.medziku.motoresponder.utils.SMSObject;
 import trikita.jedux.Action;
 import trikita.jedux.Store;
@@ -45,11 +46,11 @@ public class RespondingProcessesReducer implements Store.Reducer<Action, State> 
 
 
         // TODO combine it with actual settings later
-        process.accelerometerCheck.enabled=true;
-        process.numberRulesCheck.enabled=true;
-        process.gpsCheck.enabled=true;
-        process.screenOnCheck.enabled=true;
-        process.proximityCheck.enabled=true;
+        process.accelerometerCheck.enabled = true;
+        process.numberRulesCheck.enabled = true;
+        process.gpsCheck.enabled = true;
+        process.screenOnCheck.enabled = true;
+        process.proximityCheck.enabled = true;
 
         newProcesses.list = newProcesses.list.union(process);
 
@@ -61,7 +62,7 @@ public class RespondingProcessesReducer implements Store.Reducer<Action, State> 
         newState.respondingProcesses = newState.respondingProcesses.clone();
         newState.responses = newState.responses.clone();
 
-        final List<SMSObject> smsesToSend = new ArrayList<>();
+        final List<Responses.Response> smsesToSend = new ArrayList<>();
 
         newState.respondingProcesses.list = newState.respondingProcesses.list.map(new Predicate<RespondingProcesses.Process>() {
             @Override
@@ -73,9 +74,9 @@ public class RespondingProcessesReducer implements Store.Reducer<Action, State> 
                 if (shouldRespond == true) {
                     newState.responses.nextId++;
                     smsesToSend.add(new Responses.SmsResponse(
-                        process.phoneNumber, 
-                        RespondingProcessesReducer.this.generateMessage()
-                        newState.responses.nextId;
+                            RespondingProcessesReducer.this.generateMessage(),
+                            process.phoneNumber,
+                            newState.responses.nextId
                     ));
                     keepInList = false;
                 }

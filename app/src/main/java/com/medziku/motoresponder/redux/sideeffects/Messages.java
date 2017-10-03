@@ -4,7 +4,9 @@ import android.content.Context;
 import android.util.Pair;
 import com.google.common.base.Predicate;
 import com.medziku.motoresponder.redux.Actions;
+import com.medziku.motoresponder.redux.ArrayList;
 import com.medziku.motoresponder.redux.Store;
+import com.medziku.motoresponder.redux.state.Responses;
 import com.medziku.motoresponder.utils.SMSObject;
 import com.medziku.motoresponder.utils.SMSUtility;
 import trikita.jedux.Action;
@@ -33,17 +35,17 @@ public class Messages {
         // new method listenForPendingResponses
         Runnable unsubscribeFromStore=this.store.subscribe(new Runnable(){
             public void run(){
-                this.handleResponses();
+                Messages.this.handleResponses();
             }
         });
     }
     
     public void handleResponses(){
-        List<int> handledResponsesIds=new ArrayList<>();
+        ArrayList<Integer> handledResponsesIds=new ArrayList<>();
                 
-                for (Response response:Messages.this.store.getState().responses.list){
-                    if (response instanceof SmsResponse){
-                        this.smsUtility.sendSms();
+                for (Responses.Response response:Messages.this.store.getState().responses.list){
+                    if (response instanceof Responses.SmsResponse){
+                        this.smsUtility.sendSMS();
                         handleResponsesIds.add(response.id);
                     }
                 }
