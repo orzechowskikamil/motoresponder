@@ -90,6 +90,19 @@ class Reducer implements Store.Reducer<Action, State> {
         }
         return old;
     }
+    
+    /*new one*/
+      State.Calls reduceCalls(Action action, State.Calls old) {
+        if (action.type == Actions.Calls.CALL_LOG_UPDATE) {
+            State.Calls newCalls = old.clone();
+            newCalls.callLog = newCalls.callLog=action.value;
+            newCalls.callLogIsFresh=true;
+            
+            return newCalls;
+        }
+        return old;
+    }
+    
 
 
 
