@@ -18,8 +18,19 @@ public class ArrayList<E> extends java.util.ArrayList<E> {
         super(collection);
     }
 
+    
+    public ArrayList<F> map<F>(Function<F,E> iterator){
+          ArrayList<F> mapResult = new ArrayList<>();
 
-    public ArrayList<E> map(Predicate<E> iterator) {
+        for (E item : this) {
+          mapResult.add(iterator.call(item));
+      
+        }
+
+        return mapResult;
+    }
+
+    public ArrayList<E> filter(Predicate<E> iterator) {
         ArrayList<E> mapResult = new ArrayList<>();
 
         for (E item : this) {
