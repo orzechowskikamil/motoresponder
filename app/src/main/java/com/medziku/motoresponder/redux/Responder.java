@@ -1,8 +1,9 @@
 package com.medziku.motoresponder.redux;
 
 import android.content.Context;
-import com.medziku.motoresponder.redux.sideeffects.Calls;
-import com.medziku.motoresponder.redux.sideeffects.Messages;
+import com.medziku.motoresponder.redux.sideeffects.CallLog;
+import com.medziku.motoresponder.redux.sideeffects.CallsListener;
+import com.medziku.motoresponder.redux.sideeffects.SideEffect;
 
 
 /**
@@ -10,29 +11,31 @@ import com.medziku.motoresponder.redux.sideeffects.Messages;
  */
 public class Responder {
 
-
     private final Store store;
     private final Context context;
-    private Messages messages;
-    private Calls calls;
+
+    private SideEffect[] sideEffectsList;
 
     public Responder(Store store, Context context) {
-        this.context=context;
+        this.context = context;
         this.store = store;
 
-        this.messages=new Messages(store,context);
-        this.calls=new Calls(store,context);
+        this.sideEffectsList = new SideEffect[]{
+                new CallLog(),
+                new CallsListener()
+        };
     }
 
     public void start() {
-        this.messages.start();
-        this.calls.start();
-
+        for (SideEffect effect : this.sideEffectsList) {
+            effect.start(this.context, this.store);
+        }
     }
 
     public void stop() {
-        this.messages.stop();
-        this.calls.stop();
+        for (SideEffect effect : this.sideEffectsList) {
+            effect.stop();
+        }
     }
 
 }

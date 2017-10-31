@@ -4,11 +4,14 @@ import android.content.Context;
 import android.database.Cursor;
 import android.os.Looper;
 import android.provider.CallLog;
-import android.telephony.*;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
 import com.google.common.base.Predicate;
 import com.medziku.motoresponder.logic.PhoneNumbersComparator;
+import com.medziku.motoresponder.redux.State;
 
 import java.util.Date;
+import java.util.List;
 
 public class CallsUtility {
 
@@ -27,10 +30,6 @@ public class CallsUtility {
     public CallsUtility(Context context) {
         this.context = context;
         this.telephonyManager = getTelephonyManager();
-    }
-
-    protected TelephonyManager getTelephonyManager() {
-        return (TelephonyManager) this.context.getSystemService(Context.TELEPHONY_SERVICE);
     }
 
     /**
@@ -53,6 +52,59 @@ public class CallsUtility {
                 CallsUtility.this.registerPhoneStateListener();
             }
         }).start();
+    }
+
+    public void stopListeningForCalls() {
+        if (this.callCallback == null) {
+            return;
+        }
+        this.callCallback = null;
+
+        this.telephonyManager.listen(this.phoneStateListener, PhoneStateListener.LISTEN_NONE);
+        this.quitLooper();
+    }
+
+    public boolean wasOutgoingCallAfterDate(Date date, String phoneNumber) {
+        String[] projection = {CallLog.Calls.NUMBER};
+        String selections = CallLog.Calls.DATE + ">? AND " + CallLog.Calls.TYPE + "=?";
+        String[] selectionArgs = {String.valueOf(date.getTime()), String.valueOf(CallLog.Calls.OUTGOING_TYPE)};
+        String sortOrder = CallLog.Calls.DATE + " DESC";
+
+        Cursor cursor = this.context.getContentResolver()
+                .query(CallLog.Calls.CONTENT_URI, projection, selections, selectionArgs, sortOrder);
+
+        boolean result = false;
+
+        if (cursor.moveToFirst()) {
+            do {
+                String phoneNumberQuery = cursor.getString(cursor.getColumnIndex(CallLog.Calls.NUMBER));
+                if (this.numbersAreEqual(phoneNumber, phoneNumberQuery)) {
+                    result = true;
+                    break;
+                }
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+
+        return result;
+    }
+
+    protected TelephonyManager getTelephonyManager() {
+        return (TelephonyManager) this.context.getSystemService(Context.TELEPHONY_SERVICE);
+    }
+
+    protected void prepareLooper() {
+        Looper.prepare();
+        this.looperForListeningThread = Looper.myLooper();
+    }
+
+    protected void loopLooper() {
+        this.looperForListeningThread.loop();
+    }
+
+    protected void quitLooper() {
+        this.looperForListeningThread.quitSafely();
     }
 
     /**
@@ -94,96 +146,9 @@ public class CallsUtility {
         this.loopLooper();
     }
 
-    public void stopListeningForCalls() {
-        if (this.callCallback == null) {
-            return;
-        }
-        this.callCallback = null;
-
-        this.telephonyManager.listen(this.phoneStateListener, PhoneStateListener.LISTEN_NONE);
-        this.quitLooper();
-    }
-
-    
-    /**
-     * Get call log from last 3 days
-     */
-    public List<Call> getCallLog(){
-        const int THREE_DAYS=3*24*60*60*1000;
-        String[] projection = {CallLog.Calls.NUMBER, CallLog.Calls.DATE, CallLog.Calls.TYPE};
-        String selections = CallLog.Calls.DATE + ">?";
-        String[] selectionArgs = {String.valueOf(date.getTime()-THREE_DAYS)};
-        String sortOrder = CallLog.Calls.DATE + " DESC";
-        
-        
-          Cursor cursor = this.context.getContentResolver()
-                .query(CallLog.Calls.CONTENT_URI, projection, selections, selectionArgs, sortOrder);   
-        
-        phoneNumberColIndex=cursor.getColumnIndex(CallLog.Calls.NUMBER);
-        dateColIndex=cursor.getColumnIndex(CallLog.Calls.DATE);
-        typeColIndex=cursor.getColumnIndex(CallLog.Calls.TYPE);
-        
-        List<Call> callLog=new ArrayList<>();
-        
-    
-             if (cursor.moveToFirst()) {
-            do {
-                String phoneNumber= cursor.getString(phoneNumberColIndex);
-                String date=cursor.getString(dateColIndex);
-                String type=cursor.getString(typeColIndex)
-                callLog.add(new Call(phoneNumber,date,type));
-                    
-            } while (cursor.moveToNext());
-        }
-
-        cursor.close();
-        
-        return callLog;
-    }
-
-    public boolean wasOutgoingCallAfterDate(Date date, String phoneNumber) {
-        String[] projection = {CallLog.Calls.NUMBER};
-        String selections = CallLog.Calls.DATE + ">? AND " + CallLog.Calls.TYPE + "=?";
-        String[] selectionArgs = {String.valueOf(date.getTime()), String.valueOf(CallLog.Calls.OUTGOING_TYPE)};
-        String sortOrder = CallLog.Calls.DATE + " DESC";
-
-        Cursor cursor = this.context.getContentResolver()
-                .query(CallLog.Calls.CONTENT_URI, projection, selections, selectionArgs, sortOrder);
-
-        boolean result = false;
-
-        if (cursor.moveToFirst()) {
-            do {
-                String phoneNumberQuery = cursor.getString(cursor.getColumnIndex(CallLog.Calls.NUMBER));
-                if (this.numbersAreEqual(phoneNumber, phoneNumberQuery)) {
-                    result = true;
-                    break;
-                }
-            } while (cursor.moveToNext());
-        }
-
-        cursor.close();
-
-        return result;
-    }
-
     private boolean numbersAreEqual(String phoneNumber, String phoneNumberQuery) {
         return PhoneNumbersComparator.areNumbersEqual(phoneNumber, phoneNumberQuery);
 
-    }
-
-
-    protected void prepareLooper() {
-        Looper.prepare();
-        this.looperForListeningThread = Looper.myLooper();
-    }
-
-    protected void loopLooper() {
-        this.looperForListeningThread.loop();
-    }
-
-    protected void quitLooper() {
-        this.looperForListeningThread.quitSafely();
     }
 
 }

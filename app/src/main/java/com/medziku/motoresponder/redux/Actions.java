@@ -7,7 +7,7 @@ public final class Actions {
 
     public enum RespondingProcess {}
 
-    public enum Calls {INCOMING_CALL}
+    public enum Calls {INCOMING_CALL, CALL_LOG_UPDATE}
 
     public enum Messages {INCOMING_MESSAGE, SEND_SMS}
 
