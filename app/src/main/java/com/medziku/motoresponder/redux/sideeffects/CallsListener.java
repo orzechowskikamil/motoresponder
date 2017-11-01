@@ -6,32 +6,28 @@ import android.os.Looper;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import com.medziku.motoresponder.redux.Actions;
-import com.medziku.motoresponder.redux.Store;
+import com.medziku.motoresponder.redux.sideeffects.base.ContextSideEffect;
 import trikita.jedux.Action;
 
-public class CallsListener implements SideEffect {
-    private Context context;
-    private Store store;
+
+public class CallsListener extends ContextSideEffect {
     private TelephonyManager telephonyManager;
     private PhoneStateListener phoneStateListener;
     private Looper looperForListeningThread;
 
     @Override
-    public void start(Context context, Store store) {
-        this.context = context;
-        this.store = store;
-
-        this.telephonyManager= (TelephonyManager) this.context.getSystemService(Context.TELEPHONY_SERVICE);
+    public void afterStart() {
+        this.telephonyManager = (TelephonyManager) this.context.getSystemService(Context.TELEPHONY_SERVICE);
         (new Thread() {
             @Override
             public void run() {
-              CallsListener.this.registerPhoneStateListener();
+                CallsListener.this.registerPhoneStateListener();
             }
         }).start();
     }
 
     @Override
-    public void stop() {
+    protected void beforeStop() {
         this.telephonyManager.listen(this.phoneStateListener, PhoneStateListener.LISTEN_NONE);
         this.looperForListeningThread.quitSafely();
     }
@@ -72,7 +68,7 @@ public class CallsListener implements SideEffect {
     }
 
     private void onCallRinging(String incomingNumber) {
-          this.store.dispatch(new Action(Actions.Calls.INCOMING_CALL,incomingNumber));
+        this.store.dispatch(new Action(Actions.Calls.INCOMING_CALL, incomingNumber));
     }
 
 }

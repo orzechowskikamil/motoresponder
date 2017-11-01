@@ -9,7 +9,7 @@ public final class Actions {
 
     public enum Calls {INCOMING_CALL, CALL_LOG_UPDATE}
 
-    public enum Messages {INCOMING_MESSAGE, SEND_SMS}
+    public enum Messages {INCOMING_MESSAGE, OUTGOING_MESSAGES_LOG, SEND_SMS}
 
     public enum Settings {LOAD_SETTINGS, SETTINGS_UPDATED}
 
@@ -18,4 +18,6 @@ public final class Actions {
     public enum Proximity {PROXIMITY, NO_PROXIMITY}
     
     public enum Responses {RESPONSES_HANDLED}
+
+    public enum AppBuild{PACKAGE_NAME}
 }

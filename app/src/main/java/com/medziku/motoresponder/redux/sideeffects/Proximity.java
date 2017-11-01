@@ -1,53 +1,22 @@
 package com.medziku.motoresponder.redux.sideeffects;
 
 import android.content.Context;
-import com.medziku.motoresponder.redux.Store;
-import com.medziku.motoresponder.utils.SensorsUtility;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import com.medziku.motoresponder.redux.Actions;
+import com.medziku.motoresponder.redux.sideeffects.base.ContextSideEffect;
+import trikita.jedux.Action;
 
-public class Proximity {
 
-    private SensorsUtility sensorsUtility;
-    private Store store;
+public class Proximity extends ContextSideEffect {
 
-    public Proximity(Store store, Context context) {
-        this.store = store;
-        this.sensorsUtility = new SensorsUtility(context);
-    }
-
-    public void start() {
-        this.sensorsUtility.registerSensors();
-
-    }
-
-    public void stop() {
-        this.sensorsUtility.unregisterSensors();
-    }
-
-}
-
-  
-  /*
-  
-   private SensorEventListener sensorEventListener;
     private SensorManager sensorManager;
-
     private Sensor proximitySensor;
-
-    private float currentProximity;
-    private boolean isListening;
- 
-    public SensorsUtility(Context context) {
-        this.sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-        this.proximitySensor = this.sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
-    }
+    private SensorEventListener sensorEventListener;
 
     public void registerSensors() {
-        if (this.isListening == true) {
-            return;
-        }
-
-        this.isListening = true;
-
         this.sensorEventListener = new SensorEventListener() {
             @Override
             public void onAccuracyChanged(Sensor sensor, int accuracy) {
@@ -56,12 +25,10 @@ public class Proximity {
             @Override
             public void onSensorChanged(SensorEvent event) {
                 if (event.sensor.getType() == Sensor.TYPE_PROXIMITY) {
-                    .this.setCurrentProximity(event.values[0]);
+                    Proximity.this.dispatchProximityChangedAction(event.values[0]);
                 }
-
             }
         };
-
 
         if (this.proximitySensor != null) {
             this.sensorManager.registerListener(
@@ -73,23 +40,23 @@ public class Proximity {
 
     }
 
-    private void setCurrentProximity(float currentProximity) {
-        this.currentProximity = currentProximity;
-       boolean isProxime = this.currentProximity != this.proximitySensor.getMaximumRange();
-       dispatchAction()
-    }
-
-
-
-
     public void unregisterSensors() {
-        if (this.isListening == false) {
-            return;
-        }
-       
         this.sensorManager.unregisterListener(this.sensorEventListener);
-         this.isListening = false;
     }
 
+    @Override
+    protected void afterStart() {
+        this.sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+        this.proximitySensor = this.sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+        this.registerSensors();
+    }
 
-*/
+    @Override
+    protected void beforeStop() {
+        this.unregisterSensors();
+    }
+
+    private void dispatchProximityChangedAction(float value) {
+        store.dispatch(new Action(Actions.Proximity.PROXIMITY, new Float[]{value, this.proximitySensor.getMaximumRange()}));
+    }
+}

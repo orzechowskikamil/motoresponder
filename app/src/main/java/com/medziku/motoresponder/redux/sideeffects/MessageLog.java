@@ -1,48 +1,56 @@
 package com.medziku.motoresponder.redux.sideeffects;
 
-import android.database.Cursor;
+import android.annotation.TargetApi;
+import android.net.Uri;
+import android.os.Build;
+import android.provider.Telephony;
 import com.medziku.motoresponder.redux.Actions;
 import com.medziku.motoresponder.redux.sideeffects.base.SubscribedContextSideEffect;
 import com.medziku.motoresponder.redux.sideeffects.utils.DbUtils;
 import trikita.jedux.Action;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class CallLog extends SubscribedContextSideEffect {
+public class MessageLog extends SubscribedContextSideEffect {
 
+
+    @Override
     public void onStoreChanged() {
-        if (this.store.getState().calls().isCallLogFresh() == false) {
-            List<String[]> freshCallLog = this.getFreshCallLog();
-            this.store.dispatch(new Action(Actions.Calls.CALL_LOG_UPDATE, freshCallLog));
+        if (this.store.getState().outgoingMessagesLog() == null) {
+            this.store.dispatch(new Action(Actions.Messages.OUTGOING_MESSAGES_LOG, this.readOutgoingMessageLog()));
         }
     }
 
     @Override
     protected void afterStart() {
+
     }
 
     @Override
     protected void beforeStop() {
+
     }
 
-    private List<String[]> getFreshCallLog() {
+    @TargetApi(Build.VERSION_CODES.KITKAT)
+    protected List<String[]> readOutgoingMessageLog() {
         final int THREE_DAYS = 3 * 24 * 60 * 60 * 1000;
         int timeRange = THREE_DAYS;
+
         String[] projection = {
-                android.provider.CallLog.Calls.NUMBER,
-                android.provider.CallLog.Calls.DATE,
-                android.provider.CallLog.Calls.TYPE
+                Telephony.Sms.DATE,
+                Telephony.Sms.ADDRESS,
+                Telephony.Sms.CREATOR
         };
-        String selections = android.provider.CallLog.Calls.DATE + ">?";
+        String selection = Telephony.Sms.DATE + ">?";
         String[] selectionArgs = {String.valueOf(new Date().getTime() - timeRange)};
-        String sortOrder = android.provider.CallLog.Calls.DATE + " DESC";
+        String sortOrder = Telephony.Sms.DATE + " DESC";
+        Uri contentUri = Telephony.Sms.Sent.CONTENT_URI;
 
         return new DbUtils(this.context).read(
-                android.provider.CallLog.Calls.CONTENT_URI,
+                contentUri,
                 projection,
-                selections,
+                selection,
                 selectionArgs,
                 sortOrder);
     }

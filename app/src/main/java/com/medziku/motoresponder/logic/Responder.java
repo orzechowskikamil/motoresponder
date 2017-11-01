@@ -58,13 +58,8 @@ public class Responder {
         this.countryPrefix = this.createCountryPrefix();
     }
 
-    protected CountryPrefix createCountryPrefix() {
-        return new CountryPrefix(this.contactsUtility);
-    }
-
-
     /**
-     * Call this to start responding
+     * Call this to afterStart responding
      */
     public void startResponding() {
         if (this.isRespondingNow == true) {
@@ -90,20 +85,6 @@ public class Responder {
         this.listenForLockStateChanges();
     }
 
-    protected void listenToIncomingAccordingToSettings() {
-        if (this.settings.isRespondingForSMSEnabled() == true) {
-            this.listenForSMS();
-        } else {
-            this.stopListeningForSMS();
-        }
-        if (this.settings.isRespondingForCallsEnabled() == true) {
-            this.listenForCalls();
-        } else {
-            this.stopListeningForCalls();
-        }
-    }
-
-
     /**
      * Call this to stop responding at all.
      */
@@ -118,7 +99,6 @@ public class Responder {
         this.stopListeningForCalls();
         this.stopListeningForLockStateChanges();
     }
-
 
     /**
      * Called when user will receive sms
@@ -153,6 +133,23 @@ public class Responder {
         if (this.settings.isAssumingScreenUnlockedAsNotRidingEnabled()) {
             this.log.add("Phone unlocked, cancelling all autoresponding processes.");
             this.respondingTasksQueue.cancelAllHandling();
+        }
+    }
+
+    protected CountryPrefix createCountryPrefix() {
+        return new CountryPrefix(this.contactsUtility);
+    }
+
+    protected void listenToIncomingAccordingToSettings() {
+        if (this.settings.isRespondingForSMSEnabled() == true) {
+            this.listenForSMS();
+        } else {
+            this.stopListeningForSMS();
+        }
+        if (this.settings.isRespondingForCallsEnabled() == true) {
+            this.listenForCalls();
+        } else {
+            this.stopListeningForCalls();
         }
     }
 

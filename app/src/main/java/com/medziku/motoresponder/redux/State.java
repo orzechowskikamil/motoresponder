@@ -11,9 +11,16 @@ public interface State {
 
     List<Unhandled> unhandledIncomingList();
 
+    boolean proximity();
+
+    List<Message> outgoingMessagesLog();
+
+    String applicationPackageName();
+
     @Value.Immutable
     interface Calls {
         List<String[]> callLog();
+
         Boolean isCallLogFresh();
     }
 
@@ -26,13 +33,18 @@ public interface State {
     }
 
     @Value.Immutable
-    interface UnhandledMessage extends Unhandled{
+    interface UnhandledMessage extends Unhandled {
         String message();
     }
 
+    @Value.Immutable
+    interface Message {
+        String phoneNumber();
 
+        Date date();
 
-
+        boolean sentByThisApp();
+    }
 }
 
 //

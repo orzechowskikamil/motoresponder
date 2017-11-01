@@ -55,6 +55,36 @@ public class SettingsActivity extends PreferenceActivity {
 
     // TODO K. Orzechowski: divide it to app launcher and activity.
 
+    protected void toggleDisabledMenuOptions() {
+        if (this.settings.isResponderEnabled()) {
+
+        }
+    }
+
+    protected void onStop() {
+        if (this.settings != null) {
+            this.settings.stopListening();
+        }
+        super.onStop();
+    }
+
+    @Override
+    protected boolean isValidFragment(String fragmentName) {
+        // making this check only introduce errors when adding fragment. ignore it.
+        return true;
+    }
+
+    protected void acceptTermsAndConditions() {
+        this.settings.setTermsAndCondition(true);
+        this.settings.setResponderEnabled(true);
+    }
+
+    protected void rejectTermsAndConditions() {
+        this.settings.setTermsAndCondition(false);
+        this.settings.setResponderEnabled(false);
+        this.killApplication();
+    }
+
     private void runBackgroundProcessOrPseudotests() {
         if (this.arePseudoTestsEnabled()) {
             this.runPseudoTesting();
@@ -88,19 +118,6 @@ public class SettingsActivity extends PreferenceActivity {
         });
     }
 
-    protected void toggleDisabledMenuOptions() {
-        if (this.settings.isResponderEnabled()) {
-
-        }
-    }
-
-    protected void onStop() {
-        if (this.settings != null) {
-            this.settings.stopListening();
-        }
-        super.onStop();
-    }
-
     /**
      * Get current value from settings
      */
@@ -126,9 +143,8 @@ public class SettingsActivity extends PreferenceActivity {
         }
     }
 
-
     /**
-     * Special mode in which app instead of doing it's work, run this method to start utilities on real device.
+     * Special mode in which app instead of doing it's work, run this method to afterStart utilities on real device.
      * Because there is no possibility of good testing utilities by unit tests or instrumented tests.
      */
     private void runPseudoTesting() {
@@ -150,23 +166,6 @@ public class SettingsActivity extends PreferenceActivity {
 
     private boolean areIntegrationPseudoTestsEnabled() {
         return IntegrationRunner.ARE_INTEGRATION_TESTS_ENABLED == true;
-    }
-
-    @Override
-    protected boolean isValidFragment(String fragmentName) {
-        // making this check only introduce errors when adding fragment. ignore it.
-        return true;
-    }
-
-    protected void acceptTermsAndConditions() {
-        this.settings.setTermsAndCondition(true);
-        this.settings.setResponderEnabled(true);
-    }
-
-    protected void rejectTermsAndConditions() {
-        this.settings.setTermsAndCondition(false);
-        this.settings.setResponderEnabled(false);
-        this.killApplication();
     }
 
     private void killApplication() {

@@ -29,22 +29,22 @@ public class ResponderIntegrationTest {
         this.context = context;
     }
 
-    private void setUp() {
-        this.responder = new ExposedResponder(this.context);
-    }
-
     public void testRespondingProcessWithMockedTrueDecision() {
         this.setUp();
         this.responder.mockedRespondingDecision.result = true;
-        Log.d(TAG, "Responder right now will start responding process, assuming always respondingDecision as == true");
+        Log.d(TAG, "Responder right now will afterStart responding process, assuming always respondingDecision as == true");
         this.responder.startResponding();
     }
 
     public void testRespondingProcessWithMockedFalseDecision() {
         this.setUp();
-        Log.d(TAG, "Responder right now will start responding process, assuming always respondingDecision as == false");
+        Log.d(TAG, "Responder right now will afterStart responding process, assuming always respondingDecision as == false");
         this.responder.mockedRespondingDecision.result = false;
         this.responder.startResponding();
+    }
+
+    private void setUp() {
+        this.responder = new ExposedResponder(this.context);
     }
 
 }

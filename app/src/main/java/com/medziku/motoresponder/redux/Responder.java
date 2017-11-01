@@ -3,7 +3,7 @@ package com.medziku.motoresponder.redux;
 import android.content.Context;
 import com.medziku.motoresponder.redux.sideeffects.CallLog;
 import com.medziku.motoresponder.redux.sideeffects.CallsListener;
-import com.medziku.motoresponder.redux.sideeffects.SideEffect;
+import com.medziku.motoresponder.redux.sideeffects.base.SideEffect;
 
 
 /**

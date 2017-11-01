@@ -6,6 +6,8 @@ import com.google.common.collect.ImmutableList;
 import trikita.jedux.Action;
 import trikita.jedux.Store;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 class Reducer implements Store.Reducer<Action, State> {
@@ -13,7 +15,44 @@ class Reducer implements Store.Reducer<Action, State> {
     public State reduce(Action action, State state) {
         return ImmutableState.copyOf(state)
                 .withCalls(this.reduceCalls(action, state.calls()))
-                .withUnhandledIncomingList(this.reduceUnhandledIncomingList(action, state.unhandledIncomingList()));
+                .withUnhandledIncomingList(this.reduceUnhandledIncomingList(action, state.unhandledIncomingList()))
+                .withProximity(this.reduceProximity(action, state.proximity()))
+                .withApplicationPackageName(this.reduceAppPackageName(action, state.applicationPackageName()))
+                .withOutgoingMessagesLog(this.reduceOutgoingMessageLog(action, state));
+    }
+
+    private List<State.Message> reduceOutgoingMessageLog(Action action, State state) {
+        if (action.type==Actions.Messages.OUTGOING_MESSAGES_LOG) {
+            List<String[]> rawData= (List<String[]>) action.value;
+                    List<State.Message> result=new ArrayList<>();
+            for (String[] val: rawData){
+                String thisAppAppId = state.applicationPackageName();
+                result.add(ImmutableMessage.builder()
+                         .phoneNumber(val[1])
+                         .sentByThisApp(val[2].equals(thisAppAppId))
+                         .date(new Date(val[0])).build());
+            }
+        }
+        return state.outgoingMessagesLog();
+    }
+
+    private String reduceAppPackageName(Action action, String appPkgName) {
+        if (action.type==Actions.AppBuild.PACKAGE_NAME) {
+            return (String)action.value;
+        }
+        return appPkgName;
+    }
+
+    private boolean reduceProximity(Action action, boolean proximity) {
+        if (action.type==Actions.Proximity.PROXIMITY) {
+            Float[] value = (Float[]) action.value;
+            float max = value[1];
+            float currentRead = value[0];
+
+            boolean newProximity = max != currentRead;
+            return newProximity;
+        }
+        return proximity;
     }
 
     private List<State.Unhandled> reduceUnhandledIncomingList(Action action, List<State.Unhandled> unhandledList) {
